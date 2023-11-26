@@ -12,6 +12,7 @@ struct ShoeHealthApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .modelContainer(for: [Shoe.self], isAutosaveEnabled: true)
         }
     }
 }

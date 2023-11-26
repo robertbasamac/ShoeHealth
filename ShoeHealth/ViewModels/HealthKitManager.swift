@@ -20,15 +20,7 @@ class HealthKitManager: ObservableObject {
     
     init() {
         Task {
-            if !HKHealthStore.isHealthDataAvailable() {
-                return
-            }
-            
-            guard await requestPermission() == true else {
-                return
-            }
-            
-            isAuthorized = true
+                     
         }
     }
     
