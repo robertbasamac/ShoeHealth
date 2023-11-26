@@ -30,25 +30,24 @@ struct AddShoeView: View {
             }
             
             Section {
-                Slider(value: $lifespanDistance, in: 200...800, step: 10) {
-                    Text("Lifespan distance")
-                } minimumValueLabel: {
-                    Text("200")
-                } maximumValueLabel: {
-                    Text("800")
-                }
-                
-                HStack {
-                    Text(String(format: "%.0f", lifespanDistance))
+                VStack {
+                    Text(String(format: "%.0f Km", lifespanDistance))
                         .bold()
-                        .frame(width: 50, alignment: .leading)
-                    Picker("Unit", selection: $unit) {
-                        Text("Kilometer")
-                            .tag(LengthFormatter.Unit.kilometer)
-                        Text("Mile")
-                            .tag(LengthFormatter.Unit.mile)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Slider(value: $lifespanDistance, in: 200...800, step: 10) {
+                        Text("Lifespan distance")
+                    } minimumValueLabel: {
+                        VStack {
+                            Text("200")
+                            Text("Km")
+                        }
+                    } maximumValueLabel: {
+                        VStack {
+                            Text("800")
+                            Text("Km")
+                        }
                     }
-                    .pickerStyle(.segmented)
                 }
             } header: {
                 Text("Lifespan distance")

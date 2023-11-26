@@ -8,36 +8,29 @@
 import SwiftUI
 import HealthKit
 
-struct ContentView: View {    
+struct ContentView: View {
+    @State var healthKitManager = HealthKitManager.shared
+
     @State private var tabSelection: Tab = .workouts
         
     enum Tab: String, Identifiable {
         var id: Self { self }
         
-        case workouts = "Workouts"
         case shoes = "Shoes"
+        case workouts = "Workouts"
         
         var systemImageName: String {
             switch self {
-            case .workouts:
-                return "figure.run.square.stack"
             case .shoes:
                 return "shoe"
+            case .workouts:
+                return "figure.run.square.stack"
             }
         }
     }
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            NavigationStack {
-                WorkoutsTab()
-                    .navigationTitle("Running Workouts")
-            }
-            .tabItem {
-                Label(Tab.workouts.rawValue, systemImage: Tab.workouts.systemImageName)
-            }
-            .tag(Tab.workouts)
-            
             NavigationStack {
                 ShoesTab()
                     .navigationTitle("Shoes")
@@ -46,6 +39,26 @@ struct ContentView: View {
                 Label(Tab.shoes.rawValue, systemImage: Tab.shoes.systemImageName)
             }
             .tag(Tab.shoes)
+            
+            NavigationStack {
+                WorkoutsTab()
+                    .navigationTitle("Running Workouts")
+            }
+            .tabItem {
+                Label(Tab.workouts.rawValue, systemImage: Tab.workouts.systemImageName)
+            }
+            .tag(Tab.workouts)
+        }
+        .task {
+            if !HKHealthStore.isHealthDataAvailable() {
+                return
+            }
+            
+            guard await healthKitManager.requestPermission() == true else {
+                return
+            }
+            
+            await healthKitManager.readRunningWorkouts()
         }
     }
 }

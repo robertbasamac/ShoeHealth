@@ -12,6 +12,6 @@ extension HKWorkout {
     func totalDistance(unitPrefix unit: HKMetricPrefix) -> Double {
         guard let distance = self.statistics(for: .init(.distanceWalkingRunning))?.sumQuantity() else { return 0 }
         
-        return distance.doubleValue(for: HKUnit.meterUnit(with: unit))
+        return distance.doubleValue(for: HKUnit.meterUnit(with: .kilo))
     }
 }

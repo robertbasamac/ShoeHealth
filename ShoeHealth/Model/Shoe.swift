@@ -37,3 +37,17 @@ final class Shoe {
         self.retired = retired
     }
 }
+
+
+// MARK: - Preview data
+extension Shoe {
+    static var previewShoe: Shoe {
+        Shoe(brand: "Nike", model: "Pegasus 40", lifespanDistance: 500, aquisitionDate: Date.now)
+    }
+    
+    static var previewShoes: [Shoe] {
+        [
+            Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 600, aquisitionDate: Date.now)
+        ]
+    }
+}

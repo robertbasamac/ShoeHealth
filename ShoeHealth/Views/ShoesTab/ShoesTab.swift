@@ -71,9 +71,20 @@ extension ShoesTab {
         }
     }
 }
-#Preview {
+
+// MARK: - Preview
+#Preview("Filled") {
     NavigationStack {
         ShoesTab()
             .navigationTitle("Shoes")
+            .modelContainer(PreviewSampleData.container)
+    }
+}
+
+#Preview("Empty") {
+    NavigationStack {
+        ShoesTab()
+            .navigationTitle("Shoes")
+            .modelContainer(PreviewSampleData.emptyContainer)
     }
 }

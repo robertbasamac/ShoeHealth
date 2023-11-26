@@ -37,17 +37,6 @@ struct WorkoutsTab: View {
                 }
             }
         }
-        .task {
-            if !HKHealthStore.isHealthDataAvailable() {
-                return
-            }
-            
-            guard await healthKitManager.requestPermission() == true else {
-                return
-            }
-            
-            await healthKitManager.readRunningWorkouts()
-        }
         .refreshable {
             await healthKitManager.readRunningWorkouts()
         }

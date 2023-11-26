@@ -18,16 +18,9 @@ class HealthKitManager: ObservableObject {
     
     var workouts: [HKWorkout] = []
     
-    init() {
-        Task {
-                     
-        }
-    }
-    
     func requestPermission () async -> Bool {
         let read: Set = [
             .workoutType(),
-            HKSeriesType.activitySummaryType(),
             HKSeriesType.workoutType()
         ]
 
