@@ -93,8 +93,11 @@ extension AddShoeView {
     }
 }
 
+// MARK: - Previews
 #Preview {
-    NavigationStack {
-        AddShoeView()
+    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
+        NavigationStack {
+            AddShoeView()
+        }
     }
 }

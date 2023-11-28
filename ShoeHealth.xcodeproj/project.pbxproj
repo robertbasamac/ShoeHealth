@@ -12,6 +12,9 @@
 		09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A762B0D3F81001119E4 /* Assets.xcassets */; };
 		09DE4A7A2B0D3F81001119E4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A792B0D3F81001119E4 /* Preview Assets.xcassets */; };
 		09DE4A822B0D4CD8001119E4 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */; };
+		09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34A2B15130900D16101 /* WorkoutListItem.swift */; };
+		09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */; };
+		09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
 		09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
 		09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
 		09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */; };
@@ -29,6 +32,9 @@
 		09DE4A792B0D3F81001119E4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoeHealth.entitlements; sourceTree = "<group>"; };
 		09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		09E2F34A2B15130900D16101 /* WorkoutListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListItem.swift; sourceTree = "<group>"; };
+		09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSelectionView.swift; sourceTree = "<group>"; };
+		09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Identifiable.swift"; sourceTree = "<group>"; };
 		09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Statistics.swift"; sourceTree = "<group>"; };
 		09E385DA2B1340E3005CFF02 /* Shoe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shoe.swift; sourceTree = "<group>"; };
 		09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsTab.swift; sourceTree = "<group>"; };
@@ -93,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */,
+				09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -127,6 +134,8 @@
 			isa = PBXGroup;
 			children = (
 				09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */,
+				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
+				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 			);
 			path = WorkoutsTab;
 			sourceTree = "<group>";
@@ -219,15 +228,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
+				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
 				09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */,
 				09DE4A822B0D4CD8001119E4 /* HealthKitManager.swift in Sources */,
 				09E385E52B134B08005CFF02 /* AddShoeView.swift in Sources */,
 				09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */,
+				09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */,
 				09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

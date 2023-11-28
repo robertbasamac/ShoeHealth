@@ -18,6 +18,7 @@ final class Shoe {
     var aquisitionDate: Date
     var retireDate: Date?
     var retired: Bool
+    var workouts: [UUID] = []
     
     init(id: UUID = .init(),
          brand: String,

@@ -15,20 +15,31 @@ struct ShoesTab: View {
 
     @State private var showAddShoe: Bool = false
     
+    private var distanceFormatter: LengthFormatter {
+        let formatter = LengthFormatter()
+        formatter.unitStyle = .short
+        formatter.numberFormatter.minimumFractionDigits = 2
+        formatter.numberFormatter.maximumFractionDigits = 2
+        return formatter
+    }
+    
     var body: some View {
         List {
             ForEach(shoes) { shoe in
                 VStack {
                     Text("\(shoe.brand) - \(shoe.model)")
                     Text("\(shoe.aquisitionDate)")
-                    Text("\(shoe.currentDistance)")
+                    Text("\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer))")
                 }
             }
+            .onDelete(perform: deleteShoe)
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
                 AddShoeView()
             }
+            .presentationCornerRadius(20)
+            .presentationDragIndicator(.visible)
         }
         .overlay {
             emptyShoesView()
@@ -67,6 +78,17 @@ extension ShoesTab {
                 showAddShoe = true
             } label: {
                 Image(systemName: "plus")
+            }
+        }
+    }
+}
+
+// MARK: - Helper Methods
+extension ShoesTab {
+    private func deleteShoe(at offsets: IndexSet) {
+        withAnimation {
+            offsets.map { shoes[$0] }.forEach { shoe in
+                modelContext.delete(shoe)
             }
         }
     }

@@ -11,7 +11,7 @@ import HealthKit
 struct ContentView: View {
     @State var healthKitManager = HealthKitManager.shared
 
-    @State private var tabSelection: Tab = .workouts
+    @State private var tabSelection: Tab = .shoes
         
     enum Tab: String, Identifiable {
         var id: Self { self }
@@ -63,6 +63,13 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+// MARK: - Previews
+#Preview("Filled") {
     ContentView()
+        .modelContainer(PreviewSampleData.container)
+}
+
+#Preview("Empty") {
+    ContentView()
+        .modelContainer(PreviewSampleData.emptyContainer)
 }
