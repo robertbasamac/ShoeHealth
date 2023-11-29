@@ -29,8 +29,11 @@ struct ShoeCardView: View {
                     Text("\(shoe.brand)")
                     Text("\(shoe.model)")
                 }
+                .font(.title3.bold())
+                
                 Spacer(minLength: 0)
                 Text("\(shoe.aquisitionDate, formatter: dateFormatter)")
+                    .font(.subheadline)
             }
             
             ProgressView(value: shoe.currentDistance, total: shoe.lifespanDistance) {
@@ -38,6 +41,11 @@ struct ShoeCardView: View {
                     Text("\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer))")
                     Spacer()
                     Text("\(distanceFormatter.string(fromValue: shoe.lifespanDistance, unit: .kilometer))")
+                }
+                .font(.footnote)
+                .overlay(alignment: .center) {
+                    Text("\(shoe.wearPercentageAsString)")
+                        .font(.footnote)
                 }
             }
             .tint(getProgressViewTint())

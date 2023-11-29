@@ -39,6 +39,20 @@ final class Shoe {
     }
 }
 
+extension Shoe {
+    @Transient
+    var wearPercentageAsString: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.minimumIntegerDigits = 1
+        formatter.maximumIntegerDigits = 2
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 2
+        
+        return formatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0.0"
+    }
+}
+
 
 // MARK: - Preview data
 extension Shoe {
