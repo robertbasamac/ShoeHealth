@@ -15,22 +15,17 @@ struct ShoesTab: View {
 
     @State private var showAddShoe: Bool = false
     
-    private var distanceFormatter: LengthFormatter {
-        let formatter = LengthFormatter()
-        formatter.unitStyle = .short
-        formatter.numberFormatter.minimumFractionDigits = 2
-        formatter.numberFormatter.maximumFractionDigits = 2
-        return formatter
-    }
-    
     var body: some View {
         List {
             ForEach(shoes) { shoe in
-                VStack {
-                    Text("\(shoe.brand) - \(shoe.model)")
-                    Text("\(shoe.aquisitionDate)")
-                    Text("\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer))")
+                Section {
+                    NavigationLink {
+                        ShoeDetailedView(shoe: shoe)
+                    } label: {
+                        ShoeCardView(shoe: shoe)
+                    }
                 }
+                .listSectionSpacing(.compact)
             }
             .onDelete(perform: deleteShoe)
         }

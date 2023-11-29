@@ -13,6 +13,7 @@ struct ShoeHealthApp: App {
         WindowGroup {
             ContentView()
                 .modelContainer(for: [Shoe.self], isAutosaveEnabled: true)
+                .preferredColorScheme(.dark)
         }
     }
 }
