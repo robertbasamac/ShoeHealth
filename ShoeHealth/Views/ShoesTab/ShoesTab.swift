@@ -26,6 +26,18 @@ struct ShoesTab: View {
                     }
                 }
                 .listSectionSpacing(.compact)
+                .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                    Button {
+                        shoe.retired.toggle()
+                    } label: {
+                        if shoe.retired {
+                            Label("Reinstate", systemImage: "bolt.fill")
+                        } else {
+                            Label("Retire", systemImage: "bolt.slash.fill")
+                        }
+                    }
+                    .tint(shoe.retired ? .green : .orange)
+                }
             }
             .onDelete(perform: deleteShoe)
         }
