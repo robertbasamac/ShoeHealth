@@ -49,7 +49,7 @@ struct WorkoutsTab: View {
 #Preview {
     NavigationStack {
         WorkoutsTab()
-            .navigationTitle("Running Workouts")
+            .navigationTitle("Workouts")
     }
 }
     

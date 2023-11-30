@@ -53,8 +53,7 @@ class HealthKitManager: ObservableObject {
                 continuation.resume(returning: samples)
             }))
         }
-
-        print("samples received: \(samples.count)")
+        
         guard let workouts = samples as? [HKWorkout] else {
             print("not managed to convert to HKWorkout")
             return

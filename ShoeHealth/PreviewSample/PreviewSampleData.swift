@@ -28,7 +28,6 @@ actor PreviewSampleData {
         var sampleData: [any PersistentModel] {
             var samples: [any PersistentModel] = []
             
-            samples.append(Shoe.previewShoe)
             samples.append(contentsOf: Shoe.previewShoes)
             
             return samples

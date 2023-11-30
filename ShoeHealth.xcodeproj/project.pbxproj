@@ -17,6 +17,7 @@
 		09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
 		09E2F3512B1668D700D16101 /* ShoeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3502B1668D700D16101 /* ShoeCardView.swift */; };
 		09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */; };
+		09E2F3552B176BE700D16101 /* LoopingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3542B176BE700D16101 /* LoopingScrollView.swift */; };
 		09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
 		09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
 		09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */; };
@@ -39,6 +40,7 @@
 		09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Identifiable.swift"; sourceTree = "<group>"; };
 		09E2F3502B1668D700D16101 /* ShoeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeCardView.swift; sourceTree = "<group>"; };
 		09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailedView.swift; sourceTree = "<group>"; };
+		09E2F3542B176BE700D16101 /* LoopingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingScrollView.swift; sourceTree = "<group>"; };
 		09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Statistics.swift"; sourceTree = "<group>"; };
 		09E385DA2B1340E3005CFF02 /* Shoe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shoe.swift; sourceTree = "<group>"; };
 		09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsTab.swift; sourceTree = "<group>"; };
@@ -149,8 +151,9 @@
 			children = (
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
 				09E2F3502B1668D700D16101 /* ShoeCardView.swift */,
-				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
 				09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */,
+				09E2F3542B176BE700D16101 /* LoopingScrollView.swift */,
+				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
 			);
 			path = ShoesTab;
 			sourceTree = "<group>";
@@ -238,6 +241,7 @@
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
+				09E2F3552B176BE700D16101 /* LoopingScrollView.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,

@@ -42,7 +42,7 @@ struct ContentView: View {
             
             NavigationStack {
                 WorkoutsTab()
-                    .navigationTitle("Running Workouts")
+                    .navigationTitle("Workouts")
             }
             .tabItem {
                 Label(Tab.workouts.rawValue, systemImage: Tab.workouts.systemImageName)

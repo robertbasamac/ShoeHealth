@@ -20,7 +20,7 @@ struct ShoesTab: View {
             ForEach(shoes) { shoe in
                 Section {
                     NavigationLink {
-                        ShoeDetailedView(shoe: shoe)
+                        ShoeDetailedView(shoes: shoes, selectedShoeID: shoe.id)
                     } label: {
                         ShoeCardView(shoe: shoe)
                     }
