@@ -26,13 +26,11 @@ struct ShoeDetailedView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 0) {
                             ForEach(shoes) { shoe in
-                                RoundedRectangle(cornerRadius: 15)
-                                    .fill(Color(uiColor: .tertiarySystemGroupedBackground))
-                                    .padding(.horizontal, 15)
+                                ShoeCardView(shoe: shoe)
+                                    .padding()
+                                    .background(Color(uiColor: .tertiarySystemGroupedBackground), in: .rect(cornerRadius: 12))
+                                    .padding(.horizontal)
                                     .frame(width: size.width)
-                                    .overlay {
-                                        Text("\(shoe.model)")
-                                    }
                             }
                         }
                         .scrollTargetLayout()
@@ -40,9 +38,10 @@ struct ShoeDetailedView: View {
                     .scrollPosition(id: $selectedShoeID)
                     .scrollTargetBehavior(.paging)
                 }
-                .frame(height: 150)
+                .frame(height: 150) // TODO: adjust height based on view's child content size
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

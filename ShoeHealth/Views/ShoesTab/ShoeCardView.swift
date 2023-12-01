@@ -30,10 +30,12 @@ struct ShoeCardView: View {
                     Text("\(shoe.model)")
                 }
                 .font(.title3.bold())
-                
-                Spacer(minLength: 0)
-                Text("\(shoe.aquisitionDate, formatter: dateFormatter)")
-                    .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .overlay(alignment: .topTrailing) {
+                    Text("\(shoe.aquisitionDate, formatter: dateFormatter)")
+                        .font(.subheadline)
+                        .padding(.vertical, 3)
+                }
             }
             
             ProgressView(value: shoe.currentDistance, total: shoe.lifespanDistance) {
