@@ -50,15 +50,7 @@ struct ContentView: View {
             .tag(Tab.workouts)
         }
         .task {
-            if !HKHealthStore.isHealthDataAvailable() {
-                return
-            }
-            
-            guard await healthKitManager.requestPermission() == true else {
-                return
-            }
-            
-            await healthKitManager.readRunningWorkouts()
+            await healthKitManager.fetchRunningWorkouts()
         }
     }
 }

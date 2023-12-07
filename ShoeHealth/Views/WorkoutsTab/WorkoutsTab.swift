@@ -40,7 +40,7 @@ struct WorkoutsTab: View {
             .presentationDragIndicator(.visible)
         })
         .refreshable {
-            await healthKitManager.readRunningWorkouts()
+            await healthKitManager.fetchRunningWorkouts()
         }
     }
 }

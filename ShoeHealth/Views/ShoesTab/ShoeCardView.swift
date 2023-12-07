@@ -10,18 +10,6 @@ import SwiftUI
 struct ShoeCardView: View {
     var shoe: Shoe
     
-    private var distanceFormatter: LengthFormatter {
-        let formatter = LengthFormatter()
-        formatter.unitStyle = .short
-        formatter.numberFormatter.maximumFractionDigits = 2
-        return formatter
-    }
-    private var dateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter
-    }
-    
     var body: some View {
         VStack {
             HStack(alignment: .top) {
