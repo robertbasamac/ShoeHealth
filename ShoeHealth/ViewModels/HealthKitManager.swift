@@ -11,10 +11,10 @@ import Observation
 
 @Observable
 class HealthKitManager: ObservableObject {
+    
     static let shared = HealthKitManager()
     
     var healthStore = HKHealthStore()
-    var isBackgroundDeliveryEnabled: Bool = true
     
     var workouts: [HKWorkout] = []
     
@@ -22,7 +22,7 @@ class HealthKitManager: ObservableObject {
     
     // MARK: - Request HealthKit authorization
     
-    func requestHealthAuthorization() {
+    func requestHealthKitAuthorization() {
         if !HKHealthStore.isHealthDataAvailable() {
             print("HealthKit not accessable.")
             return
@@ -59,16 +59,16 @@ class HealthKitManager: ObservableObject {
         }
         
         let sampleType =  HKObjectType.workoutType()
-        let running = HKQuery.predicateForWorkouts(with: .running)
+        let runningPredicate = HKQuery.predicateForWorkouts(with: .running)
 
         let samples = try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
             healthStore.execute(HKSampleQuery(sampleType: sampleType,
-                                              predicate: running,
+                                              predicate: runningPredicate,
                                               limit: HKObjectQueryNoLimit,
                                               sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)],
                                               resultsHandler: { query, samples, error in
-                if let hasError = error {
-                    continuation.resume(throwing: hasError)
+                if let unwrappedError = error {
+                    continuation.resume(throwing: unwrappedError)
                     return
                 }
                 
@@ -81,7 +81,7 @@ class HealthKitManager: ObservableObject {
         }
         
         guard let workouts = samples as? [HKWorkout] else {
-            print("Not managed to convert to HKWorkout.")
+            print("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
@@ -98,9 +98,9 @@ class HealthKitManager: ObservableObject {
         }
         
         let sampleType =  HKObjectType.workoutType()
-        let predicate = HKQuery.predicateForWorkouts(with: .running)
+        let runningPredicate = HKQuery.predicateForWorkouts(with: .running)
         
-        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
+        let query = HKObserverQuery(sampleType: sampleType, predicate: runningPredicate) { (query, completionHandler, error) in
             self.handleNewWorkouts { completionHandler() }
         }
         
@@ -109,7 +109,6 @@ class HealthKitManager: ObservableObject {
         self.healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate) { (success, error) in
             if success {
                 print("Background delivery enabled.")
-                self.isBackgroundDeliveryEnabled = true
             } else {
                 if let unwrappedError = error {
                     print("Could not enable background delivery, \(unwrappedError.localizedDescription).")
@@ -134,17 +133,30 @@ class HealthKitManager: ObservableObject {
 
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
         guard let newWorkout = newSamples.last as? HKWorkout else {
-            print("updateWorkouts: Not managed to convert to HKWorkout.")
+            print("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
-        print("\(self.workouts.count) workouts available")
         if !self.workouts.contains(where: { $0.id == newWorkout.id }) {
             print("New workout received: \(newWorkout.endDate) - \(newWorkout.totalDistance(unitPrefix: .kilo)). Sending Notification.")
-            NotificationManager.shared.scheduleNotification(workout: newWorkout)
+            
+            var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: .now)
+            dateComponents.second? += 5
+            
+            NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
             
             self.workouts.append(newWorkout)
             self.workouts = self.workouts.sorted(by: { $0.endDate > $1.endDate} )
         }
+    }
+    
+    // MARK: - Helper Methods
+    
+    func getWorkout(forID workoutID: String) -> HKWorkout? {
+        if let workout = self.workouts.first(where: { $0.id.uuidString == workoutID } ) {
+            return workout
+        }
+        
+        return nil
     }
 }

@@ -49,9 +49,6 @@ struct ContentView: View {
             }
             .tag(Tab.workouts)
         }
-        .task {
-            await healthKitManager.fetchRunningWorkouts()
-        }
     }
 }
 
