@@ -7,10 +7,11 @@
 
 import SwiftUI
 import HealthKit
+import SwiftData
 
 struct ContentView: View {
-    @State var healthKitManager = HealthKitManager.shared
-
+    @State private var healthKitManager = HealthKitManager.shared
+    
     @State private var tabSelection: Tab = .shoes
         
     enum Tab: String, Identifiable {
@@ -56,9 +57,11 @@ struct ContentView: View {
 #Preview("Filled") {
     ContentView()
         .modelContainer(PreviewSampleData.container)
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
 }
 
 #Preview("Empty") {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
 }

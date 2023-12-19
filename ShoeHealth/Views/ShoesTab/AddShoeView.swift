@@ -9,11 +9,11 @@ import SwiftUI
 import SwiftData
 
 struct AddShoeView: View {
-    @Environment(\.modelContext) private var modelContext
+    @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
     @State private var shoeBrand: String = ""
-    @State private var showModel: String = ""
+    @State private var shoeModel: String = ""
     @State private var aquisitionDate: Date = .init()
     @State private var lifespanDistance: Double = 500
     @State private var unit: LengthFormatter.Unit = .kilometer
@@ -23,7 +23,7 @@ struct AddShoeView: View {
             Section {
                 TextField("Brand", text: $shoeBrand)
                     .textInputAutocapitalization(.words)
-                TextField("Model", text: $showModel)
+                TextField("Model", text: $shoeModel)
                     .textInputAutocapitalization(.words)
             } header: {
                 Text("Branding")
@@ -74,9 +74,7 @@ extension AddShoeView {
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                let shoe = Shoe(brand: shoeBrand, model: showModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate)
-                modelContext.insert(shoe)
-                
+                shoesViewModel.addShoe(brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate)
                 dismiss()
             } label: {
                 Text("Save")
@@ -89,7 +87,7 @@ extension AddShoeView {
 // MARK: - Helper Methods
 extension AddShoeView {
     private func isSaveButtonDisabled() -> Bool {
-        return shoeBrand.isEmpty || showModel.isEmpty
+        return shoeBrand.isEmpty || shoeModel.isEmpty
     }
 }
 
@@ -98,6 +96,7 @@ extension AddShoeView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             AddShoeView()
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }
 }

@@ -14,6 +14,8 @@ class NotificationManager {
         
     static let shared = NotificationManager()
     
+    private init() { }
+    
     func requestAuthorization() {
         let options: UNAuthorizationOptions = [.alert, .sound, .badge]
         

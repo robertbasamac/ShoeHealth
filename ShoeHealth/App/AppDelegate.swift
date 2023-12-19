@@ -8,10 +8,32 @@
 import Foundation
 import UIKit
 import HealthKit
+import SwiftData
 
 // MARK: - UIApplicationDelegate
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject {
+    
+    var container: ModelContainer = {
+        let container: ModelContainer
+        
+        do {
+            container = try ModelContainer(for: Shoe.self)
+        } catch {
+            fatalError("Failed to create ModelContainer for Shoe.")
+        }
+        
+        return container
+    }()
+    
+    var shoesViewModel: ShoesViewModel?
+}
+
+// MARK: - UIApplicationDelegate
+extension AppDelegate: UIApplicationDelegate {
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        shoesViewModel = ShoesViewModel(modelContext: container.mainContext)
         
         let healthManager = HealthKitManager.shared
         healthManager.requestHealthKitAuthorization()
@@ -27,18 +49,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 // MARK: - UNUserNotificationCenterDelegate
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         let workoutID = userInfo["WORKOUT_ID"] as? String
         
         switch response.actionIdentifier {
         case "DEFAULT_SHOE_ACTION":
-            print("Default shoe added.")
+            guard let workoutID = workoutID else { return }
+            guard let workout = HealthKitManager.shared.getWorkout(forID: workoutID) else { return }
             
-            NotificationManager.shared.cancelNotification()
+            if let shoe = shoesViewModel?.getDefaultShoe() {
+                print("\(shoe.brand) - \(shoe.model)")
+                shoe.workouts.append(workout.id)
+                shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
+            }
         case "REMIND_ME_LATER":
-            print("Remind me later.")
-            
             guard let workoutID = workoutID else { return }
             guard let workout = HealthKitManager.shared.getWorkout(forID: workoutID) else { return }
             

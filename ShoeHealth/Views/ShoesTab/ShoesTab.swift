@@ -9,18 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct ShoesTab: View {
-    @Environment(\.modelContext) private var modelContext
+    @Environment(ShoesViewModel.self) private var shoesViewModel
     
-    @Query(sort: \Shoe.aquisitionDate, order: .forward) private var shoes: [Shoe]
-
     @State private var showAddShoe: Bool = false
     
     var body: some View {
         List {
-            ForEach(shoes) { shoe in
+            ForEach(shoesViewModel.shoes) { shoe in
                 Section {
                     NavigationLink {
-                        ShoeDetailedView(shoes: shoes, selectedShoeID: shoe.id)
+                        ShoeDetailedView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
                     } label: {
                         ShoeCardView(shoe: shoe)
                     }
@@ -39,11 +37,12 @@ struct ShoesTab: View {
                     .tint(shoe.retired ? .green : .orange)
                 }
             }
-            .onDelete(perform: deleteShoe)
+            .onDelete(perform: shoesViewModel.deleteShoe)
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
                 AddShoeView()
+                    .environment(shoesViewModel)
             }
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
@@ -61,7 +60,7 @@ struct ShoesTab: View {
 extension ShoesTab {
     @ViewBuilder
     private func emptyShoesView() -> some View {
-        if shoes.isEmpty {
+        if shoesViewModel.shoes.isEmpty {
             ContentUnavailableView {
                 Label("No Shoes in your collection.", systemImage: "shoe.circle")
             } description: {
@@ -90,23 +89,13 @@ extension ShoesTab {
     }
 }
 
-// MARK: - Helper Methods
-extension ShoesTab {
-    private func deleteShoe(at offsets: IndexSet) {
-        withAnimation {
-            offsets.map { shoes[$0] }.forEach { shoe in
-                modelContext.delete(shoe)
-            }
-        }
-    }
-}
-
 // MARK: - Preview
 #Preview("Filled") {
     NavigationStack {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.container)
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
     }
 }
 
@@ -115,5 +104,6 @@ extension ShoesTab {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
     }
 }
