@@ -18,6 +18,7 @@ final class Shoe {
     var aquisitionDate: Date
     var retireDate: Date?
     var retired: Bool
+    var isDefaultShoe: Bool
     var workouts: [UUID] = []
     
     init(id: UUID = .init(),
@@ -26,16 +27,16 @@ final class Shoe {
          lifespanDistance: Double,
          currentDistance: Double = 0,
          aquisitionDate: Date,
-         retireDate: Date? = nil,
-         retired: Bool = false) {
+         isDefaultShoe: Bool = false) {
         self.id = id
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
         self.currentDistance = currentDistance
         self.aquisitionDate = aquisitionDate
-        self.retireDate = retireDate
-        self.retired = retired
+        self.retireDate = nil
+        self.retired = false
+        self.isDefaultShoe = isDefaultShoe
     }
 }
 
@@ -57,15 +58,15 @@ extension Shoe {
 // MARK: - Preview data
 extension Shoe {
     static var previewShoe: Shoe {
-        Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now)
+        Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true)
     }
     
     static var previewShoes: [Shoe] {
         [
-            Shoe(brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, currentDistance: 400, aquisitionDate: Date.now),
-            Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now),
-            Shoe(brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 703.53, aquisitionDate: Date.now),
-            Shoe(brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 250, aquisitionDate: Date.now)
+            Shoe(brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, currentDistance: 400, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true),
+            Shoe(brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 703.53, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: false)
         ]
     }
 }

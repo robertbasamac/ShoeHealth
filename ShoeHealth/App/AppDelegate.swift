@@ -60,7 +60,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             guard let workout = HealthKitManager.shared.getWorkout(forID: workoutID) else { return }
             
             if let shoe = shoesViewModel?.getDefaultShoe() {
-                print("\(shoe.brand) - \(shoe.model)")
                 shoe.workouts.append(workout.id)
                 shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
             }

@@ -22,10 +22,18 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
-    func addShoe(brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date) {
-        let shoe = Shoe(brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate)
-        shoes.append(shoe)
+    func addShoe(brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool) {
+        let shoe = Shoe(brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
+        
+        if isDefaultShoe {
+            if let previousDefaultShoe = shoes.first(where: { $0.isDefaultShoe} ) {
+                previousDefaultShoe.isDefaultShoe = false
+            }
+        }
+        
         modelContext.insert(shoe)
+        
+        fetchShoes()
     }
     
     func deleteShoe(at offsets: IndexSet) {
@@ -46,7 +54,13 @@ final class ShoesViewModel {
     }
     
     func getDefaultShoe() -> Shoe? {
-        if let shoe = self.shoes.first {
+        // return the assigned default shoe
+        if let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) {
+            return shoe
+        }
+        
+        // return the only available shoe
+        if self.shoes.count == 1, let shoe = self.shoes.first {
             return shoe
         }
         

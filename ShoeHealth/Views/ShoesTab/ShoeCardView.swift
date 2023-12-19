@@ -20,9 +20,15 @@ struct ShoeCardView: View {
                 .font(.title3.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .topTrailing) {
-                    Text("\(shoe.aquisitionDate, formatter: dateFormatter)")
-                        .font(.subheadline)
-                        .padding(.vertical, 3)
+                    VStack(alignment: .trailing) {
+                        Text("\(shoe.aquisitionDate, formatter: dateFormatter)")
+                            .font(.subheadline)
+                            .padding(.vertical, 3)
+                        
+                        Image(systemName: "circle.fill")
+                            .foregroundStyle(.green)
+                            .opacity(shoe.isDefaultShoe ? 1 : 0)
+                    }
                 }
             }
             

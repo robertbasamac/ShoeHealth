@@ -16,6 +16,7 @@ struct AddShoeView: View {
     @State private var shoeModel: String = ""
     @State private var aquisitionDate: Date = .init()
     @State private var lifespanDistance: Double = 500
+    @State private var isDefaultShoe: Bool = false
     @State private var unit: LengthFormatter.Unit = .kilometer
     
     var body: some View {
@@ -27,6 +28,10 @@ struct AddShoeView: View {
                     .textInputAutocapitalization(.words)
             } header: {
                 Text("Branding")
+            }
+            
+            Section {
+                Toggle("Set as default shoe", isOn: $isDefaultShoe)
             }
             
             Section {
@@ -62,6 +67,7 @@ struct AddShoeView: View {
         }
         .navigationTitle("Add New Shoe")
         .navigationBarTitleDisplayMode(.inline)
+        .listSectionSpacing(.compact)
         .toolbar {
             toolbarItems()
         }
@@ -74,7 +80,7 @@ extension AddShoeView {
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate)
+                shoesViewModel.addShoe(brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
                 dismiss()
             } label: {
                 Text("Save")
