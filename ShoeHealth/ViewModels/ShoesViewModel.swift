@@ -25,13 +25,25 @@ final class ShoesViewModel {
     func addShoe(brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool) {
         let shoe = Shoe(brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
         
-        if isDefaultShoe {
-            if let previousDefaultShoe = shoes.first(where: { $0.isDefaultShoe} ) {
-                previousDefaultShoe.isDefaultShoe = false
-            }
+        if isDefaultShoe, let previousDefaultShoe = shoes.first(where: { $0.isDefaultShoe} ) {
+            previousDefaultShoe.isDefaultShoe = false
+        }
+        
+        if shoes.isEmpty {
+            shoe.isDefaultShoe = true
         }
         
         modelContext.insert(shoe)
+        
+        fetchShoes()
+    }
+    
+    func setAsDefaultShoe(_ shoe: Shoe) {
+        if let defaultShoe = getDefaultShoe() {
+            defaultShoe.isDefaultShoe = false
+        }
+        
+        shoe.isDefaultShoe = true
         
         fetchShoes()
     }
@@ -44,6 +56,11 @@ final class ShoesViewModel {
         }
     }
     
+    func deleteShoe(_ shoe: Shoe) {
+        modelContext.delete(shoe)
+        fetchShoes()
+    }
+    
     func fetchShoes() {
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward)])
@@ -54,16 +71,7 @@ final class ShoesViewModel {
     }
     
     func getDefaultShoe() -> Shoe? {
-        // return the assigned default shoe
-        if let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) {
-            return shoe
-        }
-        
-        // return the only available shoe
-        if self.shoes.count == 1, let shoe = self.shoes.first {
-            return shoe
-        }
-        
-        return nil
+        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
+        return shoe
     }
 }

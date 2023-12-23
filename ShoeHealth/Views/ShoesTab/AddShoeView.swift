@@ -32,6 +32,7 @@ struct AddShoeView: View {
             
             Section {
                 Toggle("Set as default shoe", isOn: $isDefaultShoe)
+                    .disabled(shoesViewModel.shoes.isEmpty)
             }
             
             Section {
@@ -70,6 +71,9 @@ struct AddShoeView: View {
         .listSectionSpacing(.compact)
         .toolbar {
             toolbarItems()
+        }
+        .onAppear {
+            isDefaultShoe = shoesViewModel.shoes.isEmpty ? true : false
         }
     }
 }

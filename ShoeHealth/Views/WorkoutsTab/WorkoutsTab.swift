@@ -21,7 +21,7 @@ struct WorkoutsTab: View {
                 } label: {
                     WorkoutListItem(workout: workout)
                 }
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
                         selectedWorkout = workout
                     } label: {

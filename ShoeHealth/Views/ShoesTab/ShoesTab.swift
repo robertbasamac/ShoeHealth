@@ -24,7 +24,7 @@ struct ShoesTab: View {
                     }
                 }
                 .listSectionSpacing(.compact)
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         shoe.retired.toggle()
                     } label: {
@@ -35,9 +35,24 @@ struct ShoesTab: View {
                         }
                     }
                     .tint(shoe.retired ? .green : .orange)
+                    
+                    if !shoe.isDefaultShoe {
+                        Button {
+                            shoesViewModel.setAsDefaultShoe(shoe)
+                        } label: {
+                            Label("Make Default", systemImage: "shoe.2")
+                        }
+                        .tint(Color.blue)
+                    }
+                }
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        shoesViewModel.deleteShoe(shoe)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
                 }
             }
-            .onDelete(perform: shoesViewModel.deleteShoe)
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
