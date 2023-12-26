@@ -159,4 +159,13 @@ class HealthKitManager: ObservableObject {
         
         return nil
     }
+    
+    func getWorkouts(forShoe shoe: Shoe) -> [HKWorkout] {
+        let workoutIDs = shoe.workouts
+        let filteredWorkouts = workouts.filter { workout in
+            return workoutIDs.contains { $0 == workout.id }
+        }
+        
+        return filteredWorkouts
+    }
 }

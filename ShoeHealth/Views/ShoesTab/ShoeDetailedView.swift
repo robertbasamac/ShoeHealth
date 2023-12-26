@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct ShoeDetailedView: View {
     var shoes: [Shoe]
 
     @State var selectedShoeID: UUID?
+    @State var workouts: [HKWorkout] = []
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self.shoes = shoes
@@ -18,30 +20,65 @@ struct ShoeDetailedView: View {
     }
     
     var body: some View {
-        ScrollView(.vertical) {
-            VStack {
-                GeometryReader {
-                    let size = $0.size
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 0) {
-                            ForEach(shoes) { shoe in
-                                ShoeCardView(shoe: shoe)
-                                    .padding()
-                                    .background(Color(uiColor: .tertiarySystemGroupedBackground), in: .rect(cornerRadius: 12))
-                                    .padding(.horizontal)
-                                    .frame(width: size.width)
-                            }
+        VStack {
+            GeometryReader {
+                let size = $0.size
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 0) {
+                        ForEach(shoes) { shoe in
+                            ShoeCardView(shoe: shoe)
+                                .padding()
+                                .background(Color(uiColor: .tertiarySystemGroupedBackground), in: .rect(cornerRadius: 20))
+                                .padding(.horizontal)
+                                .frame(width: size.width)
                         }
-                        .scrollTargetLayout()
                     }
-                    .scrollPosition(id: $selectedShoeID)
-                    .scrollTargetBehavior(.paging)
+                    .scrollTargetLayout()
                 }
-                .frame(height: 150) // TODO: adjust height based on view's child content size
+                .scrollPosition(id: $selectedShoeID)
+                .scrollTargetBehavior(.paging)
             }
+            .frame(height: 140)
+            
+            ScrollView(.vertical) {
+                VStack {
+                    ForEach(workouts) { workout in
+                        WorkoutListItem(workout: workout)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(15)
+                            .background(.black, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(15)
+            }
+            .background(Color(uiColor: .systemGray), in: TopRoundedRectangle(cornerRadius: 20))
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if selectedShoeID == nil {
+                selectedShoeID = shoes.first?.id
+            }
+            
+            self.workouts = getWorkouts(of: selectedShoeID!)
+
+        }
+        .onChange(of: selectedShoeID ?? UUID()) { oldValue, newValue in
+            withAnimation(.snappy) {
+                workouts = getWorkouts(of: newValue)
+            }
+        }
+    }
+}
+
+// MARK: - Helper Methods
+extension ShoeDetailedView {
+    private func getWorkouts(of id: UUID) -> [HKWorkout] {
+        let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } )
+        let workouts = HealthKitManager.shared.getWorkouts(forShoe: selectedShoe!)
+        
+        return workouts
     }
 }
 
