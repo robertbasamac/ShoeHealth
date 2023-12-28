@@ -30,6 +30,8 @@
 		09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */; };
 		09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */; };
 		09E7EAB02B3AE5F400BFAC16 /* TopRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */; };
+		09E7EAB42B3B267000BFAC16 /* CarouselSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB32B3B267000BFAC16 /* CarouselSlider.swift */; };
+		09E7EAB62B3B280500BFAC16 /* DetailedCarouselShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
 		09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerPreview.swift; sourceTree = "<group>"; };
 		09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRoundedRectangle.swift; sourceTree = "<group>"; };
+		09E7EAB32B3B267000BFAC16 /* CarouselSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSlider.swift; sourceTree = "<group>"; };
+		09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedCarouselShoeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 		0907F25F2B1E205300EB682A /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				09E7EAB22B3B265B00BFAC16 /* Helpers */,
 				0907F2602B1E206700EB682A /* NotificationManager.swift */,
 				096D36A32B20B1C900C78453 /* Formatters.swift */,
 			);
@@ -181,9 +186,10 @@
 			children = (
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
 				09E2F3502B1668D700D16101 /* ShoeCardView.swift */,
-				09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */,
 				09E2F3542B176BE700D16101 /* LoopingScrollView.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
+				09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */,
+				09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */,
 			);
 			path = ShoesTab;
 			sourceTree = "<group>";
@@ -212,6 +218,14 @@
 				09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */,
 			);
 			path = HKWorkout;
+			sourceTree = "<group>";
+		};
+		09E7EAB22B3B265B00BFAC16 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				09E7EAB32B3B267000BFAC16 /* CarouselSlider.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -289,10 +303,12 @@
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
+				09E7EAB62B3B280500BFAC16 /* DetailedCarouselShoeView.swift in Sources */,
 				09E2F3552B176BE700D16101 /* LoopingScrollView.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
+				09E7EAB42B3B267000BFAC16 /* CarouselSlider.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
 				09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */,
 				09DE4A822B0D4CD8001119E4 /* HealthKitManager.swift in Sources */,

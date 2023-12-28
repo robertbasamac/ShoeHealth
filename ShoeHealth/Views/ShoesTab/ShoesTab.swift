@@ -18,7 +18,7 @@ struct ShoesTab: View {
             ForEach(shoesViewModel.shoes) { shoe in
                 Section {
                     NavigationLink {
-                        ShoeDetailedView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
+                        DetailedCarouselShoeView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
                     } label: {
                         ShoeCardView(shoe: shoe)
                     }
