@@ -18,26 +18,21 @@ struct DetailedCarouselShoeView: View {
     private var selectedID: UUID
     
     /// Customization Properties
-    @State private var showPagingControl: Bool = false
-    @State private var disablePagingInteraction: Bool = false
-    @State private var pagingSpacing: CGFloat = 20
+    @State private var pagingSpacing: CGFloat = 15
     @State private var titleScrollSpeed: CGFloat = 0.75
     @State private var stretchContent: Bool = true
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self._shoes = State(wrappedValue: shoes)
         self.selectedID = selectedShoeID
-        UITableViewHeaderFooterView.appearance().tintColor = UIColor.clear
     }
     
     var body: some View {
         VStack(spacing: 0) {
             CarouselSlider(activeID: $selectedShoeID,
-                               data: shoes,
-                               showPagingControl: showPagingControl,
-                               disablePagingInteraction: disablePagingInteraction,
-                               titleScrollSpeed: titleScrollSpeed,
-                               pagingControlSpacing: pagingSpacing
+                           data: shoes,
+                           titleScrollSpeed: titleScrollSpeed,
+                           spacing: pagingSpacing
             ) { shoe in
                 RoundedRectangle(cornerRadius: 15)
                     .fill(.red)
@@ -95,9 +90,21 @@ struct DetailedCarouselShoeView: View {
             .listStyle(.plain)
             .scrollIndicators(.hidden)
         }
-        .navigationBarTitle("Shoes", displayMode: .inline)
-        .navigationBarTitleDisplayMode(.inline)
         .background(Color(uiColor: .systemGroupedBackground))
+        .navigationTitle("Shoes")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarTitleMenu {
+            ForEach(shoes) { shoe in
+                Button {
+                    withAnimation(.snappy) {
+                        selectedShoeID = shoe.id
+                    }
+                } label: {
+                    Text(shoe.model)
+                    Image(systemName: "shoe")
+                }
+            }
+        }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 if selectedShoeID == nil {

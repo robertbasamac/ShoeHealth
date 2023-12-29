@@ -87,9 +87,9 @@
 		0907F25F2B1E205300EB682A /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				09E7EAB22B3B265B00BFAC16 /* Helpers */,
 				0907F2602B1E206700EB682A /* NotificationManager.swift */,
 				096D36A32B20B1C900C78453 /* Formatters.swift */,
+				09E7EAB22B3B265B00BFAC16 /* Helpers */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";

@@ -15,39 +15,34 @@ struct CarouselSlider<Content: View, TitleContent: View, Item: RandomAccessColle
 
     /// Customization Properties
     var showsIndicator: ScrollIndicatorVisibility = .hidden
-    var showPagingControl: Bool = true
-    var disablePagingInteraction: Bool = false
     var titleScrollSpeed: CGFloat = 0.75
-    var pagingControlSpacing: CGFloat = 20
     var spacing: CGFloat = 10
     
     @ViewBuilder var content: (Item.Element) -> Content
     @ViewBuilder var titleContent: (Item.Element) -> TitleContent
     
     var body: some View {
-        VStack(spacing: pagingControlSpacing) {
-            ScrollView(.horizontal) {
-                HStack(spacing: spacing) {
-                    ForEach(data) { item in
-                        VStack(spacing: 0) {
-                            titleContent(item)
-                                .frame(maxWidth: .infinity)
-                                .visualEffect { content, geometryProxy in
-                                    content
-                                        .offset(x: scrollOffset(geometryProxy))
-                                }
-                            
-                            content(item)
-                        }
-                        .containerRelativeFrame(.horizontal)
+        ScrollView(.horizontal) {
+            HStack(spacing: spacing) {
+                ForEach(data) { item in
+                    VStack(spacing: 0) {
+                        titleContent(item)
+                            .frame(maxWidth: .infinity)
+                            .visualEffect { content, geometryProxy in
+                                content
+                                    .offset(x: scrollOffset(geometryProxy))
+                            }
+                        
+                        content(item)
                     }
+                    .containerRelativeFrame(.horizontal)
                 }
-                .scrollTargetLayout()
             }
-            .scrollIndicators(showsIndicator)
-            .scrollTargetBehavior(.viewAligned)
-            .scrollPosition(id: $activeID)
+            .scrollTargetLayout()
         }
+        .scrollIndicators(showsIndicator)
+        .scrollTargetBehavior(.viewAligned)
+        .scrollPosition(id: $activeID)
     }
     
     private func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
