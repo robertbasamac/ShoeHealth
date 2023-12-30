@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ShoesTab: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel

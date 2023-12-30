@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct AddShoeView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel

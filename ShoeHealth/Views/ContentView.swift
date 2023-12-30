@@ -7,7 +7,6 @@
 
 import SwiftUI
 import HealthKit
-import SwiftData
 
 struct ContentView: View {
     @State private var healthKitManager = HealthKitManager.shared

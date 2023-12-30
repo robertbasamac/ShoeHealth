@@ -12,12 +12,34 @@ import SwiftData
 struct ShoeHealthApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
+    private var container: ModelContainer
+    @State var shoesViewModel: ShoesViewModel
+    
+    init() {
+        self.container = {
+            let container: ModelContainer
+            
+            do {
+                container = try ModelContainer(for: Shoe.self)
+            } catch {
+                fatalError("Failed to create ModelContainer for Shoe.")
+            }
+            
+            return container
+        }()
+        
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: container.mainContext))
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(appDelegate.shoesViewModel)
+                .environment(shoesViewModel)
                 .preferredColorScheme(.dark)
+                .onAppear {
+                    appDelegate.app = self
+                }
         }
-        .modelContainer(appDelegate.container)
+        .modelContainer(container)
     }
 }

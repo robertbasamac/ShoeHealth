@@ -7,34 +7,16 @@
 
 import Foundation
 import UIKit
-import HealthKit
-import SwiftData
 
-// MARK: - UIApplicationDelegate
 class AppDelegate: NSObject {
     
-    var container: ModelContainer = {
-        let container: ModelContainer
-        
-        do {
-            container = try ModelContainer(for: Shoe.self)
-        } catch {
-            fatalError("Failed to create ModelContainer for Shoe.")
-        }
-        
-        return container
-    }()
-    
-    var shoesViewModel: ShoesViewModel?
+    var app: ShoeHealthApp?
 }
 
 // MARK: - UIApplicationDelegate
 extension AppDelegate: UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
-        shoesViewModel = ShoesViewModel(modelContext: container.mainContext)
-        
         let healthManager = HealthKitManager.shared
         healthManager.requestHealthKitAuthorization()
         
@@ -59,7 +41,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             guard let workoutID = workoutID else { return }
             guard let workout = HealthKitManager.shared.getWorkout(forID: workoutID) else { return }
             
-            if let shoe = shoesViewModel?.getDefaultShoe() {
+            if let shoe = app?.shoesViewModel.getDefaultShoe() {
                 shoe.workouts.append(workout.id)
                 shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
             }
