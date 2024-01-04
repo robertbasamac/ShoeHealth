@@ -8,7 +8,7 @@
 import SwiftUI
 import HealthKit
 
-struct DetailedCarouselShoeView: View {
+struct ShoeDetailCarouselView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @State var shoes: [Shoe]
@@ -61,7 +61,6 @@ struct DetailedCarouselShoeView: View {
                 Section {
                     ForEach(workouts) { workout in
                         WorkoutListItem(workout: workout)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
                             .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                     }
@@ -123,7 +122,7 @@ struct DetailedCarouselShoeView: View {
 }
 
 // MARK: - Helper Methods
-extension DetailedCarouselShoeView {
+extension ShoeDetailCarouselView {
     private func getWorkouts(of id: UUID) -> [HKWorkout] {
         guard let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } ) else { return [] }
         
@@ -143,7 +142,7 @@ extension DetailedCarouselShoeView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            DetailedCarouselShoeView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
+            ShoeDetailCarouselView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
         }
     }
 }

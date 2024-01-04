@@ -27,7 +27,7 @@ struct ShoeDetailedView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 0) {
                         ForEach(shoes) { shoe in
-                            ShoeCardView(shoe: shoe)
+                            ShoeListItem(shoe: shoe)
                                 .padding()
                                 .background(Color(uiColor: .tertiarySystemGroupedBackground), in: .rect(cornerRadius: 20))
                                 .padding(.horizontal)

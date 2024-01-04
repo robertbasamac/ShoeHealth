@@ -25,8 +25,6 @@ struct AddShoeView: View {
                     .textInputAutocapitalization(.words)
                 TextField("Model", text: $shoeModel)
                     .textInputAutocapitalization(.words)
-            } header: {
-                Text("Branding")
             }
             
             Section {

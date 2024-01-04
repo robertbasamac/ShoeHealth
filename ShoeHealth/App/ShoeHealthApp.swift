@@ -35,7 +35,7 @@ struct ShoeHealthApp: App {
         WindowGroup {
             ContentView()
                 .environment(shoesViewModel)
-                .preferredColorScheme(.dark)
+//                .preferredColorScheme(.dark)
                 .onAppear {
                     appDelegate.app = self
                 }

@@ -53,5 +53,5 @@ struct CarouselSlider<Content: View, TitleContent: View, Item: RandomAccessColle
 }
 
 #Preview {
-    DetailedCarouselShoeView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
+    ShoeDetailCarouselView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ShoeCardView: View {
+struct ShoeListItem: View {
     var shoe: Shoe
     
     var body: some View {
@@ -51,7 +51,7 @@ struct ShoeCardView: View {
 }
 
 // MARK: - Helper Methods
-extension ShoeCardView {
+extension ShoeListItem {
     private func getProgressViewTint() -> Color {
         let wear = shoe.currentDistance / shoe.lifespanDistance
         if wear < 0.6 {
@@ -71,7 +71,7 @@ extension ShoeCardView {
             List {
                 ForEach(Shoe.previewShoes) { shoe in
                     Section {
-                        ShoeCardView(shoe: shoe)
+                        ShoeListItem(shoe: shoe)
                     }
                 }
                 .listSectionSpacing(.compact)

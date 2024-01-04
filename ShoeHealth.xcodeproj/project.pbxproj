@@ -19,9 +19,8 @@
 		09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34A2B15130900D16101 /* WorkoutListItem.swift */; };
 		09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */; };
 		09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
-		09E2F3512B1668D700D16101 /* ShoeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3502B1668D700D16101 /* ShoeCardView.swift */; };
+		09E2F3512B1668D700D16101 /* ShoeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3502B1668D700D16101 /* ShoeListItem.swift */; };
 		09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */; };
-		09E2F3552B176BE700D16101 /* LoopingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F3542B176BE700D16101 /* LoopingScrollView.swift */; };
 		09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
 		09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
 		09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */; };
@@ -31,7 +30,7 @@
 		09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */; };
 		09E7EAB02B3AE5F400BFAC16 /* TopRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */; };
 		09E7EAB42B3B267000BFAC16 /* CarouselSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB32B3B267000BFAC16 /* CarouselSlider.swift */; };
-		09E7EAB62B3B280500BFAC16 /* DetailedCarouselShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */; };
+		09E7EAB62B3B280500BFAC16 /* ShoeDetailCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,9 +48,8 @@
 		09E2F34A2B15130900D16101 /* WorkoutListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListItem.swift; sourceTree = "<group>"; };
 		09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSelectionView.swift; sourceTree = "<group>"; };
 		09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Identifiable.swift"; sourceTree = "<group>"; };
-		09E2F3502B1668D700D16101 /* ShoeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeCardView.swift; sourceTree = "<group>"; };
+		09E2F3502B1668D700D16101 /* ShoeListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeListItem.swift; sourceTree = "<group>"; };
 		09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailedView.swift; sourceTree = "<group>"; };
-		09E2F3542B176BE700D16101 /* LoopingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingScrollView.swift; sourceTree = "<group>"; };
 		09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HKWorkout+Statistics.swift"; sourceTree = "<group>"; };
 		09E385DA2B1340E3005CFF02 /* Shoe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shoe.swift; sourceTree = "<group>"; };
 		09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutsTab.swift; sourceTree = "<group>"; };
@@ -61,7 +59,7 @@
 		09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerPreview.swift; sourceTree = "<group>"; };
 		09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRoundedRectangle.swift; sourceTree = "<group>"; };
 		09E7EAB32B3B267000BFAC16 /* CarouselSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSlider.swift; sourceTree = "<group>"; };
-		09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedCarouselShoeView.swift; sourceTree = "<group>"; };
+		09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailCarouselView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,10 +160,10 @@
 		09E385DD2B1340FA005CFF02 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				09BD131B2B40923B00DFA6B1 /* Components */,
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
+				09BD131B2B40923B00DFA6B1 /* Components */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -193,11 +191,10 @@
 			isa = PBXGroup;
 			children = (
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
-				09E2F3502B1668D700D16101 /* ShoeCardView.swift */,
-				09E2F3542B176BE700D16101 /* LoopingScrollView.swift */,
+				09E2F3502B1668D700D16101 /* ShoeListItem.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
 				09E2F3522B1746E500D16101 /* ShoeDetailedView.swift */,
-				09E7EAB52B3B280500BFAC16 /* DetailedCarouselShoeView.swift */,
+				09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */,
 			);
 			path = ShoesTab;
 			sourceTree = "<group>";
@@ -311,8 +308,7 @@
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
-				09E7EAB62B3B280500BFAC16 /* DetailedCarouselShoeView.swift in Sources */,
-				09E2F3552B176BE700D16101 /* LoopingScrollView.swift in Sources */,
+				09E7EAB62B3B280500BFAC16 /* ShoeDetailCarouselView.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
@@ -324,7 +320,7 @@
 				0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */,
 				096D36A42B20B1C900C78453 /* Formatters.swift in Sources */,
 				09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */,
-				09E2F3512B1668D700D16101 /* ShoeCardView.swift in Sources */,
+				09E2F3512B1668D700D16101 /* ShoeListItem.swift in Sources */,
 				09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */,
 				09E7EAB02B3AE5F400BFAC16 /* TopRoundedRectangle.swift in Sources */,
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
@@ -466,6 +462,7 @@
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoeHealth/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health App needs access to HealthKit to use your running workout data to update your shoe pair lifespan distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -502,6 +499,7 @@
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoeHealth/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health App needs access to HealthKit to use your running workout data to update your shoe pair lifespan distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

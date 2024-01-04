@@ -6,23 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShoesTab: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
+    @Query private var shoes: [Shoe]
     @State private var showAddShoe: Bool = false
     
     var body: some View {
         List {
-            ForEach(shoesViewModel.shoes) { shoe in
-                Section {
-                    NavigationLink {
-                        DetailedCarouselShoeView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
-                    } label: {
-                        ShoeCardView(shoe: shoe)
-                    }
-                }
-                .listSectionSpacing(.compact)
+            ForEach(shoes) { shoe in
+                NavigationLink(value: shoe, label: {
+                    ShoeListItem(shoe: shoe)
+                        .padding()
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                })
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         shoe.retired.toggle()
@@ -52,6 +51,20 @@ struct ShoesTab: View {
                     }
                 }
             }
+            .listRowInsets(.init(top: 2, leading: 12, bottom: 2, trailing: 12))
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+        }
+        .listStyle(.plain)
+        .background(Color(uiColor: .systemGroupedBackground))
+        .overlay {
+            emptyShoesView()
+        }
+        .toolbar {
+            toolbarItems()
+        }
+        .navigationDestination(for: Shoe.self) { shoe in
+            ShoeDetailCarouselView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
@@ -61,12 +74,6 @@ struct ShoesTab: View {
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
         }
-        .overlay {
-            emptyShoesView()
-        }
-        .toolbar {
-            toolbarItems()
-        }
     }
 }
 
@@ -74,7 +81,7 @@ struct ShoesTab: View {
 extension ShoesTab {
     @ViewBuilder
     private func emptyShoesView() -> some View {
-        if shoesViewModel.shoes.isEmpty {
+        if shoesViewModel.shoes.isEmpty && shoes.isEmpty {
             ContentUnavailableView {
                 Label("No Shoes in your collection.", systemImage: "shoe.circle")
             } description: {
@@ -113,11 +120,11 @@ extension ShoesTab {
     }
 }
 
-#Preview("Empty") {
-    NavigationStack {
-        ShoesTab()
-            .navigationTitle("Shoes")
-            .modelContainer(PreviewSampleData.emptyContainer)
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
-    }
-}
+//#Preview("Empty") {
+//    NavigationStack {
+//        ShoesTab()
+//            .navigationTitle("Shoes")
+//            .modelContainer(PreviewSampleData.emptyContainer)
+//            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+//    }
+//}

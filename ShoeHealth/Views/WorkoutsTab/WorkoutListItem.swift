@@ -17,5 +17,6 @@ struct WorkoutListItem: View {
             Text("Duration - \(dateComponentsFormatter.string(from: workout.duration)!)")
             Text("Distance - \(distanceFormatter.string(fromValue: workout.totalDistance(unitPrefix: .kilo), unit: .kilometer))")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
