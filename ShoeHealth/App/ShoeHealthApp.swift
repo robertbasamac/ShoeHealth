@@ -13,6 +13,8 @@ struct ShoeHealthApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
     private var container: ModelContainer
+    
+    @StateObject var navigationRouter: NavigationRouter = .init()
     @State var shoesViewModel: ShoesViewModel
     
     init() {
@@ -34,8 +36,9 @@ struct ShoeHealthApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(navigationRouter)
                 .environment(shoesViewModel)
-//                .preferredColorScheme(.dark)
+                .preferredColorScheme(.dark)
                 .onAppear {
                     appDelegate.app = self
                 }

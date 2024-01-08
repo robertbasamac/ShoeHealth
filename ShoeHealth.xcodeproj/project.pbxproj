@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
+		0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956815A2B46E207005E5FE6 /* NavigationRouter.swift */; };
+		0956EE392B4C057D0029445E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* Tab.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
 		09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */; };
@@ -36,6 +38,8 @@
 /* Begin PBXFileReference section */
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		0956815A2B46E207005E5FE6 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
+		0956EE382B4C057D0029445E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
 		09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoeHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +93,14 @@
 				09E7EAB22B3B265B00BFAC16 /* Helpers */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		0956EE3A2B4C06F70029445E /* NavigationStack */ = {
+			isa = PBXGroup;
+			children = (
+				0956EE382B4C057D0029445E /* Tab.swift */,
+			);
+			path = NavigationStack;
 			sourceTree = "<group>";
 		};
 		09BD131B2B40923B00DFA6B1 /* Components */ = {
@@ -153,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				09E385DA2B1340E3005CFF02 /* Shoe.swift */,
+				0956EE3A2B4C06F70029445E /* NavigationStack */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -171,6 +184,7 @@
 		09E385DE2B1344D7005CFF02 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				0956815A2B46E207005E5FE6 /* NavigationRouter.swift */,
 				09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */,
 				0975440B2B28769A00B379E2 /* ShoesViewModel.swift */,
 			);
@@ -305,6 +319,8 @@
 			files = (
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
+				0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */,
+				0956EE392B4C057D0029445E /* Tab.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				09E2F3532B1746E500D16101 /* ShoeDetailedView.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,

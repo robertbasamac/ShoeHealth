@@ -10,7 +10,7 @@ import HealthKit
 import Observation
 
 @Observable
-class HealthKitManager: ObservableObject {
+final class HealthKitManager {
     
     static let shared = HealthKitManager()
     

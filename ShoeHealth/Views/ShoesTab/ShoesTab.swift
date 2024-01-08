@@ -120,11 +120,11 @@ extension ShoesTab {
     }
 }
 
-//#Preview("Empty") {
-//    NavigationStack {
-//        ShoesTab()
-//            .navigationTitle("Shoes")
-//            .modelContainer(PreviewSampleData.emptyContainer)
-//            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
-//    }
-//}
+#Preview("Empty") {
+    NavigationStack {
+        ShoesTab()
+            .navigationTitle("Shoes")
+            .modelContainer(PreviewSampleData.emptyContainer)
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+    }
+}

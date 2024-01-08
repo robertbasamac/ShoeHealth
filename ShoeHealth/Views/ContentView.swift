@@ -9,29 +9,13 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    
     @State private var healthKitManager = HealthKitManager.shared
-    
-    @State private var tabSelection: Tab = .shoes
         
-    enum Tab: String, Identifiable {
-        var id: Self { self }
-        
-        case shoes = "Shoes"
-        case workouts = "Workouts"
-        
-        var systemImageName: String {
-            switch self {
-            case .shoes:
-                return "shoe"
-            case .workouts:
-                return "figure.run.square.stack"
-            }
-        }
-    }
-    
     var body: some View {
-        TabView(selection: $tabSelection) {
-            NavigationStack {
+        TabView(selection: $navigationRouter.selectedTab) {
+            NavigationStack(path: $navigationRouter.shoesTabPath) {
                 ShoesTab()
                     .navigationTitle("Shoes")
             }
@@ -40,7 +24,7 @@ struct ContentView: View {
             }
             .tag(Tab.shoes)
             
-            NavigationStack {
+            NavigationStack(path: $navigationRouter.workoutsTabPath) {
                 WorkoutsTab()
                     .navigationTitle("Workouts")
             }
@@ -48,6 +32,13 @@ struct ContentView: View {
                 Label(Tab.workouts.rawValue, systemImage: Tab.workouts.systemImageName)
             }
             .tag(Tab.workouts)
+        }
+        .sheet(item: $navigationRouter.workout) { workout in
+            NavigationStack {
+                ShoeSelectionView(workout: workout)
+            }
+            .presentationCornerRadius(20)
+            .presentationDragIndicator(.visible)
         }
     }
 }
@@ -57,10 +48,12 @@ struct ContentView: View {
     ContentView()
         .modelContainer(PreviewSampleData.container)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        .environmentObject(NavigationRouter())
 }
 
 #Preview("Empty") {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+        .environmentObject(NavigationRouter())
 }
