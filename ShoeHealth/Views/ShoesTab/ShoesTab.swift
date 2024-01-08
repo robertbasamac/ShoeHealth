@@ -51,7 +51,7 @@ struct ShoesTab: View {
                     }
                 }
             }
-            .listRowInsets(.init(top: 2, leading: 12, bottom: 2, trailing: 12))
+            .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
         }

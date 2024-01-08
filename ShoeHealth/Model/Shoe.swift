@@ -11,6 +11,7 @@ import SwiftData
 @Model
 final class Shoe {
     var id: UUID
+    @Attribute(.unique) var nickname: String
     var brand: String
     var model: String
     var lifespanDistance: Double
@@ -22,6 +23,7 @@ final class Shoe {
     var workouts: [UUID] = []
     
     init(id: UUID = .init(),
+         nickname: String,
          brand: String,
          model: String,
          lifespanDistance: Double,
@@ -29,6 +31,7 @@ final class Shoe {
          aquisitionDate: Date,
          isDefaultShoe: Bool = false) {
         self.id = id
+        self.nickname = nickname
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
@@ -58,15 +61,15 @@ extension Shoe {
 // MARK: - Preview data
 extension Shoe {
     static var previewShoe: Shoe {
-        Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true)
+        Shoe(nickname: "My love", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true)
     }
     
     static var previewShoes: [Shoe] {
         [
-            Shoe(brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, currentDistance: 400, aquisitionDate: Date.now, isDefaultShoe: false),
-            Shoe(brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true),
-            Shoe(brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 703.53, aquisitionDate: Date.now, isDefaultShoe: false),
-            Shoe(brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: false)
+            Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, currentDistance: 400, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true),
+            Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 703.53, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: false)
         ]
     }
 }

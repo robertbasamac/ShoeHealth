@@ -11,6 +11,7 @@ struct AddShoeView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
+    @State private var shoeNickname: String = ""
     @State private var shoeBrand: String = ""
     @State private var shoeModel: String = ""
     @State private var aquisitionDate: Date = .init()
@@ -25,6 +26,13 @@ struct AddShoeView: View {
                     .textInputAutocapitalization(.words)
                 TextField("Model", text: $shoeModel)
                     .textInputAutocapitalization(.words)
+            } header: {
+                Text("About")
+            }
+            
+            Section {
+                TextField("Nickname", text: $shoeNickname)
+                    .textInputAutocapitalization(.words)
             }
             
             Section {
@@ -38,18 +46,20 @@ struct AddShoeView: View {
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .center)
                     
-                    Slider(value: $lifespanDistance, in: 200...800, step: 10) {
+                    Slider(value: $lifespanDistance, in: 400...1200, step: 10) {
                         Text("Lifespan distance")
                     } minimumValueLabel: {
                         VStack {
-                            Text("200")
+                            Text("400")
                             Text("Km")
                         }
+                        .font(.caption)
                     } maximumValueLabel: {
                         VStack {
-                            Text("800")
+                            Text("1200")
                             Text("Km")
                         }
+                        .font(.caption)
                     }
                 }
             } header: {
@@ -81,7 +91,7 @@ extension AddShoeView {
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
+                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
                 dismiss()
             } label: {
                 Text("Save")
