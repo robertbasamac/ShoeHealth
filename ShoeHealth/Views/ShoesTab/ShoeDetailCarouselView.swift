@@ -61,7 +61,8 @@ struct ShoeDetailCarouselView: View {
                 Section {
                     ForEach(workouts) { workout in
                         WorkoutListItem(workout: workout)
-                            .padding()
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
                             .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                     }
                 } header: {

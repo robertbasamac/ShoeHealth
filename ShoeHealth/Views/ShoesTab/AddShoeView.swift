@@ -15,8 +15,9 @@ struct AddShoeView: View {
     @State private var shoeBrand: String = ""
     @State private var shoeModel: String = ""
     @State private var aquisitionDate: Date = .init()
-    @State private var lifespanDistance: Double = 500
+    @State private var lifespanDistance: Double = 800
     @State private var isDefaultShoe: Bool = false
+    
     @State private var unit: LengthFormatter.Unit = .kilometer
     
     var body: some View {
@@ -38,6 +39,7 @@ struct AddShoeView: View {
             Section {
                 Toggle("Set as default shoe", isOn: $isDefaultShoe)
                     .disabled(shoesViewModel.shoes.isEmpty)
+                    .tint(Color.accentColor)
             }
             
             Section {
@@ -104,7 +106,7 @@ extension AddShoeView {
 // MARK: - Helper Methods
 extension AddShoeView {
     private func isSaveButtonDisabled() -> Bool {
-        return shoeBrand.isEmpty || shoeModel.isEmpty
+        return shoeBrand.isEmpty || shoeModel.isEmpty || shoeNickname.isEmpty
     }
 }
 

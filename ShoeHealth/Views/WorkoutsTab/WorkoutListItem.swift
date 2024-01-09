@@ -12,10 +12,26 @@ struct WorkoutListItem: View {
     var workout: HKWorkout
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("\(workout.endDate.formatted(date: .long, time: .shortened))")
-            Text("Duration - \(dateComponentsFormatter.string(from: workout.duration)!)")
-            Text("Distance - \(distanceFormatter.string(fromValue: workout.totalDistance(unitPrefix: .kilo), unit: .kilometer))")
+        HStack {
+            Image(systemName: "figure.run.circle.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
+                .foregroundStyle(LinearGradient(gradient: Gradient(colors: [.black.opacity(0.95), .black.opacity(0.75)]), startPoint: .leading, endPoint: .trailing))
+                .background {
+                    Circle()
+                        .fill(Color.accentColor)
+                        .frame(width: 29, height: 29)
+                }
+            
+            VStack(alignment: .leading) {
+                Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
+                    .font(.caption)
+                
+                Text("\(distanceFormatter.string(fromValue: workout.totalDistance(unitPrefix: .kilo), unit: .kilometer).uppercased())")
+                    .font(.title3)
+                    .foregroundStyle(Color.accentColor)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

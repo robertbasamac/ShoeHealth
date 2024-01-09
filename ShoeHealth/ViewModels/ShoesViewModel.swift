@@ -63,7 +63,7 @@ final class ShoesViewModel {
     
     func fetchShoes() {
         do {
-            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward)])
+            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
             self.shoes = try modelContext.fetch(descriptor)
         } catch {
             print("Fetching shoes failed, \(error.localizedDescription)")
