@@ -16,7 +16,7 @@ enum Tab: String, Identifiable, CaseIterable {
     var systemImageName: String {
         switch self {
         case .shoes:
-            return "shoe"
+            return "shoe.2.fill"
         case .workouts:
             return "figure.run.square.stack"
         }

@@ -28,7 +28,7 @@ struct AddShoeView: View {
                 TextField("Model", text: $shoeModel)
                     .textInputAutocapitalization(.words)
             } header: {
-                Text("About")
+                Text("Details")
             }
             
             Section {
@@ -43,12 +43,12 @@ struct AddShoeView: View {
             }
             
             Section {
-                VStack {
+                VStack(spacing: 2) {
                     Text(String(format: "%.0f Km", lifespanDistance))
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .center)
                     
-                    Slider(value: $lifespanDistance, in: 400...1200, step: 10) {
+                    Slider(value: $lifespanDistance, in: 400...1200, step: 50) {
                         Text("Lifespan distance")
                     } minimumValueLabel: {
                         VStack {
@@ -66,6 +66,8 @@ struct AddShoeView: View {
                 }
             } header: {
                 Text("Lifespan distance")
+            } footer: {
+                Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight any other factors.")
             }
             
             Section {
