@@ -52,6 +52,7 @@ struct ShoeListItem: View {
 
 // MARK: - Helper Methods
 extension ShoeListItem {
+    
     private func getProgressViewTint() -> Color {
         let wear = shoe.currentDistance / shoe.lifespanDistance
         if wear < 0.6 {

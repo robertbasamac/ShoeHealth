@@ -91,6 +91,7 @@ struct AddShoeView: View {
 
 // MARK: - View Components
 extension AddShoeView {
+    
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
@@ -107,6 +108,7 @@ extension AddShoeView {
 
 // MARK: - Helper Methods
 extension AddShoeView {
+    
     private func isSaveButtonDisabled() -> Bool {
         return shoeBrand.isEmpty || shoeModel.isEmpty || shoeNickname.isEmpty
     }

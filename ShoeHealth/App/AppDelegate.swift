@@ -41,7 +41,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         case "DEFAULT_SHOE_ACTION":
             if let shoe = app?.shoesViewModel.getDefaultShoe() {
                 shoe.workouts.append(workout.id)
-                shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
+//                shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
             }
             
         case "REMIND_ME_LATER":

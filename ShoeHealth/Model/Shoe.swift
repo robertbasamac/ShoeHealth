@@ -15,7 +15,7 @@ final class Shoe {
     var brand: String
     var model: String
     var lifespanDistance: Double
-    var currentDistance: Double
+//    var currentDistance: Double
     var aquisitionDate: Date
     var retireDate: Date?
     var retired: Bool
@@ -35,7 +35,7 @@ final class Shoe {
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
-        self.currentDistance = currentDistance
+//        self.currentDistance = currentDistance
         self.aquisitionDate = aquisitionDate
         self.retireDate = nil
         self.retired = false
@@ -44,6 +44,17 @@ final class Shoe {
 }
 
 extension Shoe {
+    @Transient
+    var currentDistance: Double {
+        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forShoe: self)
+        
+        let totalDistance = filteredWorkouts.reduce(0.0) { result, workout in
+            return result + workout.totalDistance(unitPrefix: .kilo)
+        }
+        
+        return totalDistance
+    }
+    
     @Transient
     var wearPercentageAsString: String {
         let formatter = NumberFormatter()
@@ -60,6 +71,7 @@ extension Shoe {
 
 // MARK: - Preview data
 extension Shoe {
+    
     static var previewShoe: Shoe {
         Shoe(nickname: "My love", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true)
     }

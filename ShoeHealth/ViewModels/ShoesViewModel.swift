@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import SwiftData
 import SwiftUI
+import HealthKit
 
 @Observable
 final class ShoesViewModel {
@@ -44,6 +45,15 @@ final class ShoesViewModel {
         }
         
         shoe.isDefaultShoe = true
+        
+        fetchShoes()
+    }
+    
+    func remove(workout: HKWorkout, fromShoe: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == fromShoe }) else { return }
+        
+        shoe.workouts.removeAll { $0 == workout.id }
+//        shoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
         
         fetchShoes()
     }

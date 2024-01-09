@@ -51,6 +51,7 @@ struct ShoeSelectionView: View {
 
 // MARK: - View Components
 extension ShoeSelectionView {
+    
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
@@ -68,18 +69,19 @@ extension ShoeSelectionView {
 
 // MARK: - Helper Methods
 extension ShoeSelectionView {
+    
     private func updateShoes() {
         if let previousShoe = previousShoe {
             previousShoe.workouts.removeAll(where: { $0 == workout.id })
-            previousShoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
+//            previousShoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
             
             if previousShoe.currentDistance < 0 {
-                previousShoe.currentDistance = 0
+//                previousShoe.currentDistance = 0
             }
         }
         
         selectedShoe?.workouts.append(workout.id)
-        selectedShoe?.currentDistance += workout.totalDistance(unitPrefix: .kilo)
+//        selectedShoe?.currentDistance += workout.totalDistance(unitPrefix: .kilo)
     }
     
     private func isSaveButtonDisabled() -> Bool {

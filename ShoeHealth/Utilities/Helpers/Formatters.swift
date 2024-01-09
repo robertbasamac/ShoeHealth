@@ -24,7 +24,7 @@ var dateComponentsFormatter: DateComponentsFormatter {
 var distanceFormatter: LengthFormatter {
     let formatter = LengthFormatter()
     formatter.unitStyle = .short
-    formatter.numberFormatter.minimumFractionDigits = 2
+    formatter.numberFormatter.minimumFractionDigits = 0
     formatter.numberFormatter.maximumFractionDigits = 2
     return formatter
 }

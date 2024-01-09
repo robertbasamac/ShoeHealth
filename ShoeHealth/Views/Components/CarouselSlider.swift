@@ -52,6 +52,7 @@ struct CarouselSlider<Content: View, TitleContent: View, Item: RandomAccessColle
     }
 }
 
+// MARK: - Preview
 #Preview {
     ShoeDetailCarouselView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
 }
