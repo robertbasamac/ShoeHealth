@@ -11,12 +11,11 @@ import SwiftData
 struct ShoesTab: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
-    @Query private var shoes: [Shoe]
     @State private var showAddShoe: Bool = false
     
     var body: some View {
         List {
-            ForEach(shoes) { shoe in
+            ForEach(shoesViewModel.shoes) { shoe in
                 NavigationLink(value: shoe, label: {
                     ShoeListItem(shoe: shoe)
                         .padding()
@@ -81,7 +80,7 @@ struct ShoesTab: View {
 extension ShoesTab {
     @ViewBuilder
     private func emptyShoesView() -> some View {
-        if shoesViewModel.shoes.isEmpty && shoes.isEmpty {
+        if shoesViewModel.shoes.isEmpty {
             ContentUnavailableView {
                 Label("No Shoes in your collection.", systemImage: "shoe.circle")
             } description: {
