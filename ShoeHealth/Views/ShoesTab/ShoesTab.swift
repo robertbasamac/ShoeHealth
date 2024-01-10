@@ -12,15 +12,17 @@ struct ShoesTab: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @State private var showAddShoe: Bool = false
+    @State private var selectedShoe: Shoe?
     
     var body: some View {
         List {
             ForEach(shoesViewModel.shoes) { shoe in
-                NavigationLink(value: shoe, label: {
                     ShoeListItem(shoe: shoe)
                         .padding()
                         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                })
+                        .onTapGesture {
+                            selectedShoe = shoe
+                        }
                 .swipeActions(edge: .leading, allowsFullSwipe: false) {
                     Button {
                         shoe.retired.toggle()
@@ -61,6 +63,9 @@ struct ShoesTab: View {
         }
         .toolbar {
             toolbarItems()
+        }
+        .navigationDestination(item: $selectedShoe) { shoe in
+            ShoeDetailCarouselView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
         }
         .navigationDestination(for: Shoe.self) { shoe in
             ShoeDetailCarouselView(shoes: shoesViewModel.shoes, selectedShoeID: shoe.id)
