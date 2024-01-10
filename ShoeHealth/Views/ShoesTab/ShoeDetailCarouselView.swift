@@ -23,6 +23,8 @@ struct ShoeDetailCarouselView: View {
     @State private var titleScrollSpeed: CGFloat = 0.75
     @State private var stretchContent: Bool = true
     
+    @State private var contentHeight: CGFloat = .zero
+    
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self._shoes = State(wrappedValue: shoes)
         self.selectedID = selectedShoeID
@@ -30,7 +32,7 @@ struct ShoeDetailCarouselView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            carouselSlider()
+            shoeInfoCrouselSlider()
             
             Divider()
                 .padding(.top)
@@ -57,46 +59,91 @@ struct ShoeDetailCarouselView: View {
                 if selectedShoeID == nil {
                     selectedShoeID = selectedID
                 }
-                
                 workouts = getWorkouts(of: selectedShoeID!)
             }
         }
         .onChange(of: selectedShoeID ?? UUID()) { oldValue, newValue in
-            withAnimation(.snappy) {
-                workouts = getWorkouts(of: newValue)
-            }
+            workouts = getWorkouts(of: newValue)
         }
     }
 }
 
+struct ContentHeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+        print(value)
+    }
+}
+
 // MARK: - View Components
+
 extension ShoeDetailCarouselView {
+    
     @ViewBuilder
-    private func carouselSlider() -> some View {
-        CarouselSlider(activeID: $selectedShoeID,
-                       data: shoes,
-                       titleScrollSpeed: titleScrollSpeed,
-                       spacing: pagingSpacing
-        ) { shoe in
-            RoundedRectangle(cornerRadius: 15)
-                .fill(.red)
-                .frame(width: stretchContent ? nil : 150, height: stretchContent ? 220 : 120)
-        } titleContent: { shoe in
-            VStack(spacing: 5) {
-                Text(shoe.model)
-                    .font(.largeTitle.bold())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
-                    .frame(height: 45)
-                
-                Text(shoe.brand)
-                    .foregroundStyle(.gray)
-                    .multilineTextAlignment(.center)
-                    .frame(height: 25)
+    private func shoeInfoCrouselSlider() -> some View {
+        GeometryReader(content: { geometry in
+            CarouselSlider(activeID: $selectedShoeID,
+                           data: shoes,
+                           titleScrollSpeed: titleScrollSpeed,
+                           spacing: pagingSpacing)
+            { shoe in
+                HStack(spacing: 0) {
+                    leftSideStats(of: shoe)
+                    
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(.red)
+                        .frame(width: geometry.size.width * 2/5, height: geometry.size.width * 2/5 * 3/4)
+                    
+                    rightSideStats(of: shoe)
+                }
+            } titleContent: { shoe in
+                VStack(spacing: 5) {
+                    Text(shoe.model)
+                        .font(.largeTitle.bold())
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.4)
+                        .frame(height: 45)
+                        .padding(.horizontal, 30)
+                    
+                    Text(shoe.brand)
+                        .foregroundStyle(.gray)
+                        .multilineTextAlignment(.center)
+                        .frame(height: 25)
+                }
+                .padding(.bottom, 15)
             }
-            .padding(.bottom, 15)
+            .background {
+                GeometryReader { geometry in
+                    Color.clear
+                        .preference(key: ContentHeightPreferenceKey.self, value: geometry.size.height)
+                }
+            }
+        })
+        .onPreferenceChange(ContentHeightPreferenceKey.self) { value in
+            contentHeight = value
         }
-        .safeAreaPadding([.horizontal], 35)
+        .frame(height: contentHeight)
+    }
+    
+    @ViewBuilder
+    private func leftSideStats(of shoe: Shoe) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ShoeStat(title: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow)
+            
+            ShoeStat(title: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColorTint)
+            
+            ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, 30)
+    }
+    
+    @ViewBuilder
+    private func rightSideStats(of shoe: Shoe) -> some View {
+        CircularProgressView(progress: shoe.wearPercentage, lineWidth: 10, color: .green)
+            .frame(maxWidth: .infinity)
     }
     
     @ViewBuilder
@@ -144,6 +191,7 @@ extension ShoeDetailCarouselView {
     
 }
 // MARK: - Helper Methods
+
 extension ShoeDetailCarouselView {
     
     private func getWorkouts(of id: UUID) -> [HKWorkout] {
@@ -162,10 +210,12 @@ extension ShoeDetailCarouselView {
 }
 
 // MARK: - Previews
+
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoeDetailCarouselView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }
 }

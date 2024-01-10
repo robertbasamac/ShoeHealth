@@ -17,40 +17,40 @@ struct ShoesTab: View {
     var body: some View {
         List {
             ForEach(shoesViewModel.shoes) { shoe in
-                    ShoeListItem(shoe: shoe)
-                        .padding()
-                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                        .onTapGesture {
-                            selectedShoe = shoe
-                        }
-                .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                    Button {
-                        shoe.retired.toggle()
-                    } label: {
-                        if shoe.retired {
-                            Label("Reinstate", systemImage: "bolt.fill")
-                        } else {
-                            Label("Retire", systemImage: "bolt.slash.fill")
-                        }
+                ShoeListItem(shoe: shoe)
+                    .padding()
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                    .onTapGesture {
+                        selectedShoe = shoe
                     }
-                    .tint(shoe.retired ? .green : .orange)
-                    
-                    if !shoe.isDefaultShoe {
+                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
                         Button {
-                            shoesViewModel.setAsDefaultShoe(shoe)
+                            shoe.retired.toggle()
                         } label: {
-                            Label("Make Default", systemImage: "shoe.2")
+                            if shoe.retired {
+                                Label("Reinstate", systemImage: "bolt.fill")
+                            } else {
+                                Label("Retire", systemImage: "bolt.slash.fill")
+                            }
                         }
-                        .tint(Color.blue)
+                        .tint(shoe.retired ? .green : .orange)
+                        
+                        if !shoe.isDefaultShoe {
+                            Button {
+                                shoesViewModel.setAsDefaultShoe(shoe)
+                            } label: {
+                                Label("Make Default", systemImage: "shoe.2")
+                            }
+                            .tint(Color.blue)
+                        }
                     }
-                }
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        shoesViewModel.deleteShoe(shoe)
-                    } label: {
-                        Label("Delete", systemImage: "trash")
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            shoesViewModel.deleteShoe(shoe)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
-                }
             }
             .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
             .listRowSeparator(.hidden)
@@ -96,6 +96,7 @@ extension ShoesTab {
                 } label: {
                     Text("Add Shoe")
                         .padding(4)
+                        .foregroundStyle(.black)
                 }
                 .buttonStyle(.borderedProminent)
             }

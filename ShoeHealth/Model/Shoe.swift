@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
 final class Shoe {
@@ -56,6 +57,23 @@ extension Shoe {
     }
     
     @Transient
+    var wearPercentage: Double {
+        return currentDistance / lifespanDistance
+    }
+    
+    @Transient
+    var wearColorTint: Color {
+        let wear = self.currentDistance / self.lifespanDistance
+        if wear < 0.6 {
+            return .green
+        } else if wear < 0.8 {
+            return .orange
+        } else {
+            return .red
+        }
+    }
+    
+    @Transient
     var wearPercentageAsString: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent
@@ -78,10 +96,10 @@ extension Shoe {
     
     static var previewShoes: [Shoe] {
         [
-            Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, currentDistance: 400, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, aquisitionDate: Date.now, isDefaultShoe: false),
             Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true),
-            Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 703.53, aquisitionDate: Date.now, isDefaultShoe: false),
-            Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: false)
+            Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, aquisitionDate: Date.now, isDefaultShoe: false)
         ]
     }
 }

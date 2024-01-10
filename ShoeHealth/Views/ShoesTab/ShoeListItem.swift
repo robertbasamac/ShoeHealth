@@ -44,23 +44,8 @@ struct ShoeListItem: View {
                         .font(.footnote)
                 }
             }
-            .tint(getProgressViewTint())
+            .tint(shoe.wearColorTint)
             .padding(.vertical, 8)
-        }
-    }
-}
-
-// MARK: - Helper Methods
-extension ShoeListItem {
-    
-    private func getProgressViewTint() -> Color {
-        let wear = shoe.currentDistance / shoe.lifespanDistance
-        if wear < 0.6 {
-            return .green
-        } else if wear < 0.8 {
-            return .orange
-        } else {
-            return .red
         }
     }
 }
