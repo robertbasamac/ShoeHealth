@@ -34,6 +34,8 @@ struct CircularProgressView: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     CircularProgressView(progress: 0.3, lineWidth: 20, color: Color.green)
 }

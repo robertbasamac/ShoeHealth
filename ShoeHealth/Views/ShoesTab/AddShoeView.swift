@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddShoeView: View {
+    
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -17,6 +19,9 @@ struct AddShoeView: View {
     @State private var aquisitionDate: Date = .init()
     @State private var lifespanDistance: Double = 800
     @State private var isDefaultShoe: Bool = false
+    
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var selectedPhotoData: Data?
     
     @State private var unit: LengthFormatter.Unit = .kilometer
     
@@ -71,6 +76,47 @@ struct AddShoeView: View {
             }
             
             Section {
+                if let selectedPhotoData, let uiImage = UIImage(data: selectedPhotoData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: 220)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(8)
+                }
+                
+                PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
+                    HStack {
+                        Label("Add Picture", systemImage: "photo")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        if selectedPhotoData != nil {
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    selectedPhoto = nil
+                                    selectedPhotoData = nil
+                                }
+                            } label: {
+                                Image(systemName: "trash")
+                                    .foregroundStyle(.red)
+                                    .padding(.horizontal, 6)
+                                    .contentShape(.rect)
+                            }
+                        }
+                    }
+                }
+            } header: {
+                Text("Shoe Picture")
+            } footer: {
+                Text("Add a picture in landscape mode for better quality.")
+            }
+            .task(id: selectedPhoto) {
+                if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
+                    selectedPhotoData = data
+                }
+            }
+            
+            Section {
                 DatePicker("Aquisition Date", selection: $aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                     .datePickerStyle(.graphical)
             } header: {
@@ -90,13 +136,14 @@ struct AddShoeView: View {
 }
 
 // MARK: - View Components
+
 extension AddShoeView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe)
+                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: selectedPhotoData)
                 dismiss()
             } label: {
                 Text("Save")
@@ -107,6 +154,7 @@ extension AddShoeView {
 }
 
 // MARK: - Helper Methods
+
 extension AddShoeView {
     
     private func isSaveButtonDisabled() -> Bool {
@@ -115,6 +163,7 @@ extension AddShoeView {
 }
 
 // MARK: - Previews
+
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {

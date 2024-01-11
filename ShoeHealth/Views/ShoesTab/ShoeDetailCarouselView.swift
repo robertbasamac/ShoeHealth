@@ -9,6 +9,7 @@ import SwiftUI
 import HealthKit
 
 struct ShoeDetailCarouselView: View {
+    
     @Environment(\.colorScheme) private var colorScheme
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
@@ -68,15 +69,6 @@ struct ShoeDetailCarouselView: View {
     }
 }
 
-struct ContentHeightPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-        print(value)
-    }
-}
-
 // MARK: - View Components
 
 extension ShoeDetailCarouselView {
@@ -89,12 +81,10 @@ extension ShoeDetailCarouselView {
                            titleScrollSpeed: titleScrollSpeed,
                            spacing: pagingSpacing)
             { shoe in
-                HStack(spacing: 0) {
+                HStack(spacing: 2) {
                     leftSideStats(of: shoe)
                     
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(.red)
-                        .frame(width: geometry.size.width * 2/5, height: geometry.size.width * 2/5 * 3/4)
+                    imageRectangle(of: shoe, geometry: geometry)
                     
                     rightSideStats(of: shoe)
                 }
@@ -136,14 +126,35 @@ extension ShoeDetailCarouselView {
             
             ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.leading, 30)
+    }
+    
+    @ViewBuilder
+    private func imageRectangle(of shoe: Shoe, geometry: GeometryProxy) -> some View {
+        ZStack(alignment: .center) {
+            RoundedRectangle(cornerRadius: 15)
+                .stroke(Color.white, style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .shadow(color: Color.white, radius: 4)
+            
+            if let data = shoe.image, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 44))
+            }
+        }
+        .frame(width: geometry.size.width * 2/5, height: geometry.size.width * 2/5 * 3/4)
+        .padding(.vertical, 8)
     }
     
     @ViewBuilder
     private func rightSideStats(of shoe: Shoe) -> some View {
         CircularProgressView(progress: shoe.wearPercentage, lineWidth: 10, color: .green)
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     @ViewBuilder
@@ -188,8 +199,8 @@ extension ShoeDetailCarouselView {
         .listStyle(.plain)
         .scrollIndicators(.hidden)
     }
-    
 }
+
 // MARK: - Helper Methods
 
 extension ShoeDetailCarouselView {

@@ -11,6 +11,7 @@
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStat.swift */; };
+		094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* PreferenceKeys.swift */; };
 		0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956815A2B46E207005E5FE6 /* NavigationRouter.swift */; };
 		0956EE392B4C057D0029445E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* Tab.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
@@ -41,6 +42,7 @@
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStat.swift; sourceTree = "<group>"; };
+		094B75B42B504D6300632590 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
 		0956815A2B46E207005E5FE6 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
 		0956EE382B4C057D0029445E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				096D36A32B20B1C900C78453 /* Formatters.swift */,
+				094B75B42B504D6300632590 /* PreferenceKeys.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
 				094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
+				094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */,
 				09E7EAB42B3B267000BFAC16 /* CarouselSlider.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
 				09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */,

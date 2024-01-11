@@ -12,11 +12,12 @@ import SwiftUI
 @Model
 final class Shoe {
     var id: UUID
+    
     @Attribute(.unique) var nickname: String
+    @Attribute(.externalStorage) var image: Data?
     var brand: String
     var model: String
     var lifespanDistance: Double
-//    var currentDistance: Double
     var aquisitionDate: Date
     var retireDate: Date?
     var retired: Bool
@@ -30,21 +31,25 @@ final class Shoe {
          lifespanDistance: Double,
          currentDistance: Double = 0,
          aquisitionDate: Date,
-         isDefaultShoe: Bool = false) {
+         isDefaultShoe: Bool = false,
+         image: Data? = nil) {
         self.id = id
         self.nickname = nickname
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
-//        self.currentDistance = currentDistance
         self.aquisitionDate = aquisitionDate
         self.retireDate = nil
         self.retired = false
         self.isDefaultShoe = isDefaultShoe
+        self.image = image
     }
 }
 
+// MARK: - Transient properties
+
 extension Shoe {
+    
     @Transient
     var currentDistance: Double {
         let filteredWorkouts = HealthKitManager.shared.getWorkouts(forShoe: self)
@@ -88,6 +93,7 @@ extension Shoe {
 
 
 // MARK: - Preview data
+
 extension Shoe {
     
     static var previewShoe: Shoe {
