@@ -90,10 +90,11 @@ extension ShoeDetailCarouselView {
                             HStack(spacing: 4) {
                                 leftSideStats(of: shoe)
                                 
-                                imageRectangle(of: shoe, geometry: geometry)
+                                ShoeImage(shoe: shoe, width: geometry.size.width)
                                 
                                 rightSideStats(of: shoe)
                             }
+                            .padding(.vertical, 8)
                             .background {
                                 RoundedRectangle(cornerRadius: 10, style: .circular)
                                     .fill(Color(uiColor: .secondarySystemGroupedBackground))
@@ -130,27 +131,6 @@ extension ShoeDetailCarouselView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.horizontal)
-    }
-    
-    @ViewBuilder
-    private func imageRectangle(of shoe: Shoe, geometry: GeometryProxy) -> some View {
-        ZStack(alignment: .center) {
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.primary.opacity(0.8), style: StrokeStyle(lineWidth: 1, lineCap: .round))
-                .shadow(color: Color.primary, radius: 4)
-            
-            if let data = shoe.image, let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: 44))
-            }
-        }
-        .frame(width: geometry.size.width / 3, height: geometry.size.width / 4)
-        .padding(.vertical, 8)
     }
     
     @ViewBuilder

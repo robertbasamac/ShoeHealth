@@ -32,6 +32,8 @@ struct ShoeStat: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     ShoeStat(title: "CURRENT", value: "3KM", color: Color.yellow)
 }
