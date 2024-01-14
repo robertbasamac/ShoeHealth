@@ -15,7 +15,6 @@ struct WorkoutListItem: View {
         HStack {
             Image(systemName: "figure.run.circle.fill")
                 .resizable()
-                .scaledToFit()
                 .frame(width: 30, height: 30)
                 .foregroundStyle(LinearGradient(gradient: Gradient(colors: [.black.opacity(0.95), .black.opacity(0.75)]), startPoint: .leading, endPoint: .trailing))
                 .background {

@@ -19,11 +19,6 @@ struct ShoeDetailCarouselView: View {
     
     private var selectedID: UUID
     
-    /// Customization Properties
-    @State private var pagingSpacing: CGFloat = 15
-    @State private var titleScrollSpeed: CGFloat = 0.75
-    @State private var stretchContent: Bool = true
-    
     @State private var contentHeight: CGFloat = .zero
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
@@ -33,10 +28,7 @@ struct ShoeDetailCarouselView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            shoeInfoCrouselSlider()
-            
-            Divider()
-                .padding(.top)
+            shoeCarousel()
             
             workoutsList()
         }
@@ -74,36 +66,48 @@ struct ShoeDetailCarouselView: View {
 extension ShoeDetailCarouselView {
     
     @ViewBuilder
-    private func shoeInfoCrouselSlider() -> some View {
+    private func shoeCarousel() -> some View {
         GeometryReader(content: { geometry in
-            CarouselSlider(activeID: $selectedShoeID,
-                           data: shoes,
-                           titleScrollSpeed: titleScrollSpeed,
-                           spacing: pagingSpacing)
-            { shoe in
-                HStack(spacing: 2) {
-                    leftSideStats(of: shoe)
-                    
-                    imageRectangle(of: shoe, geometry: geometry)
-                    
-                    rightSideStats(of: shoe)
+            ScrollView(.horizontal) {
+                HStack(spacing: 8) {
+                    ForEach(shoes) { shoe in
+                        VStack(spacing: 0) {
+                            VStack(spacing: 0) {
+                                Text(shoe.model)
+                                    .font(.largeTitle.bold())
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .frame(height: 45)
+                                    .padding(.horizontal)
+                                
+                                Text(shoe.brand)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .frame(height: 25)
+                            }
+                            .frame(maxWidth: .infinity)
+                            
+                            HStack(spacing: 4) {
+                                leftSideStats(of: shoe)
+                                
+                                imageRectangle(of: shoe, geometry: geometry)
+                                
+                                rightSideStats(of: shoe)
+                            }
+                            .background {
+                                RoundedRectangle(cornerRadius: 10, style: .circular)
+                                    .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                            }
+                        }
+                        .containerRelativeFrame(.horizontal)
+                    }
                 }
-            } titleContent: { shoe in
-                VStack(spacing: 5) {
-                    Text(shoe.model)
-                        .font(.largeTitle.bold())
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.4)
-                        .frame(height: 45)
-                        .padding(.horizontal, 30)
-                    
-                    Text(shoe.brand)
-                        .foregroundStyle(.gray)
-                        .multilineTextAlignment(.center)
-                        .frame(height: 25)
-                }
-                .padding(.bottom, 15)
+                .scrollTargetLayout()
             }
+            .scrollTargetBehavior(.viewAligned)
+            .safeAreaPadding(.horizontal, 20)
+            .scrollIndicators(.hidden)
+            .scrollPosition(id: $selectedShoeID)
             .background {
                 GeometryReader { geometry in
                     Color.clear
@@ -120,22 +124,20 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func leftSideStats(of shoe: Shoe) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            ShoeStat(title: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow)
-            
-            ShoeStat(title: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColorTint)
-            
-            ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue)
+            ShoeStat(title: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
+                        
+            ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .padding(.leading, 30)
+        .padding(.horizontal)
     }
     
     @ViewBuilder
     private func imageRectangle(of shoe: Shoe, geometry: GeometryProxy) -> some View {
         ZStack(alignment: .center) {
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.white, style: StrokeStyle(lineWidth: 1, lineCap: .round))
-                .shadow(color: Color.white, radius: 4)
+                .stroke(Color.primary.opacity(0.8), style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .shadow(color: Color.primary, radius: 4)
             
             if let data = shoe.image, let uiImage = UIImage(data: data) {
                 Image(uiImage: uiImage)
@@ -147,14 +149,18 @@ extension ShoeDetailCarouselView {
                     .font(.system(size: 44))
             }
         }
-        .frame(width: geometry.size.width * 2/5, height: geometry.size.width * 2/5 * 3/4)
+        .frame(width: geometry.size.width / 3, height: geometry.size.width / 4)
         .padding(.vertical, 8)
     }
     
     @ViewBuilder
     private func rightSideStats(of shoe: Shoe) -> some View {
-        CircularProgressView(progress: shoe.wearPercentage, lineWidth: 10, color: .green)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: .green)
+            ShoeStat(title: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColorTint)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal)
     }
     
     @ViewBuilder
@@ -211,12 +217,6 @@ extension ShoeDetailCarouselView {
         let workouts = HealthKitManager.shared.getWorkouts(forShoe: selectedShoe)
         
         return workouts
-    }
-    
-    private func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
-        let minX = proxy.bounds(of: .scrollView)?.minX ?? 0
-        
-        return -minX * 0.75
     }
 }
 
