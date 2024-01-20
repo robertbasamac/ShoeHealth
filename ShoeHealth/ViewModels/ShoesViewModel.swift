@@ -16,12 +16,58 @@ final class ShoesViewModel {
     
     private var modelContext: ModelContext
     
+    var filterType: ShoeFilterType = .active
+    var sortType: ShoeSortType = .brand
+    var sortOrder: SortOrder = .forward
+    
     var shoes: [Shoe] = []
+
+    var filterTypeBinding: Binding<ShoeFilterType> {
+        Binding(
+            get: { self.filterType },
+            set: { self.filterType = $0 }
+        )
+    }
+    
+    var sortTypeBinding: Binding<ShoeSortType> {
+        Binding(
+            get: { self.sortType },
+            set: { self.sortType = $0 }
+        )
+    }
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchShoes()
     }
+    
+    func filteredShoes() -> [Shoe] {
+        var filteredShoes: [Shoe]
+        
+        switch filterType {
+        case .active:
+            filteredShoes = shoes.filter { !$0.retired }
+        case .retired:
+            filteredShoes = shoes.filter { $0.retired }
+        case .all:
+            filteredShoes = shoes
+        }
+        
+        switch sortType {
+        case .model:
+            filteredShoes.sort { sortOrder == .forward ? $0.model > $1.model : $0.model < $1.model }
+        case .brand:
+            filteredShoes.sort { sortOrder == .forward ? $0.brand > $1.brand : $0.brand < $1.brand }
+        case .distance:
+            filteredShoes.sort { sortOrder == .forward ? $0.currentDistance > $1.currentDistance : $0.currentDistance < $1.currentDistance }
+        case .aquisitionDate:
+            filteredShoes.sort { sortOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
+        }
+        
+        return filteredShoes
+    }
+    
+    // MARK: - Handling Shoes
     
     func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, image: Data?) {
         let shoe = Shoe(nickname: nickname, brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: image)
@@ -35,26 +81,6 @@ final class ShoesViewModel {
         }
         
         modelContext.insert(shoe)
-        
-        fetchShoes()
-    }
-    
-    func setAsDefaultShoe(_ shoe: Shoe) {
-        if let defaultShoe = getDefaultShoe() {
-            defaultShoe.isDefaultShoe = false
-        }
-        
-        shoe.isDefaultShoe = true
-        
-        fetchShoes()
-    }
-    
-    func remove(workout: HKWorkout, fromShoe: UUID) {
-        guard let shoe = shoes.first(where: { $0.id == fromShoe }) else { return }
-        
-        shoe.workouts.removeAll { $0 == workout.id }
-//        shoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
-        
         fetchShoes()
     }
     
@@ -71,6 +97,24 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
+    func setAsDefaultShoe(_ shoe: Shoe) {
+        if let defaultShoe = getDefaultShoe() {
+            defaultShoe.isDefaultShoe = false
+        }
+        
+        shoe.isDefaultShoe = true
+        fetchShoes()
+    }
+    
+    func remove(workout: HKWorkout, fromShoe: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == fromShoe }) else { return }
+        
+        shoe.workouts.removeAll { $0 == workout.id }
+        fetchShoes()
+    }
+    
+    // MARK: - Fetching Data
+    
     func fetchShoes() {
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
@@ -83,5 +127,10 @@ final class ShoesViewModel {
     func getDefaultShoe() -> Shoe? {
         guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
         return shoe
+    }
+    
+    func toggleSortOrder() {
+        sortOrder = sortOrder == .forward ? .reverse : .forward
+        print(sortOrder.hashValue)
     }
 }

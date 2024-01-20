@@ -1,5 +1,5 @@
 //
-//  DetailedCarouselShoeView.swift
+//  ShoeDetailCarouselView.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 26.12.2023.

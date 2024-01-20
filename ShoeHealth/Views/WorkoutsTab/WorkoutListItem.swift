@@ -15,14 +15,8 @@ struct WorkoutListItem: View {
         HStack {
             Image(systemName: "figure.run.circle.fill")
                 .resizable()
+                .foregroundStyle(Color.accentColor, LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.01), Color.accentColor.opacity(0.1)]), startPoint: .leading, endPoint: .trailing))
                 .frame(width: 30, height: 30)
-                .foregroundStyle(LinearGradient(gradient: Gradient(colors: [.black.opacity(0.95), .black.opacity(0.75)]), startPoint: .leading, endPoint: .trailing))
-                .background {
-                    Circle()
-                        .fill(Color.accentColor)
-                        .frame(width: 29, height: 29)
-                }
-            
             VStack(alignment: .leading) {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
                     .font(.caption)

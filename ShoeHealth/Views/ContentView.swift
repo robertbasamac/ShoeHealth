@@ -17,7 +17,6 @@ struct ContentView: View {
         TabView(selection: $navigationRouter.selectedTab) {
             NavigationStack(path: $navigationRouter.shoesTabPath) {
                 ShoesTab()
-                    .navigationTitle("Shoes")
             }
             .tabItem {
                 Label(Tab.shoes.rawValue, systemImage: Tab.shoes.systemImageName)
