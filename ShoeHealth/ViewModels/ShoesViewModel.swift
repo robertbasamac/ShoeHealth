@@ -16,19 +16,25 @@ final class ShoesViewModel {
     
     private var modelContext: ModelContext
     
+    var shoes: [Shoe] = []
+    
+    var searchText: String = ""
     var filterType: ShoeFilterType = .active
     var sortType: ShoeSortType = .brand
     var sortOrder: SortOrder = .forward
     
-    var shoes: [Shoe] = []
-
+    var searchBinding: Binding<String> {
+        Binding(
+            get: { self.searchText },
+            set: { self.searchText = $0 }
+        )
+    }
     var filterTypeBinding: Binding<ShoeFilterType> {
         Binding(
             get: { self.filterType },
             set: { self.filterType = $0 }
         )
     }
-    
     var sortTypeBinding: Binding<ShoeSortType> {
         Binding(
             get: { self.sortType },
@@ -41,28 +47,35 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
-    func filteredShoes() -> [Shoe] {
-        var filteredShoes: [Shoe]
+    var filteredShoes: [Shoe] {
+        var filteredShoes: [Shoe] = []
         
-        switch filterType {
-        case .active:
-            filteredShoes = shoes.filter { !$0.retired }
-        case .retired:
-            filteredShoes = shoes.filter { $0.retired }
-        case .all:
-            filteredShoes = shoes
+        guard !searchText.isEmpty else {
+            switch filterType {
+            case .active:
+                filteredShoes = shoes.filter { !$0.retired }
+            case .retired:
+                filteredShoes = shoes.filter { $0.retired }
+            case .all:
+                filteredShoes = shoes
+            }
+            
+            switch sortType {
+            case .model:
+                filteredShoes.sort { sortOrder == .forward ? $0.model > $1.model : $0.model < $1.model }
+            case .brand:
+                filteredShoes.sort { sortOrder == .forward ? $0.brand > $1.brand : $0.brand < $1.brand }
+            case .distance:
+                filteredShoes.sort { sortOrder == .forward ? $0.currentDistance > $1.currentDistance : $0.currentDistance < $1.currentDistance }
+            case .aquisitionDate:
+                filteredShoes.sort { sortOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
+            }
+            
+            return filteredShoes
         }
         
-        switch sortType {
-        case .model:
-            filteredShoes.sort { sortOrder == .forward ? $0.model > $1.model : $0.model < $1.model }
-        case .brand:
-            filteredShoes.sort { sortOrder == .forward ? $0.brand > $1.brand : $0.brand < $1.brand }
-        case .distance:
-            filteredShoes.sort { sortOrder == .forward ? $0.currentDistance > $1.currentDistance : $0.currentDistance < $1.currentDistance }
-        case .aquisitionDate:
-            filteredShoes.sort { sortOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
-        }
+        filteredShoes = shoes.filter { $0.brand.localizedCaseInsensitiveContains(searchText) || $0.model.localizedCaseInsensitiveContains(searchText) }
+        filteredShoes.sort { $0.model < $1.model }
         
         return filteredShoes
     }

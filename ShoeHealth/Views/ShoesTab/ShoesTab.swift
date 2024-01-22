@@ -19,7 +19,7 @@ struct ShoesTab: View {
 
     var body: some View {
         List {
-            ForEach(shoesViewModel.filteredShoes()) { shoe in
+            ForEach(shoesViewModel.filteredShoes) { shoe in
                 ShoeListItem(shoe: shoe)
                     .padding()
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
@@ -62,6 +62,7 @@ struct ShoesTab: View {
         .listStyle(.plain)
         .navigationTitle(getNavigationBarTitle())
         .background(Color(uiColor: .systemGroupedBackground))
+        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
         .overlay {
             emptyShoesView()
         }
@@ -69,7 +70,7 @@ struct ShoesTab: View {
             toolbarItems()
         }
         .navigationDestination(item: $selectedShoe) { shoe in
-            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes(), selectedShoeID: shoe.id)
+            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
