@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
-		09189C0C2B569F1900CA782A /* ShoeFiltering+Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeFiltering+Sorting.swift */; };
+		09189C0C2B569F1900CA782A /* Shoe+Filter+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStat.swift */; };
 		094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* PreferenceKeys.swift */; };
@@ -41,7 +41,7 @@
 /* Begin PBXFileReference section */
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
-		09189C0B2B569F1900CA782A /* ShoeFiltering+Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShoeFiltering+Sorting.swift"; sourceTree = "<group>"; };
+		09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shoe+Filter+Sort.swift"; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStat.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
@@ -105,7 +105,7 @@
 		09189C0A2B569EE700CA782A /* Filtering */ = {
 			isa = PBXGroup;
 			children = (
-				09189C0B2B569F1900CA782A /* ShoeFiltering+Sorting.swift */,
+				09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */,
 			);
 			path = Filtering;
 			sourceTree = "<group>";
@@ -349,7 +349,7 @@
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
 				094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
-				09189C0C2B569F1900CA782A /* ShoeFiltering+Sorting.swift in Sources */,
+				09189C0C2B569F1900CA782A /* Shoe+Filter+Sort.swift in Sources */,
 				09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */,
 				09DE4A822B0D4CD8001119E4 /* HealthKitManager.swift in Sources */,
 				09E385E52B134B08005CFF02 /* AddShoeView.swift in Sources */,

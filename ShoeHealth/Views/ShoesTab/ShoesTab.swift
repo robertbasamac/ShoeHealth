@@ -11,6 +11,8 @@ import SwiftData
 struct ShoesTab: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(\.isSearching) var isSearching
+    @Environment(\.dismissSearch) var dismissSearch
     
     @State private var showAddShoe: Bool = false
     @State private var selectedShoe: Shoe?
@@ -19,7 +21,7 @@ struct ShoesTab: View {
 
     var body: some View {
         List {
-            ForEach(shoesViewModel.filteredShoes) { shoe in
+            ForEach(shoesViewModel.searchFilteredShoes) { shoe in
                 ShoeListItem(shoe: shoe)
                     .padding()
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
@@ -63,6 +65,12 @@ struct ShoesTab: View {
         .navigationTitle(getNavigationBarTitle())
         .background(Color(uiColor: .systemGroupedBackground))
         .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
+        .searchScopes(shoesViewModel.filterTypeBinding, scopes: {
+            ForEach(ShoeFilterType.allCases) { filterType in
+                Text(filterType.rawValue)
+                    .tag(filterType)
+            }
+        })
         .overlay {
             emptyShoesView()
         }

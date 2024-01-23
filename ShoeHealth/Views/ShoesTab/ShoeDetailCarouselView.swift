@@ -98,7 +98,9 @@ extension ShoeDetailCarouselView {
                             .background {
                                 RoundedRectangle(cornerRadius: 10, style: .circular)
                                     .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                                    .shadow(color: Color(uiColor: .systemGray), radius: 2)
                             }
+                            .padding(.vertical, 4)
                         }
                         .containerRelativeFrame(.horizontal)
                     }
