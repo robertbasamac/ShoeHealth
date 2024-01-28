@@ -19,7 +19,6 @@ final class ShoesViewModel {
     var shoes: [Shoe] = []
     
     var searchText: String = ""
-//    var searchFilterType: ShoeFilterType = .all
     var filterType: ShoeFilterType = .active
     var sortType: ShoeSortType = .brand
     var sortOrder: SortOrder = .forward
@@ -30,12 +29,6 @@ final class ShoesViewModel {
             set: { self.searchText = $0 }
         )
     }
-//    var searchFilterTypeBinding: Binding<ShoeFilterType> {
-//        Binding(
-//            get: { self.searchFilterType },
-//            set: { self.searchFilterType = $0 }
-//        )
-//    }
     var filterTypeBinding: Binding<ShoeFilterType> {
         Binding(
             get: { self.filterType },

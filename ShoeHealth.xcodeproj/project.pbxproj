@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
-		09189C0C2B569F1900CA782A /* Shoe+Filter+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */; };
+		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStat.swift */; };
 		094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* PreferenceKeys.swift */; };
@@ -18,6 +18,7 @@
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
+		09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D85D272B62F59B005E7365 /* ShoeFilterType.swift */; };
 		09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */; };
 		09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A742B0D3F7F001119E4 /* ContentView.swift */; };
 		09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A762B0D3F81001119E4 /* Assets.xcassets */; };
@@ -41,7 +42,7 @@
 /* Begin PBXFileReference section */
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
-		09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shoe+Filter+Sort.swift"; sourceTree = "<group>"; };
+		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStat.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
@@ -50,6 +51,7 @@
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
+		09D85D272B62F59B005E7365 /* ShoeFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
 		09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoeHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeHealthApp.swift; sourceTree = "<group>"; };
 		09DE4A742B0D3F7F001119E4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -105,7 +107,8 @@
 		09189C0A2B569EE700CA782A /* Filtering */ = {
 			isa = PBXGroup;
 			children = (
-				09189C0B2B569F1900CA782A /* Shoe+Filter+Sort.swift */,
+				09D85D272B62F59B005E7365 /* ShoeFilterType.swift */,
+				09189C0B2B569F1900CA782A /* ShoeSortType.swift */,
 			);
 			path = Filtering;
 			sourceTree = "<group>";
@@ -348,8 +351,9 @@
 				094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
 				094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */,
+				09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
-				09189C0C2B569F1900CA782A /* Shoe+Filter+Sort.swift in Sources */,
+				09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */,
 				09E385DB2B1340E3005CFF02 /* Shoe.swift in Sources */,
 				09DE4A822B0D4CD8001119E4 /* HealthKitManager.swift in Sources */,
 				09E385E52B134B08005CFF02 /* AddShoeView.swift in Sources */,

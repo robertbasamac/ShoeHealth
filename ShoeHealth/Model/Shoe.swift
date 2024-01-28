@@ -72,6 +72,8 @@ extension Shoe {
         if wear < 0.6 {
             return .green
         } else if wear < 0.8 {
+            return .yellow
+        } else if wear < 1 {
             return .orange
         } else {
             return .red

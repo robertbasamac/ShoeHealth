@@ -10,16 +10,16 @@ import HealthKit
 
 struct ShoeDetailCarouselView: View {
     
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @State var shoes: [Shoe]
     @State var selectedShoeID: UUID?
-    @State var workouts: [HKWorkout] = []
-    
+    @State private var workouts: [HKWorkout] = []
+
     private var selectedID: UUID
     
     @State private var contentHeight: CGFloat = .zero
+    @State private var wearColorTint: Color = .white
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self._shoes = State(wrappedValue: shoes)
@@ -32,9 +32,17 @@ struct ShoeDetailCarouselView: View {
             
             workoutsList()
         }
-        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("Shoes")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .background(LinearGradient(gradient: Gradient(colors: [wearColorTint.opacity(0.3),
+                                                               wearColorTint.opacity(0.15),
+                                                               .black,
+                                                               .black,
+                                                               .black]),
+                                   startPoint: .top,
+                                   endPoint: .bottom),
+                    ignoresSafeAreaEdges: .top)
         .toolbarTitleMenu {
             ForEach(shoes) { shoe in
                 Button {
@@ -48,20 +56,23 @@ struct ShoeDetailCarouselView: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 if selectedShoeID == nil {
                     selectedShoeID = selectedID
                 }
+                
+                wearColorTint = getWearColorTint(of: selectedShoeID!)
                 workouts = getWorkouts(of: selectedShoeID!)
             }
         }
-        .onChange(of: selectedShoeID ?? UUID()) { oldValue, newValue in
+        .onChange(of: selectedShoeID ?? UUID()) { _, newValue in
             workouts = getWorkouts(of: newValue)
+            wearColorTint = getWearColorTint(of: newValue)
         }
     }
 }
 
-// MARK: - View Components
+// MARK: - View Components 
 
 extension ShoeDetailCarouselView {
     
@@ -97,7 +108,7 @@ extension ShoeDetailCarouselView {
                             .padding(.vertical, 8)
                             .background {
                                 RoundedRectangle(cornerRadius: 10, style: .circular)
-                                    .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                                    .fill(Color(uiColor: .systemBackground))
                                     .shadow(color: Color(uiColor: .systemGray), radius: 2)
                             }
                             .padding(.vertical, 4)
@@ -138,7 +149,7 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func rightSideStats(of shoe: Shoe) -> some View {
         ZStack {
-            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: .green)
+            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: shoe.wearColorTint)
             ShoeStat(title: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColorTint)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -199,6 +210,14 @@ extension ShoeDetailCarouselView {
         let workouts = HealthKitManager.shared.getWorkouts(forShoe: selectedShoe)
         
         return workouts
+    }
+    
+    private func getWearColorTint(of id: UUID) -> Color {
+        guard let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } ) else { return Color.white }
+        
+        let wearColorTint = selectedShoe.wearColorTint
+        
+        return wearColorTint
     }
 }
 

@@ -62,8 +62,8 @@ struct ShoesTab: View {
             .listRowBackground(Color.clear)
         }
         .listStyle(.plain)
-        .navigationTitle(getNavigationBarTitle())
         .background(Color(uiColor: .systemGroupedBackground))
+        .navigationTitle(getNavigationBarTitle())
         .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
         .searchScopes(shoesViewModel.filterTypeBinding, scopes: {
             ForEach(ShoeFilterType.allCases) { filterType in
