@@ -52,7 +52,7 @@ extension Shoe {
     
     @Transient
     var currentDistance: Double {
-        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forShoe: self)
+        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forIDs: self.workouts)
         
         let totalDistance = filteredWorkouts.reduce(0.0) { result, workout in
             return result + workout.totalDistance(unitPrefix: .kilo)
@@ -67,6 +67,18 @@ extension Shoe {
     }
     
     @Transient
+    var wearPercentageAsString: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.minimumIntegerDigits = 1
+        formatter.maximumIntegerDigits = 2
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 2
+        
+        return formatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0"
+    }
+    
+    @Transient
     var wearColorTint: Color {
         let wear = self.currentDistance / self.lifespanDistance
         if wear < 0.6 {
@@ -78,18 +90,6 @@ extension Shoe {
         } else {
             return .red
         }
-    }
-    
-    @Transient
-    var wearPercentageAsString: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .percent
-        formatter.minimumIntegerDigits = 1
-        formatter.maximumIntegerDigits = 2
-        formatter.minimumFractionDigits = 1
-        formatter.maximumFractionDigits = 2
-        
-        return formatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0.0"
     }
 }
 

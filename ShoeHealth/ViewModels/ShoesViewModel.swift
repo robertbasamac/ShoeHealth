@@ -99,7 +99,7 @@ final class ShoesViewModel {
         return filteredShoes
     }
     
-    // MARK: - Handling Shoes
+    // MARK: - Handling Shoes Methods
     
     func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, image: Data?) {
         let shoe = Shoe(nickname: nickname, brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: image)
@@ -129,24 +129,20 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
-    func setAsDefaultShoe(_ shoe: Shoe) {
-        if let defaultShoe = getDefaultShoe() {
-            defaultShoe.isDefaultShoe = false
-        }
+    func add(workouts: Set<UUID>, toShoe shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        shoe.isDefaultShoe = true
+        shoe.workouts.append(contentsOf: workouts)
         fetchShoes()
     }
     
-    func remove(workout: HKWorkout, fromShoe: UUID) {
-        guard let shoe = shoes.first(where: { $0.id == fromShoe }) else { return }
+    func remove(workout: UUID, fromShoe shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        shoe.workouts.removeAll { $0 == workout.id }
+        shoe.workouts.removeAll { $0 == workout }
         fetchShoes()
     }
-    
-    // MARK: - Fetching Data
-    
+        
     func fetchShoes() {
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
@@ -156,13 +152,25 @@ final class ShoesViewModel {
         }
     }
     
+    // MARK: - Getters
+    
     func getDefaultShoe() -> Shoe? {
         guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
         return shoe
     }
     
+    // MARK: - Other Methods
+    
+    func setAsDefaultShoe(_ shoe: Shoe) {
+        if let defaultShoe = getDefaultShoe() {
+            defaultShoe.isDefaultShoe = false
+        }
+        
+        shoe.isDefaultShoe = true
+        fetchShoes()
+    }
+    
     func toggleSortOrder() {
         sortOrder = sortOrder == .forward ? .reverse : .forward
-        print(sortOrder.hashValue)
     }
 }

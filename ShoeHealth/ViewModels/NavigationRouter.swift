@@ -13,7 +13,4 @@ final class NavigationRouter: ObservableObject {
     @Published var selectedTab: Tab = .shoes
     
     @Published var workout: HKWorkout?
-    
-    @Published var shoesTabPath = NavigationPath()
-    @Published var workoutsTabPath = NavigationPath()
 }

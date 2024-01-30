@@ -65,12 +65,12 @@ struct ShoesTab: View {
         .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle(getNavigationBarTitle())
         .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
-        .searchScopes(shoesViewModel.filterTypeBinding, scopes: {
+        .searchScopes(shoesViewModel.filterTypeBinding) {
             ForEach(ShoeFilterType.allCases) { filterType in
                 Text(filterType.rawValue)
                     .tag(filterType)
             }
-        })
+        }
         .overlay {
             emptyShoesView()
         }
@@ -79,6 +79,7 @@ struct ShoesTab: View {
         }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
+                .navigationTitle(getNavigationBarTitle())
         }
         .sheet(isPresented: $showAddShoe) {
             NavigationStack {
@@ -159,6 +160,7 @@ extension ShoesTab {
 }
 
 // MARK: - Helper Methods
+
 extension ShoesTab {
     
     private func getFilteringImageColors() -> (Color, Color) {
@@ -173,14 +175,7 @@ extension ShoesTab {
     }
     
     private func getNavigationBarTitle() -> String {
-        switch shoesViewModel.filterType {
-        case .all:
-            return "Shoes"
-        case .active:
-            return "Active Shoes"
-        case .retired:
-            return "Retired Shoes"
-        }
+        return shoesViewModel.filterType.rawValue
     }
 }
 

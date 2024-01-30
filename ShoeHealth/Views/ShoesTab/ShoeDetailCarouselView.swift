@@ -11,15 +11,18 @@ import HealthKit
 struct ShoeDetailCarouselView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(\.dismiss) private var dismiss
     
-    @State var shoes: [Shoe]
-    @State var selectedShoeID: UUID?
+    @State private var shoes: [Shoe]
+    @State private var selectedShoeID: UUID?
     @State private var workouts: [HKWorkout] = []
+    @State private var mostRecentWorkouts: [HKWorkout] = []
 
     private var selectedID: UUID
     
     @State private var contentHeight: CGFloat = .zero
     @State private var wearColorTint: Color = .white
+    @State private var showAllWorkouts: Bool = false
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self._shoes = State(wrappedValue: shoes)
@@ -32,9 +35,6 @@ struct ShoeDetailCarouselView: View {
             
             workoutsList()
         }
-        .navigationTitle("Shoes")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
         .background(LinearGradient(gradient: Gradient(colors: [wearColorTint.opacity(0.3),
                                                                wearColorTint.opacity(0.15),
                                                                .black,
@@ -43,6 +43,10 @@ struct ShoeDetailCarouselView: View {
                                    startPoint: .top,
                                    endPoint: .bottom),
                     ignoresSafeAreaEdges: .top)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         .toolbarTitleMenu {
             ForEach(shoes) { shoe in
                 Button {
@@ -55,19 +59,22 @@ struct ShoeDetailCarouselView: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $showAllWorkouts) {
+            ShoeWorkoutsListView(shoeID: selectedShoeID ?? UUID(), workouts: $workouts) {
+                updateInterface()
+            }
+        }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 if selectedShoeID == nil {
                     selectedShoeID = selectedID
                 }
                 
-                wearColorTint = getWearColorTint(of: selectedShoeID!)
-                workouts = getWorkouts(of: selectedShoeID!)
+                updateInterface()
             }
         }
         .onChange(of: selectedShoeID ?? UUID()) { _, newValue in
-            workouts = getWorkouts(of: newValue)
-            wearColorTint = getWearColorTint(of: newValue)
+            updateInterface()
         }
     }
 }
@@ -111,7 +118,7 @@ extension ShoeDetailCarouselView {
                                     .fill(Color(uiColor: .systemBackground))
                                     .shadow(color: Color(uiColor: .systemGray), radius: 2)
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 20)
                         }
                         .containerRelativeFrame(.horizontal)
                     }
@@ -160,36 +167,33 @@ extension ShoeDetailCarouselView {
     private func workoutsList() -> some View {
         List {
             Section {
-                ForEach(workouts) { workout in
+                HStack {
+                    Text("Workouts")
+                        .font(.title2.bold())
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Button {
+                        showAllWorkouts.toggle()
+                    } label: {
+                        Text("Show More")
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
+                
+                ForEach(mostRecentWorkouts) { workout in
                     WorkoutListItem(workout: workout)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
                         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                shoesViewModel.remove(workout: workout, fromShoe: selectedShoeID ?? UUID())
+                                shoesViewModel.remove(workout: workout.id, fromShoe: selectedShoeID ?? UUID())
+                                updateInterface()
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
                 }
-            } header: {
-                HStack {
-                    Text("Workouts")
-                    Spacer()
-                    Menu {
-                        Button {
-                            workouts.shuffle()
-                        } label: {
-                            Text("Shuffle")
-                        }
-                        .buttonStyle(.plain)
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle.fill")
-                    }
-                }
-                .font(.title2.bold())
-                .foregroundStyle(.primary)
             }
             .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
             .listRowSeparator(.hidden)
@@ -204,20 +208,12 @@ extension ShoeDetailCarouselView {
 
 extension ShoeDetailCarouselView {
     
-    private func getWorkouts(of id: UUID) -> [HKWorkout] {
-        guard let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } ) else { return [] }
-        
-        let workouts = HealthKitManager.shared.getWorkouts(forShoe: selectedShoe)
-        
-        return workouts
-    }
-    
-    private func getWearColorTint(of id: UUID) -> Color {
-        guard let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } ) else { return Color.white }
-        
-        let wearColorTint = selectedShoe.wearColorTint
-        
-        return wearColorTint
+    private func updateInterface() {
+        guard let selectedShoe = shoes.first(where: { $0.id == selectedShoeID } ) else { return }
+
+        self.workouts = HealthKitManager.shared.getWorkouts(forIDs: selectedShoe.workouts)
+        self.mostRecentWorkouts = Array(workouts.prefix(5))
+        self.wearColorTint = selectedShoe.wearColorTint
     }
 }
 

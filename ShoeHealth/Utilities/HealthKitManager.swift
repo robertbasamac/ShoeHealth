@@ -160,12 +160,11 @@ final class HealthKitManager {
         return nil
     }
     
-    func getWorkouts(forShoe shoe: Shoe) -> [HKWorkout] {
-        let workoutIDs = shoe.workouts
+    func getWorkouts(forIDs workoutIDs: [UUID]) -> [HKWorkout] {
         let filteredWorkouts = workouts.filter { workout in
             return workoutIDs.contains { $0 == workout.id }
         }
         
-        return filteredWorkouts
+        return filteredWorkouts.sorted { $0.endDate > $1.endDate }
     }
 }

@@ -9,13 +9,12 @@ import SwiftUI
 import HealthKit
 
 struct ContentView: View {
+    
     @EnvironmentObject private var navigationRouter: NavigationRouter
     
-    @State private var healthKitManager = HealthKitManager.shared
-        
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
-            NavigationStack(path: $navigationRouter.shoesTabPath) {
+            NavigationStack {
                 ShoesTab()
             }
             .tabItem {
@@ -23,7 +22,7 @@ struct ContentView: View {
             }
             .tag(Tab.shoes)
             
-            NavigationStack(path: $navigationRouter.workoutsTabPath) {
+            NavigationStack {
                 WorkoutsTab()
                     .navigationTitle("Workouts")
             }
@@ -43,6 +42,7 @@ struct ContentView: View {
 }
 
 // MARK: - Previews
+
 #Preview("Filled") {
     ContentView()
         .modelContainer(PreviewSampleData.container)
