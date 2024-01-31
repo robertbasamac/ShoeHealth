@@ -171,7 +171,12 @@ extension ShoeDetailCarouselView {
                     Text("Workouts")
                         .font(.title2.bold())
                         .foregroundStyle(.primary)
+                    Text("(\(workouts.count))")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    
                     Spacer()
+                    
                     Button {
                         showAllWorkouts.toggle()
                     } label: {
@@ -201,6 +206,8 @@ extension ShoeDetailCarouselView {
         }
         .listStyle(.plain)
         .scrollIndicators(.hidden)
+        .background(Color.black.shadow(.drop(color: Color(uiColor: .systemGray), radius: 2)), in: TopRoundedRectangle(cornerRadius: 25))
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
