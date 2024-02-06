@@ -9,6 +9,7 @@ import SwiftUI
 import HealthKit
 
 struct WorkoutListItem: View {
+    
     var workout: HKWorkout
     
     var body: some View {

@@ -116,6 +116,28 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
+    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        
+        if !brand.isEmpty {
+            shoe.brand = brand
+        }
+        
+        if !model.isEmpty {
+            shoe.model = model
+        }
+        
+        if !nickname.isEmpty {
+            shoe.nickname = nickname
+        }
+        
+        shoe.image = image
+        shoe.aquisitionDate = aquisitionDate
+        shoe.lifespanDistance = lifespanDistance
+        
+        fetchShoes()
+    }
+    
     func deleteShoe(at offsets: IndexSet) {
         withAnimation {
             offsets.map { self.shoes[$0] }.forEach { shoe in
@@ -156,6 +178,11 @@ final class ShoesViewModel {
     
     func getDefaultShoe() -> Shoe? {
         guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
+        return shoe
+    }
+    
+    func getShoe(forID shoeID: UUID) -> Shoe? {
+        guard let shoe = self.shoes.first(where: { $0.id == shoeID } ) else { return nil }
         return shoe
     }
     

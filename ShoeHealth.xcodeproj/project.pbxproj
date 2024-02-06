@@ -10,6 +10,7 @@
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
 		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
+		093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F623E2B71700600430AB9 /* EditShoeView.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStat.swift */; };
 		094B75B52B504D6300632590 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* PreferenceKeys.swift */; };
@@ -45,6 +46,7 @@
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
+		093F623E2B71700600430AB9 /* EditShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShoeView.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStat.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 		09BD131B2B40923B00DFA6B1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
 				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
 				094B75B22B4ED14000632590 /* ShoeStat.swift */,
 				094B75B02B4ECA7000632590 /* CircularProgressView.swift */,
@@ -219,7 +222,6 @@
 			isa = PBXGroup;
 			children = (
 				09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */,
-				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
 				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 			);
 			path = WorkoutsTab;
@@ -231,6 +233,7 @@
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
 				09E2F3502B1668D700D16101 /* ShoeListItem.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
+				093F623E2B71700600430AB9 /* EditShoeView.swift */,
 				09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
@@ -352,6 +355,7 @@
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
+				093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */,
 				09E7EAB62B3B280500BFAC16 /* ShoeDetailCarouselView.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,

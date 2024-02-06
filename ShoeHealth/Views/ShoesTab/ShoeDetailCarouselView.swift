@@ -17,12 +17,14 @@ struct ShoeDetailCarouselView: View {
     @State private var selectedShoeID: UUID?
     @State private var workouts: [HKWorkout] = []
     @State private var mostRecentWorkouts: [HKWorkout] = []
-
+    
+    @State private var showEditShoe: Bool = false
+    @State private var showAllWorkouts: Bool = false
+    
     private var selectedID: UUID
     
     @State private var contentHeight: CGFloat = .zero
     @State private var wearColorTint: Color = .white
-    @State private var showAllWorkouts: Bool = false
     
     init(shoes: [Shoe], selectedShoeID: UUID) {
         self._shoes = State(wrappedValue: shoes)
@@ -48,20 +50,19 @@ struct ShoeDetailCarouselView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         .toolbarTitleMenu {
-            ForEach(shoes) { shoe in
-                Button {
-                    withAnimation(.snappy) {
-                        selectedShoeID = shoe.id
-                    }
-                } label: {
-                    Text(shoe.model)
-                    Image(systemName: "shoe")
-                }
-            }
+            toolbarTitleMenu()
+        }
+        .toolbar {
+            toolbarItems()
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
             ShoeWorkoutsListView(shoeID: selectedShoeID ?? UUID(), workouts: $workouts) {
                 updateInterface()
+            }
+        }
+        .navigationDestination(isPresented: $showEditShoe) {
+            if let shoe = shoesViewModel.getShoe(forID: selectedShoeID ?? UUID()) {
+                EditShoeView(shoe: shoe)
             }
         }
         .onAppear {
@@ -146,7 +147,6 @@ extension ShoeDetailCarouselView {
     private func leftSideStats(of shoe: Shoe) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             ShoeStat(title: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
-                        
             ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -208,6 +208,31 @@ extension ShoeDetailCarouselView {
         .scrollIndicators(.hidden)
         .background(Color.black.shadow(.drop(color: Color(uiColor: .systemGray), radius: 2)), in: TopRoundedRectangle(cornerRadius: 25))
         .ignoresSafeArea(edges: .bottom)
+    }
+    
+    @ToolbarContentBuilder
+    private func toolbarItems() -> some ToolbarContent {
+        ToolbarItem {
+            Button {
+                showEditShoe = true
+            } label: {
+                Text("Edit")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func toolbarTitleMenu() -> some View {
+        ForEach(shoes) { shoe in
+            Button {
+                withAnimation(.snappy) {
+                    selectedShoeID = shoe.id
+                }
+            } label: {
+                Text(shoe.model)
+                Image(systemName: "shoe")
+            }
+        }
     }
 }
 

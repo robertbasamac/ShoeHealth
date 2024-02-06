@@ -47,8 +47,8 @@ struct ShoeWorkoutsListView: View {
         .listStyle(.plain)
         .environment(\.editMode, $editMode)
         .navigationTitle("Workouts")
+        .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
-        .toolbarTitleDisplayMode(.large)
         .toolbarRole(.editor)
         .toolbar {
             toolbarItems()

@@ -1,50 +1,52 @@
 //
-//  AddShoeView.swift
+//  EditShoeView.swift
 //  ShoeHealth
 //
-//  Created by Robert Basamac on 26.11.2023.
+//  Created by Robert Basamac on 05.02.2024.
 //
 
 import SwiftUI
 import PhotosUI
 
-struct AddShoeView: View {
+struct EditShoeView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @State private var shoeNickname: String = ""
+    private var shoe: Shoe
+    
     @State private var shoeBrand: String = ""
     @State private var shoeModel: String = ""
+    @State private var shoeNickname: String = ""
     @State private var aquisitionDate: Date = .init()
     @State private var lifespanDistance: Double = 800
-    @State private var isDefaultShoe: Bool = false
     
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var selectedPhotoData: Data?
     
-    @State private var unit: LengthFormatter.Unit = .kilometer
+    init(shoe: Shoe) {
+        self.shoe = shoe
+        self._aquisitionDate = State(initialValue: shoe.aquisitionDate)
+        self._lifespanDistance = State(initialValue: shoe.lifespanDistance)
+        self._selectedPhotoData = State(initialValue: shoe.image)
+    }
     
     var body: some View {
         Form {
             Section {
-                TextField("Brand", text: $shoeBrand)
+                TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $shoeBrand)
                     .textInputAutocapitalization(.words)
-                TextField("Model", text: $shoeModel)
+                TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $shoeModel)
                     .textInputAutocapitalization(.words)
             } header: {
                 Text("Details")
             }
             
             Section {
-                TextField("Nickname", text: $shoeNickname)
+                TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $shoeNickname)
                     .textInputAutocapitalization(.words)
-            }
-            
-            Section {
-                Toggle("Set as default shoe", isOn: $isDefaultShoe)
-                    .disabled(shoesViewModel.shoes.isEmpty)
-                    .tint(Color.accentColor)
+            } header: {
+                Text("Nickname")
             }
             
             Section {
@@ -123,52 +125,35 @@ struct AddShoeView: View {
                 Text("Aquisition Date")
             }
         }
-        .navigationTitle("Add New Shoe")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Update Shoe")
+        .navigationBarTitleDisplayMode(.large)
         .listSectionSpacing(.compact)
+        .toolbarRole(.editor)
         .toolbar {
             toolbarItems()
-        }
-        .onAppear {
-            isDefaultShoe = shoesViewModel.shoes.isEmpty ? true : false
         }
     }
 }
 
 // MARK: - View Components
 
-extension AddShoeView {
+extension EditShoeView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: selectedPhotoData)
+                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: selectedPhotoData)
                 dismiss()
             } label: {
-                Text("Save")
+                Text("Done")
             }
-            .disabled(isSaveButtonDisabled())
         }
-    }
-}
-
-// MARK: - Helper Methods
-
-extension AddShoeView {
-    
-    private func isSaveButtonDisabled() -> Bool {
-        return shoeBrand.isEmpty || shoeModel.isEmpty || shoeNickname.isEmpty
     }
 }
 
 // MARK: - Previews
 
 #Preview {
-    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
-        NavigationStack {
-            AddShoeView()
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
-        }
-    }
+    EditShoeView(shoe: Shoe.previewShoe)
 }
