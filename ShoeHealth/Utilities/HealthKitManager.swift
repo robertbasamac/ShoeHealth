@@ -8,6 +8,7 @@
 import Foundation
 import HealthKit
 import Observation
+import OSLog
 
 @Observable
 final class HealthKitManager {
@@ -20,11 +21,13 @@ final class HealthKitManager {
     
     private var readTypes: Set = [.workoutType(), HKSeriesType.workoutType()]
     
+    private init() { }
+    
     // MARK: - Request HealthKit authorization
     
     func requestHealthKitAuthorization() {
         if !HKHealthStore.isHealthDataAvailable() {
-            print("HealthKit not accessable.")
+            Logger.healthkit.warning("HealthKit not accessable.")
             return
         }
        
@@ -46,7 +49,7 @@ final class HealthKitManager {
                 }
             }
             
-            print(status)
+            Logger.healthkit.info("\(status)")
         }
     }
     
@@ -54,7 +57,7 @@ final class HealthKitManager {
     
     func fetchRunningWorkouts() async {
         if !HKHealthStore.isHealthDataAvailable() {
-            print("HealthKit not accessable.")
+            Logger.healthkit.warning("HealthKit not accessable.")
             return;
         }
         
@@ -73,6 +76,7 @@ final class HealthKitManager {
                 }
                 
                 guard let samples = samples else {
+                    Logger.healthkit.error("HealthKit not accessable.")
                     fatalError("Invalid State: This can only fail if there was an error.")
                 }
                 
@@ -81,11 +85,12 @@ final class HealthKitManager {
         }
         
         guard let workouts = samples as? [HKWorkout] else {
-            print("Did not manage to convert HKSample to HKWorkout.")
+            Logger.healthkit.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
-        print("\(workouts.count) workouts fetched")
+        Logger.healthkit.debug("\(workouts.count) workouts fetched.")
+        
         self.workouts = workouts
     }
     
@@ -93,7 +98,7 @@ final class HealthKitManager {
     
     private func startObservingNewWorkouts() {
         if !HKHealthStore.isHealthDataAvailable() {
-            print("HealthKit not accessable.")
+            Logger.healthkit.warning("HealthKit not accessable.")
             return
         }
         
@@ -108,10 +113,10 @@ final class HealthKitManager {
         
         self.healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate) { (success, error) in
             if success {
-                print("Background delivery enabled.")
+                Logger.healthkit.info("Background delivery enabled.")
             } else {
                 if let unwrappedError = error {
-                    print("Could not enable background delivery, \(unwrappedError.localizedDescription).")
+                    Logger.healthkit.warning("Could not enable background delivery, \(unwrappedError.localizedDescription).")
                 }
             }
         }
@@ -133,15 +138,15 @@ final class HealthKitManager {
 
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
         guard let newWorkout = newSamples.last as? HKWorkout else {
-            print("Did not manage to convert HKSample to HKWorkout.")
+            Logger.healthkit.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
         if !self.workouts.contains(where: { $0.id == newWorkout.id }) {
-            print("New workout received: \(newWorkout.endDate) - \(newWorkout.totalDistance(unitPrefix: .kilo)). Sending Notification.")
+            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+            let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
             
-            var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: .now)
-            dateComponents.second? += 5
+            Logger.healthkit.debug("New workout received: \(newWorkout.endDate) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo)))")
             
             NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
             

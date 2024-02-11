@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import OSLog
 
 class AppDelegate: NSObject {
     
@@ -39,20 +40,23 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         switch response.actionIdentifier {
         case "DEFAULT_SHOE_ACTION":
+            Logger.usernotifications.debug("\"Use default shoe\" action pressed.")
+            
             if let shoe = app?.shoesViewModel.getDefaultShoe() {
                 shoe.workouts.append(workout.id)
-//                shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
             }
-            
+        
         case "REMIND_ME_LATER":
-            var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: .now)
-            dateComponents.second? += 3 // TODO: to update to "hour? += 1"
+            Logger.usernotifications.debug("\"Remind me later\" action pressed.")
+
+            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+            let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
             
             NotificationManager.shared.scheduleNotification(workout: workout, dateComponents: dateComponents)
             
         case UNNotificationDefaultActionIdentifier:
             app?.navigationRouter.workout = workout
-            
+        
         default:
             break
         }

@@ -26,6 +26,7 @@ struct ShoeImage: View {
             if let data = shoe.image, let uiImage = UIImage(data: data) {
                 Image(uiImage: uiImage)
                     .resizable()
+                    .frame(width: width / 3, height: width / 4)
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
             } else {

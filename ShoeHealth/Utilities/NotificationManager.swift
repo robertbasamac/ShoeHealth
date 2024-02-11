@@ -9,6 +9,7 @@ import Foundation
 import UserNotifications
 import HealthKit
 import UIKit
+import OSLog
 
 class NotificationManager {
         
@@ -21,7 +22,7 @@ class NotificationManager {
         
         UNUserNotificationCenter.current().requestAuthorization(options: options) { [weak self] success, error in
             if success {
-                print("Notifications authorized.")
+                Logger.usernotifications.info("Notifications authorized.")
                 
                 guard let strongSelf = self else { return }
                 
@@ -29,7 +30,7 @@ class NotificationManager {
                 strongSelf.getNotificationSettings()
             } else {
                 if let unwrappedError = error {
-                    print("ERROR: \(unwrappedError.localizedDescription)")
+                    Logger.usernotifications.error("\(unwrappedError.localizedDescription).")
                 }
             }
         }
@@ -83,11 +84,7 @@ class NotificationManager {
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request)
-    }
-    
-    func cancelNotification() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UNUserNotificationCenter.current().setBadgeCount(0)
+        
+        Logger.usernotifications.debug("Notification scheduled at \(dateComponents.hour ?? 0):\(dateComponents.minute ?? 0):\(dateComponents.second ?? 0)")
     }
 }
