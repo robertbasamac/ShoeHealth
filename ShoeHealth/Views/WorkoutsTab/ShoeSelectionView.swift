@@ -10,6 +10,8 @@ import SwiftData
 import HealthKit
 
 struct ShoeSelectionView: View {
+    @Environment(ShoesViewModel.self) private var shoesViewModel
+    
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
@@ -72,10 +74,10 @@ extension ShoeSelectionView {
     
     private func updateShoes() {
         if let previousShoe = previousShoe {
-            previousShoe.workouts.removeAll(where: { $0 == workout.id })
+            shoesViewModel.remove(workout: self.workout.id, fromShoe: previousShoe.id)
         }
         
-        selectedShoe?.workouts.append(workout.id)
+        shoesViewModel.add(workouts: [workout.id], toShoe: selectedShoe?.id ?? UUID())
     }
     
     private func isSaveButtonDisabled() -> Bool {

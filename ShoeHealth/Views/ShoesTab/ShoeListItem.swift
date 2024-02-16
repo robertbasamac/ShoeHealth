@@ -48,7 +48,7 @@ struct ShoeListItem: View {
                         .font(.footnote)
                 }
             }
-            .tint(shoe.wearColorTint)
+            .tint(shoe.wearColor)
         }
     }
 }

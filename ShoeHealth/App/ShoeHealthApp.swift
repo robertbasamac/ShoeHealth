@@ -24,7 +24,7 @@ struct ShoeHealthApp: App {
             do {
                 container = try ModelContainer(for: Shoe.self)
             } catch {
-                fatalError("Failed to create ModelContainer for Shoe.")
+                fatalError("Failed to create ModelContainer for Shoe: \(error)")
             }
             
             return container

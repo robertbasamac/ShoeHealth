@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WidgetKit
 import OSLog
 
 class AppDelegate: NSObject {
@@ -43,7 +44,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             Logger.usernotifications.debug("\"Use default shoe\" action pressed.")
             
             if let shoe = app?.shoesViewModel.getDefaultShoe() {
-                shoe.workouts.append(workout.id)
+                app?.shoesViewModel.add(workouts: [workout.id], toShoe: shoe.id)                
             }
         
         case "REMIND_ME_LATER":

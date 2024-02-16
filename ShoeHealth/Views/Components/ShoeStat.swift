@@ -9,24 +9,29 @@ import SwiftUI
 
 struct ShoeStat: View {
     
-    private var title: String
+    private var label: String
     private var value: String
     private var color: Color
+    private var labelFont: Font
+    private var valueFont: Font
     private var alignement: HorizontalAlignment
     
-    init(title: String, value: String, color: Color, alignement: HorizontalAlignment = .center) {
-        self.title = title
+    
+    init(label: String, value: String, color: Color, labelFont: Font = .caption, valueFont: Font = .title3, alignement: HorizontalAlignment = .center) {
+        self.label = label
         self.value = value
         self.color = color
+        self.labelFont = labelFont
+        self.valueFont = valueFont
         self.alignement = alignement
     }
     
     var body: some View {
         VStack(alignment: alignement, spacing: 0) {
-            Text(title)
-                .font(.caption)
+            Text(label)
+                .font(labelFont)
             Text(value)
-                .font(.title3)
+                .font(valueFont)
                 .foregroundStyle(color)
         }
     }
@@ -35,5 +40,5 @@ struct ShoeStat: View {
 // MARK: - Preview
 
 #Preview {
-    ShoeStat(title: "CURRENT", value: "3KM", color: Color.yellow)
+    ShoeStat(label: "CURRENT", value: "3KM", color: Color.yellow)
 }

@@ -157,6 +157,14 @@ final class HealthKitManager {
     
     // MARK: - Helper Methods
     
+    func getWorkout(forID workoutID: UUID) -> HKWorkout? {
+        if let workout = self.workouts.first(where: { $0.id == workoutID } ) {
+            return workout
+        }
+        
+        return nil
+    }
+    
     func getWorkout(forID workoutID: String) -> HKWorkout? {
         if let workout = self.workouts.first(where: { $0.id.uuidString == workoutID } ) {
             return workout

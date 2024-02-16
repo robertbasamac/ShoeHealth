@@ -146,8 +146,8 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func leftSideStats(of shoe: Shoe) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            ShoeStat(title: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
-            ShoeStat(title: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
+            ShoeStat(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
+            ShoeStat(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.horizontal)
@@ -156,8 +156,8 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func rightSideStats(of shoe: Shoe) -> some View {
         ZStack {
-            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: shoe.wearColorTint)
-            ShoeStat(title: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColorTint)
+            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: shoe.wearColor)
+            ShoeStat(label: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColor)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal)
@@ -245,7 +245,7 @@ extension ShoeDetailCarouselView {
 
         self.workouts = HealthKitManager.shared.getWorkouts(forIDs: selectedShoe.workouts)
         self.mostRecentWorkouts = Array(workouts.prefix(5))
-        self.wearColorTint = selectedShoe.wearColorTint
+        self.wearColorTint = selectedShoe.wearColor
     }
 }
 

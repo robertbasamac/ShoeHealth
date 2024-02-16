@@ -29,32 +29,10 @@ struct ShoesTab: View {
                         selectedShoe = shoe
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                        Button {
-                            shoe.retired.toggle()
-                        } label: {
-                            if shoe.retired {
-                                Label("Reinstate", systemImage: "bolt.fill")
-                            } else {
-                                Label("Retire", systemImage: "bolt.slash.fill")
-                            }
-                        }
-                        .tint(shoe.retired ? .green : .red)
-                        
-                        if !shoe.isDefaultShoe {
-                            Button {
-                                shoesViewModel.setAsDefaultShoe(shoe)
-                            } label: {
-                                Label("Set Default", systemImage: "shoe.2")
-                            }
-                            .tint(Color.gray)
-                        }
+                        swipeRightActions(shoe: shoe)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            shoesViewModel.deleteShoe(shoe)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+                        swipeLeftActions(shoe: shoe)
                     }
             }
             .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
@@ -95,6 +73,38 @@ struct ShoesTab: View {
 // MARK: - View Components
 
 extension ShoesTab {
+    
+    @ViewBuilder
+    private func swipeRightActions(shoe: Shoe) -> some View {
+        Button {
+            shoesViewModel.retireShoe(shoe.id)
+        } label: {
+            if shoe.retired {
+                Label("Reinstate", systemImage: "bolt.fill")
+            } else {
+                Label("Retire", systemImage: "bolt.slash.fill")
+            }
+        }
+        .tint(shoe.retired ? .green : .red)
+        
+        if !shoe.isDefaultShoe {
+            Button {
+                shoesViewModel.setAsDefaultShoe(shoe.id)
+            } label: {
+                Label("Set Default", systemImage: "shoe.2")
+            }
+            .tint(Color.gray)
+        }
+    }
+    
+    @ViewBuilder
+    private func swipeLeftActions(shoe: Shoe) -> some View {
+        Button(role: .destructive) {
+            shoesViewModel.deleteShoe(shoe.id)
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+    }
     
     @ViewBuilder
     private func emptyShoesView() -> some View {

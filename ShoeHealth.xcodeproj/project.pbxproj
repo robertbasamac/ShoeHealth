@@ -10,6 +10,20 @@
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
 		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
+		093742852B7AAD7A008D96BD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; };
+		093742862B7AAD7A008D96BD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; };
+		093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */; };
+		0937428B2B7AAD7A008D96BD /* ShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0937428A2B7AAD7A008D96BD /* ShoeStatsWidget.swift */; };
+		0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0937428C2B7AAD7B008D96BD /* Assets.xcassets */; };
+		093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		093742952B7AAD9B008D96BD /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
+		093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */; };
+		093742972B7AAD9F008D96BD /* ModelContainerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */; };
+		0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
+		093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
+		093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
+		093742A52B7E514F008D96BD /* ShoeStat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStat.swift */; };
+		093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F623E2B71700600430AB9 /* EditShoeView.swift */; };
 		093F62422B73BDAB00430AB9 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F62412B73BDAB00430AB9 /* Logger.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
@@ -43,10 +57,42 @@
 		09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0937428F2B7AAD7B008D96BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 09DE4A672B0D3F7F001119E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 093742832B7AAD7A008D96BD;
+			remoteInfo = ShoeStatsWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		093742702B7A6720008D96BD /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
+		093742612B7A671D008D96BD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		093742632B7A671D008D96BD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoeStatsWidgetExtension.entitlements; sourceTree = "<group>"; };
+		093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoeStatsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStatsWidgetBundle.swift; sourceTree = "<group>"; };
+		0937428A2B7AAD7A008D96BD /* ShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidget.swift; sourceTree = "<group>"; };
+		0937428C2B7AAD7B008D96BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0937428E2B7AAD7B008D96BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		093F623E2B71700600430AB9 /* EditShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShoeView.swift; sourceTree = "<group>"; };
 		093F62412B73BDAB00430AB9 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
@@ -83,6 +129,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		093742812B7AAD7A008D96BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				093742862B7AAD7A008D96BD /* SwiftUI.framework in Frameworks */,
+				093742852B7AAD7A008D96BD /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		09DE4A6C2B0D3F7F001119E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -102,14 +157,13 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		0907F25F2B1E205300EB682A /* Utilities */ = {
+		0907F25F2B1E205300EB682A /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				0907F2602B1E206700EB682A /* NotificationManager.swift */,
 				09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */,
-				09E7EAB22B3B265B00BFAC16 /* Helpers */,
 			);
-			path = Utilities;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		09189C0A2B569EE700CA782A /* Filtering */ = {
@@ -119,6 +173,63 @@
 				09189C0B2B569F1900CA782A /* ShoeSortType.swift */,
 			);
 			path = Filtering;
+			sourceTree = "<group>";
+		};
+		093742602B7A671D008D96BD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				093742612B7A671D008D96BD /* WidgetKit.framework */,
+				093742632B7A671D008D96BD /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		093742742B7A6A87008D96BD /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				093742A42B7E159C008D96BD /* Utilities */,
+				093742A22B7B9C74008D96BD /* Extensions */,
+				093742A32B7B9C80008D96BD /* Model */,
+				09E385E82B13FCAF005CFF02 /* PreviewSample */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		093742872B7AAD7A008D96BD /* ShoeStatsWidget */ = {
+			isa = PBXGroup;
+			children = (
+				093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */,
+				093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */,
+				0937428A2B7AAD7A008D96BD /* ShoeStatsWidget.swift */,
+				0937428C2B7AAD7B008D96BD /* Assets.xcassets */,
+				0937428E2B7AAD7B008D96BD /* Info.plist */,
+			);
+			path = ShoeStatsWidget;
+			sourceTree = "<group>";
+		};
+		093742A22B7B9C74008D96BD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				093F62402B73BDA300430AB9 /* Logger */,
+				09E7EAB12B3AE67900BFAC16 /* HKWorkout */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		093742A32B7B9C80008D96BD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				09E385DA2B1340E3005CFF02 /* Shoe.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		093742A42B7E159C008D96BD /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				096D36A32B20B1C900C78453 /* Formatters.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		093F62402B73BDA300430AB9 /* Logger */ = {
@@ -151,7 +262,10 @@
 		09DE4A662B0D3F7F001119E4 = {
 			isa = PBXGroup;
 			children = (
+				093742742B7A6A87008D96BD /* Shared */,
 				09DE4A712B0D3F7F001119E4 /* ShoeHealth */,
+				093742872B7AAD7A008D96BD /* ShoeStatsWidget */,
+				093742602B7A671D008D96BD /* Frameworks */,
 				09DE4A702B0D3F7F001119E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -160,6 +274,7 @@
 			isa = PBXGroup;
 			children = (
 				09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */,
+				093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,16 +282,16 @@
 		09DE4A712B0D3F7F001119E4 /* ShoeHealth */ = {
 			isa = PBXGroup;
 			children = (
+				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
-				0907F25F2B1E205300EB682A /* Utilities */,
+				0907F25F2B1E205300EB682A /* Services */,
+				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				09E385D92B1258F1005CFF02 /* Extensions */,
 				09E385DC2B1340E7005CFF02 /* Model */,
 				09E385DD2B1340FA005CFF02 /* Views */,
 				09E385DE2B1344D7005CFF02 /* ViewModels */,
-				09E385E82B13FCAF005CFF02 /* PreviewSample */,
-				09DE4A782B0D3F81001119E4 /* Preview Content */,
-				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
+				09DE4A782B0D3F81001119E4 /* Preview Content */,
 			);
 			path = ShoeHealth;
 			sourceTree = "<group>";
@@ -192,8 +307,6 @@
 		09E385D92B1258F1005CFF02 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				093F62402B73BDA300430AB9 /* Logger */,
-				09E7EAB12B3AE67900BFAC16 /* HKWorkout */,
 				09E7EAAE2B3AE5DF00BFAC16 /* Shape */,
 			);
 			path = Extensions;
@@ -202,7 +315,6 @@
 		09E385DC2B1340E7005CFF02 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				09E385DA2B1340E3005CFF02 /* Shoe.swift */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09189C0A2B569EE700CA782A /* Filtering */,
 			);
@@ -278,18 +390,34 @@
 			path = HKWorkout;
 			sourceTree = "<group>";
 		};
-		09E7EAB22B3B265B00BFAC16 /* Helpers */ = {
+		09E7EAB22B3B265B00BFAC16 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				096D36A32B20B1C900C78453 /* Formatters.swift */,
 				094B75B42B504D6300632590 /* PreferenceKeys.swift */,
 			);
-			path = Helpers;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		093742832B7AAD7A008D96BD /* ShoeStatsWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 093742922B7AAD7B008D96BD /* Build configuration list for PBXNativeTarget "ShoeStatsWidgetExtension" */;
+			buildPhases = (
+				093742802B7AAD7A008D96BD /* Sources */,
+				093742812B7AAD7A008D96BD /* Frameworks */,
+				093742822B7AAD7A008D96BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShoeStatsWidgetExtension;
+			productName = ShoeStatsWidgetExtension;
+			productReference = 093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		09DE4A6E2B0D3F7F001119E4 /* ShoeHealth */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 09DE4A7D2B0D3F81001119E4 /* Build configuration list for PBXNativeTarget "ShoeHealth" */;
@@ -297,10 +425,12 @@
 				09DE4A6B2B0D3F7F001119E4 /* Sources */,
 				09DE4A6C2B0D3F7F001119E4 /* Frameworks */,
 				09DE4A6D2B0D3F7F001119E4 /* Resources */,
+				093742702B7A6720008D96BD /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				093742902B7AAD7B008D96BD /* PBXTargetDependency */,
 			);
 			name = ShoeHealth;
 			productName = ShoeHealth;
@@ -314,9 +444,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					093742832B7AAD7A008D96BD = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					09DE4A6E2B0D3F7F001119E4 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
@@ -336,11 +469,20 @@
 			projectRoot = "";
 			targets = (
 				09DE4A6E2B0D3F7F001119E4 /* ShoeHealth */,
+				093742832B7AAD7A008D96BD /* ShoeStatsWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		093742822B7AAD7A008D96BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		09DE4A6D2B0D3F7F001119E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -353,6 +495,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		093742802B7AAD7A008D96BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				093742A52B7E514F008D96BD /* ShoeStat.swift in Sources */,
+				093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */,
+				093742952B7AAD9B008D96BD /* Shoe.swift in Sources */,
+				0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */,
+				093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */,
+				0937428B2B7AAD7A008D96BD /* ShoeStatsWidget.swift in Sources */,
+				093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */,
+				093742972B7AAD9F008D96BD /* ModelContainerPreview.swift in Sources */,
+				093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */,
+				093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		09DE4A6B2B0D3F7F001119E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -394,7 +553,81 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		093742902B7AAD7B008D96BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 093742832B7AAD7A008D96BD /* ShoeStatsWidgetExtension */;
+			targetProxy = 0937428F2B7AAD7B008D96BD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		093742932B7AAD7B008D96BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 878Q47ZQ84;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		093742942B7AAD7B008D96BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 878Q47ZQ84;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		09DE4A7B2B0D3F81001119E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -517,6 +750,7 @@
 		09DE4A7E2B0D3F81001119E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
@@ -527,6 +761,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeHealth/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Shoe Health";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health App needs access to HealthKit to use your running workout data to update your shoe pair lifespan distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -544,6 +779,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
 				SWIFT_VERSION = 5.0;
@@ -554,6 +790,7 @@
 		09DE4A7F2B0D3F81001119E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
@@ -564,6 +801,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeHealth/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Shoe Health";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health App needs access to HealthKit to use your running workout data to update your shoe pair lifespan distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -581,6 +819,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
 				SWIFT_VERSION = 5.0;
@@ -591,6 +830,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		093742922B7AAD7B008D96BD /* Build configuration list for PBXNativeTarget "ShoeStatsWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				093742932B7AAD7B008D96BD /* Debug */,
+				093742942B7AAD7B008D96BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		09DE4A6A2B0D3F7F001119E4 /* Build configuration list for PBXProject "ShoeHealth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

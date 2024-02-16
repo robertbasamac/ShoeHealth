@@ -10,6 +10,7 @@ import Observation
 import SwiftData
 import SwiftUI
 import HealthKit
+import WidgetKit
 
 @Observable
 final class ShoesViewModel {
@@ -113,7 +114,8 @@ final class ShoesViewModel {
         }
         
         modelContext.insert(shoe)
-        fetchShoes()
+        
+        save()
     }
     
     func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
@@ -122,11 +124,9 @@ final class ShoesViewModel {
         if !brand.isEmpty {
             shoe.brand = brand
         }
-        
         if !model.isEmpty {
             shoe.model = model
         }
-        
         if !nickname.isEmpty {
             shoe.nickname = nickname
         }
@@ -135,7 +135,7 @@ final class ShoesViewModel {
         shoe.aquisitionDate = aquisitionDate
         shoe.lifespanDistance = lifespanDistance
         
-        fetchShoes()
+        save()
     }
     
     func deleteShoe(at offsets: IndexSet) {
@@ -144,34 +144,58 @@ final class ShoesViewModel {
                 modelContext.delete(shoe)
             }
         }
+        save()
     }
     
-    func deleteShoe(_ shoe: Shoe) {
+    func deleteShoe(_ shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        
         modelContext.delete(shoe)
-        fetchShoes()
+        save()
     }
     
     func add(workouts: Set<UUID>, toShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
+        let workoutsData = HealthKitManager.shared.getWorkouts(forIDs: Array(workouts))
+        
+        for workout in workoutsData {
+            shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
+        }
         shoe.workouts.append(contentsOf: workouts)
-        fetchShoes()
+        
+        save()
     }
     
     func remove(workout: UUID, fromShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        shoe.workouts.removeAll { $0 == workout }
-        fetchShoes()
-    }
-        
-    func fetchShoes() {
-        do {
-            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
-            self.shoes = try modelContext.fetch(descriptor)
-        } catch {
-            print("Fetching shoes failed, \(error.localizedDescription)")
+        if let workoutData = HealthKitManager.shared.getWorkout(forID: workout) {
+            shoe.currentDistance -= workoutData.totalDistance(unitPrefix: .kilo)
         }
+        shoe.workouts.removeAll { $0 == workout }
+        
+        save()
+    }
+    
+    func setAsDefaultShoe(_ shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        
+        if let defaultShoe = getDefaultShoe() {
+            defaultShoe.isDefaultShoe = false
+        }
+        
+        shoe.isDefaultShoe = true
+        
+        save()
+    }
+    
+    func retireShoe(_ shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        
+        shoe.retired = true
+        
+        save()
     }
     
     // MARK: - Getters
@@ -188,16 +212,30 @@ final class ShoesViewModel {
     
     // MARK: - Other Methods
     
-    func setAsDefaultShoe(_ shoe: Shoe) {
-        if let defaultShoe = getDefaultShoe() {
-            defaultShoe.isDefaultShoe = false
+    func fetchShoes() {
+        do {
+            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
+            self.shoes = try modelContext.fetch(descriptor)
+        } catch {
+            print("Fetching shoes failed, \(error.localizedDescription)")
         }
         
-        shoe.isDefaultShoe = true
-        fetchShoes()
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     func toggleSortOrder() {
         sortOrder = sortOrder == .forward ? .reverse : .forward
+    }
+    
+    // MARK: - SwiftData Model Context methods
+    
+    private func save() {
+        do {
+            try modelContext.save()
+        } catch {
+            print("Saving context failed, \(error.localizedDescription)")
+        }
+        
+        fetchShoes()
     }
 }

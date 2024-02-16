@@ -18,6 +18,7 @@ final class Shoe {
     var brand: String
     var model: String
     var lifespanDistance: Double
+    var currentDistance: Double
     var aquisitionDate: Date
     var retireDate: Date?
     var retired: Bool
@@ -38,6 +39,7 @@ final class Shoe {
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
+        self.currentDistance = currentDistance
         self.aquisitionDate = aquisitionDate
         self.retireDate = nil
         self.retired = false
@@ -50,16 +52,16 @@ final class Shoe {
 
 extension Shoe {
     
-    @Transient
-    var currentDistance: Double {
-        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forIDs: self.workouts)
-        
-        let totalDistance = filteredWorkouts.reduce(0.0) { result, workout in
-            return result + workout.totalDistance(unitPrefix: .kilo)
-        }
-        
-        return totalDistance
-    }
+//    @Transient
+//    var currentDistance: Double {
+//        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forIDs: self.workouts)
+//        
+//        let totalDistance = filteredWorkouts.reduce(0.0) { result, workout in
+//            return result + workout.totalDistance(unitPrefix: .kilo)
+//        }
+//        
+//        return totalDistance
+//    }
     
     @Transient
     var wearPercentage: Double {
@@ -68,24 +70,17 @@ extension Shoe {
     
     @Transient
     var wearPercentageAsString: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .percent
-        formatter.minimumIntegerDigits = 1
-        formatter.maximumIntegerDigits = 2
-        formatter.minimumFractionDigits = 1
-        formatter.maximumFractionDigits = 2
-        
-        return formatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0"
+        return percentageFormatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0"
     }
     
     @Transient
-    var wearColorTint: Color {
+    var wearColor: Color {
         let wear = self.currentDistance / self.lifespanDistance
-        if wear < 0.6 {
+        if wear < 0.7 {
             return .green
         } else if wear < 0.8 {
             return .yellow
-        } else if wear < 1 {
+        } else if wear < 0.9 {
             return .orange
         } else {
             return .red
@@ -99,7 +94,7 @@ extension Shoe {
 extension Shoe {
     
     static var previewShoe: Shoe {
-        Shoe(nickname: "My love", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true)
+        Shoe(nickname: "My love", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true)
     }
     
     static var previewShoes: [Shoe] {
