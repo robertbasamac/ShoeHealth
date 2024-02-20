@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ShoeStat: View {
+struct ShoeStatView: View {
     
     private var label: String
     private var value: String
@@ -16,8 +16,12 @@ struct ShoeStat: View {
     private var valueFont: Font
     private var alignement: HorizontalAlignment
     
-    
-    init(label: String, value: String, color: Color, labelFont: Font = .caption, valueFont: Font = .title3, alignement: HorizontalAlignment = .center) {
+    init(label: String,
+         value: String,
+         color: Color,
+         labelFont: Font = .caption,
+         valueFont: Font = .title3,
+         alignement: HorizontalAlignment = .center) {
         self.label = label
         self.value = value
         self.color = color
@@ -40,5 +44,5 @@ struct ShoeStat: View {
 // MARK: - Preview
 
 #Preview {
-    ShoeStat(label: "CURRENT", value: "3KM", color: Color.yellow)
+    ShoeStatView(label: "CURRENT", value: "3KM", color: Color.yellow)
 }

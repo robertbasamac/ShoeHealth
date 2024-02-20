@@ -172,6 +172,7 @@ final class ShoesViewModel {
         
         if let workoutData = HealthKitManager.shared.getWorkout(forID: workout) {
             shoe.currentDistance -= workoutData.totalDistance(unitPrefix: .kilo)
+            shoe.currentDistance = shoe.currentDistance < 0 ? 0 : shoe.currentDistance
         }
         shoe.workouts.removeAll { $0 == workout }
         

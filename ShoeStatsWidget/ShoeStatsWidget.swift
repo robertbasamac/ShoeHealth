@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftData
 
 struct Provider: TimelineProvider {
+    
     private var modelContainer: ModelContainer
     
     init() {
@@ -23,11 +24,11 @@ struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> WidgetEntry {
         return WidgetEntry.placeholderEntry
     }
-
+    
     func getSnapshot(in context: Context, completion: @escaping (WidgetEntry) -> ()) {
         completion(WidgetEntry.placeholderEntry)
     }
-
+    
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         Task { @MainActor in
             var fetchDescriptor = FetchDescriptor<Shoe>()
@@ -94,47 +95,52 @@ struct WidgetEntry: TimelineEntry {
 }
 
 struct ShoeStatsWidgetEntryView : View {
+    
     var entry: Provider.Entry
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 4) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(entry.brand)
-                    .font(.caption)
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
                 
                 Text(entry.model)
-                    .font(.headline)
-//                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .font(.system(size: 14, weight: .bold))
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             
-            Text("\(String(format: "%.1f", entry.currentDistance))/\(distanceFormatter.string(fromValue: entry.lifespanDistance, unit: .kilometer).uppercased())")
-                .foregroundStyle(entry.wearColor)
+            Spacer(minLength: 0)
             
-            HStack {
-                ShoeStat(label: "WEAR",
-                         value: entry.wearPercentageAsString,
-                         color: entry.wearColor,
-                         valueFont: .body,
-                         alignement: .leading)
-                Spacer()
-                CircularProgressView(progress: entry.wearPercentage, lineWidth: 6, color: entry.wearColor)
-                    .padding(2)
+            HStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 4) {
+                    ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: entry.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, labelFont: .system(size: 9), valueFont: .system(size: 13), alignement: .leading)
+                    ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: entry.lifespanDistance - entry.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, labelFont: .system(size: 9), valueFont: .system(size: 13), alignement: .leading)
+                }
+                .contentTransition(.numericText(value: entry.currentDistance))
+                
+                Spacer(minLength: 0)
+                
+                ZStack {
+                    CircularProgressView(progress: entry.wearPercentage, lineWidth: 4, color: entry.wearColor)
+                    ShoeStatView(label: "WEAR", value: "\(entry.wearPercentageAsString.uppercased())", color: entry.wearColor, labelFont: .system(size: 8), valueFont: .system(size: 12))
+                }
+                .padding(2)
             }
-            .foregroundStyle(.white)
-            .frame(maxHeight: .infinity)
+            
+            Text("Last Activity: \(dateFormatter.string(from: entry.aquisitionDate))")
+                .font(.system(size: 10))
         }
+        .foregroundStyle(.white)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 struct ShoeStatsWidget: Widget {
+    
     let kind: String = "ShoeStatsWidget"
-
+    
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
@@ -142,27 +148,11 @@ struct ShoeStatsWidget: Widget {
                     .containerBackground(for: .widget) {
                         ZStack {
                             Color.black
-//                            AngularGradient(colors: [entry.wearColor.opacity(0),
-//                                                     entry.wearColor.opacity(0.5),
-//                                                     entry.wearColor.opacity(1),
-//                                                     entry.wearColor.opacity(0.5),
-//                                                     entry.wearColor.opacity(0)
-//                                                    ],
-//                                            center: UnitPoint(x: 0, y: 0.45),
-//                                            angle: Angle(degrees: 0))
-//                            RadialGradient(colors: [entry.wearColor.opacity(0.4),
-//                                                    entry.wearColor.opacity(0.3),
-//                                                    entry.wearColor.opacity(0.2)
-//                                                   ],
-//                                           center: .center,
-//                                           startRadius: 50,
-//                                           endRadius: 80)
-                            LinearGradient(colors: [entry.wearColor.opacity(0.7),
-//                                                    entry.wearColor.opacity(0.35),
+                            LinearGradient(colors: [entry.wearColor.opacity(0.5),
                                                     .black
                                                    ],
-                                           startPoint: .top,
-                                           endPoint: .bottom)
+                                           startPoint: .topLeading,
+                                           endPoint: .bottomTrailing)
                         }
                     }
                     .modelContainer(for: [Shoe.self])
