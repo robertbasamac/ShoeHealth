@@ -52,17 +52,6 @@ final class Shoe {
 
 extension Shoe {
     
-//    @Transient
-//    var currentDistance: Double {
-//        let filteredWorkouts = HealthKitManager.shared.getWorkouts(forIDs: self.workouts)
-//        
-//        let totalDistance = filteredWorkouts.reduce(0.0) { result, workout in
-//            return result + workout.totalDistance(unitPrefix: .kilo)
-//        }
-//        
-//        return totalDistance
-//    }
-    
     @Transient
     var wearPercentage: Double {
         return currentDistance / lifespanDistance
@@ -101,8 +90,8 @@ extension Shoe {
         [
             Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, aquisitionDate: Date.now, isDefaultShoe: false),
             Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true),
-            Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, aquisitionDate: Date.now, isDefaultShoe: false),
-            Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, aquisitionDate: Date.now, isDefaultShoe: false)
+            Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 280.25, aquisitionDate: Date.now, isDefaultShoe: false),
+            Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 715.42, aquisitionDate: Date.now, isDefaultShoe: false)
         ]
     }
 }

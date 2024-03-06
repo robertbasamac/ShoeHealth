@@ -1,5 +1,5 @@
 //
-//  PreferenceKeys.swift
+//  ContentHeightPreferenceKey.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 11.01.2024.

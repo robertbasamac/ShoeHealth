@@ -11,26 +11,12 @@ import SwiftData
 @main
 struct ShoeHealthApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    
-    private var container: ModelContainer
-    
+        
     @StateObject var navigationRouter: NavigationRouter = .init()
     @State var shoesViewModel: ShoesViewModel
     
     init() {
-        self.container = {
-            let container: ModelContainer
-            
-            do {
-                container = try ModelContainer(for: Shoe.self)
-            } catch {
-                fatalError("Failed to create ModelContainer for Shoe: \(error)")
-            }
-            
-            return container
-        }()
-        
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: container.mainContext))
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.container.mainContext))
     }
     
     var body: some Scene {
@@ -43,6 +29,6 @@ struct ShoeHealthApp: App {
                     appDelegate.app = self
                 }
         }
-        .modelContainer(container)
+        .modelContainer(ShoesStore.container)
     }
 }
