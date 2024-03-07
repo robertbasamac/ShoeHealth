@@ -22,7 +22,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
         }
         
         let shoeEntity = ShoeStatsEntity(from: shoe)
-        return Entry(date: shoe.aquisitionDate, stats: shoeEntity)
+        return Entry(date: shoe.aquisitionDate, shoe: shoeEntity)
     }
     
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
@@ -32,22 +32,30 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
         }
         
         let shoeEntity = ShoeStatsEntity(from: shoe)
-        return Entry(date: shoe.aquisitionDate, stats: shoeEntity)
+        return Entry(date: shoe.aquisitionDate, shoe: shoeEntity)
     }
     
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
-        let entry = Entry(date: .now, stats: configuration.shoeEntity)
-        return Timeline(entries: [entry], policy: .never)
+        if configuration.useDefaultShoe {
+            let shoe = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe })).first!
+            let shoeEntity = ShoeStatsEntity(from: shoe)
+
+            let entry = Entry(date: .now, shoe: shoeEntity)
+            return Timeline(entries: [entry], policy: .never)
+        } else {
+            let entry = Entry(date: .now, shoe: configuration.shoeEntity)
+            return Timeline(entries: [entry], policy: .never)
+        }
     }
 }
 
 struct ShoeStatsWidgetEntry: TimelineEntry {
     let date: Date
-    let stats: ShoeStatsEntity?
+    let shoe: ShoeStatsEntity?
     
-    init(date: Date, stats: ShoeStatsEntity? = nil) {
+    init(date: Date, shoe: ShoeStatsEntity? = nil) {
         self.date = date
-        self.stats = stats
+        self.shoe = shoe
     }
     
     static var empty: Self {

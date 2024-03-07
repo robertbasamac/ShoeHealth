@@ -61,18 +61,28 @@ struct ShoeStatsEntity: AppEntity {
 
 // MARK: - EntityQuery
 
-struct ShoeStatsQuery: EntityQuery {
+struct ShoeStatsQuery: EntityStringQuery {
+    
+    func entities(matching string: String) async throws -> [ShoeStatsEntity] {
+        let modelContext = ModelContext(ShoesStore.container)
+        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
+                                                                  sortBy: [.init(\.brand), .init(\.model)]))
+        
+        return shoes.map { ShoeStatsEntity(from: $0) }
+    }
+    
     func entities(for identifiers: [ShoeStatsEntity.ID]) async throws -> [ShoeStatsEntity] {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) }))
-                
+        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) },
+                                                                  sortBy: [.init(\.brand), .init(\.model)]))
+        
         return shoes.map { ShoeStatsEntity(from: $0) }
     }
     
     func suggestedEntities() async throws -> [ShoeStatsEntity] {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>())
-                
+        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))
+        
         return shoes.map { ShoeStatsEntity(from: $0) }
     }
     
@@ -84,20 +94,25 @@ struct ShoeStatsQuery: EntityQuery {
     }
 }
 
-
 // MARK: - WidgetConfigurationIntent
 
 struct SelectShoeIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Select Shoe"
     static var description: IntentDescription = IntentDescription("Selects the shoe to display stats for.")
     
+    @Parameter(title: "Use Default Shoe")
+    var useDefaultShoe: Bool
+    
     @Parameter(title: "Shoe")
     var shoeEntity: ShoeStatsEntity
     
-    init(shoeEntity: ShoeStatsEntity) {
-        self.shoeEntity = shoeEntity
-    }
-
-    init() {
+    static var parameterSummary: some ParameterSummary {
+        When(\.$useDefaultShoe, .equalTo, true) {
+            Summary("Use Default Shoe \(\.$useDefaultShoe)")
+        } otherwise: {
+            Summary("Use Default Shoe \(\.$useDefaultShoe)") {
+                \.$shoeEntity
+            }
+        }
     }
 }

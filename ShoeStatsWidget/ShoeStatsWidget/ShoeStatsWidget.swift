@@ -13,7 +13,11 @@ struct ShoeStatsWidget: Widget {
     let kind: String = "ShoeStatsWidget"
     
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: SelectShoeIntent.self, provider: ShoeStatsTimelineProvider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: SelectShoeIntent.self,
+            provider: ShoeStatsTimelineProvider()
+        ) { entry in
             ShoeStatsWidgetView(entry: entry)
         }
         .configurationDisplayName("Shoe Stats")

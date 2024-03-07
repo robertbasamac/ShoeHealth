@@ -25,6 +25,7 @@ struct DefaultShoeStatsWidget: Widget {
                                            endPoint: .bottomTrailing)
                         }
                     }
+//                    .modelContainer(for: [Shoe.self])
             } else {
                 DefaultShoeStatsWidgetView(entry: entry)
                     .padding()
@@ -38,6 +39,7 @@ struct DefaultShoeStatsWidget: Widget {
                                            endPoint: .bottomTrailing)
                         }
                     }
+//                    .modelContainer(for: [Shoe.self])
             }
         }
         .configurationDisplayName("Default Shoe Stats")
