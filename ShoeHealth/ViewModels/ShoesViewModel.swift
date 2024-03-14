@@ -194,7 +194,7 @@ final class ShoesViewModel {
     func retireShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        shoe.retired = true
+        shoe.retired.toggle()
         
         save()
     }
