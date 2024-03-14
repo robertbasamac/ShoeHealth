@@ -117,10 +117,8 @@ extension ShoeWorkoutsListView {
                 
                 Button {
                     withAnimation {
-                        for workoutID in self.selections {
-                            shoesViewModel.remove(workout: workoutID, fromShoe: shoeID)
-                            updateInterface()
-                        }
+                        shoesViewModel.remove(workouts: selections, fromShoe: shoeID)
+                        updateInterface()
                         
                         selections = Set<UUID>()
                         editMode = .inactive

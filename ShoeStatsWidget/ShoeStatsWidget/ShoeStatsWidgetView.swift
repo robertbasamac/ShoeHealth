@@ -55,7 +55,7 @@ struct ShoeStatsSnapshotWidgetView : View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
             }
             
-            Text("Last Run • \(dateFormatter.string(from: shoe.aquisitionDate))")
+            Text("Last Run • \(shoe.lastRunDate != nil ? dateFormatter.string(from: shoe.lastRunDate!) : "N/A")")
                 .font(.system(size: 10))
                 .minimumScaleFactor(0.8)
                 .lineLimit(1)

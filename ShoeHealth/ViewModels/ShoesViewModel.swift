@@ -164,6 +164,7 @@ final class ShoesViewModel {
         }
         shoe.workouts.append(contentsOf: workouts)
         
+        updateShoeLastActivity(shoe)
         save()
     }
     
@@ -176,6 +177,22 @@ final class ShoesViewModel {
         }
         shoe.workouts.removeAll { $0 == workout }
         
+        updateShoeLastActivity(shoe)
+        save()
+    }
+    
+    func remove(workouts: Set<UUID>, fromShoe shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+
+        let workoutsData = HealthKitManager.shared.getWorkouts(forIDs: Array(workouts))
+        
+        for workout in workoutsData {
+            shoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
+            shoe.currentDistance = shoe.currentDistance < 0 ? 0 : shoe.currentDistance
+            shoe.workouts.removeAll { $0 == workout.id }
+        }
+        
+        updateShoeLastActivity(shoe)
         save()
     }
     
@@ -195,8 +212,20 @@ final class ShoesViewModel {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         shoe.retired.toggle()
-        
+        shoe.retireDate = shoe.retired ? .now : nil
+                
         save()
+    }
+    
+    private func updateShoeLastActivity(_ shoe: Shoe) {
+        let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        
+        guard let lastActivityDate = workouts.first?.endDate else {
+            shoe.lastActivityDate = nil
+            return
+        }
+        
+        shoe.lastActivityDate = lastActivityDate
     }
     
     // MARK: - Getters
