@@ -63,34 +63,61 @@ struct ShoeStatsEntity: AppEntity {
 
 struct ShoeStatsQuery: EntityStringQuery {
     
-    func entities(matching string: String) async throws -> [ShoeStatsEntity] {
+    func entities(matching string: String) async -> [ShoeStatsEntity] {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
-                                                                  sortBy: [.init(\.brand), .init(\.model)]))
         
-        return shoes.map { ShoeStatsEntity(from: $0) }
+        do {
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
+                                                                      sortBy: [.init(\.brand), .init(\.model)]))
+            return shoes.map { ShoeStatsEntity(from: $0) }
+        } catch {
+            logger.log("Error fetching shoes, \(error).")
+        }
+        
+        return []
     }
     
-    func entities(for identifiers: [ShoeStatsEntity.ID]) async throws -> [ShoeStatsEntity] {
+    func entities(for identifiers: [ShoeStatsEntity.ID]) async -> [ShoeStatsEntity] {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) },
-                                                                  sortBy: [.init(\.brand), .init(\.model)]))
         
-        return shoes.map { ShoeStatsEntity(from: $0) }
+        do {
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) },
+                                                                      sortBy: [.init(\.brand), .init(\.model)]))
+            return shoes.map { ShoeStatsEntity(from: $0) }
+        } catch {
+            logger.log("Error fetching shoes, \(error).")
+        }
+        
+        return []
     }
     
-    func suggestedEntities() async throws -> [ShoeStatsEntity] {
+    func suggestedEntities() async -> [ShoeStatsEntity] {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))
         
-        return shoes.map { ShoeStatsEntity(from: $0) }
+        do {
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))
+            return shoes.map { ShoeStatsEntity(from: $0) }
+        } catch {
+            logger.log("Error fetching shoes, \(error).")
+        }
+        
+        return []
     }
     
     func defaultResult() async -> ShoeStatsEntity? {
         let modelContext = ModelContext(ShoesStore.container)
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
         
-        return ShoeStatsEntity(from: shoes.first!)
+        do {
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
+            
+            guard let shoe = shoes.first else { return nil }
+            
+            return ShoeStatsEntity(from: shoe)
+        } catch {
+            logger.log("Error fetching shoes, \(error).")
+        }
+        
+        return nil
     }
 }
 

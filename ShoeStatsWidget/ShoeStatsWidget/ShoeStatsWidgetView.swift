@@ -20,7 +20,6 @@ struct ShoeStatsWidgetView: View {
                 .containerBackground(.fill, for: .widget)
         }
     }
-    
 }
 
 struct ShoeStatsSnapshotWidgetView : View {
