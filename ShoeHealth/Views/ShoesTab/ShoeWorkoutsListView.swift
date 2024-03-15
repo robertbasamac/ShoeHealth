@@ -55,7 +55,7 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoeID, workouts: workouts) {
+                AddWokoutsToShoeView(shoeID: shoeID) {
                     updateInterface()
                 }
                 .navigationTitle("Add Workouts")

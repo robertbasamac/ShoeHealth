@@ -18,14 +18,13 @@ struct AddWokoutsToShoeView: View {
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
 
-    private var workouts: [HKWorkout] = []
+    @State private var workouts: [HKWorkout] = []
     private var shoeID: UUID
     private var onAdd: () -> Void
     
-    init(shoeID: UUID, workouts: [HKWorkout], onAdd: @escaping () -> Void) {
+    init(shoeID: UUID, onAdd: @escaping () -> Void) {
         self.shoeID = shoeID
         self.onAdd = onAdd
-        self.workouts = filteredWorkouts(workouts)
     }
     
     var body: some View {
@@ -37,6 +36,7 @@ struct AddWokoutsToShoeView: View {
             toolbarItems()
         }
         .onAppear(perform: {
+            workouts = getUnusedWorkouts()
             editMode = .active
         })
     }
@@ -63,12 +63,10 @@ extension AddWokoutsToShoeView {
 
 extension AddWokoutsToShoeView {
     
-    private func filteredWorkouts(_ workouts: [HKWorkout]) -> [HKWorkout] {
-        return healthKitManager.workouts.filter { workout in
-            !workouts.contains { workoutToRemove in
-                workout.uuid == workoutToRemove.id
-            }
-        }
+    private func getUnusedWorkouts() -> [HKWorkout] {
+        let allWorkoutsIDs: Set<UUID> = Set(shoesViewModel.shoes.flatMap { $0.workouts } )
+        
+        return HealthKitManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
     }
 }
 
@@ -76,7 +74,7 @@ extension AddWokoutsToShoeView {
 
 #Preview {
     NavigationStack {
-        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: []) { }
+        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id) { }
             .navigationTitle("Add Workouts")
     }
 }

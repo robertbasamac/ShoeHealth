@@ -37,14 +37,7 @@ struct ShoeDetailCarouselView: View {
             
             workoutsList()
         }
-        .background(LinearGradient(gradient: Gradient(colors: [wearColorTint.opacity(0.3),
-                                                               wearColorTint.opacity(0.15),
-                                                               .black,
-                                                               .black,
-                                                               .black]),
-                                   startPoint: .top,
-                                   endPoint: .bottom),
-                    ignoresSafeAreaEdges: .top)
+        .background(backgroundGradient, ignoresSafeAreaEdges: .top)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar(.hidden, for: .tabBar)
@@ -233,6 +226,16 @@ extension ShoeDetailCarouselView {
                 Image(systemName: "shoe")
             }
         }
+    }
+    
+    private var backgroundGradient: LinearGradient {
+        LinearGradient(gradient: Gradient(colors: [wearColorTint.opacity(0.3),
+                                                               wearColorTint.opacity(0.15),
+                                                               .black,
+                                                               .black,
+                                                               .black]),
+                                   startPoint: .top,
+                                   endPoint: .bottom)
     }
 }
 
