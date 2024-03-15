@@ -25,19 +25,38 @@ struct AddShoeView: View {
     
     @State private var unit: LengthFormatter.Unit = .kilometer
     
+    @FocusState private var focusField: FocusField?
+    
+    enum FocusField: Hashable {
+        case brand
+        case model
+        case nickname
+    }
+    
     var body: some View {
         Form {
             Section {
                 TextField("Brand", text: $shoeBrand)
+                    .focused($focusField, equals: .brand)
                     .textInputAutocapitalization(.words)
+                    .submitLabel(.next)
+                    .onSubmit {
+                        focusField = .model
+                    }
                 TextField("Model", text: $shoeModel)
+                    .focused($focusField, equals: .model)
                     .textInputAutocapitalization(.words)
+                    .submitLabel(.next)
+                    .onSubmit {
+                        focusField = .nickname
+                    }
             } header: {
                 Text("Details")
             }
             
             Section {
                 TextField("Nickname", text: $shoeNickname)
+                    .focused($focusField, equals: .nickname)
                     .textInputAutocapitalization(.words)
             }
             
@@ -131,6 +150,10 @@ struct AddShoeView: View {
         }
         .onAppear {
             isDefaultShoe = shoesViewModel.shoes.isEmpty ? true : false
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                focusField = .brand
+            }
         }
     }
 }
