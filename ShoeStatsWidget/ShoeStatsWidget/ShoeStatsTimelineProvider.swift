@@ -17,10 +17,14 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
     func placeholder(in context: Context) -> Entry {
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>())
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
             
             guard let shoe = shoes.first else {
-                return .empty
+                if context.isPreview {
+                    return Entry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoe))
+                } else {
+                    return Entry.empty
+                }
             }
             
             let shoeEntity = ShoeStatsEntity(from: shoe)
@@ -29,18 +33,48 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
             print("Error fetching shoes, \(error).")
         }
         
-        return .empty
+        if context.isPreview {
+            return Entry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoe))
+        } else {
+            return Entry.empty
+        }
     }
     
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
-        let shoes = try! modelContext.fetch(FetchDescriptor<Shoe>())
-        
-        guard let shoe = shoes.first else {
-            return .empty
+        do {
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
+            
+            guard let shoe = shoes.first else {
+                if context.isPreview {
+                    return Entry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoe))
+                } else {
+                    return Entry.empty
+                }
+            }
+            
+            if configuration.useDefaultShoe {
+                let shoeEntity = ShoeStatsEntity(from: shoe)
+                return Entry(date: .now, shoe: shoeEntity)
+            } else {
+                let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil)
+                
+                if let shoeEntity = shoeEntityToReturn {
+                    return Entry(date: .now, shoe: shoeEntity)
+                } else {
+                    return Entry.empty
+                }
+            }
+        } catch {
+            print("Error fetching shoe, \(error).")
         }
         
-        let shoeEntity = ShoeStatsEntity(from: shoe)
-        return Entry(date: shoe.aquisitionDate, shoe: shoeEntity)
+        let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil)
+        
+        if let shoeEntity = shoeEntityToReturn {
+            return Entry(date: .now, shoe: shoeEntity)
+        } else {
+            return Entry.empty
+        }
     }
     
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
@@ -49,8 +83,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
                 
                 guard let shoe = shoes.first else {
-                    let entry = Entry(date: .now)
-                    return Timeline(entries: [entry], policy: .never)
+                    return Timeline(entries: [Entry.empty], policy: .never)
                 }
                 
                 let shoeEntity = ShoeStatsEntity(from: shoe)
@@ -60,8 +93,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 print("Error fetching shoes, \(error).")
             }
             
-            let entry = Entry(date: .now, shoe: nil)
-            return Timeline(entries: [entry], policy: .never)
+            return Timeline(entries: [Entry.empty], policy: .never)
         } else {
             let entry = Entry(date: .now, shoe: configuration.shoeEntity)
             return Timeline(entries: [entry], policy: .never)

@@ -85,7 +85,7 @@ extension Shoe {
 extension Shoe {
     
     static var previewShoe: Shoe {
-        Shoe(nickname: "My love", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true)
+        Shoe(nickname: "Turbo", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true)
     }
     
     static var previewShoes: [Shoe] {

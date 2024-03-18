@@ -13,7 +13,6 @@
 		093742852B7AAD7A008D96BD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; };
 		093742862B7AAD7A008D96BD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; };
 		093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */; };
-		0937428B2B7AAD7A008D96BD /* DefaultShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0937428A2B7AAD7A008D96BD /* DefaultShoeStatsWidget.swift */; };
 		0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0937428C2B7AAD7B008D96BD /* Assets.xcassets */; };
 		093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		093742952B7AAD9B008D96BD /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
@@ -41,8 +40,6 @@
 		09BFD2DD2B978E97009F4133 /* ShoeStatsTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */; };
 		09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
-		09BFD2EE2B988616009F4133 /* DefaultShoeStatsWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2EC2B988616009F4133 /* DefaultShoeStatsWidgetView.swift */; };
-		09BFD2F02B988719009F4133 /* DefaultShoeStatsTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2EF2B988719009F4133 /* DefaultShoeStatsTimelineProvider.swift */; };
 		09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D85D272B62F59B005E7365 /* ShoeFilterType.swift */; };
 		09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */; };
 		09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A742B0D3F7F001119E4 /* ContentView.swift */; };
@@ -98,7 +95,6 @@
 		093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoeStatsWidgetExtension.entitlements; sourceTree = "<group>"; };
 		093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoeStatsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStatsWidgetBundle.swift; sourceTree = "<group>"; };
-		0937428A2B7AAD7A008D96BD /* DefaultShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultShoeStatsWidget.swift; sourceTree = "<group>"; };
 		0937428C2B7AAD7B008D96BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0937428E2B7AAD7B008D96BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		093F623E2B71700600430AB9 /* EditShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShoeView.swift; sourceTree = "<group>"; };
@@ -117,8 +113,6 @@
 		09BFD2DA2B978DD9009F4133 /* ShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidgetView.swift; sourceTree = "<group>"; };
 		09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
-		09BFD2EC2B988616009F4133 /* DefaultShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultShoeStatsWidgetView.swift; sourceTree = "<group>"; };
-		09BFD2EF2B988719009F4133 /* DefaultShoeStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultShoeStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09D85D272B62F59B005E7365 /* ShoeFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
 		09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoeHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeHealthApp.swift; sourceTree = "<group>"; };
@@ -216,7 +210,6 @@
 			children = (
 				093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */,
 				093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */,
-				09BFD2D92B976E4B009F4133 /* DefaultShoeStatsWidget */,
 				09BFD2D82B976E34009F4133 /* ShoeStatsWidget */,
 				0937428C2B7AAD7B008D96BD /* Assets.xcassets */,
 				0937428E2B7AAD7B008D96BD /* Info.plist */,
@@ -293,16 +286,6 @@
 				09BFD2DA2B978DD9009F4133 /* ShoeStatsWidgetView.swift */,
 			);
 			path = ShoeStatsWidget;
-			sourceTree = "<group>";
-		};
-		09BFD2D92B976E4B009F4133 /* DefaultShoeStatsWidget */ = {
-			isa = PBXGroup;
-			children = (
-				09BFD2EF2B988719009F4133 /* DefaultShoeStatsTimelineProvider.swift */,
-				0937428A2B7AAD7A008D96BD /* DefaultShoeStatsWidget.swift */,
-				09BFD2EC2B988616009F4133 /* DefaultShoeStatsWidgetView.swift */,
-			);
-			path = DefaultShoeStatsWidget;
 			sourceTree = "<group>";
 		};
 		09BFD2EB2B985E23009F4133 /* PreferenceKeys */ = {
@@ -553,10 +536,7 @@
 				093742952B7AAD9B008D96BD /* Shoe.swift in Sources */,
 				0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */,
 				093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */,
-				0937428B2B7AAD7A008D96BD /* DefaultShoeStatsWidget.swift in Sources */,
 				09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */,
-				09BFD2EE2B988616009F4133 /* DefaultShoeStatsWidgetView.swift in Sources */,
-				09BFD2F02B988719009F4133 /* DefaultShoeStatsTimelineProvider.swift in Sources */,
 				093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */,
 				093742972B7AAD9F008D96BD /* ModelContainerPreview.swift in Sources */,
 				093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */,
