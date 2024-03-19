@@ -149,7 +149,7 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func rightSideStats(of shoe: Shoe) -> some View {
         ZStack {
-            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 8, color: shoe.wearColor)
+            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 6, color: shoe.wearColor)
             ShoeStatView(label: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColor)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -259,6 +259,7 @@ extension ShoeDetailCarouselView {
         NavigationStack {
             ShoeDetailCarouselView(shoes: Shoe.previewShoes, selectedShoeID: Shoe.previewShoes[2].id)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .navigationTitle("Shoes")
         }
     }
 }

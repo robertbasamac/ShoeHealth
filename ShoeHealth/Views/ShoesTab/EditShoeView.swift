@@ -155,5 +155,10 @@ extension EditShoeView {
 // MARK: - Previews
 
 #Preview {
-    EditShoeView(shoe: Shoe.previewShoe)
+    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
+        NavigationStack {
+            EditShoeView(shoe:  Shoe.previewShoe)
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        }
+    }
 }
