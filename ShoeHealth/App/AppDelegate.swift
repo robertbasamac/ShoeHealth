@@ -10,6 +10,8 @@ import UIKit
 import WidgetKit
 import OSLog
 
+private let logger = Logger(subsystem: "Shoe Health", category: "AppDelegate")
+
 class AppDelegate: NSObject {
     
     var app: ShoeHealthApp?
@@ -41,14 +43,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         switch response.actionIdentifier {
         case "DEFAULT_SHOE_ACTION":
-            Logger.usernotifications.debug("\"Use default shoe\" action pressed.")
+            logger.debug("\"Use default shoe\" action pressed.")
             
             if let shoe = app?.shoesViewModel.getDefaultShoe() {
                 app?.shoesViewModel.add(workouts: [workout.id], toShoe: shoe.id)                
             }
         
         case "REMIND_ME_LATER":
-            Logger.usernotifications.debug("\"Remind me later\" action pressed.")
+            logger.debug("\"Remind me later\" action pressed.")
 
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)

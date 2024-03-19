@@ -72,7 +72,6 @@ struct ShoeStatsSnapshotWidgetView : View {
                                endPoint: .bottomTrailing)
             }
         }
-
     }
 }
 

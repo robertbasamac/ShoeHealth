@@ -8,6 +8,9 @@
 import Foundation
 import SwiftData
 import WidgetKit
+import OSLog
+
+private let logger = Logger(subsystem: "Shoe Health Widgets", category: "ShoeStatsTimelineProvider")
 
 struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
     let modelContext = ModelContext(ShoesStore.container)
@@ -30,7 +33,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
             let shoeEntity = ShoeStatsEntity(from: shoe)
             return Entry(date: shoe.aquisitionDate, shoe: shoeEntity)
         } catch {
-            print("Error fetching shoes, \(error).")
+            logger.error("Error fetching shoes, \(error).")
         }
         
         if context.isPreview {
@@ -65,7 +68,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 }
             }
         } catch {
-            print("Error fetching shoe, \(error).")
+            logger.error("Error fetching shoe, \(error).")
         }
         
         let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil)
@@ -90,7 +93,7 @@ struct ShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 let entry = Entry(date: .now, shoe: shoeEntity)
                 return Timeline(entries: [entry], policy: .never)
             } catch {
-                print("Error fetching shoes, \(error).")
+                logger.error("Error fetching shoes, \(error).")
             }
             
             return Timeline(entries: [Entry.empty], policy: .never)

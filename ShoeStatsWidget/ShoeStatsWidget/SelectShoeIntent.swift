@@ -12,7 +12,7 @@ import WidgetKit
 import AppIntents
 import OSLog
 
-private let logger = Logger(subsystem: "Widgets", category: "SelectShoeIntent")
+private let logger = Logger(subsystem: "Shoe Health Widgets", category: "SelectShoeIntent")
 
 // MARK: - AppEntity
 
@@ -71,7 +71,7 @@ struct ShoeStatsQuery: EntityStringQuery {
                                                                       sortBy: [.init(\.brand), .init(\.model)]))
             return shoes.map { ShoeStatsEntity(from: $0) }
         } catch {
-            logger.log("Error fetching shoes, \(error).")
+            logger.error("Error fetching shoes, \(error).")
         }
         
         return []
@@ -85,7 +85,7 @@ struct ShoeStatsQuery: EntityStringQuery {
                                                                       sortBy: [.init(\.brand), .init(\.model)]))
             return shoes.map { ShoeStatsEntity(from: $0) }
         } catch {
-            logger.log("Error fetching shoes, \(error).")
+            logger.error("Error fetching shoes, \(error).")
         }
         
         return []
@@ -98,7 +98,7 @@ struct ShoeStatsQuery: EntityStringQuery {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))
             return shoes.map { ShoeStatsEntity(from: $0) }
         } catch {
-            logger.log("Error fetching shoes, \(error).")
+            logger.error("Error fetching shoes, \(error).")
         }
         
         return []

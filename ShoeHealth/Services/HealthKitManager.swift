@@ -10,6 +10,8 @@ import HealthKit
 import Observation
 import OSLog
 
+private let logger = Logger(subsystem: "Shoe Health", category: "HealthKitManager")
+
 @Observable
 final class HealthKitManager {
     
@@ -27,7 +29,7 @@ final class HealthKitManager {
     
     func requestHealthKitAuthorization() {
         if !HKHealthStore.isHealthDataAvailable() {
-            Logger.healthkit.warning("HealthKit not accessable.")
+            logger.warning("HealthKit not accessable.")
             return
         }
        
@@ -49,7 +51,7 @@ final class HealthKitManager {
                 }
             }
             
-            Logger.healthkit.info("\(status)")
+            logger.info("\(status)")
         }
     }
     
@@ -57,7 +59,7 @@ final class HealthKitManager {
     
     func fetchRunningWorkouts() async {
         if !HKHealthStore.isHealthDataAvailable() {
-            Logger.healthkit.warning("HealthKit not accessable.")
+            logger.warning("HealthKit not accessable.")
             return;
         }
         
@@ -76,7 +78,7 @@ final class HealthKitManager {
                 }
                 
                 guard let samples = samples else {
-                    Logger.healthkit.error("HealthKit not accessable.")
+                    logger.error("HealthKit not accessable.")
                     fatalError("Invalid State: This can only fail if there was an error.")
                 }
                 
@@ -85,11 +87,11 @@ final class HealthKitManager {
         }
         
         guard let workouts = samples as? [HKWorkout] else {
-            Logger.healthkit.warning("Did not manage to convert HKSample to HKWorkout.")
+            logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
-        Logger.healthkit.debug("\(workouts.count) workouts fetched.")
+        logger.debug("\(workouts.count) workouts fetched.")
         
         self.workouts = workouts
     }
@@ -98,7 +100,7 @@ final class HealthKitManager {
     
     private func startObservingNewWorkouts() {
         if !HKHealthStore.isHealthDataAvailable() {
-            Logger.healthkit.warning("HealthKit not accessable.")
+            logger.warning("HealthKit not accessable.")
             return
         }
         
@@ -113,10 +115,10 @@ final class HealthKitManager {
         
         self.healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate) { (success, error) in
             if success {
-                Logger.healthkit.info("Background delivery enabled.")
+                logger.info("Background delivery enabled.")
             } else {
                 if let unwrappedError = error {
-                    Logger.healthkit.warning("Could not enable background delivery, \(unwrappedError.localizedDescription).")
+                    logger.warning("Could not enable background delivery, \(unwrappedError.localizedDescription).")
                 }
             }
         }
@@ -138,7 +140,7 @@ final class HealthKitManager {
 
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
         guard let newWorkout = newSamples.last as? HKWorkout else {
-            Logger.healthkit.warning("Did not manage to convert HKSample to HKWorkout.")
+            logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
         
@@ -146,7 +148,7 @@ final class HealthKitManager {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
             
-            Logger.healthkit.debug("New workout received: \(newWorkout.endDate) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo)))")
+            logger.debug("New workout received: \(newWorkout.endDate) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo)))")
             
             NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
             

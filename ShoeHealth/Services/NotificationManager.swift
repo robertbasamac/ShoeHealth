@@ -11,6 +11,8 @@ import HealthKit
 import UIKit
 import OSLog
 
+private let logger = Logger(subsystem: "Shoe Health", category: "NotificationManager")
+
 class NotificationManager {
         
     static let shared = NotificationManager()
@@ -22,7 +24,7 @@ class NotificationManager {
         
         UNUserNotificationCenter.current().requestAuthorization(options: options) { [weak self] success, error in
             if success {
-                Logger.usernotifications.info("Notifications authorized.")
+                logger.info("Notifications authorized.")
                 
                 guard let strongSelf = self else { return }
                 
@@ -30,7 +32,7 @@ class NotificationManager {
                 strongSelf.getNotificationSettings()
             } else {
                 if let unwrappedError = error {
-                    Logger.usernotifications.error("\(unwrappedError.localizedDescription).")
+                    logger.error("\(unwrappedError.localizedDescription).")
                 }
             }
         }
@@ -85,6 +87,6 @@ class NotificationManager {
         
         UNUserNotificationCenter.current().add(request)
         
-        Logger.usernotifications.debug("Notification scheduled at \(dateComponents.hour ?? 0):\(dateComponents.minute ?? 0):\(dateComponents.second ?? 0)")
+        logger.debug("Notification scheduled at \(dateComponents.hour ?? 0):\(dateComponents.minute ?? 0):\(dateComponents.second ?? 0)")
     }
 }
