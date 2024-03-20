@@ -20,6 +20,8 @@ struct ShoeWorkoutsListView: View {
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
 
+    @State private var showAssignToShoe: Bool = false
+    
     init(shoeID: UUID, workouts: Binding<[HKWorkout]>, updateInterface: @escaping () -> Void) {
         self.shoeID = shoeID
         self._workouts = workouts
@@ -37,8 +39,10 @@ struct ShoeWorkoutsListView: View {
                 .listRowBackground(Color.clear)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button(role: .destructive) {
-                        shoesViewModel.remove(workout: workout.id, fromShoe: shoeID)
-                        updateInterface()
+                        withAnimation {
+                            shoesViewModel.remove(workoutIDs: [workout.id], fromShoe: shoeID)
+                            updateInterface()
+                        }
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
@@ -59,6 +63,22 @@ struct ShoeWorkoutsListView: View {
                     updateInterface()
                 }
                 .navigationTitle("Add Workouts")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showAssignToShoe) {
+            NavigationStack {
+                ShoeSelectionView { shoeID in
+                    withAnimation {
+                        shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
+                        updateInterface()
+                        
+                        selections = Set<UUID>()
+                        editMode = .inactive
+                    }
+                }
+                .navigationTitle("Select Shoe")
                 .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
@@ -109,7 +129,7 @@ extension ShoeWorkoutsListView {
         ToolbarItemGroup(placement: .bottomBar) {
             if editMode.isEditing {
                 Button {
-                    
+                    showAssignToShoe.toggle()
                 } label: {
                     Text("Assign To")
                 }
@@ -117,7 +137,7 @@ extension ShoeWorkoutsListView {
                 
                 Button {
                     withAnimation {
-                        shoesViewModel.remove(workouts: selections, fromShoe: shoeID)
+                        shoesViewModel.remove(workoutIDs: selections, fromShoe: shoeID)
                         updateInterface()
                         
                         selections = Set<UUID>()

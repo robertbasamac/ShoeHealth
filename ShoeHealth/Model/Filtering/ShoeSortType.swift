@@ -8,10 +8,12 @@
 import Foundation
 
 enum ShoeSortType: String, Identifiable, CaseIterable {
+    
     var id: Self { self }
 
-    case brand = "by Brand"
-    case model = "by Model"
-    case distance = "by Distance"
-    case aquisitionDate = "by Aquisition Date"
+    case brand       = "Brand"
+    case model       = "Model"
+    case distance    = "Distance"
+    case wear        = "Wear"
+    case lastRunDate = "Recently Used"
 }

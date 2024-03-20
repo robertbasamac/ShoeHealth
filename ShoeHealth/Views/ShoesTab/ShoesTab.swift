@@ -17,8 +17,6 @@ struct ShoesTab: View {
     @State private var showAddShoe: Bool = false
     @State private var selectedShoe: Shoe?
     
-    @State private var show = false
-
     var body: some View {
         List {
             ForEach(shoesViewModel.searchFilteredShoes) { shoe in
@@ -159,7 +157,7 @@ extension ShoesTab {
                 Button {
                     shoesViewModel.toggleSortOrder()
                 } label: {
-                    Label("Sort Order", systemImage: shoesViewModel.sortOrder == .forward ? "chevron.up" : "chevron.down")
+                    Label("Sort Order", systemImage: shoesViewModel.sortOrder == .forward ? "chevron.down" : "chevron.up")
                 }
             } label: {
                 Image(systemName: "line.3.horizontal.decrease.circle.fill")

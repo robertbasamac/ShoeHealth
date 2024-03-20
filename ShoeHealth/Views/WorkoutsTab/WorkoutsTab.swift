@@ -9,7 +9,10 @@ import SwiftUI
 import HealthKit
 
 struct WorkoutsTab: View {
-    @State var healthKitManager = HealthKitManager.shared
+    
+    @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
+    
+    private var healthKitManager = HealthKitManager.shared
 
     @State private var selectedWorkout: HKWorkout?
     
@@ -33,7 +36,9 @@ struct WorkoutsTab: View {
         }
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
-                ShoeSelectionView(workout: workout)
+                ShoeSelectionView { shoeID in
+                    shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
+                }
             }
             .presentationDetents([.medium])
             .presentationCornerRadius(20)

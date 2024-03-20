@@ -37,6 +37,7 @@ struct ShoeStatView: View {
             Text(value)
                 .font(valueFont)
                 .foregroundStyle(color)
+                .contentTransition(.numericText(value: Double(value) ?? 0))
         }
     }
 }

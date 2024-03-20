@@ -46,7 +46,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             logger.debug("\"Use default shoe\" action pressed.")
             
             if let shoe = app?.shoesViewModel.getDefaultShoe() {
-                app?.shoesViewModel.add(workouts: [workout.id], toShoe: shoe.id)                
+                app?.shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoe.id)                
             }
         
         case "REMIND_ME_LATER":

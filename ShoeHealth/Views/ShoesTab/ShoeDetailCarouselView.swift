@@ -140,6 +140,7 @@ extension ShoeDetailCarouselView {
     private func leftSideStats(of shoe: Shoe) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
+            
             ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -185,8 +186,11 @@ extension ShoeDetailCarouselView {
                         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                shoesViewModel.remove(workout: workout.id, fromShoe: selectedShoeID ?? UUID())
-                                updateInterface()
+                                withAnimation {
+                                    shoesViewModel.remove(workoutIDs: [workout.id], fromShoe: selectedShoeID ?? UUID())
+                                    updateInterface()
+                                }
+                                
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }

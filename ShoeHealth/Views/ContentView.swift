@@ -11,6 +11,7 @@ import HealthKit
 struct ContentView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
     
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
@@ -33,7 +34,9 @@ struct ContentView: View {
         }
         .sheet(item: $navigationRouter.workout) { workout in
             NavigationStack {
-                ShoeSelectionView(workout: workout)
+                ShoeSelectionView { shoeID in
+                    shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
+                }
             }
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)

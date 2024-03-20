@@ -66,13 +66,15 @@ final class ShoesViewModel {
         /// Sort Shoes
         switch sortType {
         case .model:
-            filteredShoes.sort { sortOrder == .forward ? $0.model > $1.model : $0.model < $1.model }
+            filteredShoes.sort { sortOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
         case .brand:
-            filteredShoes.sort { sortOrder == .forward ? $0.brand > $1.brand : $0.brand < $1.brand }
+            filteredShoes.sort { sortOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
         case .distance:
-            filteredShoes.sort { sortOrder == .forward ? $0.currentDistance > $1.currentDistance : $0.currentDistance < $1.currentDistance }
-        case .aquisitionDate:
-            filteredShoes.sort { sortOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
+            filteredShoes.sort { sortOrder == .forward ? $0.currentDistance < $1.currentDistance : $0.currentDistance > $1.currentDistance }
+        case .wear:
+            filteredShoes.sort { sortOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+        case .lastRunDate:
+            filteredShoes.sort { sortOrder == .forward ? $0.lastActivityDate ?? Date() < $1.lastActivityDate ?? Date() : $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
         }
         
         return filteredShoes
@@ -154,45 +156,30 @@ final class ShoesViewModel {
         save()
     }
     
-    func add(workouts: Set<UUID>, toShoe shoeID: UUID) {
+    func add(workoutIDs: Set<UUID>, toShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        let workoutsData = HealthKitManager.shared.getWorkouts(forIDs: Array(workouts))
-        
-        for workout in workoutsData {
-            shoe.currentDistance += workout.totalDistance(unitPrefix: .kilo)
+        for workoutID in workoutIDs {
+            if let oldShoe = getShoe(ofWorkoutID: workoutID) {
+                oldShoe.workouts.removeAll { $0 == workoutID }
+                updateShoeActivity(oldShoe)
+            }
         }
-        shoe.workouts.append(contentsOf: workouts)
         
-        updateShoeLastActivity(shoe)
+        shoe.workouts.append(contentsOf: workoutIDs)
+        updateShoeActivity(shoe)
+        
         save()
     }
     
-    func remove(workout: UUID, fromShoe shoeID: UUID) {
+    func remove(workoutIDs: Set<UUID>, fromShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        if let workoutData = HealthKitManager.shared.getWorkout(forID: workout) {
-            shoe.currentDistance -= workoutData.totalDistance(unitPrefix: .kilo)
-            shoe.currentDistance = shoe.currentDistance < 0 ? 0 : shoe.currentDistance
-        }
-        shoe.workouts.removeAll { $0 == workout }
-        
-        updateShoeLastActivity(shoe)
-        save()
-    }
-    
-    func remove(workouts: Set<UUID>, fromShoe shoeID: UUID) {
-        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
-
-        let workoutsData = HealthKitManager.shared.getWorkouts(forIDs: Array(workouts))
-        
-        for workout in workoutsData {
-            shoe.currentDistance -= workout.totalDistance(unitPrefix: .kilo)
-            shoe.currentDistance = shoe.currentDistance < 0 ? 0 : shoe.currentDistance
-            shoe.workouts.removeAll { $0 == workout.id }
+        for workoutID in workoutIDs {
+            shoe.workouts.removeAll { $0 == workoutID }
         }
         
-        updateShoeLastActivity(shoe)
+        updateShoeActivity(shoe)
         save()
     }
     
@@ -217,8 +204,12 @@ final class ShoesViewModel {
         save()
     }
     
-    private func updateShoeLastActivity(_ shoe: Shoe) {
+    private func updateShoeActivity(_ shoe: Shoe) {
         let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        
+        shoe.currentDistance = workouts.reduce(0.0) { result, workout in
+            return result + workout.totalDistance(unitPrefix: .kilo)
+        }
         
         guard let lastActivityDate = workouts.first?.endDate else {
             shoe.lastActivityDate = nil
@@ -240,9 +231,10 @@ final class ShoesViewModel {
         return shoe
     }
     
+    
     // MARK: - Other Methods
     
-    func fetchShoes() {
+    private func fetchShoes() {
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
             self.shoes = try modelContext.fetch(descriptor)
@@ -251,6 +243,12 @@ final class ShoesViewModel {
         }
         
         WidgetCenter.shared.reloadAllTimelines()
+    }
+    
+    private func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
+        return shoes.first { shoe in
+            shoe.workouts.contains(workoutID)
+        }
     }
     
     func toggleSortOrder() {
