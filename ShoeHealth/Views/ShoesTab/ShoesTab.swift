@@ -17,6 +17,8 @@ struct ShoesTab: View {
     @State private var showAddShoe: Bool = false
     @State private var selectedShoe: Shoe?
     
+    @State private var showSetDefaultShoe: Bool = false
+    
     var body: some View {
         List {
             ForEach(shoesViewModel.searchFilteredShoes) { shoe in
@@ -65,6 +67,14 @@ struct ShoesTab: View {
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
         }
+        .fullScreenCover(isPresented: $showSetDefaultShoe) {
+            NavigationStack {
+                ShoeSelectionView { shoeID in
+                    shoesViewModel.setAsDefaultShoe(shoeID)
+                }
+                .navigationTitle("Set Default Shoe")
+            }
+        }
     }
 }
 
@@ -76,6 +86,10 @@ extension ShoesTab {
     private func swipeRightActions(shoe: Shoe) -> some View {
         Button {
             shoesViewModel.retireShoe(shoe.id)
+            
+            if shoe.isDefaultShoe {
+                showSetDefaultShoe.toggle()
+            }
         } label: {
             if shoe.retired {
                 Label("Reinstate", systemImage: "bolt.fill")
@@ -99,6 +113,10 @@ extension ShoesTab {
     private func swipeLeftActions(shoe: Shoe) -> some View {
         Button(role: .destructive) {
             shoesViewModel.deleteShoe(shoe.id)
+            
+            if shoe.isDefaultShoe {
+                showSetDefaultShoe.toggle()
+            }
         } label: {
             Label("Delete", systemImage: "trash")
         }
