@@ -39,7 +39,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
-        guard let workoutID = userInfo["WORKOUT_ID"] as? String, let workout = HealthKitManager.shared.getWorkout(forID: workoutID) else { return }
+        guard let workoutID = userInfo["WORKOUT_ID"] as? String, let workout = HealthKitManager.shared.getWorkout(forID: UUID(uuidString: workoutID) ?? UUID()) else { return }
         
         switch response.actionIdentifier {
         case "DEFAULT_SHOE_ACTION":

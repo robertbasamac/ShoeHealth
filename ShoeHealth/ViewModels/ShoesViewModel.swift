@@ -56,9 +56,9 @@ final class ShoesViewModel {
         /// Filter Shoes
         switch filterType {
         case .active:
-            filteredShoes = shoes.filter { !$0.retired }
+            filteredShoes = shoes.filter { !$0.isRetired }
         case .retired:
-            filteredShoes = shoes.filter { $0.retired }
+            filteredShoes = shoes.filter { $0.isRetired }
         case .all:
             filteredShoes = shoes
         }
@@ -89,9 +89,9 @@ final class ShoesViewModel {
         
         switch filterType {
         case .active:
-            filteredShoes = shoes.filter { !$0.retired }
+            filteredShoes = shoes.filter { !$0.isRetired }
         case .retired:
-            filteredShoes = shoes.filter { $0.retired }
+            filteredShoes = shoes.filter { $0.isRetired }
         case .all:
             filteredShoes = shoes
         }
@@ -191,6 +191,7 @@ final class ShoesViewModel {
         }
         
         shoe.isDefaultShoe = true
+        shoe.isRetired = false
         
         save()
     }
@@ -198,8 +199,8 @@ final class ShoesViewModel {
     func retireShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        shoe.retired.toggle()
-        shoe.retireDate = shoe.retired ? .now : nil
+        shoe.isRetired.toggle()
+        shoe.retireDate = shoe.isRetired ? .now : nil
                 
         save()
     }

@@ -76,5 +76,6 @@ extension AddWokoutsToShoeView {
     NavigationStack {
         AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id) { }
             .navigationTitle("Add Workouts")
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
     }
 }

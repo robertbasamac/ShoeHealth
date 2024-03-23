@@ -22,7 +22,7 @@ final class Shoe {
     var aquisitionDate: Date
     var retireDate: Date?
     var lastActivityDate: Date?
-    var retired: Bool
+    var isRetired: Bool
     var isDefaultShoe: Bool
     var workouts: [UUID] = []
     
@@ -44,7 +44,7 @@ final class Shoe {
         self.aquisitionDate = aquisitionDate
         self.retireDate = nil
         self.lastActivityDate = nil
-        self.retired = false
+        self.isRetired = false
         self.isDefaultShoe = isDefaultShoe
         self.image = image
     }

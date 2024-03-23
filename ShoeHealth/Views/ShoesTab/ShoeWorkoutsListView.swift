@@ -69,7 +69,9 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
-                ShoeSelectionView { shoeID in
+                ShoeSelectionView {
+                    Text("Select a Shoe to assign the selected Workouts")
+                } onDone: { shoeID in
                     withAnimation {
                         shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
                         updateInterface()
@@ -78,7 +80,7 @@ struct ShoeWorkoutsListView: View {
                         editMode = .inactive
                     }
                 }
-                .navigationTitle("Select Shoe")
+                .navigationTitle("Assign Workouts")
                 .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)

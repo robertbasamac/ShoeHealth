@@ -362,7 +362,6 @@
 			isa = PBXGroup;
 			children = (
 				09E385DF2B13457E005CFF02 /* WorkoutsTab.swift */,
-				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 			);
 			path = WorkoutsTab;
 			sourceTree = "<group>";
@@ -377,6 +376,7 @@
 				09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
+				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 			);
 			path = ShoesTab;
 			sourceTree = "<group>";

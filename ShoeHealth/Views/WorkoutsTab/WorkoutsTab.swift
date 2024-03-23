@@ -36,11 +36,13 @@ struct WorkoutsTab: View {
         }
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
-                ShoeSelectionView { shoeID in
+                ShoeSelectionView {
+                    Text("Select the shoe to assign the Workout to")
+                } onDone: { shoeID in
                     shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
                 }
             }
-            .presentationDetents([.medium])
+            .presentationDetents([.medium, .large])
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
         })

@@ -34,9 +34,13 @@ struct ContentView: View {
         }
         .sheet(item: $navigationRouter.workout) { workout in
             NavigationStack {
-                ShoeSelectionView { shoeID in
+                ShoeSelectionView {
+                    Text("Select a Shoe to assign the newly recorded Workout")
+                } onDone: { shoeID in
                     shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
                 }
+                .navigationTitle("Assign Workout")
+                .navigationBarTitleDisplayMode(.inline)
             }
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)

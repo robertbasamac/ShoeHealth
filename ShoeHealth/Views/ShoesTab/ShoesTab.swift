@@ -19,6 +19,15 @@ struct ShoesTab: View {
     
     @State private var showSetDefaultShoe: Bool = false
     
+    @State private var showSheet: SheetType?
+    
+    enum SheetType: Identifiable {
+        var id: Self { self }
+        
+        case addShoe
+        case setDefaultShoe
+    }
+    
     var body: some View {
         List {
             ForEach(shoesViewModel.searchFilteredShoes) { shoe in
@@ -49,6 +58,7 @@ struct ShoesTab: View {
                     .tag(filterType)
             }
         }
+        .scrollBounceBehavior(shoesViewModel.shoes.isEmpty ? .basedOnSize : .automatic)
         .overlay {
             emptyShoesView()
         }
@@ -59,21 +69,24 @@ struct ShoesTab: View {
             ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
                 .navigationTitle(getNavigationBarTitle())
         }
-        .sheet(isPresented: $showAddShoe) {
+        .sheet(item: $showSheet) { sheetType in
             NavigationStack {
-                AddShoeView()
-                    .environment(shoesViewModel)
+                switch sheetType {
+                case .addShoe:
+                    AddShoeView()
+                case .setDefaultShoe:
+                    ShoeSelectionView {
+                        Text("Select your new Default Shoe")
+                    } onDone: { shoeID in
+                        shoesViewModel.setAsDefaultShoe(shoeID)
+                    }
+                    .navigationTitle("Set Default Shoe")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
             }
             .presentationCornerRadius(20)
-            .presentationDragIndicator(.visible)
-        }
-        .fullScreenCover(isPresented: $showSetDefaultShoe) {
-            NavigationStack {
-                ShoeSelectionView { shoeID in
-                    shoesViewModel.setAsDefaultShoe(shoeID)
-                }
-                .navigationTitle("Set Default Shoe")
-            }
+            .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
+            .presentationCompactAdaptation(sheetType == .addShoe ? .sheet : .fullScreenCover)
         }
     }
 }
@@ -87,17 +100,17 @@ extension ShoesTab {
         Button {
             shoesViewModel.retireShoe(shoe.id)
             
-            if shoe.isDefaultShoe {
-                showSetDefaultShoe.toggle()
+            if shoe.isRetired && shoe.isDefaultShoe {
+                showSheet = .setDefaultShoe
             }
         } label: {
-            if shoe.retired {
+            if shoe.isRetired {
                 Label("Reinstate", systemImage: "bolt.fill")
             } else {
                 Label("Retire", systemImage: "bolt.slash.fill")
             }
         }
-        .tint(shoe.retired ? .green : .red)
+        .tint(shoe.isRetired ? .green : .red)
         
         if !shoe.isDefaultShoe {
             Button {
@@ -112,10 +125,12 @@ extension ShoesTab {
     @ViewBuilder
     private func swipeLeftActions(shoe: Shoe) -> some View {
         Button(role: .destructive) {
-            shoesViewModel.deleteShoe(shoe.id)
+            withAnimation {
+                shoesViewModel.deleteShoe(shoe.id)
+            }
             
-            if shoe.isDefaultShoe {
-                showSetDefaultShoe.toggle()
+            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                showSheet = .setDefaultShoe
             }
         } label: {
             Label("Delete", systemImage: "trash")
@@ -131,7 +146,7 @@ extension ShoesTab {
                 Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
             } actions: {
                 Button {
-                    showAddShoe.toggle()
+                    showSheet = .addShoe
                 } label: {
                     Text("Add Shoe")
                         .padding(4)
@@ -146,7 +161,7 @@ extension ShoesTab {
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .automatic) {
             Button {
-                showAddShoe = true
+                showSheet = .addShoe
             } label: {
                 Image(systemName: "plus")
             }
