@@ -22,6 +22,8 @@ final class HealthKitManager {
     var workouts: [HKWorkout] = []
     
     private var readTypes: Set = [.workoutType(), HKSeriesType.workoutType()]
+    private let sampleType =  HKObjectType.workoutType()
+    private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
     private init() { }
     
@@ -62,13 +64,10 @@ final class HealthKitManager {
             logger.warning("HealthKit not accessable.")
             return;
         }
-        
-        let sampleType =  HKObjectType.workoutType()
-        let runningPredicate = HKQuery.predicateForWorkouts(with: .running)
 
         let samples = try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
             healthStore.execute(HKSampleQuery(sampleType: sampleType,
-                                              predicate: runningPredicate,
+                                              predicate: predicate,
                                               limit: HKObjectQueryNoLimit,
                                               sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)],
                                               resultsHandler: { query, samples, error in
@@ -104,10 +103,12 @@ final class HealthKitManager {
             return
         }
         
-        let sampleType =  HKObjectType.workoutType()
-        let runningPredicate = HKQuery.predicateForWorkouts(with: .running)
-        
-        let query = HKObserverQuery(sampleType: sampleType, predicate: runningPredicate) { (query, completionHandler, error) in
+        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
+            if let error = error {
+                logger.warning("HKObserverQuery returned error, \(error).")
+                return
+            }
+            
             self.handleNewWorkouts { completionHandler() }
         }
         
@@ -126,10 +127,11 @@ final class HealthKitManager {
     
     private func handleNewWorkouts(completionHandler: @escaping () -> Void) {
         var anchor: HKQueryAnchor?
-        let sampleType =  HKObjectType.workoutType()
-        let predicate = HKQuery.predicateForWorkouts(with: .running)
-
-        let anchoredQuery = HKAnchoredObjectQuery(type: sampleType, predicate: predicate, anchor: anchor, limit: HKObjectQueryNoLimit) { [unowned self] query, newSamples, deletedSamples, newAnchor, error in
+        
+        let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
+                                                  predicate: predicate,
+                                                  anchor: anchor,
+                                                  limit: HKObjectQueryNoLimit) { [unowned self] query, newSamples, deletedSamples, newAnchor, error in
             self.updateWorkouts(newSamples: newSamples ?? [], deletedObjects: deletedSamples ?? [])
             anchor = newAnchor
             
@@ -161,14 +163,6 @@ final class HealthKitManager {
     
     func getWorkout(forID workoutID: UUID) -> HKWorkout? {
         if let workout = self.workouts.first(where: { $0.id == workoutID } ) {
-            return workout
-        }
-        
-        return nil
-    }
-    
-    func getWorkout(forID workoutID: String) -> HKWorkout? {
-        if let workout = self.workouts.first(where: { $0.id.uuidString == workoutID } ) {
             return workout
         }
         
