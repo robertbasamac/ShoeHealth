@@ -46,9 +46,6 @@ struct WorkoutsTab: View {
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
         })
-        .task {
-            await HealthKitManager.shared.fetchRunningWorkouts()
-        }
         .refreshable {
             await healthKitManager.fetchRunningWorkouts()
         }

@@ -31,32 +31,26 @@ final class HealthKitManager {
     
     // MARK: - Request HealthKit authorization
     
-    func requestHealthKitAuthorization() {
+    func requestHealthKitAuthorization() async {
         if !HKHealthStore.isHealthDataAvailable() {
             logger.warning("HealthKit not accessable.")
             return
         }
        
-        healthStore.requestAuthorization(toShare: [], read: readTypes) { (success, error) in
-            var status: String = ""
+        var status: String = ""
+
+        do {
+            try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+
+            status = "HealthKit authorization request was successful!"
             
-            if let unwrappedError = error {
-                status = "HealthKit Authorization Error: \(unwrappedError.localizedDescription)"
-            } else {
-                if success {
-                    status = "HealthKit authorization request was successful!"
-                    
-                    Task {
-                        await self.fetchRunningWorkouts()
-                    }
-                    DispatchQueue.main.async(execute: self.startObservingNewWorkouts)
-                } else {
-                    status = "HealthKit authorization did not complete successfully."
-                }
-            }
-            
-            logger.info("\(status)")
+            await self.fetchRunningWorkouts()
+            await self.startObservingNewWorkouts()
+        } catch {
+            status = "HealthKit Authorization Error: \(error.localizedDescription)"
         }
+        
+        logger.info("\(status)")
     }
     
     // MARK: - Fetching Running Workouts
@@ -101,7 +95,7 @@ final class HealthKitManager {
     
     // MARK: - Observing new Workouts
     
-    private func startObservingNewWorkouts() {
+    private func startObservingNewWorkouts() async {
         if !HKHealthStore.isHealthDataAvailable() {
             logger.warning("HealthKit not accessable.")
             return
@@ -118,14 +112,11 @@ final class HealthKitManager {
         
         self.healthStore.execute(query)
         
-        self.healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate) { (success, error) in
-            if success {
-                logger.info("Background delivery enabled.")
-            } else {
-                if let unwrappedError = error {
-                    logger.warning("Could not enable background delivery, \(unwrappedError.localizedDescription).")
-                }
-            }
+        do {
+            try await healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate)
+            logger.info("Background delivery enabled.")
+        } catch {
+            logger.warning("Could not enable background delivery, \(error.localizedDescription).")
         }
     }
     
@@ -141,6 +132,7 @@ final class HealthKitManager {
             
             completionHandler()
         }
+        
         healthStore.execute(anchoredQuery)
     }
 
@@ -152,12 +144,13 @@ final class HealthKitManager {
 
         logger.debug("New workout received: \(dateFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
         
-        if HealthKitManager.latestUpdate < newWorkout.endDate {
+        if HealthKitManager.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
             NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
             HealthKitManager.latestUpdate = newWorkout.endDate
+            
             self.workouts.append(newWorkout)
         } else {
             logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")

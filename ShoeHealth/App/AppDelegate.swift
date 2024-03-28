@@ -22,7 +22,10 @@ extension AppDelegate: UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let healthManager = HealthKitManager.shared
-        healthManager.requestHealthKitAuthorization()
+        
+        Task {
+            await healthManager.requestHealthKitAuthorization()
+        }
         
         let notificationManager = NotificationManager.shared
         notificationManager.requestAuthorization()
