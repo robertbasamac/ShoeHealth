@@ -87,6 +87,8 @@ class NotificationManager {
         
         UNUserNotificationCenter.current().add(request)
         
-        logger.debug("Notification scheduled at \(dateComponents.hour ?? 0):\(dateComponents.minute ?? 0):\(dateComponents.second ?? 0)")
+        if let date = Calendar.current.date(from: dateComponents) {
+            logger.debug("Notification scheduled: \(dateFormatter.string(from: date))")
+        }            
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import HealthKit
 
-struct ShoeSelectionView<Content>: View where Content: View {
+struct ShoeSelectionView<Content:View>: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss

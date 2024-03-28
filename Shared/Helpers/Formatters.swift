@@ -11,6 +11,7 @@ var dateFormatter: DateFormatter {
     let formatter = DateFormatter()
     
     formatter.dateStyle = .medium
+    formatter.timeStyle = .long
     
     return formatter
 }

@@ -31,6 +31,7 @@
 		0956EE392B4C057D0029445E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* Tab.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
+		0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */; };
 		09BFD2D32B974ECB009F4133 /* ShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2D22B974ECB009F4133 /* ShoeStatsWidget.swift */; };
@@ -104,6 +105,7 @@
 		0956EE382B4C057D0029445E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
+		0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+PropertyWrapper.swift"; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWokoutsToShoeView.swift; sourceTree = "<group>"; };
 		09BFD2D22B974ECB009F4133 /* ShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidget.swift; sourceTree = "<group>"; };
@@ -164,13 +166,14 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		0907F25F2B1E205300EB682A /* Services */ = {
+		090D76ED2BB2DEE600D23762 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				0907F2602B1E206700EB682A /* NotificationManager.swift */,
-				09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */,
+				09BFD2EB2B985E23009F4133 /* PreferenceKeys */,
+				0980A7EF2BB42DBF000848A1 /* PropertWrappers */,
+				09E7EAAE2B3AE5DF00BFAC16 /* Shapes */,
 			);
-			path = Services;
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		09189C0A2B569EE700CA782A /* Filtering */ = {
@@ -194,9 +197,10 @@
 		093742742B7A6A87008D96BD /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				093742A42B7E159C008D96BD /* Utilities */,
+				0980A7F22BB5AEB4000848A1 /* Helpers */,
 				093742A22B7B9C74008D96BD /* Extensions */,
 				093742A32B7B9C80008D96BD /* Model */,
+				0980A7F32BB5AEFB000848A1 /* Services */,
 				093742A72B84AE29008D96BD /* View */,
 				09E385E82B13FCAF005CFF02 /* PreviewSample */,
 			);
@@ -227,17 +231,8 @@
 			isa = PBXGroup;
 			children = (
 				09E385DA2B1340E3005CFF02 /* Shoe.swift */,
-				09BFD2E82B979C81009F4133 /* ShoesStore.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		093742A42B7E159C008D96BD /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				096D36A32B20B1C900C78453 /* Formatters.swift */,
-			);
-			path = Utilities;
 			sourceTree = "<group>";
 		};
 		093742A72B84AE29008D96BD /* View */ = {
@@ -255,6 +250,30 @@
 				0956EE382B4C057D0029445E /* Tab.swift */,
 			);
 			path = NavigationStack;
+			sourceTree = "<group>";
+		};
+		0980A7EF2BB42DBF000848A1 /* PropertWrappers */ = {
+			isa = PBXGroup;
+			children = (
+				0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */,
+			);
+			path = PropertWrappers;
+			sourceTree = "<group>";
+		};
+		0980A7F22BB5AEB4000848A1 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				096D36A32B20B1C900C78453 /* Formatters.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		0980A7F32BB5AEFB000848A1 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				09BFD2E82B979C81009F4133 /* ShoesStore.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		09BD131B2B40923B00DFA6B1 /* Components */ = {
@@ -310,8 +329,8 @@
 			children = (
 				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
-				0907F25F2B1E205300EB682A /* Services */,
 				09E7EAB22B3B265B00BFAC16 /* Utilities */,
+				090D76ED2BB2DEE600D23762 /* Helpers */,
 				09E385DC2B1340E7005CFF02 /* Model */,
 				09E385DD2B1340FA005CFF02 /* Views */,
 				09E385DE2B1344D7005CFF02 /* ViewModels */,
@@ -410,8 +429,8 @@
 		09E7EAB22B3B265B00BFAC16 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				09BFD2EB2B985E23009F4133 /* PreferenceKeys */,
-				09E7EAAE2B3AE5DF00BFAC16 /* Shapes */,
+				09DE4A812B0D4CD8001119E4 /* HealthKitManager.swift */,
+				0907F2602B1E206700EB682A /* NotificationManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -570,6 +589,7 @@
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
 				09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */,
+				0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

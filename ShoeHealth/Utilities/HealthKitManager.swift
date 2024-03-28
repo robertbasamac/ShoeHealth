@@ -17,13 +17,15 @@ final class HealthKitManager {
     
     static let shared = HealthKitManager()
     
-    var healthStore = HKHealthStore()
+    @ObservationIgnored private var healthStore = HKHealthStore()
     
-    var workouts: [HKWorkout] = []
+    @ObservationIgnored private var readTypes: Set = [.workoutType(), HKSeriesType.workoutType()]
+    @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
+    @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
-    private var readTypes: Set = [.workoutType(), HKSeriesType.workoutType()]
-    private let sampleType =  HKObjectType.workoutType()
-    private let predicate = HKQuery.predicateForWorkouts(with: .running)
+    @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) static var latestUpdate: Date
+    
+    private(set) var workouts: [HKWorkout] = []
     
     private init() { }
     
@@ -92,7 +94,9 @@ final class HealthKitManager {
         
         logger.debug("\(workouts.count) workouts fetched.")
         
-        self.workouts = workouts
+        Task { @MainActor in
+            self.workouts = workouts
+        }
     }
     
     // MARK: - Observing new Workouts
@@ -145,17 +149,18 @@ final class HealthKitManager {
             logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
+
+        logger.debug("New workout received: \(dateFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
         
-        if !self.workouts.contains(where: { $0.id == newWorkout.id }) {
+        if HealthKitManager.latestUpdate < newWorkout.endDate {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-            let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
-            
-            logger.debug("New workout received: \(newWorkout.endDate) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo)))")
+            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
             NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
-            
+            HealthKitManager.latestUpdate = newWorkout.endDate
             self.workouts.append(newWorkout)
-            self.workouts = self.workouts.sorted(by: { $0.endDate > $1.endDate} )
+        } else {
+            logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
         }
     }
     

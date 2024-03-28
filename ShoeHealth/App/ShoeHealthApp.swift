@@ -12,12 +12,9 @@ import SwiftData
 struct ShoeHealthApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
         
-    @StateObject var navigationRouter: NavigationRouter = .init()
-    @State var shoesViewModel: ShoesViewModel
+    @StateObject var navigationRouter = NavigationRouter()
     
-    init() {
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.container.mainContext))
-    }
+    @State var shoesViewModel = ShoesViewModel(modelContext: ShoesStore.container.mainContext)
     
     var body: some Scene {
         WindowGroup {

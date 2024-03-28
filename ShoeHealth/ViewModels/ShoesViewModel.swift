@@ -15,14 +15,14 @@ import WidgetKit
 @Observable
 final class ShoesViewModel {
     
-    private var modelContext: ModelContext
+    @ObservationIgnored private var modelContext: ModelContext
     
-    var shoes: [Shoe] = []
+    private(set) var shoes: [Shoe] = []
     
-    var searchText: String = ""
-    var filterType: ShoeFilterType = .active
-    var sortType: ShoeSortType = .brand
-    var sortOrder: SortOrder = .forward
+    private(set) var searchText: String = ""
+    private(set) var filterType: ShoeFilterType = .active
+    private(set) var sortType: ShoeSortType = .brand
+    private(set) var sortOrder: SortOrder = .forward
     
     var searchBinding: Binding<String> {
         Binding(
@@ -53,7 +53,6 @@ final class ShoesViewModel {
     var filteredShoes: [Shoe] {
         var filteredShoes: [Shoe] = []
         
-        /// Filter Shoes
         switch filterType {
         case .active:
             filteredShoes = shoes.filter { !$0.isRetired }
@@ -63,7 +62,6 @@ final class ShoesViewModel {
             filteredShoes = shoes
         }
         
-        /// Sort Shoes
         switch sortType {
         case .model:
             filteredShoes.sort { sortOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
