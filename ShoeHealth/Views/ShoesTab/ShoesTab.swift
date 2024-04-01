@@ -11,13 +11,9 @@ import SwiftData
 struct ShoesTab: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
-    @Environment(\.isSearching) var isSearching
-    @Environment(\.dismissSearch) var dismissSearch
     
     @State private var showAddShoe: Bool = false
     @State private var selectedShoe: Shoe?
-    
-    @State private var showSetDefaultShoe: Bool = false
     
     @State private var showSheet: SheetType?
     
@@ -51,6 +47,7 @@ struct ShoesTab: View {
         .listStyle(.plain)
         .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle(getNavigationBarTitle())
+        .scrollBounceBehavior(shoesViewModel.searchFilteredShoes.isEmpty ? .basedOnSize : .automatic)
         .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
         .searchScopes(shoesViewModel.filterTypeBinding) {
             ForEach(ShoeFilterType.allCases) { filterType in
@@ -58,7 +55,6 @@ struct ShoesTab: View {
                     .tag(filterType)
             }
         }
-        .scrollBounceBehavior(shoesViewModel.shoes.isEmpty ? .basedOnSize : .automatic)
         .overlay {
             emptyShoesView()
         }
@@ -86,7 +82,7 @@ struct ShoesTab: View {
             }
             .presentationCornerRadius(20)
             .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
-            .presentationCompactAdaptation(sheetType == .addShoe ? .sheet : .fullScreenCover)
+            .interactiveDismissDisabled(sheetType == .setDefaultShoe)
         }
     }
 }
@@ -153,6 +149,27 @@ extension ShoesTab {
                         .foregroundStyle(.black)
                 }
                 .buttonStyle(.borderedProminent)
+            }
+        } else {
+            if shoesViewModel.searchFilteredShoes.isEmpty {
+                if !shoesViewModel.searchText.isEmpty {
+                    ContentUnavailableView.search
+                } else {
+                    ContentUnavailableView {
+                        Label("No \(shoesViewModel.filterType.rawValue) in your collection.", systemImage: "shoe.circle")
+                    } description: {
+                        Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
+                    } actions: {
+                        Button {
+                            showSheet = .addShoe
+                        } label: {
+                            Text("Add Shoe")
+                                .padding(4)
+                                .foregroundStyle(.black)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
             }
         }
     }

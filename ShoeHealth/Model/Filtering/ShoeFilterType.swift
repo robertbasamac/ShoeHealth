@@ -10,7 +10,7 @@ import Foundation
 enum ShoeFilterType: String, Identifiable, CaseIterable {
     var id: Self { self }
 
-    case all = "All Shoes"
-    case active = "Active Shoes"
+    case all     = "All Shoes"
+    case active  = "Active Shoes"
     case retired = "Retired Shoes"
 }
