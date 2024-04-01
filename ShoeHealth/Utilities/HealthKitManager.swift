@@ -142,7 +142,7 @@ final class HealthKitManager {
             return
         }
 
-        logger.debug("New workout received: \(dateFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
+        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
         
         if HealthKitManager.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
