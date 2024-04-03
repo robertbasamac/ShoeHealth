@@ -170,7 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				09BFD2EB2B985E23009F4133 /* PreferenceKeys */,
-				0980A7EF2BB42DBF000848A1 /* PropertWrappers */,
+				0980A7EF2BB42DBF000848A1 /* PropertyWrappers */,
 				09E7EAAE2B3AE5DF00BFAC16 /* Shapes */,
 			);
 			path = Helpers;
@@ -252,12 +252,12 @@
 			path = NavigationStack;
 			sourceTree = "<group>";
 		};
-		0980A7EF2BB42DBF000848A1 /* PropertWrappers */ = {
+		0980A7EF2BB42DBF000848A1 /* PropertyWrappers */ = {
 			isa = PBXGroup;
 			children = (
 				0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */,
 			);
-			path = PropertWrappers;
+			path = PropertyWrappers;
 			sourceTree = "<group>";
 		};
 		0980A7F22BB5AEB4000848A1 /* Helpers */ = {
