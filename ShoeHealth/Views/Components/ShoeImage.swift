@@ -9,37 +9,43 @@ import SwiftUI
 
 struct ShoeImage: View {
     
-    private var shoe: Shoe
-    private var width: CGFloat
+    private var imageData: Data?
+    private var showBackground: Bool
+    private var width: CGFloat = 200
     
-    init(shoe: Shoe, width: CGFloat) {
-        self.shoe = shoe
+    init(imageData: Data? = nil, showBackground: Bool = true, width: CGFloat) {
+        self.imageData = imageData
+        self.showBackground = showBackground
         self.width = width
     }
     
     var body: some View {
-        ZStack(alignment: .center) {
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.primary.opacity(0.8), style: StrokeStyle(lineWidth: 1, lineCap: .round))
-                .shadow(color: Color.primary, radius: 4)
-            
-            if let data = shoe.image, let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
+        if let imageData, let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: width, height: width)
+        } else {
+            ZStack {
+                if showBackground {
+                    Rectangle()
+                        .fill(.gray)
+                        .frame(width: width, height: width)
+
+                }
+                Image(systemName: "shoe.2.fill")
                     .resizable()
-                    .frame(width: width / 3, height: width / 4)
-                    .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: 44))
+                    .foregroundStyle(.white)
+                    .aspectRatio(contentMode: .fit)
+                    .padding(30)
+                    .frame(width: width, height: width)
             }
         }
-        .frame(width: width / 3, height: width / 4)
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    ShoeImage(shoe: .previewShoe, width: 400)
+    ShoeImage(imageData: Shoe.previewShoe.image, width: 200)
 }

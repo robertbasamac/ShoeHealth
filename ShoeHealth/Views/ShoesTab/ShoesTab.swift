@@ -25,41 +25,38 @@ struct ShoesTab: View {
     }
     
     var body: some View {
-        List {
-            ForEach(shoesViewModel.searchFilteredShoes) { shoe in
-                ShoeListItem(shoe: shoe)
-                    .padding()
-                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                    .onTapGesture {
-                        selectedShoe = shoe
+        ZStack {
+            Color(uiColor: .systemBackground)
+            
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0) {
+                    lastRunSection
+                                        
+                    if let shoe = shoesViewModel.getDefaultShoe() {
+                        defaultShoeSection(shoe)
+                    } else {
+                        noDefaultShoeSection
                     }
-                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                        swipeRightActions(shoe: shoe)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        swipeLeftActions(shoe: shoe)
-                    }
-            }
-            .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-        }
-        .listStyle(.plain)
-        .background(Color(uiColor: .systemGroupedBackground))
-        .navigationTitle(getNavigationBarTitle())
-        .scrollBounceBehavior(shoesViewModel.searchFilteredShoes.isEmpty ? .basedOnSize : .automatic)
-        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
-        .searchScopes(shoesViewModel.filterTypeBinding) {
-            ForEach(ShoeFilterType.allCases) { filterType in
-                Text(filterType.rawValue)
-                    .tag(filterType)
+                                        
+                    recentlyUsedScrollSection
+                }
             }
         }
-        .overlay {
-            emptyShoesView()
-        }
+        .navigationTitle("Shoe Health")
+        .navigationBarTitleDisplayMode(.inline)
+//        .scrollBounceBehavior(shoesViewModel.searchFilteredShoes.isEmpty ? .basedOnSize : .automatic)
+//        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
+//        .searchScopes(shoesViewModel.filterTypeBinding) {
+//            ForEach(ShoeFilterType.allCases) { filterType in
+//                Text(filterType.rawValue)
+//                    .tag(filterType)
+//            }
+//        }
+//        .overlay {
+//            emptyShoesView
+//        }
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
@@ -90,6 +87,102 @@ struct ShoesTab: View {
 // MARK: - View Components
 
 extension ShoesTab {
+    
+    @ViewBuilder
+    private var lastRunSection: some View {
+        VStack(spacing: 0) {
+            Text("Last Run")
+                .asHeader()
+            
+            VStack {
+                Text("Last Run")
+                    .frame(height: 200)
+            }
+            .frame(maxWidth: .infinity)
+            .contentRoundedBackground()
+        }
+        
+    }
+    
+    @ViewBuilder
+    private func defaultShoeSection(_ shoe: Shoe) -> some View {
+        Section {
+            ShoeListItem(shoe: shoe, width: 140)
+                .contentRoundedBackground()
+        } header: {
+            Text("Default Shoe")
+                .asHeader()
+        }
+    }
+    
+    @ViewBuilder
+    private var noDefaultShoeSection: some View {
+        VStack(spacing: 0) {
+            Text("Default Shoe")
+                .asHeader()
+            
+            HStack(spacing: 0) {
+                ShoeImage(width: 140)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                
+                VStack {
+                    Text("No Default Shoe")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                    
+                    Button {
+                        showSheet = .setDefaultShoe
+                    } label: {
+                        Text("Select Shoe")
+                            .fontWeight(.medium)
+                            .foregroundStyle(.black)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .background(Color.accentColor)
+                            .clipShape(RoundedRectangle(cornerRadius: 25))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 12)
+            }
+            .contentRoundedBackground()
+        }
+    }
+    
+    @ViewBuilder
+    private var recentlyUsedScrollSection: some View {
+        VStack(spacing: 0) {
+            Text("Recently Used")
+                .asHeader()
+            
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    ForEach(shoesViewModel.filteredShoes) { shoe in
+                        ShoeCell(shoe: shoe, width: 140)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    shoesViewModel.deleteShoe(shoe.id)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            } preview: {
+                                ShoeCell(shoe: shoe, width: 240)
+                                    .padding(8)
+                            }
+                            .onTapGesture {
+                                selectedShoe = shoe
+                            }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .scrollIndicators(.hidden)
+        }
+    }
     
     @ViewBuilder
     private func swipeRightActions(shoe: Shoe) -> some View {
@@ -134,7 +227,7 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private func emptyShoesView() -> some View {
+    private var emptyShoesView: some View {
         if shoesViewModel.shoes.isEmpty {
             ContentUnavailableView {
                 Label("No Shoes in your collection.", systemImage: "shoe.circle")
@@ -175,7 +268,7 @@ extension ShoesTab {
     }
     
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .automatic) {
             Button {
                 showSheet = .addShoe
@@ -254,5 +347,24 @@ extension ShoesTab {
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+    }
+}
+
+fileprivate extension View {
+    
+    func asHeader() -> some View {
+        self
+            .font(.title)
+            .fontWeight(.semibold)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding([.horizontal])
+    }
+    
+    func contentRoundedBackground() -> some View {
+        self
+            .background(Color(uiColor: .secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal)
+            .padding(.vertical, 8)
     }
 }

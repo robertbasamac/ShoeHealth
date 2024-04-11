@@ -84,6 +84,15 @@ extension ShoeSelectionView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
+        
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Text("Cancel")
+            }
+        }
+        
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 if let shoe = selectedShoe {
