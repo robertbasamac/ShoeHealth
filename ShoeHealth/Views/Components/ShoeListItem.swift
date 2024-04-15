@@ -16,6 +16,9 @@ struct ShoeListItem: View {
         HStack(spacing: 0) {
             ShoeImage(imageData: shoe.image, width: width)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor)
+                }
             
             detailsSection
         }
@@ -29,23 +32,18 @@ extension ShoeListItem {
     @ViewBuilder
     private var detailsSection: some View {
         VStack(alignment: .leading) {
-            Text("\(shoe.brand)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .overlay(alignment: .trailing) {
-                    Image(systemName: "circle.fill")
-                        .foregroundStyle(.green)
-                        .opacity(shoe.isDefaultShoe ? 1 : 0)
-                }
-            
-            Text("\(shoe.model)")
-                .font(.headline)
-                .fontWeight(.bold)
-                .lineLimit(2, reservesSpace: true)
-                .multilineTextAlignment(.leading)
-                .minimumScaleFactor(0.4)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading) {
+                Text("\(shoe.brand)")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                
+                Text("\(shoe.model)")
+                    .font(.headline)
+                    .lineLimit(2, reservesSpace: true)
+                    .multilineTextAlignment(.leading)
+                    .minimumScaleFactor(0.4)
+            }
+            .frame(maxHeight: .infinity, alignment: .topLeading)
             
             ProgressView(value: shoe.currentDistance, total: shoe.lifespanDistance) {
                 HStack {
@@ -62,7 +60,7 @@ extension ShoeListItem {
             .tint(shoe.wearColor)
         }
         .frame(maxWidth: .infinity,  maxHeight: .infinity, alignment: .leading)
-        .padding(.horizontal, 12)
+        .padding(12)
     }
 }
 

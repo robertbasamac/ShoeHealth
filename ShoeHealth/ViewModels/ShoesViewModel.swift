@@ -150,6 +150,7 @@ final class ShoesViewModel {
     func deleteShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
+        self.shoes.removeAll { $0.id == shoeID }
         modelContext.delete(shoe)
         save()
     }
@@ -230,6 +231,16 @@ final class ShoesViewModel {
         return shoe
     }
     
+    func getRecentlyUsedShoes() -> [Shoe] {
+        var sortedShoes = self.shoes.filter { !$0.workouts.isEmpty }
+        
+        sortedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
+        return sortedShoes
+    }
+    
+    func getShoes(retired: Bool = false) -> [Shoe] {
+        return shoes.filter { $0.isRetired == retired }
+    }
     
     // MARK: - Other Methods
     

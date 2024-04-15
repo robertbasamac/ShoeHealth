@@ -29,7 +29,7 @@ struct ShoesTab: View {
             Color(uiColor: .systemBackground)
             
             ScrollView(.vertical) {
-                LazyVStack(spacing: 0) {
+                VStack(spacing: 12) {
                     lastRunSection
                                         
                     if let shoe = shoesViewModel.getDefaultShoe() {
@@ -37,14 +37,25 @@ struct ShoesTab: View {
                     } else {
                         noDefaultShoeSection
                     }
-                                        
-                    recentlyUsedScrollSection
+                    
+                    if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
+                        recentlyUsedScrollSection
+                    }
+                    
+                    if !shoesViewModel.getShoes().isEmpty {
+                        activeShoesSection()
+                    }
+                    
+                    if !shoesViewModel.getShoes(retired: true).isEmpty {
+                        activeShoesSection()
+                    }
                 }
             }
+            .scrollIndicators(.hidden)
         }
         .navigationTitle("Shoe Health")
         .navigationBarTitleDisplayMode(.inline)
-//        .scrollBounceBehavior(shoesViewModel.searchFilteredShoes.isEmpty ? .basedOnSize : .automatic)
+//        .scrollBounceBehavior(.basedOnSize)
 //        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
 //        .searchScopes(shoesViewModel.filterTypeBinding) {
 //            ForEach(ShoeFilterType.allCases) { filterType in
@@ -106,12 +117,12 @@ extension ShoesTab {
     
     @ViewBuilder
     private func defaultShoeSection(_ shoe: Shoe) -> some View {
-        Section {
-            ShoeListItem(shoe: shoe, width: 140)
-                .contentRoundedBackground()
-        } header: {
+        VStack(spacing: 0) {
             Text("Default Shoe")
                 .asHeader()
+            
+            ShoeListItem(shoe: shoe, width: 140)
+                .contentRoundedBackground()
         }
     }
     
@@ -156,32 +167,57 @@ extension ShoesTab {
             Text("Recently Used")
                 .asHeader()
             
-            ScrollView(.horizontal) {
-                LazyHStack {
-                    ForEach(shoesViewModel.filteredShoes) { shoe in
-                        ShoeCell(shoe: shoe, width: 140)
-                            .contextMenu {
-                                Button(role: .destructive) {
-                                    shoesViewModel.deleteShoe(shoe.id)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                            } preview: {
-                                ShoeCell(shoe: shoe, width: 240)
-                                    .padding(8)
-                            }
-                            .onTapGesture {
-                                selectedShoe = shoe
-                            }
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                .scrollTargetLayout()
-            }
-            .scrollTargetBehavior(.viewAligned)
-            .scrollIndicators(.hidden)
+            shoesCarousel(shoes: shoesViewModel.getRecentlyUsedShoes())
         }
+    }
+    
+    @ViewBuilder
+    private func activeShoesSection() -> some View {
+        VStack(spacing: 0) {
+            Text("Active Shoes")
+                .asHeader()
+            
+            shoesCarousel(shoes: shoesViewModel.getShoes())
+        }
+    }
+    
+    @ViewBuilder
+    private func retiredShoesSection() -> some View {
+        VStack(spacing: 0) {
+            Text("Retired Shoes")
+                .asHeader()
+            
+            shoesCarousel(shoes: shoesViewModel.getShoes(retired: true))
+        }
+    }
+    
+    @ViewBuilder
+    private func shoesCarousel(shoes: [Shoe]) -> some View {
+        ScrollView(.horizontal) {
+            LazyHStack {
+                ForEach(shoesViewModel.getShoes()) { shoe in
+                    ShoeCell(shoe: shoe, width: 140, displayProgress: true)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                shoesViewModel.deleteShoe(shoe.id)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        } preview: {
+                            ShoeCell(shoe: shoe, width: 300)
+                                .padding(8)
+                        }
+                        .onTapGesture {
+                            selectedShoe = shoe
+                        }
+                }
+            }
+            .scrollTargetLayout()
+            .padding(.horizontal)
+            .padding(.top, 8)
+        }
+        .scrollTargetBehavior(.viewAligned)
+        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder
@@ -277,36 +313,36 @@ extension ShoesTab {
             }
         }
         
-        ToolbarItem(placement: .topBarLeading) {
-            Menu {
-                Picker("Filtering", selection: shoesViewModel.filterTypeBinding) {
-                    ForEach(ShoeFilterType.allCases) { filterType in
-                        Text(filterType.rawValue)
-                            .tag(filterType)
-                    }
-                }
-                
-                Divider()
-                
-                Picker("Sorting", selection: shoesViewModel.sortTypeBinding) {
-                    ForEach(ShoeSortType.allCases) { sortType in
-                        Text(sortType.rawValue)
-                            .tag(sortType)
-                    }
-                }
-                
-                Divider()
-                
-                Button {
-                    shoesViewModel.toggleSortOrder()
-                } label: {
-                    Label("Sort Order", systemImage: shoesViewModel.sortOrder == .forward ? "chevron.down" : "chevron.up")
-                }
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease.circle.fill")
-                    .foregroundStyle(getFilteringImageColors().0, getFilteringImageColors().1)
-            }
-        }
+//        ToolbarItem(placement: .topBarLeading) {
+//            Menu {
+//                Picker("Filtering", selection: shoesViewModel.filterTypeBinding) {
+//                    ForEach(ShoeFilterType.allCases) { filterType in
+//                        Text(filterType.rawValue)
+//                            .tag(filterType)
+//                    }
+//                }
+//                
+//                Divider()
+//                
+//                Picker("Sorting", selection: shoesViewModel.sortTypeBinding) {
+//                    ForEach(ShoeSortType.allCases) { sortType in
+//                        Text(sortType.rawValue)
+//                            .tag(sortType)
+//                    }
+//                }
+//                
+//                Divider()
+//                
+//                Button {
+//                    shoesViewModel.toggleSortOrder()
+//                } label: {
+//                    Label("Sort Order", systemImage: shoesViewModel.sortOrder == .forward ? "chevron.down" : "chevron.up")
+//                }
+//            } label: {
+//                Image(systemName: "line.3.horizontal.decrease.circle.fill")
+//                    .foregroundStyle(getFilteringImageColors().0, getFilteringImageColors().1)
+//            }
+//        }
     }
 }
 
@@ -329,7 +365,6 @@ extension ShoesTab {
         return shoesViewModel.filterType.rawValue
     }
 }
-
 // MARK: - Preview
 
 #Preview("Filled") {
@@ -358,6 +393,7 @@ fileprivate extension View {
             .fontWeight(.semibold)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding([.horizontal])
+            .padding(.top, 8)
     }
     
     func contentRoundedBackground() -> some View {
@@ -365,6 +401,6 @@ fileprivate extension View {
             .background(Color(uiColor: .secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal)
-            .padding(.vertical, 8)
+            .padding(.top, 8)
     }
 }

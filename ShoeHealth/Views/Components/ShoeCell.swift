@@ -11,11 +11,17 @@ struct ShoeCell: View {
     
     var shoe: Shoe
     var width: CGFloat = 140
+    var displayProgress: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ShoeImage(imageData: shoe.image, showBackground: true, width: width)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    if displayProgress {
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor)
+                    }
+                }
 
             VStack(alignment: .leading) {
                 Text(shoe.brand)
