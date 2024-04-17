@@ -221,25 +221,24 @@ final class ShoesViewModel {
     
     // MARK: - Getters
     
-    func getDefaultShoe() -> Shoe? {
-        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
-        return shoe
-    }
-    
     func getShoe(forID shoeID: UUID) -> Shoe? {
         guard let shoe = self.shoes.first(where: { $0.id == shoeID } ) else { return nil }
         return shoe
     }
     
+    func getDefaultShoe() -> Shoe? {
+        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
+        return shoe
+    }
+    
     func getRecentlyUsedShoes() -> [Shoe] {
-        var sortedShoes = self.shoes.filter { !$0.workouts.isEmpty }
-        
-        sortedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
-        return sortedShoes
+        var recentlyUsedShoes: [Shoe] = self.shoes.filter { !$0.workouts.isEmpty }
+        recentlyUsedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
+        return recentlyUsedShoes
     }
     
     func getShoes(retired: Bool = false) -> [Shoe] {
-        return shoes.filter { $0.isRetired == retired }
+        return self.shoes.filter({ $0.isRetired == retired })
     }
     
     // MARK: - Other Methods

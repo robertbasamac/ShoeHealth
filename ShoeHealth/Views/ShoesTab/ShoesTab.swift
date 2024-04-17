@@ -39,15 +39,15 @@ struct ShoesTab: View {
                     }
                     
                     if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
-                        recentlyUsedScrollSection
+                        recentlyUsedSection
                     }
                     
                     if !shoesViewModel.getShoes().isEmpty {
-                        activeShoesSection()
+                        activeShoesSection
                     }
                     
                     if !shoesViewModel.getShoes(retired: true).isEmpty {
-                        activeShoesSection()
+                        retiredShoesSection
                     }
                 }
             }
@@ -162,7 +162,7 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private var recentlyUsedScrollSection: some View {
+    private var recentlyUsedSection: some View {
         VStack(spacing: 0) {
             Text("Recently Used")
                 .asHeader()
@@ -172,7 +172,7 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private func activeShoesSection() -> some View {
+    private var activeShoesSection: some View {
         VStack(spacing: 0) {
             Text("Active Shoes")
                 .asHeader()
@@ -182,7 +182,7 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private func retiredShoesSection() -> some View {
+    private var retiredShoesSection: some View {
         VStack(spacing: 0) {
             Text("Retired Shoes")
                 .asHeader()
@@ -195,7 +195,7 @@ extension ShoesTab {
     private func shoesCarousel(shoes: [Shoe]) -> some View {
         ScrollView(.horizontal) {
             LazyHStack {
-                ForEach(shoesViewModel.getShoes()) { shoe in
+                ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: 140, displayProgress: true)
                         .contextMenu {
                             Button(role: .destructive) {
@@ -203,6 +203,21 @@ extension ShoesTab {
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
+                            
+                            Button {
+                                shoesViewModel.retireShoe(shoe.id)
+                                
+                                if shoe.isRetired && shoe.isDefaultShoe {
+                                    showSheet = .setDefaultShoe
+                                }
+                            } label: {
+                                if shoe.isRetired {
+                                    Label("Reinstate", systemImage: "bolt.fill")
+                                } else {
+                                    Label("Retire", systemImage: "bolt.slash.fill")
+                                }
+                            }
+                            .tint(shoe.isRetired ? .green : .red)
                         } preview: {
                             ShoeCell(shoe: shoe, width: 300)
                                 .padding(8)
