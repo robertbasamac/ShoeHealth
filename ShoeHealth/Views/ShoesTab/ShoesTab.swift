@@ -17,6 +17,8 @@ struct ShoesTab: View {
     
     @State private var showSheet: SheetType?
     
+    @State private var selectedCategory: ShoeFilterType?
+    
     enum SheetType: Identifiable {
         var id: Self { self }
         
@@ -42,11 +44,11 @@ struct ShoesTab: View {
                         recentlyUsedSection
                     }
                     
-                    if !shoesViewModel.getShoes().isEmpty {
+                    if !shoesViewModel.getShoes(filter: .active).isEmpty {
                         activeShoesSection
                     }
                     
-                    if !shoesViewModel.getShoes(retired: true).isEmpty {
+                    if !shoesViewModel.getShoes(filter: .retired).isEmpty {
                         retiredShoesSection
                     }
                 }
@@ -54,7 +56,7 @@ struct ShoesTab: View {
             .scrollIndicators(.hidden)
         }
         .navigationTitle("Shoe Health")
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline)
 //        .scrollBounceBehavior(.basedOnSize)
 //        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
 //        .searchScopes(shoesViewModel.filterTypeBinding) {
@@ -68,6 +70,14 @@ struct ShoesTab: View {
 //        }
         .toolbar {
             toolbarItems
+        }
+//        .navigationDestination(item: $selectedShoe) { shoe in
+//            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
+//                .navigationTitle(getNavigationBarTitle())
+//        }
+        .navigationDestination(item: $selectedCategory) { category in
+            ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
+                .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
         }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
@@ -138,7 +148,7 @@ extension ShoesTab {
                 
                 VStack {
                     Text("No Default Shoe")
-                        .font(.title2)
+                        .font(.title3)
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
                     
@@ -146,13 +156,13 @@ extension ShoesTab {
                         showSheet = .setDefaultShoe
                     } label: {
                         Text("Select Shoe")
+                            .font(.callout)
                             .fontWeight(.medium)
                             .foregroundStyle(.black)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(Color.accentColor)
-                            .clipShape(RoundedRectangle(cornerRadius: 25))
                     }
+                    .tint(.accentColor)
+                    .buttonStyle(BorderedProminentButtonStyle())
+                    .buttonBorderShape(.capsule)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.horizontal, 12)
@@ -174,27 +184,43 @@ extension ShoesTab {
     @ViewBuilder
     private var activeShoesSection: some View {
         VStack(spacing: 0) {
-            Text("Active Shoes")
-                .asHeader()
+            HStack {
+                Text("Active Shoes")
+                Image(systemName: "chevron.right")
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+            }
+            .asHeader()
+            .onTapGesture {
+                selectedCategory = .active
+            }
             
-            shoesCarousel(shoes: shoesViewModel.getShoes())
+            shoesCarousel(shoes: shoesViewModel.getShoes(filter: .active))
         }
     }
     
     @ViewBuilder
     private var retiredShoesSection: some View {
         VStack(spacing: 0) {
-            Text("Retired Shoes")
-                .asHeader()
+            HStack {
+                Text("Retired Shoes")
+                Image(systemName: "chevron.right")
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+            }
+            .asHeader()
+            .onTapGesture {
+                selectedCategory = .retired
+            }
             
-            shoesCarousel(shoes: shoesViewModel.getShoes(retired: true))
+            shoesCarousel(shoes: shoesViewModel.getShoes(filter: .retired))
         }
     }
     
     @ViewBuilder
     private func shoesCarousel(shoes: [Shoe]) -> some View {
         ScrollView(.horizontal) {
-            LazyHStack {
+            LazyHStack(spacing: 10) {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: 140, displayProgress: true)
                         .contextMenu {
@@ -220,7 +246,7 @@ extension ShoesTab {
                             .tint(shoe.isRetired ? .green : .red)
                         } preview: {
                             ShoeCell(shoe: shoe, width: 300)
-                                .padding(8)
+                                .padding(10)
                         }
                         .onTapGesture {
                             selectedShoe = shoe
@@ -228,7 +254,7 @@ extension ShoesTab {
                 }
             }
             .scrollTargetLayout()
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.top, 8)
         }
         .scrollTargetBehavior(.viewAligned)
@@ -377,7 +403,7 @@ extension ShoesTab {
     }
     
     private func getNavigationBarTitle() -> String {
-        return shoesViewModel.filterType.rawValue
+        return selectedCategory?.rawValue ?? "Shoes"
     }
 }
 // MARK: - Preview
@@ -404,18 +430,19 @@ fileprivate extension View {
     
     func asHeader() -> some View {
         self
-            .font(.title)
-            .fontWeight(.semibold)
+            .font(.title2)
+            .fontWeight(.bold)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding([.horizontal])
+            .padding([.horizontal], 20)
             .padding(.top, 8)
+            .contentShape(.rect)
     }
     
     func contentRoundedBackground() -> some View {
         self
             .background(Color(uiColor: .secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.top, 8)
     }
 }

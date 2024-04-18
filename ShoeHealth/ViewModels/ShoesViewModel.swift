@@ -237,8 +237,15 @@ final class ShoesViewModel {
         return recentlyUsedShoes
     }
     
-    func getShoes(retired: Bool = false) -> [Shoe] {
-        return self.shoes.filter({ $0.isRetired == retired })
+    func getShoes(filter: ShoeFilterType = .all) -> [Shoe] {
+        switch filter {
+        case .active:
+            return self.shoes.filter({ !$0.isRetired })
+        case .retired:
+            return self.shoes.filter({ $0.isRetired })
+        case .all:
+            return self.shoes
+        }
     }
     
     // MARK: - Other Methods
