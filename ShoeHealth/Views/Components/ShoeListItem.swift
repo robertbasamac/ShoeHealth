@@ -14,7 +14,8 @@ struct ShoeListItem: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            ShoeImage(imageData: shoe.image, width: width)
+            ShoeImage(imageData: shoe.image)
+                .frame(width: width, height: width)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay {
                     RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor)

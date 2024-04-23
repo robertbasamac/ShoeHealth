@@ -31,6 +31,7 @@ struct ShoesListView: View {
             .listRowBackground(Color.clear)
         }
         .listStyle(.plain)
+        .scrollIndicators(.hidden)
         .background(Color(uiColor: .systemGroupedBackground))
         .toolbarRole(.editor)
     }

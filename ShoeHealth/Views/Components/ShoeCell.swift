@@ -15,7 +15,8 @@ struct ShoeCell: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ShoeImage(imageData: shoe.image, showBackground: true, width: width)
+            ShoeImage(imageData: shoe.image, showBackground: true)
+                .frame(width: width, height: width)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay {
                     if displayProgress {

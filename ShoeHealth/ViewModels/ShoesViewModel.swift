@@ -96,7 +96,7 @@ final class ShoesViewModel {
         
         filteredShoes = filteredShoes.filter { $0.brand.localizedCaseInsensitiveContains(searchText) || $0.model.localizedCaseInsensitiveContains(searchText) }
         filteredShoes.sort { $0.model < $1.model }
-
+        
         return filteredShoes
     }
     
@@ -144,6 +144,7 @@ final class ShoesViewModel {
                 modelContext.delete(shoe)
             }
         }
+        
         save()
     }
     
@@ -152,6 +153,7 @@ final class ShoesViewModel {
         
         self.shoes.removeAll { $0.id == shoeID }
         modelContext.delete(shoe)
+        
         save()
     }
     
@@ -200,7 +202,7 @@ final class ShoesViewModel {
         
         shoe.isRetired.toggle()
         shoe.retireDate = shoe.isRetired ? .now : nil
-                
+        
         save()
     }
     
@@ -232,9 +234,11 @@ final class ShoesViewModel {
     }
     
     func getRecentlyUsedShoes() -> [Shoe] {
-        var recentlyUsedShoes: [Shoe] = self.shoes.filter { !$0.workouts.isEmpty }
+        var recentlyUsedShoes: [Shoe] = self.shoes.filter { $0.lastActivityDate != nil  }
+        
         recentlyUsedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
-        return recentlyUsedShoes
+        
+        return Array(recentlyUsedShoes.prefix(5))
     }
     
     func getShoes(filter: ShoeFilterType = .all) -> [Shoe] {
@@ -279,7 +283,5 @@ final class ShoesViewModel {
         } catch {
             print("Saving context failed, \(error.localizedDescription)")
         }
-        
-        fetchShoes()
     }
 }

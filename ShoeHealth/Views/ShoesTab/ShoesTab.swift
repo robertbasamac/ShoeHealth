@@ -27,36 +27,32 @@ struct ShoesTab: View {
     }
     
     var body: some View {
-        ZStack {
-            Color(uiColor: .systemBackground)
-            
-            ScrollView(.vertical) {
-                VStack(spacing: 12) {
-                    lastRunSection
-                                        
-                    if let shoe = shoesViewModel.getDefaultShoe() {
-                        defaultShoeSection(shoe)
-                    } else {
-                        noDefaultShoeSection
-                    }
-                    
-                    if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
-                        recentlyUsedSection
-                    }
-                    
-                    if !shoesViewModel.getShoes(filter: .active).isEmpty {
-                        activeShoesSection
-                    }
-                    
-                    if !shoesViewModel.getShoes(filter: .retired).isEmpty {
-                        retiredShoesSection
-                    }
+        ScrollView(.vertical) {
+            VStack(spacing: 12) {
+                lastRunSection
+                
+                if let shoe = shoesViewModel.getDefaultShoe() {
+                    defaultShoeSection(shoe)
+                } else {
+                    noDefaultShoeSection
+                }
+                
+                if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
+                    recentlyUsedSection
+                }
+                
+                if !shoesViewModel.getShoes(filter: .active).isEmpty {
+                    activeShoesSection
+                }
+                
+                if !shoesViewModel.getShoes(filter: .retired).isEmpty {
+                    retiredShoesSection
                 }
             }
-            .scrollIndicators(.hidden)
         }
+        .scrollIndicators(.hidden)
         .navigationTitle("Shoe Health")
-//        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
 //        .scrollBounceBehavior(.basedOnSize)
 //        .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
 //        .searchScopes(shoesViewModel.filterTypeBinding) {
@@ -71,17 +67,14 @@ struct ShoesTab: View {
         .toolbar {
             toolbarItems
         }
-//        .navigationDestination(item: $selectedShoe) { shoe in
+        .navigationDestination(item: $selectedShoe) { shoe in
+            ShoeDetailView(shoe: shoe)
 //            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
 //                .navigationTitle(getNavigationBarTitle())
-//        }
+        }
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
-        }
-        .navigationDestination(item: $selectedShoe) { shoe in
-            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
-                .navigationTitle(getNavigationBarTitle())
         }
         .sheet(item: $showSheet) { sheetType in
             NavigationStack {
@@ -133,6 +126,9 @@ extension ShoesTab {
             
             ShoeListItem(shoe: shoe, width: 140)
                 .contentRoundedBackground()
+                .onTapGesture {
+                    selectedShoe = shoe
+                }
         }
     }
     
@@ -143,7 +139,8 @@ extension ShoesTab {
                 .asHeader()
             
             HStack(spacing: 0) {
-                ShoeImage(width: 140)
+                ShoeImage()
+                    .frame(width: 140, height: 140)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 
                 VStack {
@@ -243,7 +240,14 @@ extension ShoesTab {
                                     Label("Retire", systemImage: "bolt.slash.fill")
                                 }
                             }
-                            .tint(shoe.isRetired ? .green : .red)
+                            
+                            if !shoe.isDefaultShoe {
+                                Button {
+                                    shoesViewModel.setAsDefaultShoe(shoe.id)
+                                } label: {
+                                    Label("Set Default", systemImage: "shoe.2")
+                                }
+                            }
                         } preview: {
                             ShoeCell(shoe: shoe, width: 300)
                                 .padding(10)

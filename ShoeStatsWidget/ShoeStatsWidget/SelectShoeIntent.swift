@@ -108,6 +108,7 @@ struct ShoeStatsQuery: EntityStringQuery {
 // MARK: - WidgetConfigurationIntent
 
 struct SelectShoeIntent: WidgetConfigurationIntent {
+    
     static var title: LocalizedStringResource = "Select Shoe"
     static var description: IntentDescription = IntentDescription("Selects the shoe to display stats for.")
     

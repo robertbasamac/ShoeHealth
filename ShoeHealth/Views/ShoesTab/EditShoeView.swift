@@ -126,7 +126,7 @@ struct EditShoeView: View {
             }
         }
         .navigationTitle("Update Shoe")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .toolbarRole(.editor)
         .toolbar {

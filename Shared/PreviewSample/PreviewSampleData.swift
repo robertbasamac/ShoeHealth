@@ -20,6 +20,7 @@ actor PreviewSampleData {
         return try! emptyInMemoryContainer()
     }()
 
+    @MainActor
     static var inMemoryContainer: () throws -> ModelContainer = {
         let schema = Schema([Shoe.self])
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
@@ -33,15 +34,14 @@ actor PreviewSampleData {
             return samples
         }
         
-        Task { @MainActor in
-            sampleData.forEach {
-                container.mainContext.insert($0)
-            }
+        sampleData.forEach {
+            container.mainContext.insert($0)
         }
         
         return container
     }
     
+    @MainActor
     static var emptyInMemoryContainer: () throws -> ModelContainer = {
         let schema = Schema([Shoe.self])
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)

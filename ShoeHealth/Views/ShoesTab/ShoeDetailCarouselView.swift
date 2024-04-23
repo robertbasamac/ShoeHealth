@@ -102,7 +102,8 @@ extension ShoeDetailCarouselView {
                             HStack(spacing: 4) {
                                 leftSideStats(of: shoe)
                                 
-                                ShoeImage(imageData: shoe.image, width: geometry.size.width / 3.5)
+                                ShoeImage(imageData: shoe.image)
+                                    .frame(width: geometry.size.width / 3.5, height: geometry.size.width / 3.5)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                 
                                 rightSideStats(of: shoe)
