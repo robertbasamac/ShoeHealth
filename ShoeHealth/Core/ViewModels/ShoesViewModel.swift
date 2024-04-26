@@ -96,7 +96,7 @@ final class ShoesViewModel {
         
         filteredShoes = filteredShoes.filter { $0.brand.localizedCaseInsensitiveContains(searchText) || $0.model.localizedCaseInsensitiveContains(searchText) }
         filteredShoes.sort { $0.model < $1.model }
-
+        
         return filteredShoes
     }
     
@@ -144,13 +144,16 @@ final class ShoesViewModel {
                 modelContext.delete(shoe)
             }
         }
+        
         save()
     }
     
     func deleteShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
+        self.shoes.removeAll { $0.id == shoeID }
         modelContext.delete(shoe)
+        
         save()
     }
     
@@ -199,7 +202,7 @@ final class ShoesViewModel {
         
         shoe.isRetired.toggle()
         shoe.retireDate = shoe.isRetired ? .now : nil
-                
+        
         save()
     }
     
@@ -220,16 +223,34 @@ final class ShoesViewModel {
     
     // MARK: - Getters
     
-    func getDefaultShoe() -> Shoe? {
-        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
-        return shoe
-    }
-    
     func getShoe(forID shoeID: UUID) -> Shoe? {
         guard let shoe = self.shoes.first(where: { $0.id == shoeID } ) else { return nil }
         return shoe
     }
     
+    func getDefaultShoe() -> Shoe? {
+        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
+        return shoe
+    }
+    
+    func getRecentlyUsedShoes() -> [Shoe] {
+        var recentlyUsedShoes: [Shoe] = self.shoes.filter { $0.lastActivityDate != nil  }
+        
+        recentlyUsedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
+        
+        return Array(recentlyUsedShoes.prefix(5))
+    }
+    
+    func getShoes(filter: ShoeFilterType = .all) -> [Shoe] {
+        switch filter {
+        case .active:
+            return self.shoes.filter({ !$0.isRetired })
+        case .retired:
+            return self.shoes.filter({ $0.isRetired })
+        case .all:
+            return self.shoes
+        }
+    }
     
     // MARK: - Other Methods
     
@@ -262,7 +283,5 @@ final class ShoesViewModel {
         } catch {
             print("Saving context failed, \(error.localizedDescription)")
         }
-        
-        fetchShoes()
     }
 }

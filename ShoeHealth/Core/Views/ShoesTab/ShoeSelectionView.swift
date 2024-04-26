@@ -9,19 +9,19 @@ import SwiftUI
 import SwiftData
 import HealthKit
 
-struct ShoeSelectionView<Content:View>: View {
+struct ShoeSelectionView<Content: View>: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
     @Query(filter: #Predicate { !$0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var activeShoes: [Shoe]
     @Query(filter: #Predicate { $0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var retiredShoes: [Shoe]
-
+    
     @State private var selectedShoe: Shoe?
     
     @State private var isExpandedActive: Bool = true
     @State private var isExpandedRetire: Bool = false
-
+    
     private let content: () -> Content
     private let onDone: (UUID) -> Void
     
@@ -84,6 +84,15 @@ extension ShoeSelectionView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
+        
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Text("Cancel")
+            }
+        }
+        
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 if let shoe = selectedShoe {

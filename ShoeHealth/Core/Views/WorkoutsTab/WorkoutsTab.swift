@@ -53,10 +53,12 @@ struct WorkoutsTab: View {
 }
 
 // MARK: - Previews
+
 #Preview {
     NavigationStack {
         WorkoutsTab()
             .navigationTitle("Workouts")
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
     }
 }
     
