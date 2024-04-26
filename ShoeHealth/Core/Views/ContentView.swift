@@ -16,21 +16,30 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
             NavigationStack {
-                ShoesTab()
-            }
-            .tabItem {
-                Label(Tab.shoes.rawValue, systemImage: Tab.shoes.systemImageName)
-            }
-            .tag(Tab.shoes)
-            
-            NavigationStack {
                 WorkoutsTab()
                     .navigationTitle("Workouts")
             }
             .tabItem {
-                Label(Tab.workouts.rawValue, systemImage: Tab.workouts.systemImageName)
+                Label(TabItem.workouts.rawValue, systemImage: TabItem.workouts.systemImageName)
             }
-            .tag(Tab.workouts)
+            .tag(TabItem.workouts)
+            
+            NavigationStack {
+                ShoesTab()
+            }
+            .tabItem {
+                Label(TabItem.shoes.rawValue, systemImage: TabItem.shoes.systemImageName)
+            }
+            .tag(TabItem.shoes)
+            
+            NavigationStack {
+                SettingsTab()
+                    .navigationTitle("Settings")
+            }
+            .tabItem {
+                Label(TabItem.settings.rawValue, systemImage: TabItem.settings.systemImageName)
+            }
+            .tag(TabItem.settings)
         }
         .sheet(item: $navigationRouter.workout) { workout in
             NavigationStack {

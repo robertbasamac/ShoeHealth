@@ -10,7 +10,7 @@ import HealthKit
 
 final class NavigationRouter: ObservableObject {
     
-    @Published var selectedTab: Tab = .shoes
+    @Published var selectedTab: TabItem = .shoes
     
     @Published var workout: HKWorkout?
 }

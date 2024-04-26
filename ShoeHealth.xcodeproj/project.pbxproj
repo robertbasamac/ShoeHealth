@@ -34,8 +34,9 @@
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStatView.swift */; };
 		094B75B52B504D6300632590 /* ContentHeightPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */; };
+		094F26222BDC2B1200441A62 /* SettingsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F26212BDC2B1200441A62 /* SettingsTab.swift */; };
 		0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956815A2B46E207005E5FE6 /* NavigationRouter.swift */; };
-		0956EE392B4C057D0029445E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* Tab.swift */; };
+		0956EE392B4C057D0029445E /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* TabItem.swift */; };
 		095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */; };
 		095D8B612BCD6B61001D7592 /* RoundedRectangleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
@@ -118,8 +119,9 @@
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatView.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentHeightPreferenceKey.swift; sourceTree = "<group>"; };
+		094F26212BDC2B1200441A62 /* SettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
 		0956815A2B46E207005E5FE6 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
-		0956EE382B4C057D0029445E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
+		0956EE382B4C057D0029445E /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItem.swift; sourceTree = "<group>"; };
 		095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleProgressView.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
@@ -275,10 +277,18 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		094F26202BDC2AD200441A62 /* SettingsTab */ = {
+			isa = PBXGroup;
+			children = (
+				094F26212BDC2B1200441A62 /* SettingsTab.swift */,
+			);
+			path = SettingsTab;
+			sourceTree = "<group>";
+		};
 		0956EE3A2B4C06F70029445E /* NavigationStack */ = {
 			isa = PBXGroup;
 			children = (
-				0956EE382B4C057D0029445E /* Tab.swift */,
+				0956EE382B4C057D0029445E /* TabItem.swift */,
 			);
 			path = NavigationStack;
 			sourceTree = "<group>";
@@ -339,11 +349,22 @@
 			path = PreferenceKeys;
 			sourceTree = "<group>";
 		};
+		09D1AF922BD9636700C61E5D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				09E385DC2B1340E7005CFF02 /* Model */,
+				09E385DD2B1340FA005CFF02 /* Views */,
+				09E385DE2B1344D7005CFF02 /* ViewModels */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
 		09DE4A662B0D3F7F001119E4 = {
 			isa = PBXGroup;
 			children = (
 				093742742B7A6A87008D96BD /* Shared */,
 				09DE4A712B0D3F7F001119E4 /* ShoeHealth */,
+				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
 				093742872B7AAD7A008D96BD /* ShoeStatsWidget */,
 				093742602B7A671D008D96BD /* Frameworks */,
 				09DE4A702B0D3F7F001119E4 /* Products */,
@@ -366,10 +387,7 @@
 				0907F25C2B1C964B00EB682A /* App */,
 				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				090D76ED2BB2DEE600D23762 /* Helpers */,
-				09E385DC2B1340E7005CFF02 /* Model */,
-				09E385DD2B1340FA005CFF02 /* Views */,
-				09E385DE2B1344D7005CFF02 /* ViewModels */,
-				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
+				09D1AF922BD9636700C61E5D /* Core */,
 				09DE4A782B0D3F81001119E4 /* Preview Content */,
 			);
 			path = ShoeHealth;
@@ -398,6 +416,7 @@
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
+				094F26202BDC2AD200441A62 /* SettingsTab */,
 				09BD131B2B40923B00DFA6B1 /* Components */,
 			);
 			path = Views;
@@ -606,7 +625,7 @@
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
 				0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */,
-				0956EE392B4C057D0029445E /* Tab.swift in Sources */,
+				0956EE392B4C057D0029445E /* TabItem.swift in Sources */,
 				09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,
@@ -639,6 +658,7 @@
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
 				09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */,
+				094F26222BDC2B1200441A62 /* SettingsTab.swift in Sources */,
 				0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

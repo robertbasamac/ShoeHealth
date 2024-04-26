@@ -69,8 +69,6 @@ struct ShoesTab: View {
         }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe)
-//            ShoeDetailCarouselView(shoes: shoesViewModel.filteredShoes, selectedShoeID: shoe.id)
-//                .navigationTitle(getNavigationBarTitle())
         }
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
