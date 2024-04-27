@@ -19,7 +19,7 @@ struct StaticHeaderCell: View {
             Text(title)
                 .font(.largeTitle)
                 .lineLimit(1)
-                .minimumScale Factor(0.4)
+                .minimumScaleFactor(0.4)
                 .fontWeight(.bold)
         }
         .foregroundStyle(.primary)
