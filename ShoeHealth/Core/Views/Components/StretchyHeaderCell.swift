@@ -32,6 +32,7 @@ struct StretchyHeaderCell: View {
             }
             .overlay(alignment: .bottomLeading) {
                 StaticHeaderCell(title: title, subtitle: subtitle)
+                    .frame(height: 75)
                 .background {
                     LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
                 }
@@ -43,5 +44,7 @@ struct StretchyHeaderCell: View {
 // MARK: - Preview
 
 #Preview {
-    StretchyHeaderCell(title: "Pegasus 40", subtitle: "nike", imageData: Shoe.previewShoe.image)
+    StretchyHeaderCell(title: Shoe.previewShoe.model, subtitle: Shoe.previewShoe.brand, imageData: Shoe.previewShoe.image)
+        .background(.gray)
+        .frame(maxHeight: .infinity, alignment: .top)
 }

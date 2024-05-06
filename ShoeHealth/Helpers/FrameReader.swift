@@ -20,7 +20,7 @@ public struct FrameReader: View {
 
     public var body: some View {
         GeometryReader { geo in
-            Text("")
+            Color.clear
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onAppear(perform: {
                     onChange(geo.frame(in: coordinateSpace))
@@ -79,4 +79,18 @@ struct FrameReader_Previews: PreviewProvider {
     static var previews: some View {
         PreviewView()
     }
+}
+
+
+func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
+    // Ensure position is within the range
+    let clampedPosition = min(max(position, minPosition), maxPosition)
+    
+    // Calculate normalized position between 0 and 1
+    let normalizedPosition = (clampedPosition - minPosition) / (maxPosition - minPosition)
+    
+    // Interpolate opacity between 0 and 1
+    let interpolatedOpacity = reversed ? Double(1 - normalizedPosition) : Double(normalizedPosition)
+    
+    return interpolatedOpacity
 }

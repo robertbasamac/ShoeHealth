@@ -25,7 +25,6 @@ struct StaticHeaderCell: View {
         .foregroundStyle(.primary)
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .padding(.top, 66)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

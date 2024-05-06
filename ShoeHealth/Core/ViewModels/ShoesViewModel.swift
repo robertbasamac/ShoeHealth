@@ -283,5 +283,7 @@ final class ShoesViewModel {
         } catch {
             print("Saving context failed, \(error.localizedDescription)")
         }
+        
+        fetchShoes()
     }
 }
