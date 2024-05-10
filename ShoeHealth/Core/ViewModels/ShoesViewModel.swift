@@ -265,7 +265,7 @@ final class ShoesViewModel {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
-    private func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
+    func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
         return shoes.first { shoe in
             shoe.workouts.contains(workoutID)
         }

@@ -10,6 +10,7 @@
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
 		090E156C2BE8EAAA00BC8124 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */; };
+		090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
 		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
@@ -106,6 +107,7 @@
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		090E156D2BEB814D00BC8124 /* StatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCell.swift; sourceTree = "<group>"; };
 		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
@@ -352,10 +354,11 @@
 			children = (
 				09E2F3502B1668D700D16101 /* ShoeListItem.swift */,
 				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
-				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
 				09F18EE72BC6AC03002B73EE /* ShoeCell.swift */,
+				090E156D2BEB814D00BC8124 /* StatCell.swift */,
 				0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */,
 				0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */,
+				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -445,10 +448,10 @@
 			isa = PBXGroup;
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
+				09BD131B2B40923B00DFA6B1 /* Components */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
 				094F26202BDC2AD200441A62 /* SettingsTab */,
-				09BD131B2B40923B00DFA6B1 /* Components */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -682,6 +685,7 @@
 				0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */,
 				0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */,
 				094F262A2BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift in Sources */,
+				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,
 				096D36A42B20B1C900C78453 /* Formatters.swift in Sources */,
 				09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */,

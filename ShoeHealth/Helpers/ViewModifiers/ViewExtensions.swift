@@ -19,7 +19,7 @@ extension View {
             .contentShape(.rect)
     }
     
-    func contentRoundedBackground() -> some View {
+    func roundedContainer() -> some View {
         self
             .background(Color(uiColor: .secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import HealthKit
 
 struct ShoesTab: View {
     
@@ -18,13 +19,6 @@ struct ShoesTab: View {
     
     @State private var headerOpacity: CGFloat = 0
     
-    enum SheetType: Identifiable {
-        var id: Self { self }
-        
-        case addShoe
-        case setDefaultShoe
-    }
-    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -35,13 +29,9 @@ struct ShoesTab: View {
             
             ScrollView(.vertical) {
                 VStack(spacing: 12) {
-                    lastRunSection
+                    lastRunSection(run: HealthKitManager.shared.getLastRun())
                     
-                    if let shoe = shoesViewModel.getDefaultShoe() {
-                        defaultShoeSection(shoe)
-                    } else {
-                        noDefaultShoeSection
-                    }
+                    defaultShoeSection(shoesViewModel.getDefaultShoe())
                     
                     if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
                         recentlyUsedSection
@@ -76,15 +66,31 @@ struct ShoesTab: View {
             NavigationStack {
                 switch sheetType {
                 case .addShoe:
-                    AddShoeView()
+                    NavigationStack {
+                        AddShoeView()
+                    }
                 case .setDefaultShoe:
-                    ShoeSelectionView {
-                        Text("Select your new Default Shoe")
-                    } onDone: { shoeID in
-                        shoesViewModel.setAsDefaultShoe(shoeID)
+                    NavigationStack {
+                        ShoeSelectionView {
+                            Text("Select your new Default Shoe")
+                        } onDone: { shoeID in
+                            shoesViewModel.setAsDefaultShoe(shoeID)
+                        }
                     }
                     .navigationTitle("Set Default Shoe")
                     .navigationBarTitleDisplayMode(.inline)
+                case .addToShoe(let workoutID):
+                    NavigationStack {
+                        ShoeSelectionView {
+                            Text("Select a Shoe to assign the newly recorded Workout")
+                        } onDone: { shoeID in
+                            shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
+                        }
+                        .navigationTitle("Assign Workout")
+                        .navigationBarTitleDisplayMode(.inline)
+                    }
+                    .presentationCornerRadius(20)
+                    .presentationDragIndicator(.visible)
                 }
             }
             .presentationCornerRadius(20)
@@ -118,74 +124,92 @@ extension ShoesTab {
         })
         .overlay {
             Text("Shoe Health")
-                .font(.headline)
+                .font(.title2)
+                .fontWeight(.semibold)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
         }
     }
     
     @ViewBuilder
-    private var lastRunSection: some View {
+    private func lastRunSection(run: HKWorkout?) -> some View {
         VStack(spacing: 0) {
             Text("Last Run")
                 .asHeader()
             
-            VStack {
-                Text("Last Run")
-                    .frame(height: 200)
-            }
-            .frame(maxWidth: .infinity)
-            .contentRoundedBackground()
-        }
-    }
-    
-    @ViewBuilder
-    private func defaultShoeSection(_ shoe: Shoe) -> some View {
-        VStack(spacing: 0) {
-            Text("Default Shoe")
-                .asHeader()
-            
-            ShoeListItem(shoe: shoe, width: 140)
-                .contentRoundedBackground()
-                .onTapGesture {
-                    selectedShoe = shoe
-                }
-        }
-    }
-    
-    @ViewBuilder
-    private var noDefaultShoeSection: some View {
-        VStack(spacing: 0) {
-            Text("Default Shoe")
-                .asHeader()
-            
-            HStack(spacing: 0) {
-                ShoeImage()
-                    .frame(width: 140, height: 140)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                VStack {
-                    Text("No Default Shoe")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.center)
-                    
-                    Button {
-                        showSheet = .setDefaultShoe
-                    } label: {
-                        Text("Select Shoe")
-                            .font(.callout)
-                            .fontWeight(.medium)
-                            .foregroundStyle(.black)
+            Group {
+                if let lastRun = run {
+                    VStack(spacing: 8) {
+                        HStack {
+                            runDateAndTimeSection(lastRun)
+                            runUsedShoeSection(lastRun)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        
+                        Divider()
+
+                        runStatsSection(lastRun)
+                            .padding(.horizontal, 20)
                     }
-                    .tint(.accentColor)
-                    .buttonStyle(BorderedProminentButtonStyle())
-                    .buttonBorderShape(.capsule)
+                    .padding(.vertical, 10)
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal, 12)
+                else {
+                    Text("Your latest run will appear here.")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
             }
-            .contentRoundedBackground()
+            .roundedContainer()
+        }
+    }
+    
+    @ViewBuilder
+    private func defaultShoeSection(_ shoe: Shoe?) -> some View {
+        if let shoe = shoe {
+            VStack(spacing: 0) {
+                Text("Default Shoe")
+                    .asHeader()
+                
+                ShoeListItem(shoe: shoe, width: 140)
+                    .roundedContainer()
+                    .onTapGesture {
+                        selectedShoe = shoe
+                    }
+            }
+        } else {
+            VStack(spacing: 0) {
+                Text("Default Shoe")
+                    .asHeader()
+                
+                HStack(spacing: 0) {
+                    ShoeImage()
+                        .frame(width: 140, height: 140)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    
+                    VStack {
+                        Text("No Default Shoe")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                        
+                        Button {
+                            showSheet = .setDefaultShoe
+                        } label: {
+                            Text("Select Shoe")
+                                .font(.callout)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.black)
+                        }
+                        .tint(.accentColor)
+                        .buttonStyle(BorderedProminentButtonStyle())
+                        .buttonBorderShape(.capsule)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.horizontal, 12)
+                }
+                .roundedContainer()
+            }
         }
     }
     
@@ -243,7 +267,13 @@ extension ShoesTab {
                     ShoeCell(shoe: shoe, width: 140, displayProgress: true)
                         .contextMenu {
                             Button(role: .destructive) {
-                                shoesViewModel.deleteShoe(shoe.id)
+                                withAnimation {
+                                    shoesViewModel.deleteShoe(shoe.id)
+                                }
+                                
+                                if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                                    showSheet = .setDefaultShoe
+                                }
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -284,6 +314,86 @@ extension ShoesTab {
         }
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
+    }
+    
+    @ViewBuilder
+    private func runDateAndTimeSection(_ run: HKWorkout) -> some View {
+        VStack(alignment: .leading) {
+            Text(run.startDateAsString)
+            Text("\(run.startTimeAsString) - \(run.endTimeAsString)")
+                .foregroundStyle(.secondary)
+                .textScale(.secondary)
+        }
+        .font(.system(size: 17, weight: .regular))
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    @ViewBuilder
+    private func runStatsSection(_ run: HKWorkout) -> some View {
+        VStack(spacing: 8) {
+            HStack {
+                StatCell(title: "Duration", value: run.durationAsString, color: .yellow)
+                StatCell(title: "Distance", value: String(format: "%.2f", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(title: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: .accentColor)
+                StatCell(title: "Avg Cadence", value: String(format: "%.0f", run.averageCadence), unit: "SPM", color: .cyan)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(title: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace.minutes, run.averagePace.seconds), unit: "/KM", color: .teal)
+                StatCell(title: "Avg Heart Rate", value: String(format: "%.0f", run.averageHeartRate), unit: "BPM", color: .red)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func runUsedShoeSection(_ run: HKWorkout) -> some View {
+        Group {
+            if let shoe = shoesViewModel.getShoe(ofWorkoutID: run.id) {
+                VStack(alignment: .leading) {
+                    Text("\(shoe.brand)")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
+                    
+                    Text("\(shoe.model)")
+                        .font(.system(size: 18))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(.rect)
+                .onTapGesture {
+                    selectedShoe = shoe
+                }
+            } else {
+                Text("No shoe selected for this workout.")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .contentShape(.rect)
+                    .onTapGesture {
+                        showSheet = .addToShoe(workoutID: run.id)
+                    }
+            }
+        }
+        .padding(.trailing, 20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(alignment: .leading) {
+            Image(systemName: "shoe.2.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 44, height: 44)
+                .offset(x: -50)
+        }
+        .overlay(alignment: .trailing) {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 22, weight: .bold))
+                .imageScale(.small)
+                .foregroundStyle(.secondary)
+        }
     }
     
     @ViewBuilder
@@ -432,6 +542,39 @@ extension ShoesTab {
     }
 }
 
+// MARK: - Data Types
+
+extension ShoesTab {
+    
+    enum SheetType: Identifiable {
+        case addShoe
+        case setDefaultShoe
+        case addToShoe(workoutID: UUID)
+        
+        var id: UUID {
+            switch self {
+            case .addShoe:
+                return UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+            case .setDefaultShoe:
+                return UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+            case .addToShoe(let workoutID):
+                return workoutID
+            }
+        }
+        
+        static func == (lhs: SheetType, rhs: SheetType) -> Bool {
+                switch (lhs, rhs) {
+                case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
+                    return true
+                case let (.addToShoe(workout1), .addToShoe(workout2)):
+                    return workout1 == workout2
+                default:
+                    return false
+                }
+            }
+    }
+}
+
 // MARK: - Preview
 
 #Preview("Filled") {
@@ -451,3 +594,6 @@ extension ShoesTab {
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
     }
 }
+
+
+//StatCell(title: "Active Kilocalories", value: String(format: "%.0f", lastRun.activeKilocalories), unit: UnitEnergy.kilocalories.symbol, color: .pink)

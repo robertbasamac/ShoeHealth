@@ -22,7 +22,7 @@ struct WorkoutListItem: View {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
                     .font(.caption)
                 
-                Text("\(distanceFormatter.string(fromValue: workout.totalDistance(unitPrefix: .kilo), unit: .kilometer).uppercased())")
+                Text("\(distanceFormatter.string(fromValue: Double(workout.totalDistance()), unit: .kilometer).uppercased())")
                     .font(.title3)
                     .foregroundStyle(Color.accentColor)
             }

@@ -150,10 +150,12 @@ final class HealthKitManager {
             
             NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
             HealthKitManager.latestUpdate = newWorkout.endDate
-            
-            self.workouts.append(newWorkout)
         } else {
             logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
+        }
+        
+        Task {
+            await fetchRunningWorkouts()
         }
     }
     
@@ -173,5 +175,9 @@ final class HealthKitManager {
         }
         
         return filteredWorkouts.sorted { $0.endDate > $1.endDate }
+    }
+    
+    func getLastRun() -> HKWorkout? {
+        return workouts.first
     }
 }
