@@ -17,10 +17,10 @@ struct ShoeCell: View {
         VStack(alignment: .leading, spacing: 0) {
             ShoeImage(imageData: shoe.image, showBackground: true)
                 .frame(width: width, height: width)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     if displayProgress {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor)
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
                     }
                 }
 
@@ -40,7 +40,7 @@ struct ShoeCell: View {
             .padding(8)
         }
         .frame(width: width)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(.rect(cornerRadius: 12))
     }
 }
 

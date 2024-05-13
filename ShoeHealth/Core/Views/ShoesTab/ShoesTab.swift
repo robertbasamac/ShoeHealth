@@ -147,8 +147,11 @@ extension ShoesTab {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                         
-                        Divider()
-
+                        Rectangle()
+                            .fill(.background)
+                            .frame(height: 2)
+                            .frame(maxWidth: .infinity)
+                        
                         runStatsSection(lastRun)
                             .padding(.horizontal, 20)
                     }
