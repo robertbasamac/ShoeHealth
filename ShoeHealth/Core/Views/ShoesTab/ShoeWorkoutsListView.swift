@@ -69,7 +69,7 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
-                ShoeSelectionView {
+                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: selections.first ?? UUID())) {
                     Text("Select a Shoe to assign the selected Workouts")
                 } onDone: { shoeID in
                     withAnimation {

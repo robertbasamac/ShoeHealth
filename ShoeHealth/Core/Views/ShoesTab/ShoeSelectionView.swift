@@ -25,7 +25,8 @@ struct ShoeSelectionView<Content: View>: View {
     private let content: () -> Content
     private let onDone: (UUID) -> Void
     
-    init (@ViewBuilder header content: @escaping () -> Content, onDone: @escaping (UUID) -> Void) {
+    init (selectedShoe: Shoe? = nil, @ViewBuilder header content: @escaping () -> Content, onDone: @escaping (UUID) -> Void) {
+        self.selectedShoe = selectedShoe
         self.content = content
         self.onDone = onDone
     }
@@ -121,7 +122,7 @@ extension ShoeSelectionView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeSelectionView {
+            ShoeSelectionView(selectedShoe: Shoe.previewShoes.first) {
                 Text("Select a Shoe")
             } onDone: { _ in
                 

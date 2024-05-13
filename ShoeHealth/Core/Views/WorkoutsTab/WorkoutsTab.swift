@@ -36,7 +36,7 @@ struct WorkoutsTab: View {
         }
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
-                ShoeSelectionView {
+                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: workout.id)) {
                     Text("Select the shoe to assign the Workout to")
                 } onDone: { shoeID in
                     shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
