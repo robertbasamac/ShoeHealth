@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct ShoeDetailView: View {
     
@@ -13,7 +14,11 @@ struct ShoeDetailView: View {
     
     private var shoe: Shoe
     
+    @State private var workouts: [HKWorkout] = []
+    @State private var mostRecentWorkouts: [HKWorkout] = []
+    
     @State private var showEditShoe: Bool = false
+    @State private var showAllWorkouts: Bool = false
 
     @State private var opacity: CGFloat = 0
     @State private var headerOpacity: CGFloat = 0
@@ -42,11 +47,7 @@ struct ShoeDetailView: View {
                                 readFrame(frame)
                             }
                         
-                        ForEach(0..<10, id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(.red)
-                                .frame(width: 200, height: 200)
-                        }
+                        workoutsSection
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -65,11 +66,7 @@ struct ShoeDetailView: View {
                                 readFrame(frame)
                             }
                         
-                        ForEach(0..<10, id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(.red)
-                                .frame(width: 200, height: 200)
-                        }
+                        workoutsSection
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -81,6 +78,14 @@ struct ShoeDetailView: View {
         .navigationDestination(isPresented: $showEditShoe) {
             EditShoeView(shoe: shoe)
         }
+        .navigationDestination(isPresented: $showAllWorkouts) {
+            ShoeWorkoutsListView(shoeID: shoe.id, workouts: $workouts) {
+                updateInterface()
+            }
+        }
+        .onAppear(perform: {
+            updateInterface()
+        })
     }
 }
 
@@ -128,6 +133,37 @@ extension ShoeDetailView {
         }
     }
     
+    @ViewBuilder
+    private var workoutsSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text("Workouts")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Image(systemName: "chevron.right")
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+            }
+            .font(.title2)
+            .fontWeight(.bold)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(.rect)
+            .onTapGesture {
+                showAllWorkouts.toggle()
+            }
+            
+            VStack(spacing: 4) {
+                ForEach(mostRecentWorkouts) { workout in
+                    WorkoutListItem(workout: workout)
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color(uiColor: .secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+            }
+        }
+        .padding(20)
+    }
 }
 
 // MARK: - Helpers
@@ -139,6 +175,11 @@ extension ShoeDetailView {
         
         opacity = interpolateOpacity(position: frame.maxY, minPosition: topPadding + 30, maxPosition: topPadding + 75, reversed: true)
         headerOpacity = interpolateOpacity(position: frame.maxY, minPosition: topPadding, maxPosition: topPadding + 4, reversed: true)
+    }
+    
+    private func updateInterface() {
+        self.workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        self.mostRecentWorkouts = Array(workouts.prefix(5))
     }
 }
 

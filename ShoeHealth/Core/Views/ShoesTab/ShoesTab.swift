@@ -169,22 +169,17 @@ extension ShoesTab {
     
     @ViewBuilder
     private func defaultShoeSection(_ shoe: Shoe?) -> some View {
-        if let shoe = shoe {
-            VStack(spacing: 0) {
-                Text("Default Shoe")
-                    .asHeader()
-                
+        VStack(spacing: 0) {
+            Text("Default Shoe")
+                .asHeader()
+            
+            if let shoe = shoe {
                 ShoeListItem(shoe: shoe, width: 140)
                     .roundedContainer()
                     .onTapGesture {
                         selectedShoe = shoe
                     }
-            }
-        } else {
-            VStack(spacing: 0) {
-                Text("Default Shoe")
-                    .asHeader()
-                
+            } else {
                 HStack(spacing: 0) {
                     ShoeImage()
                         .frame(width: 140, height: 140)
