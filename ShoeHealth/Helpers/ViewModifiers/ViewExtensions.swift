@@ -14,7 +14,7 @@ extension View {
             .font(.title2)
             .fontWeight(.bold)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding([.horizontal], 20)
+            .padding(.horizontal, 20)
             .padding(.top, 8)
             .contentShape(.rect)
     }

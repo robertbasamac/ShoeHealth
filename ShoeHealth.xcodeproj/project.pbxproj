@@ -11,6 +11,7 @@
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
 		090E156C2BE8EAAA00BC8124 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */; };
 		090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
+		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
 		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
@@ -108,6 +109,7 @@
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		090E156D2BEB814D00BC8124 /* StatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCell.swift; sourceTree = "<group>"; };
+		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 			isa = PBXGroup;
 			children = (
 				09E7EAB12B3AE67900BFAC16 /* HKWorkout */,
+				090E15702BF377F800BC8124 /* Double.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -659,6 +662,7 @@
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
 				094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
+				090E15712BF377F800BC8124 /* Double.swift in Sources */,
 				0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */,
 				0956EE392B4C057D0029445E /* TabItem.swift in Sources */,
 				090E156C2BE8EAAA00BC8124 /* ViewExtensions.swift in Sources */,

@@ -145,7 +145,6 @@ extension ShoesTab {
                             runUsedShoeSection(lastRun)
                         }
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
                         
                         Rectangle()
                             .fill(.background)
@@ -330,22 +329,22 @@ extension ShoesTab {
     private func runStatsSection(_ run: HKWorkout) -> some View {
         VStack(spacing: 8) {
             HStack {
-                StatCell(title: "Duration", value: run.durationAsString, color: .yellow)
-                StatCell(title: "Distance", value: String(format: "%.2f", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue)
+                StatCell(label: "Duration", value: run.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: String(format: "%.2f", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
             
             HStack {
-                StatCell(title: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: .accentColor)
-                StatCell(title: "Avg Cadence", value: String(format: "%.0f", run.averageCadence), unit: "SPM", color: .cyan)
+                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: .accentColor, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Cadence", value: String(format: "%.0f", run.averageCadence), unit: "SPM", color: .cyan, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
             
             HStack {
-                StatCell(title: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace.minutes, run.averagePace.seconds), unit: "/KM", color: .teal)
-                StatCell(title: "Avg Heart Rate", value: String(format: "%.0f", run.averageHeartRate), unit: "BPM", color: .red)
+                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace.minutes, run.averagePace.seconds), unit: "/KM", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Heart Rate", value: String(format: "%.0f", run.averageHeartRate), unit: "BPM", color: .red, textAlignment: .leading, containerAlignment: .leading)
             }
         }
     }
@@ -592,6 +591,3 @@ extension ShoesTab {
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
     }
 }
-
-
-//StatCell(title: "Active Kilocalories", value: String(format: "%.0f", lastRun.activeKilocalories), unit: UnitEnergy.kilocalories.symbol, color: .pink)

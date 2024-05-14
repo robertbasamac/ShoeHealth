@@ -37,7 +37,7 @@ struct ShoeDetailView: View {
             
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
+                    LazyVStack(spacing: 20) {
                         StretchyHeaderCell(height: 250, title: shoe.model, subtitle: shoe.brand, imageData: imageData)
                             .overlay(content: {
                                 Color.black
@@ -47,6 +47,8 @@ struct ShoeDetailView: View {
                                 readFrame(frame)
                             }
                         
+                        infoSection
+                        
                         workoutsSection
                     }
                 }
@@ -55,7 +57,7 @@ struct ShoeDetailView: View {
                 .contentMargins(.top, 44)
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
+                    LazyVStack(spacing: 20) {
                         StaticHeaderCell(title: shoe.model, subtitle: shoe.brand)
                             .frame(height: 75)
                             .overlay(content: {
@@ -65,6 +67,8 @@ struct ShoeDetailView: View {
                             .readingFrame { frame in
                                 readFrame(frame)
                             }
+                        
+                        infoSection
                         
                         workoutsSection
                     }
@@ -134,6 +138,46 @@ extension ShoeDetailView {
     }
     
     @ViewBuilder
+    private var infoSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text("Lifespan")
+                    .font(.title2)
+                    .fontWeight(.bold)
+//                Image(systemName: "chevron.right")
+//                    .imageScale(.small)
+//                    .foregroundStyle(.secondary)
+            }
+            .font(.title2)
+            .fontWeight(.bold)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(.rect)
+//            .onTapGesture {
+//                showAllWorkouts.toggle()
+//            }
+            
+            HStack {
+                VStack(alignment: .leading, spacing: 12) {
+                    StatCell(label: "CURRENT", value: shoe.currentDistance.as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.currentDistance).as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                }
+                
+                ZStack {
+                    CircularProgressView(progress: shoe.wearPercentage, lineWidth: 6, color: shoe.wearColor)
+                        .padding()
+                    StatCell(label: "WEAR", value: shoe.wearPercentageAsString, labelFont: .system(size: 14), valueFont: .system(size: 20), color: shoe.wearColor)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .offset(x: 20)
+            }
+            .padding(.horizontal, 20)
+            .frame(height: 140)
+            .background(Color(uiColor: .secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        .padding(.horizontal, 20)
+    }
+    @ViewBuilder
     private var workoutsSection: some View {
         VStack(spacing: 8) {
             HStack {
@@ -162,7 +206,7 @@ extension ShoeDetailView {
                 }
             }
         }
-        .padding(20)
+        .padding(.horizontal, 20)
     }
 }
 
