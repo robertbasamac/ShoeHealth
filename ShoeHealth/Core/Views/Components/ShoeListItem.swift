@@ -46,9 +46,9 @@ extension ShoeListItem {
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             
-            ProgressView(value: shoe.currentDistance, total: shoe.lifespanDistance) {
+            ProgressView(value: shoe.totalDistance, total: shoe.lifespanDistance) {
                 HStack {
-                    Text("\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer))")
+                    Text("\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer))")
                     Spacer()
                     Text("\(distanceFormatter.string(fromValue: shoe.lifespanDistance, unit: .kilometer))")
                 }

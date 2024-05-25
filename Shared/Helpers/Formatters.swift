@@ -19,7 +19,7 @@ var dateTimeFormatter: DateFormatter {
     let formatter = DateFormatter()
     
     formatter.dateStyle = .medium
-    formatter.timeStyle = .long
+    formatter.timeStyle = .medium
     
     return formatter
 }

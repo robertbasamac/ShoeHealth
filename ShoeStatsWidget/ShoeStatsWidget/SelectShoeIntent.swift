@@ -21,18 +21,18 @@ struct ShoeStatsEntity: AppEntity {
     var brand: String
     var model: String
     var lifespanDistance: Double
-    var currentDistance: Double
+    var totalDistance: Double
     var lastRunDate: Date?
     var wearPercentage: Double
     var wearPercentageAsString: String
     var wearColor: Color
     
-    init(id: UUID, brand: String, model: String, lifespanDistance: Double, currentDistance: Double, lastActivityDate: Date, wearPercentage: Double, wearPercentageAsString: String, wearColor: Color) {
+    init(id: UUID, brand: String, model: String, lifespanDistance: Double, totalDistance: Double, lastActivityDate: Date, wearPercentage: Double, wearPercentageAsString: String, wearColor: Color) {
         self.id = id
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
-        self.currentDistance = currentDistance
+        self.totalDistance = totalDistance
         self.lastRunDate = lastActivityDate
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
@@ -44,7 +44,7 @@ struct ShoeStatsEntity: AppEntity {
         self.brand = shoe.brand
         self.model = shoe.model
         self.lifespanDistance = shoe.lifespanDistance
-        self.currentDistance = shoe.currentDistance
+        self.totalDistance = shoe.totalDistance
         self.lastRunDate = shoe.lastActivityDate
         self.wearPercentage = shoe.wearPercentage
         self.wearPercentageAsString = shoe.wearPercentageAsString

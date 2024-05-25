@@ -12,6 +12,7 @@ struct SettingsTab: View {
     var body: some View {
         ScrollView(.vertical) {
             Text("Settings")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

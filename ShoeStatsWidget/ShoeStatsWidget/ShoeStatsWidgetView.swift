@@ -42,15 +42,15 @@ struct ShoeStatsSnapshotWidgetView : View {
             
             HStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 4) {
-                    ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
-                    ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
+                    ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.yellow, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
+                    ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.blue, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
                 }
-                .contentTransition(.numericText(value: shoe.currentDistance))
+                .contentTransition(.numericText(value: shoe.totalDistance))
                 
                 ZStack {
                     CircularProgressView(progress: shoe.wearPercentage, lineWidth: 4, color: shoe.wearColor)
                     ShoeStatView(label: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColor, labelFont: .system(size: 10), valueFont: .system(size: 12))
-                        .contentTransition(.numericText(value: shoe.currentDistance))
+                        .contentTransition(.numericText(value: shoe.totalDistance))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
             }

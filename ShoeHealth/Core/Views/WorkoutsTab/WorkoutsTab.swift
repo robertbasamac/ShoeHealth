@@ -20,7 +20,7 @@ struct WorkoutsTab: View {
         List {
             ForEach(healthKitManager.workouts, id: \.self) { workout in
                 NavigationLink {
-                    WorkoutListItem(workout: workout)
+                    SampleView(workout: workout)
                 } label: {
                     WorkoutListItem(workout: workout)
                 }

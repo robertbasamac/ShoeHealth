@@ -141,9 +141,9 @@ extension ShoeDetailCarouselView {
     @ViewBuilder
     private func leftSideStats(of shoe: Shoe) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
+            ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.yellow, alignement: .leading)
             
-            ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.currentDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
+            ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.blue, alignement: .leading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.horizontal)

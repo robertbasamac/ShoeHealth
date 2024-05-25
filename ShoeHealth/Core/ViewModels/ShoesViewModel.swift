@@ -24,6 +24,11 @@ final class ShoesViewModel {
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
     
+    private let distance5K: Double = 5000
+    private let distance10K: Double = 10000
+    private let halfMarathon: Double = 21097.5
+    private let marathon: Double = 42195
+    
     var searchBinding: Binding<String> {
         Binding(
             get: { self.searchText },
@@ -68,7 +73,7 @@ final class ShoesViewModel {
         case .brand:
             filteredShoes.sort { sortOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
         case .distance:
-            filteredShoes.sort { sortOrder == .forward ? $0.currentDistance < $1.currentDistance : $0.currentDistance > $1.currentDistance }
+            filteredShoes.sort { sortOrder == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
         case .wear:
             filteredShoes.sort { sortOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
         case .lastRunDate:
@@ -163,12 +168,12 @@ final class ShoesViewModel {
         for workoutID in workoutIDs {
             if let oldShoe = getShoe(ofWorkoutID: workoutID) {
                 oldShoe.workouts.removeAll { $0 == workoutID }
-                updateShoeActivity(oldShoe)
+                updateShoeStatistics(oldShoe)
             }
         }
         
         shoe.workouts.append(contentsOf: workoutIDs)
-        updateShoeActivity(shoe)
+        updateShoeStatistics(shoe)
         
         save()
     }
@@ -180,7 +185,7 @@ final class ShoesViewModel {
             shoe.workouts.removeAll { $0 == workoutID }
         }
         
-        updateShoeActivity(shoe)
+        updateShoeStatistics(shoe)
         save()
     }
     
@@ -206,19 +211,85 @@ final class ShoesViewModel {
         save()
     }
     
-    private func updateShoeActivity(_ shoe: Shoe) {
+    func computePersonalBests(for shoe: Shoe) {
+        var personalBests: [RunningCategory: PersonalBest?] = [:]
+        var totalRuns: [RunningCategory: Int] = [:]
+        
+        var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
+        
         let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
         
-        shoe.currentDistance = workouts.reduce(0.0) { result, workout in
+        for category in RunningCategory.allCases {
+            personalBests[category] = nil
+            totalRuns[category] = 0
+            filteredWorkouts[category] = workouts.filter { $0.totalDistance?.doubleValue(for: .meter()) ?? 0 >= category.distance }
+        }
+        
+        let group = DispatchGroup()
+        
+        for category in RunningCategory.allCases {
+            guard let workoutsForCategory = filteredWorkouts[category] else { continue }
+            
+            totalRuns[category] = workoutsForCategory.count
+            
+            for workout in workoutsForCategory {
+                group.enter()
+                
+                HealthKitManager.shared.fetchDistanceSamples(for: workout) { samples in
+                    var accumulatedDistance: Double = 0
+                    var lastSampleEndDate: Date?
+                    
+                    for sample in samples {
+                        let sampleDistance = sample.quantity.doubleValue(for: .meter())
+
+                        if accumulatedDistance + sampleDistance >= category.distance {
+                            let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
+
+                            let remainingDistance = category.distance - accumulatedDistance
+                            let proportion = remainingDistance / sampleDistance
+                            let interpolatedTime = proportion * sampleDuration
+                            
+                            lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
+                            
+                            break
+                        }
+                        
+                        accumulatedDistance += sampleDistance
+                    }
+                    
+                    if let lastSampleEndDate = lastSampleEndDate {
+                        let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
+                        
+                        if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
+                            personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
+                        }
+                    }
+                    
+                    group.leave()
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            shoe.personalBests = personalBests
+            shoe.totalRuns = totalRuns
+        }
+    }
+    
+    private func updateShoeStatistics(_ shoe: Shoe) {
+        let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        
+        shoe.lastActivityDate = workouts.first?.endDate
+        
+        shoe.totalDistance = workouts.reduce(0.0) { result, workout in
             return result + workout.totalDistance(unitPrefix: .kilo)
         }
         
-        guard let lastActivityDate = workouts.first?.endDate else {
-            shoe.lastActivityDate = nil
-            return
+        shoe.totalDuration = workouts.reduce(0.0) { result, workout in
+            return result + workout.duration
         }
         
-        shoe.lastActivityDate = lastActivityDate
+        computePersonalBests(for: shoe)
     }
     
     // MARK: - Getters

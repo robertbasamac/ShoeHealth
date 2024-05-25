@@ -18,13 +18,16 @@ final class Shoe {
     var brand: String
     var model: String
     var lifespanDistance: Double
-    var currentDistance: Double
+    var totalDistance: Double
     var aquisitionDate: Date
     var retireDate: Date?
     var lastActivityDate: Date?
     var isRetired: Bool
     var isDefaultShoe: Bool
     var workouts: [UUID] = []
+    var personalBests: [RunningCategory: PersonalBest?] = [:]
+    var totalRuns: [RunningCategory: Int] = [:]
+    var totalDuration: Double = 0
     
     init(id: UUID = .init(),
          nickname: String,
@@ -40,7 +43,7 @@ final class Shoe {
         self.brand = brand
         self.model = model
         self.lifespanDistance = lifespanDistance
-        self.currentDistance = currentDistance
+        self.totalDistance = currentDistance
         self.aquisitionDate = aquisitionDate
         self.retireDate = nil
         self.lastActivityDate = nil
@@ -54,19 +57,16 @@ final class Shoe {
 
 extension Shoe {
     
-    @Transient
     var wearPercentage: Double {
-        return currentDistance / lifespanDistance
+        return totalDistance / lifespanDistance
     }
     
-    @Transient
     var wearPercentageAsString: String {
-        return percentageFormatter.string(from: NSNumber(value: currentDistance / lifespanDistance)) ?? "0"
+        return percentageFormatter.string(from: NSNumber(value: totalDistance / lifespanDistance)) ?? "0"
     }
     
-    @Transient
     var wearColor: Color {
-        let wear = self.currentDistance / self.lifespanDistance
+        let wear = self.totalDistance / self.lifespanDistance
         if wear < 0.7 {
             return .green
         } else if wear < 0.8 {
@@ -77,6 +77,49 @@ extension Shoe {
             return .red
         }
     }
+    
+    var averageDuration: Double {
+        guard self.workouts.count != 0 else {
+            return 0
+        }
+        return self.totalDuration / Double(self.workouts.count)
+    }
+        
+    
+    var averageDistance: Double {
+        guard self.workouts.count != 0 else {
+            return 0
+        }
+        return self.totalDistance / Double(self.workouts.count)
+    }
+    
+    var averagePace: (minutes: Int, seconds: Int) {
+        guard self.totalDistance > 0 else { return (0, 0) }
+        
+        let paceInSecondsPerKilometer = self.totalDuration / self.totalDistance
+        let minutes = Int(paceInSecondsPerKilometer) / 60
+        let seconds = Int(paceInSecondsPerKilometer) % 60
+        
+        return (minutes, seconds)
+    }
+    
+    func formattedPersonalBest(for category: RunningCategory) -> String {
+        return formatDuration(personalBests[category]??.time)
+    }
+    
+    func formatDuration(_ duration: TimeInterval?) -> String {
+        guard let duration = duration else { return "N/A" }
+        
+        let hours = Int(duration / 3600)
+        let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
+        let seconds = Int(duration.truncatingRemainder(dividingBy: 60))
+        
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%02d:%02d", minutes, seconds)
+        }
+    }    
 }
 
 

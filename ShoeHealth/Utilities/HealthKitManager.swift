@@ -19,7 +19,8 @@ final class HealthKitManager {
     
     @ObservationIgnored private var healthStore = HKHealthStore()
     
-    @ObservationIgnored private var readTypes: Set = [.workoutType(), HKSeriesType.workoutType()]
+    @ObservationIgnored private var readTypes: Set = [HKObjectType.workoutType(),
+                                                      HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!]
     @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
     @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
@@ -157,6 +158,21 @@ final class HealthKitManager {
         Task {
             await fetchRunningWorkouts()
         }
+    }
+    
+    func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {
+        let sampleType = HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!
+        let predicate = HKQuery.predicateForObjects(from: workout)
+        
+        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, results, error in
+            if let samples = results as? [HKQuantitySample] {
+                completion(samples)
+            } else {
+                completion([])
+            }
+        }
+        
+        healthStore.execute(query)
     }
     
     // MARK: - Helper Methods
