@@ -207,7 +207,7 @@ extension ShoeDetailView {
         Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4, content: {
             GridRow {
                 Color.clear
-                Text("PR")
+                Text("PB")
                 Text("Runs")
             }
             .font(.system(size: 16))
@@ -259,10 +259,10 @@ extension ShoeDetailView {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text(shoe.formatDuration(shoe.totalDuration))
+                Text(shoe.formattedTotalDuration)
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Text(shoe.formatDuration(shoe.averageDuration))
+                Text(shoe.formatterAverageDuration)
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             .foregroundStyle(.yellow)

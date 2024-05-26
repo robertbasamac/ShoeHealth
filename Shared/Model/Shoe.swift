@@ -19,6 +19,7 @@ final class Shoe {
     var model: String
     var lifespanDistance: Double
     var totalDistance: Double
+    var totalDuration: Double = 0
     var aquisitionDate: Date
     var retireDate: Date?
     var lastActivityDate: Date?
@@ -27,7 +28,6 @@ final class Shoe {
     var workouts: [UUID] = []
     var personalBests: [RunningCategory: PersonalBest?] = [:]
     var totalRuns: [RunningCategory: Int] = [:]
-    var totalDuration: Double = 0
     
     init(id: UUID = .init(),
          nickname: String,
@@ -103,11 +103,19 @@ extension Shoe {
         return (minutes, seconds)
     }
     
+    var formattedTotalDuration: String {
+        return formatDuration(self.totalDuration)
+    }
+    
+    var formatterAverageDuration: String {
+        return formatDuration(self.averageDuration)
+    }
+    
     func formattedPersonalBest(for category: RunningCategory) -> String {
         return formatDuration(personalBests[category]??.time)
     }
     
-    func formatDuration(_ duration: TimeInterval?) -> String {
+    private func formatDuration(_ duration: TimeInterval?) -> String {
         guard let duration = duration else { return "N/A" }
         
         let hours = Int(duration / 3600)
