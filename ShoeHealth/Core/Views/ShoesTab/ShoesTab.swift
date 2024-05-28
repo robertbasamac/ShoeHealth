@@ -315,7 +315,7 @@ extension ShoesTab {
     
     @ViewBuilder
     private func runDateAndTimeSection(_ run: HKWorkout) -> some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .center) {
             Text(run.startDateAsString)
             Text("\(run.startTimeAsString) - \(run.endTimeAsString)")
                 .foregroundStyle(.secondary)
@@ -330,7 +330,7 @@ extension ShoesTab {
         VStack(spacing: 8) {
             HStack {
                 StatCell(label: "Duration", value: run.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Distance", value: String(format: "%.2f KM", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: String(format: "%.2f", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()

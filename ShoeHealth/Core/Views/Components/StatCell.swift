@@ -22,7 +22,7 @@ struct StatCell: View {
          value: String,
          unit: String = "",
          labelFont: Font = .system(size: 17, weight: .regular, design: .rounded),
-         valueFont: Font = .system(size: 22, weight: .regular, design: .rounded),
+         valueFont: Font = .system(size: 20, weight: .regular, design: .rounded),
          color: Color,
          textAlignment: HorizontalAlignment = .center,
          containerAlignment: Alignment = .center) {

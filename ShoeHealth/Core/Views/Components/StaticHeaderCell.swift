@@ -18,9 +18,9 @@ struct StaticHeaderCell: View {
                 .font(.headline)
             Text(title)
                 .font(.largeTitle)
+                .fontWeight(.bold)
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
-                .fontWeight(.bold)
         }
         .foregroundStyle(.primary)
         .padding(.horizontal, 20)

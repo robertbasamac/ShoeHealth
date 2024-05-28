@@ -130,7 +130,7 @@ extension ShoeDetailView {
         })
         .overlay {
             Text(shoe.model)
-                .font(.headline)
+                .font(.system(size: 17))
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
                 .opacity(opacity)
@@ -142,14 +142,10 @@ extension ShoeDetailView {
     @ViewBuilder
     private var lifespanSection: some View {
         VStack(spacing: 8) {
-            HStack {
-                Text("Lifespan")
-                    .font(.system(size: 22, weight: .bold))
-            }
-            .font(.title2)
-            .fontWeight(.bold)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+            Text("Health")
+                .font(.system(size: 22, weight: .bold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(.rect)
             
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
@@ -183,15 +179,17 @@ extension ShoeDetailView {
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(.rect)
             
-            VStack(alignment: .leading) {
-                VStack(alignment: .leading, spacing: 8) {
-                    averagesSection
-                    Rectangle()
-                        .fill(.background)
-                        .frame(height: 2)
-                        .frame(maxWidth: .infinity)
-                    personalBestsSection
-                }
+            VStack(spacing: 8) {
+                averagesSection
+                    .padding(.horizontal, 20)
+                
+                Rectangle()
+                    .fill(.background)
+                    .frame(height: 2)
+                    .frame(maxWidth: .infinity)
+                
+                personalBestsSection
+                    .padding(.horizontal, 20)
             }
             .font(.system(size: 17))
             .padding(.vertical, 10)
@@ -203,103 +201,62 @@ extension ShoeDetailView {
     }
     
     @ViewBuilder
+    private var averagesSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                StatCell(label: "Runs", value: "\(shoe.workouts.count)", color: .gray, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds), unit: "/KM", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(label: "Total Distance", value: shoe.totalDistance.as2DecimalsString(), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Distance", value: shoe.averageDistance.as2DecimalsString(), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(label: "Total Duration", value: shoe.formattedTotalDuration, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Duration", value: shoe.formatterAverageDuration, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+            }
+        }
+    }
+    
+    @ViewBuilder
     private var personalBestsSection: some View {
         Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4, content: {
             GridRow {
                 Color.clear
-                Text("PB")
+                Text("PR")
                 Text("Runs")
             }
-            .font(.system(size: 16))
+            .font(.system(size: 17))
             .foregroundStyle(.secondary)
             
             ForEach(RunningCategory.allCases, id: \.self) { category in
                 GridRow {
                     Text("\(category.shortTitle)")
+                        .font(.system(size: 17))
                         .frame(maxWidth: .infinity, alignment: .leading)
-
+                    
                     Text(shoe.formattedPersonalBest(for: category))
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     Text("\(shoe.totalRuns[category] ?? 0)")
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .font(.system(size: 20, weight: .medium, design: .rounded))
             }
         })
-        .font(.system(size: 18, weight: .medium, design: .rounded))
-        .padding(.horizontal, 20)
     }
-    
-    @ViewBuilder
-    private var averagesSection: some View {
-        Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4, content: {
-            GridRow {
-                Color.clear
-                Text("Total")
-                Text("Average")
-            }
-            .font(.system(size: 17))
-            .foregroundStyle(.secondary)
-            
-            GridRow {
-                Text("Distance")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Text("\(shoe.totalDistance.as2DecimalsString()) KM")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Text("\(shoe.averageDistance.as2DecimalsString()) KM")
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            .foregroundStyle(.blue)
-            
-            GridRow {
-                Text("Duration")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Text(shoe.formattedTotalDuration)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Text(shoe.formatterAverageDuration)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            .foregroundStyle(.yellow)
-            
-            GridRow {
-                Text("Pace")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Color.clear
-
-                Text("\(String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds))/KM")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .foregroundStyle(.teal)
-            }
-            
-            GridRow {
-                Text("Runs")
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Text("\(shoe.workouts.count)")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .foregroundStyle(.white)
-
-                Color.clear
-            }
-        })
-        .font(.system(size: 18, weight: .medium, design: .rounded))
-        .padding(.horizontal, 20)
-    }
-    
+        
     @ViewBuilder
     private var workoutsSection: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Workouts")
+                Text("History")
                 
                 Image(systemName: "chevron.right")
                     .imageScale(.small)
