@@ -126,9 +126,8 @@ struct EditShoeView: View {
             }
         }
         .navigationTitle("Update Shoe")
-//        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
-        .toolbarRole(.editor)
         .toolbar {
             toolbarItems()
         }
@@ -141,6 +140,14 @@ extension EditShoeView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Text("Cancel")
+            }
+        }
+        
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 shoesViewModel.updateShoe(shoeID: shoe.id, nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: selectedPhotoData)

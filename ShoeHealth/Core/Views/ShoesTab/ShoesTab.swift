@@ -17,50 +17,37 @@ struct ShoesTab: View {
     @State private var showSheet: SheetType?
     @State private var selectedCategory: ShoeFilterType?
     
-    @State private var headerOpacity: CGFloat = 0
-    
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            
-            header
-            .frame(maxHeight: .infinity, alignment: .top)
-            .zIndex(2)
-            
-            ScrollView(.vertical) {
-                VStack(spacing: 12) {
-                    lastRunSection(run: HealthKitManager.shared.getLastRun())
-                    
-                    defaultShoeSection(shoesViewModel.getDefaultShoe())
-                    
-                    if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
-                        recentlyUsedSection
-                    }
-                    
-                    if !shoesViewModel.getShoes(filter: .active).isEmpty {
-                        activeShoesSection
-                    }
-                    
-                    if !shoesViewModel.getShoes(filter: .retired).isEmpty {
-                        retiredShoesSection
-                    }
+        ScrollView(.vertical) {
+            VStack(spacing: 12) {
+                lastRunSection(run: HealthKitManager.shared.getLastRun())
+                
+                defaultShoeSection(shoesViewModel.getDefaultShoe())
+                
+                if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
+                    recentlyUsedSection
                 }
-                .readingFrame { frame in
-                    let topPadding = UIApplication.topSafeAreaInsets + 44
-                    
-                    headerOpacity = interpolateOpacity(position: frame.minY, minPosition: topPadding - 2, maxPosition: topPadding, reversed: true)
+                
+                if !shoesViewModel.getShoes(filter: .active).isEmpty {
+                    activeShoesSection
+                }
+                
+                if !shoesViewModel.getShoes(filter: .retired).isEmpty {
+                    retiredShoesSection
                 }
             }
-            .contentMargins(.top, 44)
-            .scrollIndicators(.hidden)
         }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Shoe Health")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe)
         }
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
+        }
+        .toolbar {
+            toolbarItems
         }
         .sheet(item: $showSheet) { sheetType in
             NavigationStack {
@@ -103,33 +90,6 @@ struct ShoesTab: View {
 // MARK: - View Components
 
 extension ShoesTab {
-    
-    @ViewBuilder
-    private var header: some View {
-        HStack(spacing: 0) {
-            Button {
-                showSheet = .addShoe
-            } label: {
-                Image(systemName: "plus")
-                    .asHeaderImageButton()
-            }
-        }
-        .padding(.horizontal)
-        .frame(height: 44)
-        .frame(maxWidth: .infinity, alignment: .trailing)
-        .background(.bar.opacity(headerOpacity))
-        .overlay(alignment: .bottom, content: {
-            Divider()
-                .opacity(headerOpacity)
-        })
-        .overlay {
-            Text("Shoe Health")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-        }
-    }
     
     @ViewBuilder
     private func lastRunSection(run: HKWorkout?) -> some View {
@@ -478,7 +438,19 @@ extension ShoesTab {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItem(placement: .automatic) {
+//        ToolbarItem(placement: .principal) {
+//            VStack(spacing: 0) {
+//                Image(systemName: "shoe.fill")
+//                    .font(.system(size: 17))
+//                    .foregroundStyle(.accent)
+//                
+//                Text("Health")
+//                    .font(.headline)
+//                    .minimumScaleFactor(0.5)
+//            }
+//        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
             Button {
                 showSheet = .addShoe
             } label: {
@@ -560,15 +532,15 @@ extension ShoesTab {
         }
         
         static func == (lhs: SheetType, rhs: SheetType) -> Bool {
-                switch (lhs, rhs) {
-                case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
-                    return true
-                case let (.addToShoe(workout1), .addToShoe(workout2)):
-                    return workout1 == workout2
-                default:
-                    return false
-                }
+            switch (lhs, rhs) {
+            case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
+                return true
+            case let (.addToShoe(workout1), .addToShoe(workout2)):
+                return workout1 == workout2
+            default:
+                return false
             }
+        }
     }
 }
 

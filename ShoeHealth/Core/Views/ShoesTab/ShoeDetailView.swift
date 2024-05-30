@@ -21,20 +21,15 @@ struct ShoeDetailView: View {
     @State private var showAllWorkouts: Bool = false
 
     @State private var opacity: CGFloat = 0
-    @State private var headerOpacity: CGFloat = 0
-        
+    @State private var navBarVisibility: Visibility = .hidden
+    @State private var navBarTitle: String = ""
+    
     init(shoe: Shoe) {
         self.shoe = shoe
     }
     
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            
-            header
-            .frame(maxHeight: .infinity, alignment: .top)
-            .zIndex(2)
-            
+        Group {
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 20) {
@@ -55,7 +50,6 @@ struct ShoeDetailView: View {
                 }
                 .scrollIndicators(.hidden)
                 .scrollTargetBehavior(.stretchyHeader)
-                .contentMargins(.top, 44)
             } else {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 20) {
@@ -77,16 +71,23 @@ struct ShoeDetailView: View {
                 }
                 .scrollIndicators(.hidden)
                 .scrollTargetBehavior(.staticHeader)
-                .contentMargins(.top, 44)
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
-        .navigationDestination(isPresented: $showEditShoe) {
-            EditShoeView(shoe: shoe)
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle(navBarTitle)
+        .toolbarBackground(navBarVisibility, for: .navigationBar)
+        .toolbar {
+            toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
             ShoeWorkoutsListView(shoeID: shoe.id, workouts: $workouts) {
                 updateInterface()
+            }
+        }
+        .fullScreenCover(isPresented: $showEditShoe) {
+            NavigationStack {
+                EditShoeView(shoe: shoe)
             }
         }
         .onAppear(perform: {
@@ -98,46 +99,6 @@ struct ShoeDetailView: View {
 // MARK: - View Components
 
 extension ShoeDetailView {
-    
-    @ViewBuilder
-    private var header: some View {
-        HStack(spacing: 8) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .asHeaderImageButton()
-                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
-            }
-            
-            Spacer(minLength: 0)
-
-            Button {
-                showEditShoe.toggle()
-            } label: {
-                Text("Edit")
-                    .asHeaderTextButton()
-                    .background(.bar.opacity(Double(1 - opacity)), in: .capsule(style: .circular))
-            }
-        }
-        .padding(.horizontal, 12)
-        .frame(height: 44)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.bar.opacity(headerOpacity))
-        .overlay(alignment: .bottom, content: {
-            Divider()
-                .opacity(headerOpacity)
-        })
-        .overlay {
-            Text(shoe.model)
-                .font(.system(size: 17))
-                .lineLimit(1)
-                .minimumScaleFactor(0.4)
-                .opacity(opacity)
-                .padding(.horizontal, 90)
-                .frame(maxWidth: .infinity)
-        }
-    }
     
     @ViewBuilder
     private var lifespanSection: some View {
@@ -281,6 +242,28 @@ extension ShoeDetailView {
         }
         .padding(.horizontal, 20)
     }
+    
+    @ToolbarContentBuilder
+    private var toolbarItems: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .fontWeight(.semibold)
+            }
+            .buttonStyle(.blurredCircle(Double(1-opacity)))
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showEditShoe.toggle()
+            } label: {
+                Text("Edit")
+            }
+            .buttonStyle(.blurredCapsule(Double(1-opacity)))
+        }
+    }
 }
 
 // MARK: - Helpers
@@ -288,10 +271,20 @@ extension ShoeDetailView {
 extension ShoeDetailView {
     
     private func readFrame(_ frame: CGRect) {
-        let topPadding = UIApplication.topSafeAreaInsets + 44
+        guard frame.maxY > 0 else {
+            return
+        }
         
-        opacity = interpolateOpacity(position: frame.maxY, minPosition: topPadding + 30, maxPosition: topPadding + 75, reversed: true)
-        headerOpacity = interpolateOpacity(position: frame.maxY, minPosition: topPadding, maxPosition: topPadding + 4, reversed: true)
+        let topPadding: CGFloat = UIApplication.statusBarHeight + 44
+        let showNavBarTitlePadding: CGFloat = 25
+        
+        opacity = interpolateOpacity(position: frame.maxY,
+                                     minPosition: topPadding + showNavBarTitlePadding,
+                                     maxPosition: topPadding + 75,
+                                     reversed: true)
+        
+        navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
+        navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
     }
     
     private func updateInterface() {

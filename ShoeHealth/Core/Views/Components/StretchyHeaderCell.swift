@@ -33,9 +33,9 @@ struct StretchyHeaderCell: View {
             .overlay(alignment: .bottomLeading) {
                 StaticHeaderCell(title: title, subtitle: subtitle)
                     .frame(height: 75)
-                .background {
-                    LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
-                }
+                    .background {
+                        LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
+                    }
             }
             .asStretchyHeader(startingHeight: height)
     }

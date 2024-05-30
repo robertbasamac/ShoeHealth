@@ -63,6 +63,8 @@
 		09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D85D272B62F59B005E7365 /* ShoeFilterType.swift */; };
+		09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */; };
+		09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */; };
 		09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */; };
 		09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A742B0D3F7F001119E4 /* ContentView.swift */; };
 		09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A762B0D3F81001119E4 /* Assets.xcassets */; };
@@ -156,6 +158,8 @@
 		09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
 		09D85D272B62F59B005E7365 /* ShoeFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
+		09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurredCircleButtonStyle.swift; sourceTree = "<group>"; };
+		09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurredCapsuleButtonStyle.swift; sourceTree = "<group>"; };
 		09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoeHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeHealthApp.swift; sourceTree = "<group>"; };
 		09DE4A742B0D3F7F001119E4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -214,6 +218,7 @@
 			children = (
 				0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */,
 				0936FF542BD586F600BF5798 /* FrameReader.swift */,
+				09D9B5C42C08EA650016825A /* ButtonStyle */,
 				094F26282BE01FC800441A62 /* ScrollTargetBehavior */,
 				0936FF512BD14C7B00BF5798 /* ViewModifiers */,
 				09BFD2EB2B985E23009F4133 /* PreferenceKeys */,
@@ -404,6 +409,15 @@
 				09E385DE2B1344D7005CFF02 /* ViewModels */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		09D9B5C42C08EA650016825A /* ButtonStyle */ = {
+			isa = PBXGroup;
+			children = (
+				09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */,
+				09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */,
+			);
+			path = ButtonStyle;
 			sourceTree = "<group>";
 		};
 		09DE4A662B0D3F7F001119E4 = {
@@ -675,6 +689,8 @@
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
 				094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
+				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
+				09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */,
 				09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */,
 				090E15712BF377F800BC8124 /* Double.swift in Sources */,
 				0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */,
