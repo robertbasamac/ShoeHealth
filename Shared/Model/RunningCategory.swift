@@ -8,9 +8,10 @@
 import Foundation
 
 enum RunningCategory: String, CaseIterable, Codable {
-    case fiveK = "5k"
-    case tenK = "10k"
-    case halfMarathon = "1/2 Marathon"
+    
+    case fiveK = "5K"
+    case tenK = "10K"
+    case halfMarathon = "Half-Marathon"
     case marathon = "Marathon"
 
     var distance: Double {
@@ -29,13 +30,13 @@ enum RunningCategory: String, CaseIterable, Codable {
     var shortTitle: String {
         switch self {
         case .fiveK:
-            return "5k"
+            return "5K"
         case .tenK:
             return "10K"
         case .halfMarathon:
-            return "21k"
+            return "21K"
         case .marathon:
-            return "42k"
+            return "42K"
         }
     }
 }

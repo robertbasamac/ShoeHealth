@@ -190,8 +190,14 @@ extension ShoeDetailView {
         Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4, content: {
             GridRow {
                 Color.clear
+                    .gridCellColumns(2)
+
                 Text("PR")
+                    .gridCellColumns(3)
+
                 Text("Runs")
+                    .gridCellColumns(1)
+
             }
             .font(.system(size: 17))
             .foregroundStyle(.secondary)
@@ -201,12 +207,16 @@ extension ShoeDetailView {
                     Text("\(category.shortTitle)")
                         .font(.system(size: 17))
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .gridCellColumns(2)
                     
                     Text(shoe.formattedPersonalBest(for: category))
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .gridCellColumns(3)
+
                     
                     Text("\(shoe.totalRuns[category] ?? 0)")
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .gridCellColumns(1)
                 }
                 .font(.system(size: 20, weight: .medium, design: .rounded))
             }

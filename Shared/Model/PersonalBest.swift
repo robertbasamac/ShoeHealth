@@ -8,6 +8,7 @@
 import Foundation
 
 struct PersonalBest: Codable {
+    
     var time: TimeInterval
     var workoutID: UUID
     

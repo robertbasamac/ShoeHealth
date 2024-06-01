@@ -14,7 +14,8 @@ private let logger = Logger(subsystem: "Shoe Health", category: "AppDelegate")
 
 class AppDelegate: NSObject {
     
-    var app: ShoeHealthApp?
+    var shoesViewModel: ShoesViewModel?
+    var navigationRouter: NavigationRouter?
 }
 
 // MARK: - UIApplicationDelegate
@@ -48,8 +49,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         case "DEFAULT_SHOE_ACTION":
             logger.debug("\"Use default shoe\" action pressed.")
             
-            if let shoe = app?.shoesViewModel.getDefaultShoe() {
-                app?.shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoe.id)                
+            if let shoe = shoesViewModel?.getDefaultShoe() {
+                shoesViewModel?.add(workoutIDs: [workout.id], toShoe: shoe.id)
             }
         
         case "REMIND_ME_LATER":
@@ -61,7 +62,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             NotificationManager.shared.scheduleNotification(workout: workout, dateComponents: dateComponents)
             
         case UNNotificationDefaultActionIdentifier:
-            app?.navigationRouter.workout = workout
+            navigationRouter?.workout = workout
         
         default:
             break

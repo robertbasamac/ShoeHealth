@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct ShoeHealthApp: App {
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
         
     @StateObject var navigationRouter = NavigationRouter()
@@ -23,7 +24,8 @@ struct ShoeHealthApp: App {
                 .environment(shoesViewModel)
                 .preferredColorScheme(.dark)
                 .onAppear {
-                    appDelegate.app = self
+                    appDelegate.shoesViewModel = shoesViewModel
+                    appDelegate.navigationRouter = navigationRouter
                 }
         }
         .modelContainer(ShoesStore.container)

@@ -8,6 +8,7 @@
 import Foundation
 
 enum TabItem: String, Hashable, Identifiable, CaseIterable {
+    
     var id: Self { self }
     
     case shoes = "Shoes"

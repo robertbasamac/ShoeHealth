@@ -9,6 +9,7 @@ import Foundation
 import HealthKit
 
 extension HKWorkout: Identifiable {
+    
     public var id: UUID {
         self.uuid
     }
