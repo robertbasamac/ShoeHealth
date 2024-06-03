@@ -69,9 +69,11 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
-                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: selections.first ?? UUID())) {
-                    Text("Select a Shoe to assign the selected Workouts")
-                } onDone: { shoeID in
+                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: selections.first ?? UUID()),
+                                  title: Prompts.assignWorkoutsTitle,
+                                  description: Prompts.assignWorkoutsDescription,
+                                  systemImage: "shoe.2",
+                                  onDone: { shoeID in
                     withAnimation {
                         shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
                         updateInterface()
@@ -79,9 +81,7 @@ struct ShoeWorkoutsListView: View {
                         selections = Set<UUID>()
                         editMode = .inactive
                     }
-                }
-                .navigationTitle("Assign Workouts")
-                .navigationBarTitleDisplayMode(.inline)
+                })
             }
             .presentationDragIndicator(.visible)
         }

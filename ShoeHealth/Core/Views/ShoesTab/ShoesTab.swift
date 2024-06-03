@@ -39,15 +39,15 @@ struct ShoesTab: View {
         }
         .navigationTitle("Shoe Health")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            toolbarItems
+        }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe)
         }
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
-        }
-        .toolbar {
-            toolbarItems
         }
         .sheet(item: $showSheet) { sheetType in
             NavigationStack {
@@ -58,26 +58,23 @@ struct ShoesTab: View {
                     }
                 case .setDefaultShoe:
                     NavigationStack {
-                        ShoeSelectionView {
-                            Text("Select your new Default Shoe")
-                        } onDone: { shoeID in
+                        ShoeSelectionView(title: Prompts.selectDefaultShoeTitle,
+                                          description: Prompts.selectDefaultShoeDecription,
+                                          systemImage: "shoe.2",
+                                          onDone: { shoeID in
+                            
                             shoesViewModel.setAsDefaultShoe(shoeID)
-                        }
+                        })
                     }
-                    .navigationTitle("Set Default Shoe")
-                    .navigationBarTitleDisplayMode(.inline)
                 case .addToShoe(let workoutID):
                     NavigationStack {
-                        ShoeSelectionView {
-                            Text("Select a Shoe to assign the newly recorded Workout")
-                        } onDone: { shoeID in
+                        ShoeSelectionView(title: Prompts.assignWorkoutsTitle,
+                                          description: Prompts.assignWorkoutsDescription,
+                                          systemImage: "shoe.2",
+                                          onDone: { shoeID in
                             shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
-                        }
-                        .navigationTitle("Assign Workout")
-                        .navigationBarTitleDisplayMode(.inline)
+                        })
                     }
-                    .presentationCornerRadius(20)
-                    .presentationDragIndicator(.visible)
                 }
             }
             .presentationCornerRadius(20)
@@ -223,16 +220,12 @@ extension ShoesTab {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: 140, displayProgress: true)
                         .contextMenu {
-                            Button(role: .destructive) {
-                                withAnimation {
-                                    shoesViewModel.deleteShoe(shoe.id)
+                            if !shoe.isDefaultShoe {
+                                Button {
+                                    shoesViewModel.setAsDefaultShoe(shoe.id)
+                                } label: {
+                                    Label("Set Default", systemImage: "shoe.2")
                                 }
-                                
-                                if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                                    showSheet = .setDefaultShoe
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
                             }
                             
                             Button {
@@ -249,12 +242,16 @@ extension ShoesTab {
                                 }
                             }
                             
-                            if !shoe.isDefaultShoe {
-                                Button {
-                                    shoesViewModel.setAsDefaultShoe(shoe.id)
-                                } label: {
-                                    Label("Set Default", systemImage: "shoe.2")
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    shoesViewModel.deleteShoe(shoe.id)
                                 }
+                                
+                                if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                                    showSheet = .setDefaultShoe
+                                }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
                             }
                         } preview: {
                             ShoeCell(shoe: shoe, width: 300)

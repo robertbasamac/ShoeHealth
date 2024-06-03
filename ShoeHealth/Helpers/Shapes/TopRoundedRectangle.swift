@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct TopRoundedRectangle: Shape {
+    
     var cornerRadius: CGFloat
 
     func path(in rect: CGRect) -> Path {

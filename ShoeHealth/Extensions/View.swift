@@ -1,5 +1,5 @@
 //
-//  ViewExtensions.swift
+//  View.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 06.05.2024.

@@ -1,5 +1,5 @@
 //
-//  UIApplicationExtensions.swift
+//  UIApplication.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 30.05.2024.

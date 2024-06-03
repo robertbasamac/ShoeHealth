@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import HealthKit
 
-struct ShoeSelectionView<Content: View>: View {
+struct ShoeSelectionView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
@@ -22,20 +22,37 @@ struct ShoeSelectionView<Content: View>: View {
     @State private var isExpandedActive: Bool = true
     @State private var isExpandedRetire: Bool = false
     
-    private let content: () -> Content
+    private let title: String
+    private let description: String
+    private let systemImage: String
     private let onDone: (UUID) -> Void
     
-    init (selectedShoe: Shoe? = nil, @ViewBuilder header content: @escaping () -> Content, onDone: @escaping (UUID) -> Void) {
+    init (selectedShoe: Shoe? = nil, title: String, description: String, systemImage: String, onDone: @escaping (UUID) -> Void) {
         self.selectedShoe = selectedShoe
-        self.content = content
+        self.title = title
+        self.description = description
+        self.systemImage = systemImage
         self.onDone = onDone
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            content()
-                .frame(maxWidth: .infinity)
-                .padding(40)
+            VStack(spacing: 8) {
+                Image(systemName: systemImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 84, height: 84, alignment: .center)
+                    .foregroundStyle(.secondary)
+                Text(title)
+                    .font(.title2.bold())
+                
+                Text(description)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.bottom)
+            .padding(.horizontal)
             
             Divider()
             
@@ -122,11 +139,11 @@ extension ShoeSelectionView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeSelectionView(selectedShoe: Shoe.previewShoes.first) {
-                Text("Select a Shoe")
-            } onDone: { _ in
-                
-            }
+            ShoeSelectionView(selectedShoe: Shoe.previewShoe,
+                              title: Prompts.selectDefaultShoeTitle,
+                              description: Prompts.selectDefaultShoeDecription,
+                              systemImage: "shoe.2",
+                              onDone: { _ in })
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

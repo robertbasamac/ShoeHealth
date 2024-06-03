@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F25D2B1C965E00EB682A /* AppDelegate.swift */; };
 		0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0907F2602B1E206700EB682A /* NotificationManager.swift */; };
-		090E156C2BE8EAAA00BC8124 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */; };
+		090E156C2BE8EAAA00BC8124 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* View.swift */; };
 		090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
 		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
 		09189C0C2B569F1900CA782A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09189C0B2B569F1900CA782A /* ShoeSortType.swift */; };
@@ -39,6 +39,7 @@
 		09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B812BFD0EFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7D2BFBC54800C943C1 /* RunningCategory.swift */; };
+		0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0948B5DA2C0DE9CA001A7745 /* Prompts.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094B75B32B4ED14000632590 /* ShoeStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStatView.swift */; };
 		094B75B52B504D6300632590 /* ContentHeightPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */; };
@@ -63,7 +64,7 @@
 		09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D85D272B62F59B005E7365 /* ShoeFilterType.swift */; };
 		09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */; };
 		09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */; };
-		09D9B5CA2C08F1930016825A /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C92C08F1930016825A /* UIApplicationExtensions.swift */; };
+		09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D9B5C92C08F1930016825A /* UIApplication.swift */; };
 		09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */; };
 		09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A742B0D3F7F001119E4 /* ContentView.swift */; };
 		09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A762B0D3F81001119E4 /* Assets.xcassets */; };
@@ -113,7 +114,7 @@
 /* Begin PBXFileReference section */
 		0907F25D2B1C965E00EB682A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0907F2602B1E206700EB682A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
-		090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
+		090E156B2BE8EAAA00BC8124 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		090E156D2BEB814D00BC8124 /* StatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCell.swift; sourceTree = "<group>"; };
 		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		09189C0B2B569F1900CA782A /* ShoeSortType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
@@ -135,6 +136,7 @@
 		09402B7B2BFBBB6800C943C1 /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		09402B7D2BFBC54800C943C1 /* RunningCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningCategory.swift; sourceTree = "<group>"; };
 		09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBest.swift; sourceTree = "<group>"; };
+		0948B5DA2C0DE9CA001A7745 /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094B75B22B4ED14000632590 /* ShoeStatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatView.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentHeightPreferenceKey.swift; sourceTree = "<group>"; };
@@ -157,7 +159,7 @@
 		09D85D272B62F59B005E7365 /* ShoeFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
 		09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurredCircleButtonStyle.swift; sourceTree = "<group>"; };
 		09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurredCapsuleButtonStyle.swift; sourceTree = "<group>"; };
-		09D9B5C92C08F1930016825A /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
+		09D9B5C92C08F1930016825A /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		09DE4A6F2B0D3F7F001119E4 /* ShoeHealth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoeHealth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DE4A722B0D3F7F001119E4 /* ShoeHealthApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeHealthApp.swift; sourceTree = "<group>"; };
 		09DE4A742B0D3F7F001119E4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -214,16 +216,15 @@
 		090D76ED2BB2DEE600D23762 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0948B5DA2C0DE9CA001A7745 /* Prompts.swift */,
 				0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */,
 				0936FF542BD586F600BF5798 /* FrameReader.swift */,
-				090E156B2BE8EAAA00BC8124 /* ViewExtensions.swift */,
-				09D9B5C92C08F1930016825A /* UIApplicationExtensions.swift */,
 				09D9B5C42C08EA650016825A /* ButtonStyle */,
 				094F26282BE01FC800441A62 /* ScrollTargetBehavior */,
 				0936FF512BD14C7B00BF5798 /* ViewModifiers */,
 				09BFD2EB2B985E23009F4133 /* PreferenceKeys */,
-				0980A7EF2BB42DBF000848A1 /* PropertyWrappers */,
 				09E7EAAE2B3AE5DF00BFAC16 /* Shapes */,
+				0980A7EF2BB42DBF000848A1 /* PropertyWrappers */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -306,6 +307,15 @@
 				095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		0948B5DC2C0E1C2A001A7745 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				090E156B2BE8EAAA00BC8124 /* View.swift */,
+				09D9B5C92C08F1930016825A /* UIApplication.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		094F26202BDC2AD200441A62 /* SettingsTab */ = {
@@ -436,6 +446,7 @@
 				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
 				09E7EAB22B3B265B00BFAC16 /* Utilities */,
+				0948B5DC2C0E1C2A001A7745 /* Extensions */,
 				090D76ED2BB2DEE600D23762 /* Helpers */,
 				09D1AF922BD9636700C61E5D /* Core */,
 				09DE4A782B0D3F81001119E4 /* Preview Content */,
@@ -678,15 +689,16 @@
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
 				094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
-				09D9B5CA2C08F1930016825A /* UIApplicationExtensions.swift in Sources */,
+				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */,
 				09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */,
+				0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */,
 				090E15712BF377F800BC8124 /* Double.swift in Sources */,
 				0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */,
 				09402B7C2BFBBB6800C943C1 /* SampleView.swift in Sources */,
 				0956EE392B4C057D0029445E /* TabItem.swift in Sources */,
-				090E156C2BE8EAAA00BC8124 /* ViewExtensions.swift in Sources */,
+				090E156C2BE8EAAA00BC8124 /* View.swift in Sources */,
 				09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,

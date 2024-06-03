@@ -23,6 +23,7 @@ struct ShoeListItem: View {
             
             detailsSection
         }
+        .frame(height: width)
     }
 }
 
