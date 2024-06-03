@@ -59,11 +59,12 @@ struct ShoeSelectionView: View {
             List {
                 Section(isExpanded: $isExpandedActive, content: {
                     ForEach(activeShoes) { shoe in
-                        HStack {
+                        HStack(spacing: 16) {
                             Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                            Text("\(shoe.brand) - \(shoe.model)")
+                                .foregroundStyle(Color.accentColor)
+                            ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                         .contentShape(.rect)
                         .onTapGesture {
                             selectedShoe = selectedShoe == shoe ? nil : shoe
@@ -75,11 +76,12 @@ struct ShoeSelectionView: View {
                 
                 Section(isExpanded: $isExpandedRetire, content: {
                     ForEach(retiredShoes) { shoe in
-                        HStack {
+                        HStack(spacing: 16) {
                             Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                            Text("\(shoe.brand) - \(shoe.model)")
+                                .foregroundStyle(Color.accentColor)
+                            ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                         .contentShape(.rect)
                         .onTapGesture {
                             selectedShoe = selectedShoe == shoe ? nil : shoe
@@ -89,7 +91,8 @@ struct ShoeSelectionView: View {
                     Text("Retired Shoes")
                 })
             }
-            .listStyle(SidebarListStyle())
+            .listStyle(.sidebar)
+            .listRowSpacing(4)
         }
         .toolbar {
             toolbarItems()

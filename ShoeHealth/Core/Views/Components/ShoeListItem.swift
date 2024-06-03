@@ -11,17 +11,29 @@ struct ShoeListItem: View {
     
     var shoe: Shoe
     var width: CGFloat = 140
+    var imageAlignment: HorizontalAlignment = .leading
     
     var body: some View {
         HStack(spacing: 0) {
-            ShoeImage(imageData: shoe.image)
-                .frame(width: width, height: width)
-                .clipShape(.rect(cornerRadius: 12))
-                .overlay {
-                    RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
-                }
+            if imageAlignment == .leading {
+                ShoeImage(imageData: shoe.image)
+                    .frame(width: width, height: width)
+                    .clipShape(.rect(cornerRadius: 12))
+                    .overlay {
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
+                    }
+            }
             
             detailsSection
+            
+            if imageAlignment == .trailing {
+                ShoeImage(imageData: shoe.image)
+                    .frame(width: width, height: width)
+                    .clipShape(.rect(cornerRadius: 12))
+                    .overlay {
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
+                    }
+            }
         }
         .frame(height: width)
     }
@@ -47,19 +59,19 @@ extension ShoeListItem {
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             
-            ProgressView(value: shoe.totalDistance, total: shoe.lifespanDistance) {
-                HStack {
-                    Text("\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer))")
-                    Spacer()
-                    Text("\(distanceFormatter.string(fromValue: shoe.lifespanDistance, unit: .kilometer))")
-                }
-                .font(.footnote)
-                .overlay(alignment: .center) {
-                    Text("\(shoe.wearPercentageAsString)")
-                        .font(.footnote)
-                }
-            }
-            .tint(shoe.wearColor)
+//            ProgressView(value: shoe.totalDistance, total: shoe.lifespanDistance) {
+//                HStack {
+//                    Text("\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer))")
+//                    Spacer()
+//                    Text("\(distanceFormatter.string(fromValue: shoe.lifespanDistance, unit: .kilometer))")
+//                }
+//                .font(.footnote)
+//                .overlay(alignment: .center) {
+//                    Text("\(shoe.wearPercentageAsString)")
+//                        .font(.footnote)
+//                }
+//            }
+//            .tint(shoe.wearColor)
         }
         .frame(maxWidth: .infinity,  maxHeight: .infinity, alignment: .leading)
         .padding(12)
@@ -73,18 +85,11 @@ extension ShoeListItem {
         NavigationStack {
             List {
                 ForEach(Shoe.previewShoes) { shoe in
-                    Section {
-                        ShoeListItem(shoe: shoe)
-                            .background(Color(uiColor: .secondarySystemBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
+                    ShoeListItem(shoe: shoe)
+                        .listRowInsets(EdgeInsets())
                 }
-                .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
             }
-            .listStyle(.plain)
-            .background(Color(uiColor: .systemGroupedBackground))
+            .listRowSpacing(4)
             .navigationTitle("Shoes")
         }
     }
