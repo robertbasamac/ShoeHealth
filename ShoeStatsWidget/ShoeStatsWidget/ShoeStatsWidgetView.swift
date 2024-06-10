@@ -26,30 +26,30 @@ struct ShoeStatsSnapshotWidgetView : View {
     var shoe: ShoeStatsEntity
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 2) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.brand)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
                 
                 Text(shoe.model)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 16, weight: .semibold))
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
             }
-            
-            Spacer(minLength: 0)
-            
-            HStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 4) {
-                    ShoeStatView(label: "CURRENT", value: "\(distanceFormatter.string(fromValue: shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.yellow, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
-                    ShoeStatView(label: "REMAINING", value: "\(distanceFormatter.string(fromValue: shoe.lifespanDistance - shoe.totalDistance, unit: .kilometer).uppercased())", color: Color.blue, labelFont: .system(size: 10), valueFont: .system(size: 12), alignement: .leading)
+                        
+            HStack(spacing: 2) {
+                VStack(alignment: .leading, spacing: 2) {
+                    StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: .blue, textAlignment: .leading, containerAlignment: .leading)
+
+                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 .contentTransition(.numericText(value: shoe.totalDistance))
                 
                 ZStack {
                     CircularProgressView(progress: shoe.wearPercentage, lineWidth: 4, color: shoe.wearColor)
-                    ShoeStatView(label: "WEAR", value: "\(shoe.wearPercentageAsString.uppercased())", color: shoe.wearColor, labelFont: .system(size: 10), valueFont: .system(size: 12))
+                    StatCell(label: "WEAR", value: shoe.wearPercentageAsString, labelFont: .system(size: 10), valueFont: .system(size: 12), color: shoe.wearColor)
                         .contentTransition(.numericText(value: shoe.totalDistance))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
@@ -65,9 +65,7 @@ struct ShoeStatsSnapshotWidgetView : View {
         .containerBackground(for: .widget) {
             ZStack {
                 Color.black
-                LinearGradient(colors: [shoe.wearColor.opacity(0.5),
-                                        .black
-                                       ],
+                LinearGradient(colors: [shoe.wearColor.opacity(0.6), .black],
                                startPoint: .topLeading,
                                endPoint: .bottomTrailing)
             }

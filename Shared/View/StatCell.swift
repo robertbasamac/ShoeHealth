@@ -41,13 +41,12 @@ struct StatCell: View {
             Text(label)
                 .font(labelFont)
             Group {
-                Text(value)
-                    .font(valueFont)
+                Text(value) +
                 
-                + Text("\(unit.uppercased())")
-                    .font(valueFont)
+                Text("\(unit.uppercased())")
                     .textScale(.secondary)
             }
+            .font(valueFont)
             .fontWeight(.medium)
             .fontDesign(.rounded)
             .foregroundStyle(color)
@@ -57,30 +56,31 @@ struct StatCell: View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    VStack(spacing: 8) {
-        StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
-        
-        Divider()
-        
-        HStack {
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .pink, textAlignment: .leading, containerAlignment: .leading)
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-        }
-        
-        Divider()
-        
-        HStack {
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .cyan, textAlignment: .leading, containerAlignment: .leading)
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .red, textAlignment: .leading, containerAlignment: .leading)
-        }
-        
-        Divider()
-        
-        HStack {
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .teal, textAlignment: .leading, containerAlignment: .leading)
-            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .cyan, textAlignment: .leading, containerAlignment: .leading)
+    GroupBox {
+        VStack(spacing: 8) {
+            StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+            
+            Divider()
+            
+            HStack {
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .pink, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .cyan, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .red, textAlignment: .leading, containerAlignment: .leading)
+            }
+            
+            Divider()
+            
+            HStack {
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: "5.25", unit: UnitLength.kilometers.symbol, color: .cyan, textAlignment: .leading, containerAlignment: .leading)
+            }
         }
     }
     .padding()
-    .roundedContainer()
 }

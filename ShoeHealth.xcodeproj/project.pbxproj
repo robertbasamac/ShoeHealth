@@ -20,8 +20,6 @@
 		0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */; };
 		0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */; };
 		0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */; };
-		093742852B7AAD7A008D96BD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; };
-		093742862B7AAD7A008D96BD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; };
 		093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */; };
 		0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0937428C2B7AAD7B008D96BD /* Assets.xcassets */; };
 		093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -31,7 +29,6 @@
 		0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
 		093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
-		093742A52B7E514F008D96BD /* ShoeStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStatView.swift */; };
 		093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093F623E2B71700600430AB9 /* EditShoeView.swift */; };
 		09402B7C2BFBBB6800C943C1 /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7B2BFBBB6800C943C1 /* SampleView.swift */; };
@@ -40,9 +37,14 @@
 		09402B812BFD0EFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7D2BFBC54800C943C1 /* RunningCategory.swift */; };
 		0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0948B5DA2C0DE9CA001A7745 /* Prompts.swift */; };
+		0948B5DF2C131257001A7745 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; };
+		0948B5E02C131257001A7745 /* WidgetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0948B5E22C13125A001A7745 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; };
+		0948B5E32C13125A001A7745 /* SwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
-		094B75B32B4ED14000632590 /* ShoeStatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B22B4ED14000632590 /* ShoeStatView.swift */; };
 		094B75B52B504D6300632590 /* ContentHeightPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */; };
+		094D13822C1606A1003C6F50 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
+		094D13832C1606F1003C6F50 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
 		094F26222BDC2B1200441A62 /* SettingsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F26212BDC2B1200441A62 /* SettingsTab.swift */; };
 		094F262A2BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F26292BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift */; };
 		094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F262B2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift */; };
@@ -82,7 +84,6 @@
 		09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */; };
 		09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */; };
 		09E7EAB02B3AE5F400BFAC16 /* TopRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */; };
-		09E7EAB62B3B280500BFAC16 /* ShoeDetailCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */; };
 		09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F18EE72BC6AC03002B73EE /* ShoeCell.swift */; };
 		09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */; };
 /* End PBXBuildFile section */
@@ -107,6 +108,18 @@
 				093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0948B5E12C131257001A7745 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0948B5E32C13125A001A7745 /* SwiftUI.framework in Embed Frameworks */,
+				0948B5E02C131257001A7745 /* WidgetKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -138,7 +151,6 @@
 		09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBest.swift; sourceTree = "<group>"; };
 		0948B5DA2C0DE9CA001A7745 /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
-		094B75B22B4ED14000632590 /* ShoeStatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatView.swift; sourceTree = "<group>"; };
 		094B75B42B504D6300632590 /* ContentHeightPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentHeightPreferenceKey.swift; sourceTree = "<group>"; };
 		094F26212BDC2B1200441A62 /* SettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
 		094F26292BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticHeaderScrollTargetBehavior.swift; sourceTree = "<group>"; };
@@ -179,7 +191,6 @@
 		09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
 		09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerPreview.swift; sourceTree = "<group>"; };
 		09E7EAAF2B3AE5F400BFAC16 /* TopRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRoundedRectangle.swift; sourceTree = "<group>"; };
-		09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailCarouselView.swift; sourceTree = "<group>"; };
 		09F18EE72BC6AC03002B73EE /* ShoeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeCell.swift; sourceTree = "<group>"; };
 		09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeWorkoutsListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,8 +200,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				093742862B7AAD7A008D96BD /* SwiftUI.framework in Frameworks */,
-				093742852B7AAD7A008D96BD /* WidgetKit.framework in Frameworks */,
+				0948B5E22C13125A001A7745 /* SwiftUI.framework in Frameworks */,
+				0948B5DF2C131257001A7745 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +313,7 @@
 		093742A72B84AE29008D96BD /* View */ = {
 			isa = PBXGroup;
 			children = (
-				094B75B22B4ED14000632590 /* ShoeStatView.swift */,
+				090E156D2BEB814D00BC8124 /* StatCell.swift */,
 				094B75B02B4ECA7000632590 /* CircularProgressView.swift */,
 				095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */,
 			);
@@ -373,7 +384,6 @@
 				09E2F3502B1668D700D16101 /* ShoeListItem.swift */,
 				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
 				09F18EE72BC6AC03002B73EE /* ShoeCell.swift */,
-				090E156D2BEB814D00BC8124 /* StatCell.swift */,
 				0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */,
 				0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */,
 				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
@@ -509,7 +519,6 @@
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
 				093F623E2B71700600430AB9 /* EditShoeView.swift */,
-				09E7EAB52B3B280500BFAC16 /* ShoeDetailCarouselView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
 				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
@@ -562,6 +571,7 @@
 				093742802B7AAD7A008D96BD /* Sources */,
 				093742812B7AAD7A008D96BD /* Frameworks */,
 				093742822B7AAD7A008D96BD /* Resources */,
+				0948B5E12C131257001A7745 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -660,11 +670,12 @@
 				09BFD2D32B974ECB009F4133 /* ShoeStatsWidget.swift in Sources */,
 				09BFD2DB2B978DD9009F4133 /* ShoeStatsWidgetView.swift in Sources */,
 				09BFD2DD2B978E97009F4133 /* ShoeStatsTimelineProvider.swift in Sources */,
-				093742A52B7E514F008D96BD /* ShoeStatView.swift in Sources */,
+				094D13822C1606A1003C6F50 /* StatCell.swift in Sources */,
 				093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */,
 				093742952B7AAD9B008D96BD /* Shoe.swift in Sources */,
 				0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */,
 				093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */,
+				094D13832C1606F1003C6F50 /* Double.swift in Sources */,
 				09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */,
 				09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */,
 				093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */,
@@ -704,12 +715,10 @@
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
 				093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */,
-				09E7EAB62B3B280500BFAC16 /* ShoeDetailCarouselView.swift in Sources */,
 				0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
-				094B75B32B4ED14000632590 /* ShoeStatView.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
 				094B75B52B504D6300632590 /* ContentHeightPreferenceKey.swift in Sources */,
 				09D85D282B62F59B005E7365 /* ShoeFilterType.swift in Sources */,
@@ -957,6 +966,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -997,6 +1007,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (

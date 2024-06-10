@@ -49,5 +49,4 @@ struct RoundedRectangleProgressView: View {
 
 #Preview {
     RoundedRectangleProgressView(progress: 0.5, color: .orange, width: 200)
-//        .frame(width: 200, height: 200)
 }
