@@ -7,14 +7,15 @@
 
 import SwiftUI
 import HealthKit
+import SwiftData
 
 struct ShoeWorkoutsListView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
-    private var shoeID: UUID
-    @Binding private var workouts: [HKWorkout]
-    private var updateInterface: () -> Void
+    @Query var shoes: [Shoe]
+    
+    @State private var workouts: [HKWorkout] = []
     
     @State private var showAddWorkouts: Bool = false
     @State private var selections: Set<UUID> = Set<UUID>()
@@ -22,10 +23,8 @@ struct ShoeWorkoutsListView: View {
 
     @State private var showAssignToShoe: Bool = false
     
-    init(shoeID: UUID, workouts: Binding<[HKWorkout]>, updateInterface: @escaping () -> Void) {
-        self.shoeID = shoeID
-        self._workouts = workouts
-        self.updateInterface = updateInterface
+    init(shoeID: UUID) {
+        self._shoes = Query(filter: #Predicate { $0.id == shoeID })
     }
     
     var body: some View {
@@ -40,8 +39,10 @@ struct ShoeWorkoutsListView: View {
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button(role: .destructive) {
                         withAnimation {
-                            shoesViewModel.remove(workoutIDs: [workout.id], fromShoe: shoeID)
-                            updateInterface()
+                            if let shoe = shoes.first {
+                                shoesViewModel.remove(workoutIDs: [workout.id], fromShoe: shoe.id)
+                                workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+                            }
                         }
                     } label: {
                         Label("Delete", systemImage: "trash")
@@ -57,13 +58,16 @@ struct ShoeWorkoutsListView: View {
         .toolbar {
             toolbarItems()
         }
+
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoeID) {
-                    updateInterface()
+                if let shoe = shoes.first {
+                    AddWokoutsToShoeView(shoeID: shoe.id) {
+                        workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+                    }
+                    .navigationTitle("Add Workouts")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
-                .navigationTitle("Add Workouts")
-                .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
         }
@@ -76,7 +80,10 @@ struct ShoeWorkoutsListView: View {
                                   onDone: { shoeID in
                     withAnimation {
                         shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
-                        updateInterface()
+                        
+                        if let shoe = shoes.first {
+                            workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+                        }
                         
                         selections = Set<UUID>()
                         editMode = .inactive
@@ -85,6 +92,11 @@ struct ShoeWorkoutsListView: View {
             }
             .presentationDragIndicator(.visible)
         }
+        .onAppear(perform: {
+            if let shoe = shoes.first {
+                self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+            }
+        })
     }
 }
 
@@ -139,8 +151,10 @@ extension ShoeWorkoutsListView {
                 
                 Button {
                     withAnimation {
-                        shoesViewModel.remove(workoutIDs: selections, fromShoe: shoeID)
-                        updateInterface()
+                        if let shoe = shoes.first {
+                            shoesViewModel.remove(workoutIDs: selections, fromShoe: shoe.id)
+                            self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+                        }
                         
                         selections = Set<UUID>()
                         editMode = .inactive
@@ -165,7 +179,7 @@ extension ShoeWorkoutsListView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeWorkoutsListView(shoeID: Shoe.previewShoe.id, workouts: .constant([])) { }
+            ShoeWorkoutsListView(shoeID: Shoe.previewShoe.id)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

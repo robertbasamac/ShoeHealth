@@ -14,7 +14,6 @@ struct ShoeDetailView: View {
     
     private var shoe: Shoe
     
-    @State private var workouts: [HKWorkout] = []
     @State private var mostRecentWorkouts: [HKWorkout] = []
     
     @State private var showEditShoe: Bool = false
@@ -81,9 +80,7 @@ struct ShoeDetailView: View {
             toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
-            ShoeWorkoutsListView(shoeID: shoe.id, workouts: $workouts) {
-                updateInterface()
-            }
+            ShoeWorkoutsListView(shoeID: shoe.id)
         }
         .fullScreenCover(isPresented: $showEditShoe) {
             NavigationStack {
@@ -91,6 +88,7 @@ struct ShoeDetailView: View {
             }
         }
         .onAppear(perform: {
+            print("onAppear called")
             updateInterface()
         })
     }
@@ -299,7 +297,7 @@ extension ShoeDetailView {
     
     @MainActor
     private func updateInterface() {
-        self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         self.mostRecentWorkouts = Array(workouts.prefix(5))
     }
 }
