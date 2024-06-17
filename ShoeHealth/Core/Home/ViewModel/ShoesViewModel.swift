@@ -217,7 +217,7 @@ final class ShoesViewModel {
         
         var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
         
-        let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         
         for category in RunningCategory.allCases {
             personalBests[category] = nil
@@ -235,7 +235,7 @@ final class ShoesViewModel {
             for workout in workoutsForCategory {
                 group.enter()
                 
-                HealthKitManager.shared.fetchDistanceSamples(for: workout) { samples in
+                HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
                     var accumulatedDistance: Double = 0
                     var lastSampleEndDate: Date?
                     
@@ -277,7 +277,7 @@ final class ShoesViewModel {
     }
     
     private func updateShoeStatistics(_ shoe: Shoe) {
-        let workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         
         shoe.lastActivityDate = workouts.first?.endDate
         

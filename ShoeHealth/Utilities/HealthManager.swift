@@ -1,5 +1,5 @@
 //
-//  HealthKitManager.swift
+//  HealthManager.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 21.11.2023.
@@ -10,21 +10,21 @@ import HealthKit
 import Observation
 import OSLog
 
-private let logger = Logger(subsystem: "Shoe Health", category: "HealthKitManager")
+private let logger = Logger(subsystem: "Shoe Health", category: "HealthManager")
 
 @Observable
-final class HealthKitManager {
+final class HealthManager {
     
-    static let shared = HealthKitManager()
+    static let shared = HealthManager()
     
     @ObservationIgnored private var healthStore = HKHealthStore()
     
-    @ObservationIgnored private var readTypes: Set = [HKObjectType.workoutType(),
+    @ObservationIgnored private let readTypes: Set = [HKObjectType.workoutType(),
                                                       HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!]
     @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
     @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
-    @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) static var latestUpdate: Date
+    @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) var latestUpdate: Date
     
     private(set) var workouts: [HKWorkout] = []
     
@@ -32,42 +32,113 @@ final class HealthKitManager {
     
     // MARK: - Request HealthKit authorization
     
-    func requestHealthKitAuthorization() async {
+    func requestHealthAuthorization() async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return false
+        }
+        
+        do {
+            try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+            
+            await enableBackgroundDelivery()
+            
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    // MARK: - Observing new Workouts
+    
+    func startObserving() {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return
+        }
+                
+        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
+            if let error = error {
+                logger.warning("HKObserverQuery returned error, \(error).")
+                return
+            }
+            
+            self.handleNewWorkouts()
+            
+            completionHandler()
+        }
+        
+        self.healthStore.execute(query)
+    }
+    
+    private func enableBackgroundDelivery() async {
         if !HKHealthStore.isHealthDataAvailable() {
             logger.warning("HealthKit not accessable.")
             return
         }
-       
-        var status: String = ""
-
-        do {
-            try await healthStore.requestAuthorization(toShare: [], read: readTypes)
-
-            status = "HealthKit authorization request was successful!"
-            
-            await self.fetchRunningWorkouts()
-            await self.startObservingNewWorkouts()
-        } catch {
-            status = "HealthKit Authorization Error: \(error.localizedDescription)"
-        }
         
-        logger.info("\(status)")
+        do {
+            try await healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate)
+            
+            logger.info("Background delivery enabled.")
+            
+            startObserving()
+        } catch {
+            logger.warning("Could not enable background delivery, \(error.localizedDescription).")
+        }
     }
     
-    // MARK: - Fetching Running Workouts
+    private func handleNewWorkouts() {
+        var anchor: HKQueryAnchor?
+
+        let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
+                                                  predicate: predicate,
+                                                  anchor: anchor,
+                                                  limit: HKObjectQueryNoLimit) { [unowned self] query, newSamples, deletedSamples, newAnchor, error in
+            self.updateWorkouts(newSamples: newSamples ?? [], deletedObjects: deletedSamples ?? [])
+            anchor = newAnchor
+        }
+        
+        healthStore.execute(anchoredQuery)
+    }
     
+    private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
+        guard let newWorkout = newSamples.last as? HKWorkout else {
+            logger.warning("Did not manage to convert HKSample to HKWorkout.")
+            return
+        }
+
+        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
+        
+        if self.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
+            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
+            
+            NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
+            self.latestUpdate = newWorkout.endDate
+        } else {
+            logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
+        }
+        
+        Task {
+            await self.fetchRunningWorkouts()
+        }
+    }
+    
+    // MARK: - Handling HealthKit Data
+        
     func fetchRunningWorkouts() async {
-        if !HKHealthStore.isHealthDataAvailable() {
-            logger.warning("HealthKit not accessable.")
-            return;
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return
         }
 
         let samples = try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
-            healthStore.execute(HKSampleQuery(sampleType: sampleType,
-                                              predicate: predicate,
-                                              limit: HKObjectQueryNoLimit,
-                                              sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)],
-                                              resultsHandler: { query, samples, error in
+            let query = HKSampleQuery(sampleType: sampleType,
+                                      predicate: predicate,
+                                      limit: HKObjectQueryNoLimit,
+                                      sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)],
+                                      resultsHandler: { query, samples, error in
                 if let unwrappedError = error {
                     continuation.resume(throwing: unwrappedError)
                     return
@@ -79,7 +150,9 @@ final class HealthKitManager {
                 }
                 
                 continuation.resume(returning: samples)
-            }))
+            })
+            
+            healthStore.execute(query)
         }
         
         guard let workouts = samples as? [HKWorkout] else {
@@ -89,78 +162,17 @@ final class HealthKitManager {
         
         logger.debug("\(workouts.count) workouts fetched.")
         
-        Task { @MainActor in
-            self.workouts = workouts
-        }
-    }
-    
-    // MARK: - Observing new Workouts
-    
-    private func startObservingNewWorkouts() async {
-        if !HKHealthStore.isHealthDataAvailable() {
-            logger.warning("HealthKit not accessable.")
-            return
-        }
-        
-        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
-            if let error = error {
-                logger.warning("HKObserverQuery returned error, \(error).")
-                return
-            }
-            
-            self.handleNewWorkouts { completionHandler() }
-        }
-        
-        self.healthStore.execute(query)
-        
-        do {
-            try await healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate)
-            logger.info("Background delivery enabled.")
-        } catch {
-            logger.warning("Could not enable background delivery, \(error.localizedDescription).")
-        }
-    }
-    
-    private func handleNewWorkouts(completionHandler: @escaping () -> Void) {
-        var anchor: HKQueryAnchor?
-        
-        let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
-                                                  predicate: predicate,
-                                                  anchor: anchor,
-                                                  limit: HKObjectQueryNoLimit) { [unowned self] query, newSamples, deletedSamples, newAnchor, error in
-            self.updateWorkouts(newSamples: newSamples ?? [], deletedObjects: deletedSamples ?? [])
-            anchor = newAnchor
-            
-            completionHandler()
-        }
-        
-        healthStore.execute(anchoredQuery)
-    }
-
-    private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
-        guard let newWorkout = newSamples.last as? HKWorkout else {
-            logger.warning("Did not manage to convert HKSample to HKWorkout.")
-            return
-        }
-
-        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
-        
-        if HealthKitManager.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
-            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
-            
-            NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
-            HealthKitManager.latestUpdate = newWorkout.endDate
-        } else {
-            logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
-        }
-        
-        Task {
-            await fetchRunningWorkouts()
+        await MainActor.run {
+            HealthManager.shared.workouts = workouts
         }
     }
     
     func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return
+        }
+        
         let sampleType = HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let predicate = HKQuery.predicateForObjects(from: workout)
         

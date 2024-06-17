@@ -5,7 +5,6 @@
 //  Created by Robert Basamac on 05.03.2024.
 //
 
-import Foundation
 import SwiftData
 import WidgetKit
 import OSLog

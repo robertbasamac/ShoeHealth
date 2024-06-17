@@ -13,7 +13,7 @@ struct AddWokoutsToShoeView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    private var healthKitManager = HealthKitManager.shared
+    private var healthKitManager = HealthManager.shared
     
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
@@ -66,7 +66,7 @@ extension AddWokoutsToShoeView {
     private func getUnusedWorkouts() -> [HKWorkout] {
         let allWorkoutsIDs: Set<UUID> = Set(shoesViewModel.shoes.flatMap { $0.workouts } )
         
-        return HealthKitManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
+        return HealthManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
     }
 }
 

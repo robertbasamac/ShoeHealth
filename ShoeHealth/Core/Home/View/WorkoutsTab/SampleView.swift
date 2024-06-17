@@ -28,7 +28,7 @@ struct SampleView: View {
             }
         }
         .task {
-            HealthKitManager.shared.fetchDistanceSamples(for: workout) { samples in
+            HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
                 self.samples = samples.sorted(by: { $0.endDate > $1.endDate })
             }
         }

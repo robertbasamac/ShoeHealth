@@ -5,8 +5,6 @@
 //  Created by Robert Basamac on 25.01.2024.
 //
 
-import Foundation
-
 enum ShoeFilterType: String, Identifiable, CaseIterable {
     var id: Self { self }
 

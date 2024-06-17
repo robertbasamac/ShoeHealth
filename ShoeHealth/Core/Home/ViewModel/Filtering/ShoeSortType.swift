@@ -5,8 +5,6 @@
 //  Created by Robert Basamac on 16.01.2024.
 //
 
-import Foundation
-
 enum ShoeSortType: String, Identifiable, CaseIterable {
     
     var id: Self { self }

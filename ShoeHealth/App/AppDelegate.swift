@@ -5,7 +5,6 @@
 //  Created by Robert Basamac on 03.12.2023.
 //
 
-import Foundation
 import UIKit
 import WidgetKit
 import OSLog
@@ -16,34 +15,35 @@ class AppDelegate: NSObject {
     
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
+    
+    @UserDefault("isOnboarding", defaultValue: true) var isOnboarding: Bool
 }
 
 // MARK: - UIApplicationDelegate
+
 extension AppDelegate: UIApplicationDelegate {
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        let healthManager = HealthKitManager.shared
-        
-        Task {
-            await healthManager.requestHealthKitAuthorization()
-        }
-        
-        let notificationManager = NotificationManager.shared
-        notificationManager.requestAuthorization()
-        
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {       
         UNUserNotificationCenter.current().delegate = self
+        
+        NotificationManager.shared.setActionableNotificationTypes()
+            
+        if !isOnboarding {
+            HealthManager.shared.startObserving()
+        }
         
         return true
     }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
-        guard let workoutID = userInfo["WORKOUT_ID"] as? String, let workout = HealthKitManager.shared.getWorkout(forID: UUID(uuidString: workoutID) ?? UUID()) else { return }
+        guard let workoutID = userInfo["WORKOUT_ID"] as? String, let workout = HealthManager.shared.getWorkout(forID: UUID(uuidString: workoutID) ?? UUID()) else { return }
         
         switch response.actionIdentifier {
         case "DEFAULT_SHOE_ACTION":

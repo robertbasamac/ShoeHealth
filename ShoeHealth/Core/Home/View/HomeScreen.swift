@@ -1,14 +1,13 @@
 //
-//  ContentView.swift
+//  HomeScreen.swift
 //  ShoeHealth
 //
-//  Created by Robert Basamac on 21.11.2023.
+//  Created by Robert Basamac on 10.06.2024.
 //
 
 import SwiftUI
-import HealthKit
 
-struct ContentView: View {
+struct HomeScreen: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
@@ -43,8 +42,8 @@ struct ContentView: View {
         }
         .sheet(item: $navigationRouter.workout) { workout in
             NavigationStack {
-                ShoeSelectionView(title: Prompts.selectWorkoutShoeTitle,
-                                  description: Prompts.selectWorkoutShoeDescription,
+                ShoeSelectionView(title: Prompts.SelectShoe.selectWorkoutShoeTitle,
+                                  description: Prompts.SelectShoe.selectWorkoutShoeDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
@@ -57,17 +56,15 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Previews
-
 #Preview("Filled") {
-    ContentView()
+    HomeScreen()
         .modelContainer(PreviewSampleData.container)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environmentObject(NavigationRouter())
 }
 
 #Preview("Empty") {
-    ContentView()
+    HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environmentObject(NavigationRouter())

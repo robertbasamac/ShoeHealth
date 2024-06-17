@@ -143,8 +143,8 @@ extension ShoeSelectionView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoeSelectionView(selectedShoe: Shoe.previewShoe,
-                              title: Prompts.selectDefaultShoeTitle,
-                              description: Prompts.selectDefaultShoeDecription,
+                              title: Prompts.SelectShoe.selectDefaultShoeTitle,
+                              description: Prompts.SelectShoe.selectDefaultShoeDescription,
                               systemImage: "shoe.2",
                               onDone: { _ in })
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))

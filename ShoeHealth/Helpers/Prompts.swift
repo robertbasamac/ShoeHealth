@@ -5,16 +5,28 @@
 //  Created by Robert Basamac on 03.06.2024.
 //
 
-import Foundation
-
 struct Prompts {
     
-    static var selectDefaultShoeTitle: String = "Select Default Shoe"
-    static var selectDefaultShoeDecription: String = "Choose your default shoe for new workouts. This setting allows you to quickly assign your preferred shoe to each new running session, ensuring consistency and convenience in your routine."
+    struct SelectShoe {
+        static let selectDefaultShoeTitle: String = "Select Default Shoe"
+        static let selectDefaultShoeDescription: String = "Choose your default shoe for new workouts. This setting allows you to quickly assign your preferred shoe to each new running session, ensuring consistency and convenience in your routine."
+        
+        static let selectWorkoutShoeTitle = "Select Shoe for Workout"
+        static let selectWorkoutShoeDescription = "Select the shoe you used for this session to ensure accurate tracking."
+        
+        static let assignWorkoutsTitle = "Assign Workouts to Shoe"
+        static let assignWorkoutsDescription = "Select the new shoe to which you want to assign the selected workouts."
+    }
     
-    static let selectWorkoutShoeTitle = "Select Shoe for Workout"
-    static let selectWorkoutShoeDescription = "Select the shoe you used for this session to ensure accurate tracking."
+    struct HealthAccess {
+        static let title = "Allow access to Apple Health"
+        static let description = "To track your running gear health, access to Apple Health data is needed. This helps us not only manage your running gear health, but to also provide personalized insights and statistics."
+        static let note = "Note: this is a mandatory step in order for Shoe Health to help you track your running gear health."
+    }
     
-    static let assignWorkoutsTitle = "Assign Workouts to Shoe"
-    static let assignWorkoutsDescription = "Select the new shoe to which you want to assign the selected workouts."
+    struct Notifications {
+        static let title = "Allow access to Notifications"
+        static let description = "Stay updated with the latest alerts by enabling notifications."
+        static let note = ""
+    }
 }

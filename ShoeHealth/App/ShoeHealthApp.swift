@@ -12,11 +12,11 @@ import SwiftData
 struct ShoeHealthApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-        
+    
     @StateObject var navigationRouter = NavigationRouter()
     
     @State var shoesViewModel = ShoesViewModel(modelContext: ShoesStore.container.mainContext)
-    
+        
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -16,11 +16,11 @@ struct ShoesTab: View {
     @State private var selectedShoe: Shoe?
     @State private var showSheet: SheetType?
     @State private var selectedCategory: ShoeFilterType?
-    
+        
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
-                lastRunSection(run: HealthKitManager.shared.getLastRun())
+                lastRunSection(run: HealthManager.shared.getLastRun())
                 
                 defaultShoeSection(shoesViewModel.getDefaultShoe())
                 
@@ -58,8 +58,8 @@ struct ShoesTab: View {
                     }
                 case .setDefaultShoe:
                     NavigationStack {
-                        ShoeSelectionView(title: Prompts.selectDefaultShoeTitle,
-                                          description: Prompts.selectDefaultShoeDecription,
+                        ShoeSelectionView(title: Prompts.SelectShoe.selectDefaultShoeTitle,
+                                          description: Prompts.SelectShoe.selectDefaultShoeDescription,
                                           systemImage: "shoe.2",
                                           onDone: { shoeID in
                             
@@ -68,8 +68,8 @@ struct ShoesTab: View {
                     }
                 case .addToShoe(let workoutID):
                     NavigationStack {
-                        ShoeSelectionView(title: Prompts.assignWorkoutsTitle,
-                                          description: Prompts.assignWorkoutsDescription,
+                        ShoeSelectionView(title: Prompts.SelectShoe.assignWorkoutsTitle,
+                                          description: Prompts.SelectShoe.assignWorkoutsDescription,
                                           systemImage: "shoe.2",
                                           onDone: { shoeID in
                             shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)

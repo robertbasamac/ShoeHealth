@@ -70,8 +70,8 @@ struct ShoeWorkoutsListView: View {
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
                 ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: selections.first ?? UUID()),
-                                  title: Prompts.assignWorkoutsTitle,
-                                  description: Prompts.assignWorkoutsDescription,
+                                  title: Prompts.SelectShoe.assignWorkoutsTitle,
+                                  description: Prompts.SelectShoe.assignWorkoutsDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     withAnimation {

@@ -5,8 +5,6 @@
 //  Created by Robert Basamac on 08.01.2024.
 //
 
-import Foundation
-
 enum TabItem: String, Hashable, Identifiable, CaseIterable {
     
     var id: Self { self }

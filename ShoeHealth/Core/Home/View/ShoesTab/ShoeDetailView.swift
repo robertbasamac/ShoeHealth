@@ -297,8 +297,9 @@ extension ShoeDetailView {
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
     }
     
+    @MainActor
     private func updateInterface() {
-        self.workouts = HealthKitManager.shared.getWorkouts(forIDs: shoe.workouts)
+        self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         self.mostRecentWorkouts = Array(workouts.prefix(5))
     }
 }

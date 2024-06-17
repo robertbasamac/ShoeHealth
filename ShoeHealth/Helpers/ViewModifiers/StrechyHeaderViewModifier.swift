@@ -5,7 +5,6 @@
 //  Created by Robert Basamac on 18.04.2024.
 //
 
-import Foundation
 import SwiftUI
 
 // MARK: - View Modifier

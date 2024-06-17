@@ -12,7 +12,7 @@ struct WorkoutsTab: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
     
-    private var healthKitManager = HealthKitManager.shared
+    private var healthKitManager = HealthManager.shared
 
     @State private var selectedWorkout: HKWorkout?
     
@@ -37,8 +37,8 @@ struct WorkoutsTab: View {
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
                 ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: workout.id),
-                                  title: Prompts.assignWorkoutsDescription,
-                                  description: Prompts.assignWorkoutsDescription,
+                                  title: Prompts.SelectShoe.assignWorkoutsDescription,
+                                  description: Prompts.SelectShoe.assignWorkoutsDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)

@@ -13,42 +13,40 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "NotificationManager")
 
-class NotificationManager {
+final class NotificationManager {
         
     static let shared = NotificationManager()
     
+    private let center = UNUserNotificationCenter.current()
+    private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+
     private init() { }
     
-    func requestAuthorization() {
-        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
-        
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { [weak self] success, error in
-            if success {
-                logger.info("Notifications authorized.")
-                
-                guard let strongSelf = self else { return }
-                
-                strongSelf.setActionableNotificationTypes()
-                strongSelf.getNotificationSettings()
-            } else {
-                if let unwrappedError = error {
-                    logger.error("\(unwrappedError.localizedDescription).")
-                }
-            }
-        }
-    }
-    
-    private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .authorized else { return }
+    func requestNotificationAuthorization() async -> Bool {
+        do {
+            let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
             
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
+            logger.info("Notifications authorized.")
+            
+            return granted
+        } catch {
+            return false
         }
     }
     
-    private func setActionableNotificationTypes() {
+    func getNotificationAuthorizationStatus() async -> UNAuthorizationStatus {
+        let settings = await center.notificationSettings()
+            
+//        if settings.authorizationStatus == .authorized {
+//            DispatchQueue.main.async {
+//                UIApplication.shared.registerForRemoteNotifications()
+//            }
+//        }
+        
+        return settings.authorizationStatus
+    }
+    
+    func setActionableNotificationTypes() {
         let defaultShoeAction = UNNotificationAction(identifier: "DEFAULT_SHOE_ACTION",
                                                      title: "Use default Shoe",
                                                      options: [],
@@ -66,7 +64,7 @@ class NotificationManager {
                                                             categorySummaryFormat: "format summary",
                                                             options: [.customDismissAction])
         
-        UNUserNotificationCenter.current().setNotificationCategories([runningWorkoutCategory])
+        center.setNotificationCategories([runningWorkoutCategory])
     }
     
     func scheduleNotification(workout: HKWorkout, dateComponents: DateComponents) {
@@ -85,7 +83,7 @@ class NotificationManager {
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         
-        UNUserNotificationCenter.current().add(request)
+        center.add(request)
         
         if let date = Calendar.current.date(from: dateComponents) {
             logger.debug("Notification scheduled: \(dateTimeFormatter.string(from: date))")
