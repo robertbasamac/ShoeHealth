@@ -13,11 +13,11 @@ import OSLog
 private let logger = Logger(subsystem: "Shoe Health", category: "HealthManager")
 
 @Observable
-final class HealthManager {
+final class HealthManager: @unchecked Sendable {
     
     static let shared = HealthManager()
     
-    @ObservationIgnored private var healthStore = HKHealthStore()
+    @ObservationIgnored private let healthStore = HKHealthStore()
     
     @ObservationIgnored private let readTypes: Set = [HKObjectType.workoutType(),
                                                       HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!]
@@ -33,6 +33,8 @@ final class HealthManager {
     // MARK: - Request HealthKit authorization
     
     func requestHealthAuthorization() async -> Bool {
+        logger.debug("requestHealthAuthorization called, \(Thread.current)")
+        
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return false
@@ -51,27 +53,7 @@ final class HealthManager {
     
     // MARK: - Observing new Workouts
     
-    func startObserving() {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            logger.warning("HealthKit is not available on this device.")
-            return
-        }
-                
-        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
-            if let error = error {
-                logger.warning("HKObserverQuery returned error, \(error).")
-                return
-            }
-            
-            self.handleNewWorkouts()
-            
-            completionHandler()
-        }
-        
-        self.healthStore.execute(query)
-    }
-    
-    private func enableBackgroundDelivery() async {
+    private func enableBackgroundDelivery() async {        
         if !HKHealthStore.isHealthDataAvailable() {
             logger.warning("HealthKit not accessable.")
             return
@@ -86,6 +68,26 @@ final class HealthManager {
         } catch {
             logger.warning("Could not enable background delivery, \(error.localizedDescription).")
         }
+    }
+    
+    func startObserving() {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return
+        }
+        
+        let query = HKObserverQuery(sampleType: sampleType, predicate: predicate) { (query, completionHandler, error) in
+            if let error = error {
+                logger.warning("HKObserverQuery returned error, \(error).")
+                return
+            }
+            
+            self.handleNewWorkouts()
+            
+            completionHandler()
+        }
+        
+        self.healthStore.execute(query)
     }
     
     private func handleNewWorkouts() {
@@ -103,14 +105,13 @@ final class HealthManager {
     }
     
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
-        guard let newWorkout = newSamples.last as? HKWorkout else {
+        guard !newSamples.isEmpty, let newWorkout = newSamples.last as? HKWorkout else {
             logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
-
-        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
         
         if self.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
+            logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
@@ -120,51 +121,39 @@ final class HealthManager {
             logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
         }
         
-        Task {
-            await self.fetchRunningWorkouts()
+        Task { @MainActor in
+            await fetchRunningWorkouts()
         }
     }
     
     // MARK: - Handling HealthKit Data
-        
+    
     func fetchRunningWorkouts() async {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
         }
-
-        let samples = try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
-            let query = HKSampleQuery(sampleType: sampleType,
-                                      predicate: predicate,
-                                      limit: HKObjectQueryNoLimit,
-                                      sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)],
-                                      resultsHandler: { query, samples, error in
-                if let unwrappedError = error {
-                    continuation.resume(throwing: unwrappedError)
-                    return
-                }
-                
-                guard let samples = samples else {
-                    logger.error("HealthKit not accessable.")
-                    fatalError("Invalid State: This can only fail if there was an error.")
-                }
-                
-                continuation.resume(returning: samples)
-            })
+        
+        let query = HKSampleQuery(sampleType: sampleType,
+                                  predicate: predicate,
+                                  limit: HKObjectQueryNoLimit,
+                                  sortDescriptors: [.init(keyPath: \HKSample.endDate, ascending: false)]) { query, samples, error in
+            if let error = error {
+                logger.error("Error when fetching workouts, \(error.localizedDescription)")
+                return
+            }
             
-            healthStore.execute(query)
-        }
-        
-        guard let workouts = samples as? [HKWorkout] else {
-            logger.warning("Did not manage to convert HKSample to HKWorkout.")
-            return
-        }
-        
-        logger.debug("\(workouts.count) workouts fetched.")
-        
-        await MainActor.run {
+            guard let workouts = samples as? [HKWorkout] else {
+                logger.warning("Did not manage to convert HKSample to HKWorkout.")
+                return
+            }
+            
+            logger.debug("\(workouts.count) workouts fetched.")
+            
             HealthManager.shared.workouts = workouts
         }
+        
+        healthStore.execute(query)
     }
     
     func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {

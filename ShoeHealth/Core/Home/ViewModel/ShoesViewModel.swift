@@ -13,7 +13,7 @@ import HealthKit
 import WidgetKit
 
 @Observable
-final class ShoesViewModel {
+final class ShoesViewModel: @unchecked Sendable {
     
     @ObservationIgnored private var modelContext: ModelContext
     
@@ -23,11 +23,6 @@ final class ShoesViewModel {
     private(set) var filterType: ShoeFilterType = .active
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
-    
-    private let distance5K: Double = 5000
-    private let distance10K: Double = 10000
-    private let halfMarathon: Double = 21097.5
-    private let marathon: Double = 42195
     
     var searchBinding: Binding<String> {
         Binding(
@@ -123,7 +118,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
+    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, setDefaultShoe: Bool, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         if !brand.isEmpty {
@@ -134,6 +129,14 @@ final class ShoesViewModel {
         }
         if !nickname.isEmpty {
             shoe.nickname = nickname
+        }
+        
+        if setDefaultShoe {
+            if let defaultShoe = getDefaultShoe() {
+                defaultShoe.isDefaultShoe = false
+            }
+            
+            shoe.isDefaultShoe = setDefaultShoe
         }
         
         shoe.image = image

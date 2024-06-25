@@ -42,48 +42,20 @@ struct OnboardingScreen: View {
                 )
                 .tag(OnboardingTab.notificationAccess)
             }
-            .tabViewStyle(.page)
-//            .onAppear {
-//                UIScrollView.appearance().isScrollEnabled = false
-//            }
-            
-            Button {
-                withAnimation {
-                    switch selectedTab {
-                    case .healthKitAccess:
-                        selectedTab = .notificationAccess
-                    case .notificationAccess:
-                        isOnboarding = false
-                    }
-                }
-            } label: {
-                Group {
-                    switch selectedTab {
-                    case .healthKitAccess:
-                        Image(systemName: "arrow.right.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .fontWeight(.light)
-                    case .notificationAccess:
-                        Text("Get Started")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                    }
-                }
-                .frame(height: 44)
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .onAppear {
+                UIScrollView.appearance().isScrollEnabled = false
             }
-            .tint(.white)
-            .animation(.none, value: selectedTab)
-            .padding(.vertical, 10)
-            .padding(.bottom, 40)
-            .disabled(!onboardingViewModel.isHealthAuthorized)
+            
+            nextButton
+                .animation(.none, value: selectedTab)
+                .disabled(!onboardingViewModel.isHealthAuthorized)
         }
         .task {
             await onboardingViewModel.checkNotificationAuthorizationStatus()
         }
         .onChange(of: scenePhase) { _, newValue in
-            if newValue == .active {                
+            if newValue == .active {
                 Task {
                     await onboardingViewModel.checkNotificationAuthorizationStatus()
                 }
@@ -92,7 +64,45 @@ struct OnboardingScreen: View {
     }
 }
 
-// MARK: - Access request
+// MARK: - View Components
+
+extension OnboardingScreen {
+    
+    @ViewBuilder
+    private var nextButton: some View {
+        Button {
+            withAnimation {
+                switch selectedTab {
+                case .healthKitAccess:
+                    selectedTab = .notificationAccess
+                case .notificationAccess:
+                    isOnboarding = false
+                }
+            }
+        } label: {
+            Group {
+                switch selectedTab {
+                case .healthKitAccess:
+                    Image(systemName: "arrow.right.circle")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .fontWeight(.light)
+                case .notificationAccess:
+                    Text("Get Started")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                }
+            }
+            .frame(height: 44)
+        }
+        .tint(.white)
+        .padding(.vertical, 10)
+        .padding(.bottom, 40)
+    }
+}
+
+// MARK: - Authorization requests
 
 extension OnboardingScreen {
     

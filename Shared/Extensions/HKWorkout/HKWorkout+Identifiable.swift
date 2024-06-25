@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-extension HKWorkout: Identifiable {
+extension HKWorkout: @retroactive Identifiable {
     
     public var id: UUID {
         self.uuid

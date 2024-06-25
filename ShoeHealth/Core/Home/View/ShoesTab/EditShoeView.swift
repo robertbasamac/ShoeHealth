@@ -18,112 +18,36 @@ struct EditShoeView: View {
     @State private var shoeBrand: String = ""
     @State private var shoeModel: String = ""
     @State private var shoeNickname: String = ""
-    @State private var aquisitionDate: Date = .init()
-    @State private var lifespanDistance: Double = 800
+    @State private var aquisitionDate: Date
+    @State private var lifespanDistance: Double
+    @State private var isDefaultShoe: Bool = false
     
-    @State private var selectedPhoto: PhotosPickerItem?
-    @State private var selectedPhotoData: Data?
-    
+    @State private var vm: AddShoeViewModel
+
     init(shoe: Shoe) {
         self.shoe = shoe
-        self._aquisitionDate = State(initialValue: shoe.aquisitionDate)
-        self._lifespanDistance = State(initialValue: shoe.lifespanDistance)
-        self._selectedPhotoData = State(initialValue: shoe.image)
+        self._aquisitionDate = State(wrappedValue: shoe.aquisitionDate)
+        self._lifespanDistance = State(wrappedValue: shoe.lifespanDistance)
+        self._isDefaultShoe = State(wrappedValue: shoe.isDefaultShoe)
+        self._vm = State(initialValue: AddShoeViewModel(selectedPhotoData: shoe.image))
     }
     
     var body: some View {
         Form {
-            Section {
-                TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $shoeBrand)
-                    .textInputAutocapitalization(.words)
-                TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $shoeModel)
-                    .textInputAutocapitalization(.words)
-            } header: {
-                Text("Details")
-            }
-            
-            Section {
-                TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $shoeNickname)
-                    .textInputAutocapitalization(.words)
-            } header: {
-                Text("Nickname")
-            }
-            
-            Section {
-                VStack(spacing: 2) {
-                    Text(String(format: "%.0f Km", lifespanDistance))
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Slider(value: $lifespanDistance, in: 400...1200, step: 50) {
-                        Text("Lifespan distance")
-                    } minimumValueLabel: {
-                        VStack {
-                            Text("400")
-                            Text("Km")
-                        }
-                        .font(.caption)
-                    } maximumValueLabel: {
-                        VStack {
-                            Text("1200")
-                            Text("Km")
-                        }
-                        .font(.caption)
-                    }
+            photoSection
+                .task(id: vm.selectedPhoto) {
+                    await vm.loadPhoto()
                 }
-            } header: {
-                Text("Lifespan distance")
-            } footer: {
-                Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight any other factors.")
-            }
             
-            Section {
-                if let selectedPhotoData, let uiImage = UIImage(data: selectedPhotoData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: 220)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(8)
-                }
-                
-                PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
-                    HStack {
-                        Label("Add Picture", systemImage: "photo")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        if selectedPhotoData != nil {
-                            Button(role: .destructive) {
-                                withAnimation {
-                                    selectedPhoto = nil
-                                    selectedPhotoData = nil
-                                }
-                            } label: {
-                                Image(systemName: "trash")
-                                    .foregroundStyle(.red)
-                                    .padding(.horizontal, 6)
-                                    .contentShape(.rect)
-                            }
-                        }
-                    }
-                }
-            } header: {
-                Text("Shoe Picture")
-            } footer: {
-                Text("Add a picture in landscape mode (4:3) for better quality.")
-            }
-            .task(id: selectedPhoto) {
-                if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-                    selectedPhotoData = data
-                }
-            }
+            detailsSection
             
-            Section {
-                DatePicker("Aquisition Date", selection: $aquisitionDate, in: ...Date.now, displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-            } header: {
-                Text("Aquisition Date")
-            }
+            nicknameSection
+            
+            setDefaultSection
+            
+            lifespanSection
+            
+            aquisitionDateSection
         }
         .navigationTitle("Update Shoe")
         .navigationBarTitleDisplayMode(.inline)
@@ -138,6 +62,123 @@ struct EditShoeView: View {
 
 extension EditShoeView {
     
+    @ViewBuilder
+    private var photoSection: some View {
+        Section {
+            VStack(spacing: 12) {
+                ZStack {
+                    if let data = vm.selectedPhotoData, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        Image(systemName: "square.fill")
+                            .resizable()
+                            .foregroundStyle(.secondary)
+                            .frame(width: 150, height: 150)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        Image(systemName: "shoe.2.fill")
+                            .resizable()
+                            .foregroundStyle(.primary)
+                            .aspectRatio(contentMode: .fit)
+                            .padding()
+                            .frame(width: 150, height: 150)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+                
+                Text("Add Photo")
+                    .font(.callout)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color(uiColor: .secondarySystemBackground))
+                    .cornerRadius(20)
+            }
+            .frame(maxWidth: .infinity)
+            .photosPicker(isPresented: $vm.showPhotosPicker, selection: $vm.selectedPhoto, photoLibrary: .shared())
+            .onTapGesture {
+                vm.showPhotosPicker.toggle()
+            }
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
+    }
+    
+    @ViewBuilder
+    private var detailsSection: some View {
+        Section {
+            TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $shoeBrand)
+                .textInputAutocapitalization(.words)
+                .submitLabel(.next)
+            TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $shoeModel)
+                .textInputAutocapitalization(.words)
+                .submitLabel(.next)
+        } header: {
+            Text("Details")
+        }
+    }
+    
+    @ViewBuilder
+    private var nicknameSection: some View {
+        Section {
+            TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $shoeNickname)
+                .textInputAutocapitalization(.words)
+        }
+    }
+    
+    @ViewBuilder
+    private var setDefaultSection: some View {
+        Section {
+            Toggle("Set as default shoe", isOn: $isDefaultShoe)
+                .tint(Color.accentColor)
+        }
+    }
+    
+    @ViewBuilder
+    private var lifespanSection: some View {
+        Section {
+            VStack(spacing: 2) {
+                Text(String(format: "%.0f Km", lifespanDistance))
+                    .bold()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                Slider(value: $lifespanDistance, in: 400...1200, step: 50) {
+                    Text("Lifespan distance")
+                } minimumValueLabel: {
+                    VStack {
+                        Text("400")
+                        Text("Km")
+                    }
+                    .font(.caption)
+                } maximumValueLabel: {
+                    VStack {
+                        Text("1200")
+                        Text("Km")
+                    }
+                    .font(.caption)
+                }
+            }
+        } header: {
+            Text("Lifespan distance")
+        } footer: {
+            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight any other factors.")
+        }
+    }
+    
+    @ViewBuilder
+    private var aquisitionDateSection: some View {
+        Section {
+            DatePicker("Aquisition Date", selection: $aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+                .datePickerStyle(.graphical)
+        } header: {
+            Text("Aquisition Date")
+        }
+    }
+    
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
@@ -150,7 +191,7 @@ extension EditShoeView {
         
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: selectedPhotoData)
+                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: shoeNickname, brand: shoeBrand, model: shoeModel, setDefaultShoe: isDefaultShoe, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: vm.selectedPhotoData)
                 dismiss()
             } label: {
                 Text("Done")

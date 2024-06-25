@@ -13,7 +13,7 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "NotificationManager")
 
-final class NotificationManager {
+final class NotificationManager: @unchecked Sendable {
         
     static let shared = NotificationManager()
     
@@ -24,11 +24,7 @@ final class NotificationManager {
     
     func requestNotificationAuthorization() async -> Bool {
         do {
-            let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
-            
-            logger.info("Notifications authorized.")
-            
-            return granted
+            return try await center.requestAuthorization(options: [.alert, .badge, .sound])
         } catch {
             return false
         }
@@ -36,12 +32,6 @@ final class NotificationManager {
     
     func getNotificationAuthorizationStatus() async -> UNAuthorizationStatus {
         let settings = await center.notificationSettings()
-            
-//        if settings.authorizationStatus == .authorized {
-//            DispatchQueue.main.async {
-//                UIApplication.shared.registerForRemoteNotifications()
-//            }
-//        }
         
         return settings.authorizationStatus
     }
