@@ -123,7 +123,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
+    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, setDefaultShoe: Bool, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         if !brand.isEmpty {
@@ -134,6 +134,15 @@ final class ShoesViewModel {
         }
         if !nickname.isEmpty {
             shoe.nickname = nickname
+        }
+        
+        if setDefaultShoe {
+            if let defaultShoe = getDefaultShoe() {
+                defaultShoe.isDefaultShoe = false
+            }
+            
+            shoe.isDefaultShoe = setDefaultShoe
+            shoe.isRetired = false
         }
         
         shoe.image = image

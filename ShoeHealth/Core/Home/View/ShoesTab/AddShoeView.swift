@@ -20,10 +20,6 @@ struct AddShoeView: View {
     @State private var lifespanDistance: Double = 800
     @State private var isDefaultShoe: Bool = false
     
-    @State private var showPhotosPicker: Bool = false
-    @State private var selectedPhoto: PhotosPickerItem?
-    @State private var selectedPhotoData: Data?
-    
     @State private var unit: LengthFormatter.Unit = .kilometer
     
     @FocusState private var focusField: FocusField?
@@ -34,9 +30,14 @@ struct AddShoeView: View {
         case nickname
     }
     
+    @State private var vm = AddShoeViewModel()
+    
     var body: some View {
         Form {
             photoSection
+                .task(id: vm.selectedPhoto) {
+                    await vm.loadPhoto()
+                }
             
             detailsSection
             
@@ -85,7 +86,7 @@ extension AddShoeView {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let selectedPhotoData, let uiImage = UIImage(data: selectedPhotoData) {
+                    if let data = vm.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -117,15 +118,10 @@ extension AddShoeView {
                     .cornerRadius(20)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $showPhotosPicker, selection: $selectedPhoto, photoLibrary: .shared())
+            .photosPicker(isPresented: $vm.showPhotosPicker, selection: $vm.selectedPhoto, matching: .images, photoLibrary: .shared())
             .onTapGesture {
                 focusField = nil
-                showPhotosPicker.toggle()
-            }
-            .task(id: selectedPhoto) {
-                if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-                    selectedPhotoData = data
-                }
+                vm.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -211,7 +207,7 @@ extension AddShoeView {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: selectedPhotoData)
+                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: vm.selectedPhotoData)
                 dismiss()
             } label: {
                 Text("Save")
