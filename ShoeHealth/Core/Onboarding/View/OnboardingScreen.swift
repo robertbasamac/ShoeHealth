@@ -16,7 +16,7 @@ struct OnboardingScreen: View {
     
     @State private var selectedTab: OnboardingTab = .healthKitAccess
 
-    @AppStorage("isOnboarding") var isOnboarding: Bool = true
+    @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
     
     var body: some View {
         VStack(spacing: 0) {

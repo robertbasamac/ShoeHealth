@@ -218,7 +218,7 @@ extension ShoesTab {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 10) {
                 ForEach(shoes) { shoe in
-                    ShoeCell(shoe: shoe, width: 140, displayProgress: true)
+                    ShoeCell(shoe: shoe, width: 140)
                         .contextMenu {
                             if !shoe.isDefaultShoe {
                                 Button {
@@ -254,7 +254,7 @@ extension ShoesTab {
                                 Label("Delete", systemImage: "trash")
                             }
                         } preview: {
-                            ShoeCell(shoe: shoe, width: 300)
+                            ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
                                 .padding(10)
                         }
                         .onTapGesture {

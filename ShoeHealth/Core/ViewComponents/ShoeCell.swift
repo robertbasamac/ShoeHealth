@@ -11,7 +11,8 @@ struct ShoeCell: View {
     
     var shoe: Shoe
     var width: CGFloat = 140
-    var displayProgress: Bool = false
+    var displayProgress: Bool = true
+    var reserveSpace: Bool = true
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -33,7 +34,7 @@ struct ShoeCell: View {
                 Text(shoe.model)
                     .font(.headline)
                     .foregroundStyle(.primary)
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(2, reservesSpace: reserveSpace)
                     .multilineTextAlignment(.leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

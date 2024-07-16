@@ -108,14 +108,30 @@ extension AddShoeView {
                     }
                 }
                 
-                Text("Add Photo")
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color(uiColor: .secondarySystemBackground))
-                    .cornerRadius(20)
+                HStack {
+                    Text("Add Photo")
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
+                    
+                    if vm.selectedPhotoData != nil {
+                        Image(systemName: "xmark")
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.red)
+                            .padding(10)
+                            .background(Color(uiColor: .secondarySystemBackground), in: .circle)
+                            .onTapGesture {
+                                vm.selectedPhoto = nil
+                                vm.selectedPhotoData = nil
+                            }
+
+                    }
+                }
+                .animation(.smooth, value: vm.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
             .photosPicker(isPresented: $vm.showPhotosPicker, selection: $vm.selectedPhoto, matching: .images, photoLibrary: .shared())
