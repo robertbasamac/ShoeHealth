@@ -5,8 +5,6 @@
 //  Created by Robert Basamac on 20.05.2024.
 //
 
-import Foundation
-
 enum RunningCategory: String, CaseIterable, Codable {
     
     case fiveK = "5K"

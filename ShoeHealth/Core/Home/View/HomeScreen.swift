@@ -23,7 +23,7 @@ struct HomeScreen: View {
             }
             .tag(TabItem.workouts)
             
-            NavigationStack {
+            NavigationStack(path: $navigationRouter.shoesTabPath) {
                 ShoesTab()
             }
             .tabItem {
@@ -40,21 +40,35 @@ struct HomeScreen: View {
             }
             .tag(TabItem.settings)
         }
-        .sheet(item: $navigationRouter.workout) { workout in
+        .sheet(item: $navigationRouter.showSheet) { sheetType in
             NavigationStack {
-                ShoeSelectionView(title: Prompts.SelectShoe.selectWorkoutShoeTitle,
-                                  description: Prompts.SelectShoe.selectWorkoutShoeDescription,
-                                  systemImage: "shoe.2",
-                                  onDone: { shoeID in
-                    shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
-                })
-                .navigationBarTitleDisplayMode(.inline)
+                switch sheetType {
+                case .addShoe:
+                    AddShoeView()
+                case .setDefaultShoe:
+                    ShoeSelectionView(title: Prompts.SelectShoe.selectDefaultShoeTitle,
+                                      description: Prompts.SelectShoe.selectDefaultShoeDescription,
+                                      systemImage: "shoe.2",
+                                      onDone: { shoeID in
+                        shoesViewModel.setAsDefaultShoe(shoeID)
+                    })
+                case .addToShoe(let workoutID):
+                    ShoeSelectionView(title: Prompts.SelectShoe.assignWorkoutsTitle,
+                                      description: Prompts.SelectShoe.assignWorkoutsDescription,
+                                      systemImage: "shoe.2",
+                                      onDone: { shoeID in
+                        shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
+                    })
+                }
             }
             .presentationCornerRadius(20)
-            .presentationDragIndicator(.visible)
+            .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
+            .interactiveDismissDisabled(sheetType == .setDefaultShoe)
         }
     }
 }
+
+// MARK: - Previews
 
 #Preview("Filled") {
     HomeScreen()

@@ -10,7 +10,7 @@ import HealthKit
 
 struct ContentView: View {
     
-    @AppStorage("isOnboarding") var isOnboarding: Bool = true
+    @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
     
     var body: some View {
         HomeScreen()

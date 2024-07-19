@@ -35,7 +35,7 @@ struct ShoeDetailView: View {
                     LazyVStack(spacing: 20) {
                         StretchyHeaderCell(height: 250, title: shoe.model, subtitle: shoe.brand, imageData: imageData)
                             .overlay(content: {
-                                Color.black
+                                Color(uiColor: .systemBackground)
                                     .opacity(Double(opacity))
                             })
                             .readingFrame { frame in
@@ -85,10 +85,12 @@ struct ShoeDetailView: View {
                 updateInterface()
             }
         }
-        .fullScreenCover(isPresented: $showEditShoe) {
+        .sheet(isPresented: $showEditShoe) {
             NavigationStack {
                 EditShoeView(shoe: shoe)
             }
+            .presentationCornerRadius(20)
+            .interactiveDismissDisabled()
         }
         .onAppear(perform: {
             updateInterface()

@@ -24,11 +24,6 @@ final class ShoesViewModel {
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
     
-    private let distance5K: Double = 5000
-    private let distance10K: Double = 10000
-    private let halfMarathon: Double = 21097.5
-    private let marathon: Double = 42195
-    
     var searchBinding: Binding<String> {
         Binding(
             get: { self.searchText },
@@ -181,10 +176,19 @@ final class ShoesViewModel {
             }
         }
         
+        let previousWear = shoe.wearType
+        
         shoe.workouts.append(contentsOf: workoutIDs)
         updateShoeStatistics(shoe)
         
         save()
+        
+        if !shoe.isRetired && shoe.wearType.rawValue > previousWear.rawValue && shoe.wearType != .new && shoe.wearType != .good {
+            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+            let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+            
+            NotificationManager.shared.scheduleShoeWearNotification(forShoe: shoe, at: dateComponents)
+        }
     }
     
     func remove(workoutIDs: Set<UUID>, fromShoe shoeID: UUID) {
@@ -216,6 +220,11 @@ final class ShoesViewModel {
         
         shoe.isRetired.toggle()
         shoe.retireDate = shoe.isRetired ? .now : nil
+        
+        // no retired shoe can be default shoe
+        if shoe.isRetired && shoe.isDefaultShoe {
+            shoe.isDefaultShoe = false
+        }
         
         save()
     }

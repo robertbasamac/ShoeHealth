@@ -66,6 +66,8 @@
 		09BFD2DD2B978E97009F4133 /* ShoeStatsTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */; };
 		09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
+		09BFD6EE2C4050DF00D112BF /* WearType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearType.swift */; };
+		09BFD6EF2C4050DF00D112BF /* WearType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearType.swift */; };
 		09C1716A2C203D4A005FAB1A /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeFilterType.swift */; };
 		09C1716B2C203D4A005FAB1A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* ShoeSortType.swift */; };
 		09D6B8FA2C3C2856004EDA01 /* AddShoeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */; };
@@ -175,6 +177,7 @@
 		09BFD2DA2B978DD9009F4133 /* ShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidgetView.swift; sourceTree = "<group>"; };
 		09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
+		09BFD6ED2C4050DF00D112BF /* WearType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearType.swift; sourceTree = "<group>"; };
 		09C171672C203D4A005FAB1A /* ShoeFilterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
 		09C171682C203D4A005FAB1A /* ShoeSortType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
 		09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShoeViewModel.swift; sourceTree = "<group>"; };
@@ -303,6 +306,7 @@
 				09E385DA2B1340E3005CFF02 /* Shoe.swift */,
 				09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */,
 				09402B7D2BFBC54800C943C1 /* RunningCategory.swift */,
+				09BFD6ED2C4050DF00D112BF /* WearType.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -467,8 +471,8 @@
 		09C1716D2C203D9D005FAB1A /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */,
 				0975440B2B28769A00B379E2 /* ShoesViewModel.swift */,
+				09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */,
 				09C171692C203D4A005FAB1A /* Filtering */,
 			);
 			path = ViewModel;
@@ -702,6 +706,7 @@
 				093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */,
 				093742952B7AAD9B008D96BD /* Shoe.swift in Sources */,
 				0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */,
+				09BFD6EE2C4050DF00D112BF /* WearType.swift in Sources */,
 				093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */,
 				094D13832C1606F1003C6F50 /* Double.swift in Sources */,
 				09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */,
@@ -747,6 +752,7 @@
 				093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */,
 				0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
+				09BFD6EF2C4050DF00D112BF /* WearType.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,

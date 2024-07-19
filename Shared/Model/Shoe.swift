@@ -5,12 +5,12 @@
 //  Created by Robert Basamac on 26.11.2023.
 //
 
-import Foundation
 import SwiftData
 import SwiftUI
 
 @Model
 final class Shoe {
+    
     var id: UUID
     
     @Attribute(.unique) var nickname: String
@@ -62,18 +62,32 @@ extension Shoe {
     }
     
     var wearPercentageAsString: String {
-        return percentageFormatter.string(from: NSNumber(value: totalDistance / lifespanDistance)) ?? "0"
+        return percentageFormatter.string(from: NSNumber(value: wearPercentage)) ?? "0"
+    }
+    
+    var wearType: WearType {
+        if wearPercentage == 0 {
+            return .new
+        } else if wearPercentage <= 0.5 {
+            return .good
+        } else if wearPercentage <= 0.7 {
+            return .moderate
+        } else if wearPercentage <= 0.9 {
+            return .high
+        } else {
+            return .critical
+        }
     }
     
     var wearColor: Color {
-        let wear = self.totalDistance / self.lifespanDistance
-        if wear < 0.7 {
+        switch wearType {
+        case .new, .good:
             return .green
-        } else if wear < 0.8 {
+        case .moderate:
             return .yellow
-        } else if wear < 0.9 {
+        case .high:
             return .orange
-        } else {
+        case .critical:
             return .red
         }
     }

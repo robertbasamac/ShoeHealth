@@ -114,7 +114,7 @@ final class HealthManager {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
-            NotificationManager.shared.scheduleNotification(workout: newWorkout, dateComponents: dateComponents)
+            NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkout: newWorkout, at: dateComponents)
             self.latestUpdate = newWorkout.endDate
         } else {
             logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")

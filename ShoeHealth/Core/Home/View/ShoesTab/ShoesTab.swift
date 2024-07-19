@@ -11,12 +11,10 @@ import HealthKit
 
 struct ShoesTab: View {
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
-    @State private var selectedShoe: Shoe?
-    @State private var showSheet: SheetType?
-    @State private var selectedCategory: ShoeFilterType?
-        
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
@@ -42,44 +40,12 @@ struct ShoesTab: View {
         .toolbar {
             toolbarItems
         }
-        .navigationDestination(item: $selectedShoe) { shoe in
+        .navigationDestination(for: Shoe.self) { shoe in
             ShoeDetailView(shoe: shoe)
         }
-        .navigationDestination(item: $selectedCategory) { category in
+        .navigationDestination(for: ShoeFilterType.self) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
-        }
-        .sheet(item: $showSheet) { sheetType in
-            NavigationStack {
-                switch sheetType {
-                case .addShoe:
-                    NavigationStack {
-                        AddShoeView()
-                    }
-                case .setDefaultShoe:
-                    NavigationStack {
-                        ShoeSelectionView(title: Prompts.SelectShoe.selectDefaultShoeTitle,
-                                          description: Prompts.SelectShoe.selectDefaultShoeDescription,
-                                          systemImage: "shoe.2",
-                                          onDone: { shoeID in
-                            
-                            shoesViewModel.setAsDefaultShoe(shoeID)
-                        })
-                    }
-                case .addToShoe(let workoutID):
-                    NavigationStack {
-                        ShoeSelectionView(title: Prompts.SelectShoe.assignWorkoutsTitle,
-                                          description: Prompts.SelectShoe.assignWorkoutsDescription,
-                                          systemImage: "shoe.2",
-                                          onDone: { shoeID in
-                            shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
-                        })
-                    }
-                }
-            }
-            .presentationCornerRadius(20)
-            .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
-            .interactiveDismissDisabled(sheetType == .setDefaultShoe)
         }
     }
 }
@@ -133,7 +99,7 @@ extension ShoesTab {
                 ShoeListItem(shoe: shoe, width: 140)
                     .roundedContainer()
                     .onTapGesture {
-                        selectedShoe = shoe
+                        navigationRouter.shoesTabPath.append(shoe)
                     }
             } else {
                 HStack(spacing: 0) {
@@ -148,7 +114,7 @@ extension ShoesTab {
                             .multilineTextAlignment(.center)
                         
                         Button {
-                            showSheet = .setDefaultShoe
+                            navigationRouter.showSheet = .setDefaultShoe
                         } label: {
                             Text("Select Shoe")
                                 .font(.callout)
@@ -188,7 +154,7 @@ extension ShoesTab {
             }
             .asHeader()
             .onTapGesture {
-                selectedCategory = .active
+                navigationRouter.shoesTabPath.append(ShoeFilterType.active)
             }
             
             shoesCarousel(shoes: shoesViewModel.getShoes(filter: .active))
@@ -206,7 +172,7 @@ extension ShoesTab {
             }
             .asHeader()
             .onTapGesture {
-                selectedCategory = .retired
+                navigationRouter.shoesTabPath.append(ShoeFilterType.retired)
             }
             
             shoesCarousel(shoes: shoesViewModel.getShoes(filter: .retired))
@@ -229,10 +195,14 @@ extension ShoesTab {
                             }
                             
                             Button {
+                                let wasDefaultShoe = shoe.isDefaultShoe
+
                                 shoesViewModel.retireShoe(shoe.id)
                                 
-                                if shoe.isRetired && shoe.isDefaultShoe {
-                                    showSheet = .setDefaultShoe
+                                if wasDefaultShoe {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        navigationRouter.showSheet = .setDefaultShoe
+                                    }
                                 }
                             } label: {
                                 if shoe.isRetired {
@@ -248,7 +218,9 @@ extension ShoesTab {
                                 }
                                 
                                 if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                                    showSheet = .setDefaultShoe
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        navigationRouter.showSheet = .setDefaultShoe
+                                    }
                                 }
                             } label: {
                                 Label("Delete", systemImage: "trash")
@@ -258,7 +230,7 @@ extension ShoesTab {
                                 .padding(10)
                         }
                         .onTapGesture {
-                            selectedShoe = shoe
+                            navigationRouter.shoesTabPath.append(shoe)
                         }
                 }
             }
@@ -321,7 +293,7 @@ extension ShoesTab {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(.rect)
                 .onTapGesture {
-                    selectedShoe = shoe
+                    navigationRouter.shoesTabPath.append(shoe)
                 }
             } else {
                 Text("No shoe selected for this workout.")
@@ -329,7 +301,7 @@ extension ShoesTab {
                     .multilineTextAlignment(.center)
                     .contentShape(.rect)
                     .onTapGesture {
-                        showSheet = .addToShoe(workoutID: run.id)
+                        navigationRouter.showSheet = .addToShoe(workoutID: run.id)
                     }
             }
         }
@@ -353,10 +325,14 @@ extension ShoesTab {
     @ViewBuilder
     private func swipeRightActions(shoe: Shoe) -> some View {
         Button {
+            let wasDefaultShoe = shoe.isDefaultShoe
+            
             shoesViewModel.retireShoe(shoe.id)
             
-            if shoe.isRetired && shoe.isDefaultShoe {
-                showSheet = .setDefaultShoe
+            if wasDefaultShoe {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe
+                }
             }
         } label: {
             if shoe.isRetired {
@@ -385,7 +361,7 @@ extension ShoesTab {
             }
             
             if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                showSheet = .setDefaultShoe
+                navigationRouter.showSheet = .setDefaultShoe
             }
         } label: {
             Label("Delete", systemImage: "trash")
@@ -401,7 +377,7 @@ extension ShoesTab {
                 Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
             } actions: {
                 Button {
-                    showSheet = .addShoe
+                    navigationRouter.showSheet = .addShoe
                 } label: {
                     Text("Add Shoe")
                         .padding(4)
@@ -420,7 +396,7 @@ extension ShoesTab {
                         Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
                     } actions: {
                         Button {
-                            showSheet = .addShoe
+                            navigationRouter.showSheet = .addShoe
                         } label: {
                             Text("Add Shoe")
                                 .padding(4)
@@ -449,7 +425,7 @@ extension ShoesTab {
         
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                showSheet = .addShoe
+                navigationRouter.showSheet = .addShoe
             } label: {
                 Image(systemName: "plus")
             }
@@ -501,10 +477,6 @@ extension ShoesTab {
         case .retired:
             return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
         }
-    }
-    
-    private func getNavigationBarTitle() -> String {
-        return selectedCategory?.rawValue ?? "Shoes"
     }
 }
 
