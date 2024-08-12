@@ -15,29 +15,27 @@ struct EditShoeView: View {
     
     private var shoe: Shoe
     
-    @State private var shoeBrand: String = ""
-    @State private var shoeModel: String = ""
-    @State private var shoeNickname: String = ""
-    @State private var aquisitionDate: Date
-    @State private var lifespanDistance: Double
-    @State private var isDefaultShoe: Bool = false
+    @State private var addViewModel: AddShoeViewModel
     
-    @State private var vm: AddShoeViewModel
-
+    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
+    
     init(shoe: Shoe) {
         self.shoe = shoe
-        self._aquisitionDate = State(wrappedValue: shoe.aquisitionDate)
-        self._lifespanDistance = State(wrappedValue: shoe.lifespanDistance)
-        self._isDefaultShoe = State(wrappedValue: shoe.isDefaultShoe)
-        self._vm = State(initialValue: AddShoeViewModel(selectedPhotoData: shoe.image))
+        self._addViewModel = State(initialValue: AddShoeViewModel(selectedPhotoData: shoe.image,
+                                                                  aquisitionDate: shoe.aquisitionDate,
+                                                                  lifespanDistance: shoe.lifespanDistance,
+                                                                  isDefaultShoe: shoe.isDefaultShoe
+                                                                 )
+        )
     }
     
     var body: some View {
         Form {
             photoSection
-                .task(id: vm.selectedPhoto) {
-                    if vm.selectedPhoto != nil {
-                        await vm.loadPhoto()
+                .task(id: addViewModel.selectedPhoto) {
+                    if addViewModel.selectedPhoto != nil {
+                        await addViewModel.loadPhoto()
                     }
                 }
             
@@ -57,6 +55,12 @@ struct EditShoeView: View {
         .toolbar {
             toolbarItems()
         }
+        .onChange(of: self.unitOfMeasure) { _, newValue in
+            addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
+        }
+        .onChange(of: unitOfMeasureString) { _, newValue in
+            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
+        }
     }
 }
 
@@ -69,7 +73,7 @@ extension EditShoeView {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let data = vm.selectedPhotoData, let uiImage = UIImage(data: data) {
+                    if let data = addViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -100,7 +104,7 @@ extension EditShoeView {
                         .padding(.vertical, 8)
                         .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
                     
-                    if vm.selectedPhotoData != nil {
+                    if addViewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
                             .fontWeight(.semibold)
@@ -108,18 +112,18 @@ extension EditShoeView {
                             .padding(10)
                             .background(Color(uiColor: .secondarySystemBackground), in: .circle)
                             .onTapGesture {
-                                vm.selectedPhoto = nil
-                                vm.selectedPhotoData = nil
+                                addViewModel.selectedPhoto = nil
+                                addViewModel.selectedPhotoData = nil
                             }
 
                     }
                 }
-                .animation(.smooth, value: vm.selectedPhotoData)
+                .animation(.smooth, value: addViewModel.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $vm.showPhotosPicker, selection: $vm.selectedPhoto, matching: .images, photoLibrary: .shared())
+            .photosPicker(isPresented: $addViewModel.showPhotosPicker, selection: $addViewModel.selectedPhoto, matching: .images, photoLibrary: .shared())
             .onTapGesture {
-                vm.showPhotosPicker.toggle()
+                addViewModel.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -129,10 +133,10 @@ extension EditShoeView {
     @ViewBuilder
     private var detailsSection: some View {
         Section {
-            TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $shoeBrand)
+            TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $addViewModel.shoeBrand)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
-            TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $shoeModel)
+            TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $addViewModel.shoeModel)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
         } header: {
@@ -143,7 +147,7 @@ extension EditShoeView {
     @ViewBuilder
     private var nicknameSection: some View {
         Section {
-            TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $shoeNickname)
+            TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $addViewModel.shoeNickname)
                 .textInputAutocapitalization(.words)
         }
     }
@@ -151,7 +155,7 @@ extension EditShoeView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $isDefaultShoe)
+            Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
                 .tint(Color.accentColor)
         }
     }
@@ -159,23 +163,33 @@ extension EditShoeView {
     @ViewBuilder
     private var lifespanSection: some View {
         Section {
+            HStack {
+                Text("Unit of Measure")
+                Spacer(minLength: 40)
+                Picker("Unit", selection: $unitOfMeasure) {
+                    Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
+                    Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+            
             VStack(spacing: 2) {
-                Text(String(format: "%.0f Km", lifespanDistance))
+                Text(String(format: "%.0f\(unitOfMeasure.symbol)", addViewModel.lifespanDistance))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Slider(value: $lifespanDistance, in: 400...1200, step: 50) {
+                Slider(value: $addViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
                     Text("Lifespan distance")
                 } minimumValueLabel: {
                     VStack {
-                        Text("400")
-                        Text("Km")
+                        Text(String(format: "%.0f", unitOfMeasure.range.lowerBound))
+                        Text(unitOfMeasure.symbol)
                     }
                     .font(.caption)
                 } maximumValueLabel: {
                     VStack {
-                        Text("1200")
-                        Text("Km")
+                        Text(String(format: "%.0f", unitOfMeasure.range.upperBound))
+                        Text(unitOfMeasure.symbol)
                     }
                     .font(.caption)
                 }
@@ -190,7 +204,7 @@ extension EditShoeView {
     @ViewBuilder
     private var aquisitionDateSection: some View {
         Section {
-            DatePicker("Aquisition Date", selection: $aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+            DatePicker("Aquisition Date", selection: $addViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
         } header: {
             Text("Aquisition Date")
@@ -209,7 +223,15 @@ extension EditShoeView {
         
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: shoeNickname, brand: shoeBrand, model: shoeModel, setDefaultShoe: isDefaultShoe, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: vm.selectedPhotoData)
+                let settingsUnitOfMeasure = SettingsManager.shared.unitOfMeasure
+                
+                if settingsUnitOfMeasure != unitOfMeasure {
+                    addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
+                }
+                
+                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: addViewModel.shoeNickname, brand: addViewModel.shoeBrand, model: addViewModel.shoeModel, setDefaultShoe: addViewModel.isDefaultShoe, lifespanDistance: addViewModel.lifespanDistance, aquisitionDate: addViewModel.aquisitionDate, image: addViewModel.selectedPhotoData)
+                SettingsManager.shared.setUnitOfMeasure(to: unitOfMeasure)
+                
                 dismiss()
             } label: {
                 Text("Done")

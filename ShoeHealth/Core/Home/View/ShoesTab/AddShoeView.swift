@@ -13,16 +13,12 @@ struct AddShoeView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @State private var shoeNickname: String = ""
-    @State private var shoeBrand: String = ""
-    @State private var shoeModel: String = ""
-    @State private var aquisitionDate: Date = .init()
-    @State private var lifespanDistance: Double = 800
-    @State private var isDefaultShoe: Bool = false
-    
-    @State private var unit: LengthFormatter.Unit = .kilometer
+    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     @FocusState private var focusField: FocusField?
+    
+    @State private var addViewModel = AddShoeViewModel()
     
     enum FocusField: Hashable {
         case brand
@@ -30,13 +26,11 @@ struct AddShoeView: View {
         case nickname
     }
     
-    @State private var vm = AddShoeViewModel()
-    
     var body: some View {
         Form {
             photoSection
-                .task(id: vm.selectedPhoto) {
-                    await vm.loadPhoto()
+                .task(id: addViewModel.selectedPhoto) {
+                    await addViewModel.loadPhoto()
                 }
             
             detailsSection
@@ -68,11 +62,17 @@ struct AddShoeView: View {
             }
         }
         .onAppear {
-            isDefaultShoe = shoesViewModel.shoes.isEmpty ? true : false
+            addViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty ? true : false
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 focusField = .brand
             }
+        }
+        .onChange(of: self.unitOfMeasure) { _, newValue in
+            addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
+        }
+        .onChange(of: unitOfMeasureString) { _, newValue in
+            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
         }
     }
 }
@@ -86,7 +86,7 @@ extension AddShoeView {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let data = vm.selectedPhotoData, let uiImage = UIImage(data: data) {
+                    if let data = addViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -117,7 +117,7 @@ extension AddShoeView {
                         .padding(.vertical, 8)
                         .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
                     
-                    if vm.selectedPhotoData != nil {
+                    if addViewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
                             .fontWeight(.semibold)
@@ -125,19 +125,19 @@ extension AddShoeView {
                             .padding(10)
                             .background(Color(uiColor: .secondarySystemBackground), in: .circle)
                             .onTapGesture {
-                                vm.selectedPhoto = nil
-                                vm.selectedPhotoData = nil
+                                addViewModel.selectedPhoto = nil
+                                addViewModel.selectedPhotoData = nil
                             }
 
                     }
                 }
-                .animation(.smooth, value: vm.selectedPhotoData)
+                .animation(.smooth, value: addViewModel.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $vm.showPhotosPicker, selection: $vm.selectedPhoto, matching: .images, photoLibrary: .shared())
+            .photosPicker(isPresented: $addViewModel.showPhotosPicker, selection: $addViewModel.selectedPhoto, matching: .images, photoLibrary: .shared())
             .onTapGesture {
                 focusField = nil
-                vm.showPhotosPicker.toggle()
+                addViewModel.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -147,11 +147,11 @@ extension AddShoeView {
     @ViewBuilder
     private var detailsSection: some View {
         Section {
-            TextField("Brand", text: $shoeBrand)
+            TextField("Brand", text: $addViewModel.shoeBrand)
                 .focused($focusField, equals: .brand)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
-            TextField("Model", text: $shoeModel)
+            TextField("Model", text: $addViewModel.shoeModel)
                 .focused($focusField, equals: .model)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
@@ -163,7 +163,7 @@ extension AddShoeView {
     @ViewBuilder
     private var nicknameSection: some View {
         Section {
-            TextField("Nickname", text: $shoeNickname)
+            TextField("Nickname", text: $addViewModel.shoeNickname)
                 .focused($focusField, equals: .nickname)
                 .textInputAutocapitalization(.words)
         }
@@ -172,7 +172,7 @@ extension AddShoeView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $isDefaultShoe)
+            Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
                 .disabled(shoesViewModel.shoes.isEmpty)
                 .tint(Color.accentColor)
         }
@@ -181,23 +181,33 @@ extension AddShoeView {
     @ViewBuilder
     private var lifespanSection: some View {
         Section {
+            HStack {
+                Text("Unit of Measure")
+                Spacer(minLength: 40)
+                Picker("Unit", selection: $unitOfMeasure) {
+                    Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
+                    Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+                
             VStack(spacing: 2) {
-                Text(String(format: "%.0f Km", lifespanDistance))
+                Text(String(format: "%.0f\(unitOfMeasure.symbol)", addViewModel.lifespanDistance))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Slider(value: $lifespanDistance, in: 400...1200, step: 50) {
+                Slider(value: $addViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
                     Text("Lifespan distance")
                 } minimumValueLabel: {
                     VStack {
-                        Text("400")
-                        Text("Km")
+                        Text(String(format: "%.0f", unitOfMeasure.range.lowerBound))
+                        Text(unitOfMeasure.symbol)
                     }
                     .font(.caption)
                 } maximumValueLabel: {
                     VStack {
-                        Text("1200")
-                        Text("Km")
+                        Text(String(format: "%.0f", unitOfMeasure.range.upperBound))
+                        Text(unitOfMeasure.symbol)
                     }
                     .font(.caption)
                 }
@@ -212,7 +222,7 @@ extension AddShoeView {
     @ViewBuilder
     private var aquisitionDateSection: some View {
         Section {
-            DatePicker("Aquisition Date", selection: $aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+            DatePicker("Aquisition Date", selection: $addViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
         } header: {
             Text("Aquisition Date")
@@ -223,7 +233,15 @@ extension AddShoeView {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.addShoe(nickname: shoeNickname, brand: shoeBrand, model: shoeModel, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: vm.selectedPhotoData)
+                let settingsUnitOfMeasure = SettingsManager.shared.unitOfMeasure
+                
+                if settingsUnitOfMeasure != unitOfMeasure {
+                    addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
+                }
+                
+                shoesViewModel.addShoe(nickname: addViewModel.shoeNickname, brand: addViewModel.shoeBrand, model: addViewModel.shoeModel, lifespanDistance: addViewModel.lifespanDistance, aquisitionDate: addViewModel.aquisitionDate, isDefaultShoe: addViewModel.isDefaultShoe, image: addViewModel.selectedPhotoData)
+                SettingsManager.shared.setUnitOfMeasure(to: unitOfMeasure)
+                
                 dismiss()
             } label: {
                 Text("Save")
@@ -238,7 +256,37 @@ extension AddShoeView {
 extension AddShoeView {
     
     private func isSaveButtonDisabled() -> Bool {
-        return shoeBrand.isEmpty || shoeModel.isEmpty || shoeNickname.isEmpty
+        return addViewModel.shoeBrand.isEmpty || addViewModel.shoeModel.isEmpty || addViewModel.shoeNickname.isEmpty
+    }
+    
+    func convertLifespanDistance(_ lifespanDistance: Double, unitOfMeasure: UnitOfMeasure) -> Double {
+        var convertedDistance: Double
+        
+        let distanceRange = unitOfMeasure.range
+        
+        if unitOfMeasure == .metric {
+            convertedDistance = lifespanDistance * 1.60934 // miles to km
+            
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        } else {
+            convertedDistance = lifespanDistance / 1.60934 // km to miles
+            
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        }
+        
+        return roundToNearest50(convertedDistance)
+    }
+    
+    func roundToNearest50(_ value: Double) -> Double {
+        return (value / 50.0).rounded() * 50.0
     }
 }
 

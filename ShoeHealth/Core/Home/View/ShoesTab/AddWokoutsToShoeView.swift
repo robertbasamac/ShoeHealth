@@ -50,6 +50,7 @@ extension AddWokoutsToShoeView {
             Button {
                 shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
                 onAdd()
+                
                 dismiss()
             } label: {
                 Text("Add")

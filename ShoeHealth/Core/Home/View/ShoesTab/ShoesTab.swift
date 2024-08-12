@@ -12,8 +12,10 @@ import HealthKit
 struct ShoesTab: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    
+    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         ScrollView(.vertical) {
@@ -46,6 +48,9 @@ struct ShoesTab: View {
         .navigationDestination(for: ShoeFilterType.self) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
+        }
+        .onChange(of: unitOfMeasureString) { _, newValue in
+            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
         }
     }
 }
@@ -259,7 +264,7 @@ extension ShoesTab {
         VStack(spacing: 8) {
             HStack {
                 StatCell(label: "Duration", value: run.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Distance", value: String(format: "%.2f", run.totalDistance(unitPrefix: .kilo)), unit: UnitLength.kilometers.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: String(format: "%.2f", run.totalDistance(unit: unitOfMeasure.unit)), unit: unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
@@ -272,7 +277,7 @@ extension ShoesTab {
             Divider()
             
             HStack {
-                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace.minutes, run.averagePace.seconds), unit: "/KM", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace(unit: unitOfMeasure.unit).minutes, run.averagePace(unit: unitOfMeasure.unit).seconds), unit: "/\(unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
                 StatCell(label: "Avg Heart Rate", value: String(format: "%.0f", run.averageHeartRate), unit: "BPM", color: .red, textAlignment: .leading, containerAlignment: .leading)
             }
         }
@@ -291,6 +296,12 @@ extension ShoesTab {
                         .font(.system(size: 18))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .overlay(alignment: .trailing) {
+                    Image(systemName: "chevron.right")
+                        .font(.title2.bold())
+                        .imageScale(.small)
+                        .foregroundStyle(.secondary)
+                }
                 .contentShape(.rect)
                 .onTapGesture {
                     navigationRouter.shoesTabPath.append(shoe)
@@ -299,26 +310,24 @@ extension ShoesTab {
                 Text("No shoe selected for this workout.")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.center)
+                    .overlay(alignment: .trailing) {
+                        Image(systemName: "chevron.right")
+                            .font(.title2.bold())
+                            .imageScale(.small)
+                            .foregroundStyle(.secondary)
+                    }
                     .contentShape(.rect)
                     .onTapGesture {
                         navigationRouter.showSheet = .addToShoe(workoutID: run.id)
                     }
             }
         }
-        .padding(.trailing, 20)
-        .frame(maxWidth: .infinity, alignment: .leading)
         .overlay(alignment: .leading) {
             Image(systemName: "shoe.2.fill")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 44, height: 44)
                 .offset(x: -50)
-        }
-        .overlay(alignment: .trailing) {
-            Image(systemName: "chevron.right")
-                .font(.system(size: 22, weight: .bold))
-                .imageScale(.small)
-                .foregroundStyle(.secondary)
         }
     }
     

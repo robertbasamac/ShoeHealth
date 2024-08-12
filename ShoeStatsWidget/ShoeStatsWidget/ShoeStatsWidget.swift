@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftData
 
 struct ShoeStatsWidget: Widget {
+    
     let kind: String = "ShoeStatsWidget"
     
     var body: some WidgetConfiguration {

@@ -10,6 +10,7 @@ import SwiftUI
 
 @main
 struct ShoeStatsWidgetBundle: WidgetBundle {
+    
     var body: some Widget {
         ShoeStatsWidget()
     }

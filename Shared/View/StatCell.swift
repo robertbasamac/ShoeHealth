@@ -42,7 +42,6 @@ struct StatCell: View {
                 .font(labelFont)
             Group {
                 Text(value) +
-                
                 Text("\(unit.uppercased())")
                     .textScale(.secondary)
             }

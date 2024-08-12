@@ -9,8 +9,11 @@ import SwiftUI
 import HealthKit
 
 struct WorkoutListItem: View {
-    
+        
     var workout: HKWorkout
+    
+    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         HStack {
@@ -22,11 +25,18 @@ struct WorkoutListItem: View {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
                     .font(.caption)
                 
-                Text("\(distanceFormatter.string(fromValue: Double(workout.totalDistance(unitPrefix: .kilo)), unit: .kilometer).uppercased())")
-                    .font(.title3)
-                    .foregroundStyle(Color.accentColor)
+                Group {
+                    Text(String(format: "%.2f", workout.totalDistance(unit: unitOfMeasure.unit))) +
+                    Text("\(unitOfMeasure.symbol)")
+                        .textScale(.secondary)
+                }
+                .font(.title3)
+                .foregroundStyle(Color.accentColor)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onChange(of: SettingsManager.shared.unitOfMeasure) { _, newValue in
+            unitOfMeasure = newValue
+        }
     }
 }

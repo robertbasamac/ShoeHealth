@@ -48,10 +48,10 @@ extension HKWorkout {
         return String(format: "%d:%02d:%02d", hours, minutes, seconds)
     }
     
-    func totalDistance(unitPrefix unit: HKMetricPrefix = .none) -> Double {
+    func totalDistance(unit: HKUnit) -> Double {
         guard let distance = self.statistics(for: .init(.distanceWalkingRunning))?.sumQuantity() else { return 0 }
         
-        return distance.doubleValue(for: HKUnit.meterUnit(with: unit))
+        return distance.doubleValue(for: unit)
     }
     
     var averagePower: Double {
@@ -66,10 +66,10 @@ extension HKWorkout {
         return activeKCal.doubleValue(for: HKUnit.kilocalorie())
     }
     
-    var averagePace: (minutes: Int, seconds: Int) {
+    func averagePace(unit: HKUnit) -> (minutes: Int, seconds: Int) {
         let duration = self.duration
         
-        let distance = self.totalDistance(unitPrefix: .kilo)
+        let distance = self.totalDistance(unit: unit)
         let durationMinutes = duration / 60
         
         let paceMinutes = durationMinutes / distance

@@ -14,14 +14,25 @@ import SwiftUI
 final class AddShoeViewModel {
 
     var showPhotosPicker: Bool = false
-
+    
     var selectedPhoto: PhotosPickerItem?
     var selectedPhotoData: Data?
-
-    init(selectedPhoto: PhotosPickerItem? = nil, selectedPhotoData: Data? = nil) {
-        self.showPhotosPicker = showPhotosPicker
-        self.selectedPhoto = selectedPhoto
+    var shoeNickname: String = ""
+    var shoeBrand: String = ""
+    var shoeModel: String = ""
+    var aquisitionDate: Date
+    var lifespanDistance: Double
+    var isDefaultShoe: Bool
+    
+    init(selectedPhotoData: Data? = nil,
+         aquisitionDate: Date = .init(),
+         lifespanDistance: Double = SettingsManager.shared.unitOfMeasure.range.lowerBound,
+         isDefaultShoe: Bool = false
+    ) {
         self.selectedPhotoData = selectedPhotoData
+        self.aquisitionDate = aquisitionDate
+        self.lifespanDistance = lifespanDistance
+        self.isDefaultShoe = isDefaultShoe
     }
 
     func loadPhoto() async {
@@ -30,5 +41,35 @@ final class AddShoeViewModel {
                 selectedPhotoData = data
             }
         }
+    }
+    
+    func convertLifespanDistance(unitOfMeasure: UnitOfMeasure) {
+        var convertedDistance: Double
+        
+        let distanceRange = unitOfMeasure.range
+        
+        if unitOfMeasure == .metric {
+            convertedDistance = lifespanDistance * 1.60934 // miles to km
+            
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        } else {
+            convertedDistance = lifespanDistance / 1.60934 // km to miles
+
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        }
+        
+        self.lifespanDistance = roundToNearest50(convertedDistance)
+    }
+    
+    private func roundToNearest50(_ value: Double) -> Double {
+        return (value / 50.0).rounded() * 50.0
     }
 }

@@ -107,9 +107,11 @@ final class HealthManager {
             logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
         }
-
-        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f Km", newWorkout.totalDistance(unitPrefix: .kilo))).")
         
+        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
+        
+        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f\(unitOfMeasure.symbol)", newWorkout.totalDistance(unit: unitOfMeasure.unit))).")
+
         if self.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)

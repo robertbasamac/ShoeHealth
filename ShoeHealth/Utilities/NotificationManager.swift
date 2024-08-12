@@ -82,7 +82,9 @@ final class NotificationManager {
     func scheduleNewWorkoutNotification(forNewWorkout workout: HKWorkout, at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
         
-        let distanceString = distanceFormatter.string(fromValue: workout.totalDistance(unitPrefix: .kilo), unit: .kilometer)
+        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
+        
+        let distanceString = String(format: "%.2f\(unitOfMeasure.symbol)", workout.totalDistance(unit: unitOfMeasure.unit))
         let dateString = workout.endDate.formatted(date: .numeric, time: .shortened)
         
         content.title = "New Running Workout"

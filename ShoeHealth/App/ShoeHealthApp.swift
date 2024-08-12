@@ -13,13 +13,13 @@ struct ShoeHealthApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     
-    @StateObject var navigationRouter = NavigationRouter()
-    
-    @State var shoesViewModel = ShoesViewModel(modelContext: ShoesStore.container.mainContext)
+    @StateObject private var navigationRouter = NavigationRouter()
+    @State private var shoesViewModel = ShoesViewModel(modelContext: ShoesStore.container.mainContext)
         
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .defaultAppStorage(UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")!)
                 .environmentObject(navigationRouter)
                 .environment(shoesViewModel)
                 .preferredColorScheme(.dark)

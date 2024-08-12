@@ -47,6 +47,8 @@ struct RoundedRectangleProgressView: View {
     }
 }
 
+// MARK: - Previews
+
 #Preview {
     RoundedRectangleProgressView(progress: 0.5, color: .orange, width: 200)
 }

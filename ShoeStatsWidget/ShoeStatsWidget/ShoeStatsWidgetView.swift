@@ -7,13 +7,15 @@
 
 import SwiftUI
 import WidgetKit
+import HealthKit
 
 struct ShoeStatsWidgetView: View {
+    
     var entry: ShoeStatsWidgetEntry
     
     var body: some View {
         if let stats = entry.shoe {
-            ShoeStatsSnapshotWidgetView(shoe: stats)
+            ShoeStatsSnapshotWidgetView(shoe: stats, unitSymbol: entry.unitSymbol)
         } else {
             Text("No Shoe")
                 .foregroundStyle(.secondary)
@@ -23,7 +25,9 @@ struct ShoeStatsWidgetView: View {
 }
 
 struct ShoeStatsSnapshotWidgetView : View {
+        
     var shoe: ShoeStatsEntity
+    var unitSymbol: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -40,9 +44,9 @@ struct ShoeStatsSnapshotWidgetView : View {
                         
             HStack(spacing: 2) {
                 VStack(alignment: .leading, spacing: 2) {
-                    StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                    StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: unitSymbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: .blue, textAlignment: .leading, containerAlignment: .leading)
 
-                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: UnitLength.kilometers.symbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
+                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: unitSymbol, labelFont: .system(size: 10), valueFont: .system(size: 12), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 .contentTransition(.numericText(value: shoe.totalDistance))

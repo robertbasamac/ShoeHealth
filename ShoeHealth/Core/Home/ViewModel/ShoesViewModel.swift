@@ -11,6 +11,7 @@ import SwiftData
 import SwiftUI
 import HealthKit
 import WidgetKit
+import Combine
 
 @Observable
 final class ShoesViewModel {
@@ -23,6 +24,8 @@ final class ShoesViewModel {
     private(set) var filterType: ShoeFilterType = .active
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
+    
+    private var cancellables = Set<AnyCancellable>()
     
     var searchBinding: Binding<String> {
         Binding(
@@ -46,6 +49,7 @@ final class ShoesViewModel {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchShoes()
+        setupObservers()
     }
     
     // MARK: - Computed Properties
@@ -295,12 +299,14 @@ final class ShoesViewModel {
     }
     
     private func updateShoeStatistics(_ shoe: Shoe) {
+        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
+        
         let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         
         shoe.lastActivityDate = workouts.first?.endDate
         
         shoe.totalDistance = workouts.reduce(0.0) { result, workout in
-            return result + workout.totalDistance(unitPrefix: .kilo)
+            return result + workout.totalDistance(unit: unitOfMeasure.unit)
         }
         
         shoe.totalDuration = workouts.reduce(0.0) { result, workout in
@@ -343,6 +349,12 @@ final class ShoesViewModel {
     
     // MARK: - Other Methods
     
+    private func setupObservers() {
+        SettingsManager.shared.addObserver { [weak self] in
+            self?.convertShoesToSelectedUnit()
+        }
+    }
+    
     private func fetchShoes() {
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
@@ -362,6 +374,24 @@ final class ShoesViewModel {
     
     func toggleSortOrder() {
         sortOrder = sortOrder == .forward ? .reverse : .forward
+    }
+
+    
+    private func convertShoesToSelectedUnit() {
+        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
+        
+        for shoe in shoes {
+            switch unitOfMeasure {
+            case .imperial:
+                shoe.lifespanDistance = shoe.lifespanDistance / 1.60934
+            case .metric:
+                shoe.lifespanDistance = shoe.lifespanDistance * 1.60934
+            }
+
+            updateShoeStatistics(shoe)
+        }
+        
+        save()
     }
     
     // MARK: - SwiftData Model Context methods
