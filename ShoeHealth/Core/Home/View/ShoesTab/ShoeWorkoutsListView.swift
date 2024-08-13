@@ -33,8 +33,8 @@ struct ShoeWorkoutsListView: View {
             WorkoutListItem(workout: workout)
                 .padding(.horizontal)
                 .padding(.vertical, 6)
-                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-                .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
+                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .listRowInsets(.init(top: 2, leading: 16, bottom: 2, trailing: 16))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {

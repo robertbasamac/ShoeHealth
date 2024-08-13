@@ -18,12 +18,12 @@ struct ShoeCell: View {
         VStack(alignment: .leading, spacing: 0) {
             ShoeImage(imageData: shoe.image, showBackground: true)
                 .frame(width: width, height: width)
-                .clipShape(.rect(cornerRadius: 12))
                 .overlay {
                     if displayProgress {
                         RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
                     }
                 }
+                .clipShape(.rect(cornerRadius: 12))
 
             VStack(alignment: .leading) {
                 Text(shoe.brand)

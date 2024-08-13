@@ -35,7 +35,7 @@ struct ShoeDetailView: View {
         Group {
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 20) {
+                    LazyVStack(spacing: 12) {
                         StretchyHeaderCell(height: 250, title: shoe.model, subtitle: shoe.brand, imageData: imageData)
                             .overlay(content: {
                                 Color(uiColor: .systemBackground)
@@ -54,7 +54,7 @@ struct ShoeDetailView: View {
                 .scrollTargetBehavior(.stretchyHeader)
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 20) {
+                    LazyVStack(spacing: 12) {
                         StaticHeaderCell(title: shoe.model, subtitle: shoe.brand)
                             .frame(height: 75)
                             .overlay(content: {
@@ -108,11 +108,9 @@ extension ShoeDetailView {
     
     @ViewBuilder
     private var lifespanSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             Text("Health")
-                .font(.system(size: 22, weight: .bold))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(.rect)
+                .asHeader()
             
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
@@ -130,21 +128,15 @@ extension ShoeDetailView {
             }
             .padding(.horizontal, 20)
             .frame(height: 140)
-            .background(Color(uiColor: .secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .roundedContainer()
         }
-        .padding(.horizontal, 20)
     }
     
     @ViewBuilder
     private var statsSection: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Text("Statistics")
-            }
-            .font(.system(size: 22, weight: .bold))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+        VStack(spacing: 0) {
+            Text("Statistics")
+                .asHeader()
             
             VStack(spacing: 8) {
                 averagesSection
@@ -161,10 +153,8 @@ extension ShoeDetailView {
             .font(.system(size: 17))
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-            .background(Color(uiColor: .secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .roundedContainer()
         }
-        .padding(.horizontal, 20)
     }
     
     @ViewBuilder
@@ -231,7 +221,7 @@ extension ShoeDetailView {
         
     @ViewBuilder
     private var workoutsSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             HStack {
                 Text("History")
                 
@@ -239,9 +229,7 @@ extension ShoeDetailView {
                     .imageScale(.small)
                     .foregroundStyle(.secondary)
             }
-            .font(.system(size: 22, weight: .bold))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+            .asHeader()
             .onTapGesture {
                 showAllWorkouts.toggle()
             }
@@ -252,11 +240,12 @@ extension ShoeDetailView {
                         .padding(.horizontal)
                         .padding(.vertical, 6)
                         .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
+            .padding(.horizontal)
+            .padding(.top, 8)
         }
-        .padding(.horizontal, 20)
     }
     
     @ToolbarContentBuilder

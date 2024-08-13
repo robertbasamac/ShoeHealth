@@ -240,7 +240,7 @@ extension ShoesTab {
                 }
             }
             .scrollTargetLayout()
-            .padding(.horizontal, 20)
+            .padding(.horizontal)
             .padding(.top, 8)
         }
         .scrollTargetBehavior(.viewAligned)
