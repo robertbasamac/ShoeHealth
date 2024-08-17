@@ -37,59 +37,13 @@ struct ShoeSelectionView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 8) {
-                Image(systemName: systemImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 84, height: 84, alignment: .center)
-                    .foregroundStyle(.secondary)
-                Text(title)
-                    .font(.title2.bold())
-                
-                Text(description)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-            .multilineTextAlignment(.center)
-            .padding(.bottom)
-            .padding(.horizontal)
+            headerSection
             
             Divider()
             
             List {
-                Section(isExpanded: $isExpandedActive, content: {
-                    ForEach(activeShoes) { shoe in
-                        HStack(spacing: 16) {
-                            Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(Color.accentColor)
-                            ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing)
-                        }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
-                        .contentShape(.rect)
-                        .onTapGesture {
-                            selectedShoe = selectedShoe == shoe ? nil : shoe
-                        }
-                    }
-                }, header: {
-                    Text("Active Shoes")
-                })
-                
-                Section(isExpanded: $isExpandedRetire, content: {
-                    ForEach(retiredShoes) { shoe in
-                        HStack(spacing: 16) {
-                            Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(Color.accentColor)
-                            ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing)
-                        }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
-                        .contentShape(.rect)
-                        .onTapGesture {
-                            selectedShoe = selectedShoe == shoe ? nil : shoe
-                        }
-                    }
-                }, header: {
-                    Text("Retired Shoes")
-                })
+                activeShoesSection
+                retiredShoesSection
             }
             .listStyle(.sidebar)
             .listRowSpacing(4)
@@ -101,7 +55,69 @@ struct ShoeSelectionView: View {
 }
 
 // MARK: - View Components
+
 extension ShoeSelectionView {
+    
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Image(systemName: systemImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 84, height: 84, alignment: .center)
+                .foregroundStyle(.secondary)
+            Text(title)
+                .font(.title2.bold())
+            
+            Text(description)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
+        .multilineTextAlignment(.center)
+        .padding(.bottom)
+        .padding(.horizontal)
+    }
+    
+    private var activeShoesSection: some View {
+        Section(isExpanded: $isExpandedActive, content: {
+            ForEach(activeShoes) { shoe in
+                HStack(spacing: 4) {
+                    Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
+                        .imageScale(.large)
+                        .foregroundStyle(Color.accentColor)
+                    
+                    ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                }
+                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                .contentShape(.rect)
+                .onTapGesture {
+                    selectedShoe = selectedShoe == shoe ? nil : shoe
+                }
+            }
+        }, header: {
+            Text("Active Shoes")
+        })
+    }
+    
+    private var retiredShoesSection: some View {
+        Section(isExpanded: $isExpandedRetire, content: {
+            ForEach(retiredShoes) { shoe in
+                HStack(spacing: 4) {
+                    Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
+                        .imageScale(.large)
+                        .foregroundStyle(Color.accentColor)
+                    
+                    ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                }
+                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                .contentShape(.rect)
+                .onTapGesture {
+                    selectedShoe = selectedShoe == shoe ? nil : shoe
+                }
+            }
+        }, header: {
+            Text("Retired Shoes")
+        })
+    }
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
@@ -130,6 +146,7 @@ extension ShoeSelectionView {
 }
 
 // MARK: - Helper Methods
+
 extension ShoeSelectionView {
     
     private func isSaveButtonDisabled() -> Bool {

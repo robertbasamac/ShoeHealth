@@ -13,6 +13,7 @@ struct ShoeDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
+    private var backButtonSymbol: String
     
     @State private var workouts: [HKWorkout] = []
     @State private var mostRecentWorkouts: [HKWorkout] = []
@@ -27,8 +28,9 @@ struct ShoeDetailView: View {
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
-    init(shoe: Shoe) {
+    init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
+        self.backButtonSymbol = backButtonSymbol
     }
     
     var body: some View {
@@ -254,7 +256,8 @@ extension ShoeDetailView {
             Button {
                 dismiss()
             } label: {
-                Image(systemName: "chevron.left")
+                Image(systemName: backButtonSymbol)
+                    .imageScale(.large)
                     .fontWeight(.semibold)
             }
             .buttonStyle(.blurredCircle(Double(1-opacity)))

@@ -100,9 +100,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case UNNotificationDefaultActionIdentifier:
                 guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { break }
                 
-                navigationRouter?.selectedTab = .shoes
-                navigationRouter?.shoesTabPath = NavigationPath()
-                navigationRouter?.shoesTabPath.append(shoe)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.navigationRouter?.showShoeDetails = shoe
+                }
                 break
                 
             default:
@@ -111,7 +111,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         } else if categoryIdentifier == "SET_DEFAULT_SHOE" {
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
-                navigationRouter?.showSheet = .setDefaultShoe
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.navigationRouter?.showSheet = .setDefaultShoe
+                }
                 break
                 
             default:

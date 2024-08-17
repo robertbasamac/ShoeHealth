@@ -12,7 +12,9 @@ struct ShoeListItem: View {
     var shoe: Shoe
     var width: CGFloat = 140
     var imageAlignment: HorizontalAlignment = .leading
-        
+    var showStats: Bool = true
+    var showNavigationLink: Bool = true
+    
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
@@ -56,22 +58,36 @@ extension ShoeListItem {
                 Text("\(shoe.brand)")
                     .font(.callout)
                     .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .overlay(alignment: .trailing) {
+                        if showNavigationLink {
+                            Image(systemName: "chevron.right")
+                                .font(.title2.bold())
+                                .imageScale(.small)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .contentShape(.rect)
                 
                 Text("\(shoe.model)")
-                    .font(.headline)
+                    .font(.title3)
+                    .fontWeight(.semibold)
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
                     .minimumScaleFactor(0.4)
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             
-            HStack {
-                StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
+            if showStats {
+                HStack {
+                    StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
+                }
             }
         }
         .frame(maxWidth: .infinity,  maxHeight: .infinity, alignment: .leading)
-        .padding(12)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
     }
 }
 

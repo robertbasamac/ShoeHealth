@@ -17,6 +17,9 @@ struct ShoesTab: View {
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
+    @State private var selectedShoe: Shoe?
+    @State private var selectedCategory: ShoeCategory?
+    
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
@@ -42,10 +45,10 @@ struct ShoesTab: View {
         .toolbar {
             toolbarItems
         }
-        .navigationDestination(for: Shoe.self) { shoe in
+        .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe)
         }
-        .navigationDestination(for: ShoeFilterType.self) { category in
+        .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
         }
@@ -101,10 +104,10 @@ extension ShoesTab {
                 .asHeader()
             
             if let shoe = shoe {
-                ShoeListItem(shoe: shoe, width: 140)
+                ShoeListItem(shoe: shoe)
                     .roundedContainer()
                     .onTapGesture {
-                        navigationRouter.shoesTabPath.append(shoe)
+                        selectedShoe = shoe
                     }
             } else {
                 HStack(spacing: 0) {
@@ -159,7 +162,7 @@ extension ShoesTab {
             }
             .asHeader()
             .onTapGesture {
-                navigationRouter.shoesTabPath.append(ShoeFilterType.active)
+                selectedCategory = .active
             }
             
             shoesCarousel(shoes: shoesViewModel.getShoes(filter: .active))
@@ -177,7 +180,7 @@ extension ShoesTab {
             }
             .asHeader()
             .onTapGesture {
-                navigationRouter.shoesTabPath.append(ShoeFilterType.retired)
+                selectedCategory = .retired
             }
             
             shoesCarousel(shoes: shoesViewModel.getShoes(filter: .retired))
@@ -187,7 +190,7 @@ extension ShoesTab {
     @ViewBuilder
     private func shoesCarousel(shoes: [Shoe]) -> some View {
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 10) {
+            LazyHStack(spacing: 6) {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: 140)
                         .contextMenu {
@@ -235,7 +238,7 @@ extension ShoesTab {
                                 .padding(10)
                         }
                         .onTapGesture {
-                            navigationRouter.shoesTabPath.append(shoe)
+                            selectedShoe = shoe
                         }
                 }
             }
@@ -304,7 +307,7 @@ extension ShoesTab {
                 }
                 .contentShape(.rect)
                 .onTapGesture {
-                    navigationRouter.shoesTabPath.append(shoe)
+                    selectedShoe = shoe
                 }
             } else {
                 Text("No shoe selected for this workout.")
@@ -485,39 +488,6 @@ extension ShoesTab {
             return (Color(uiColor: .secondarySystemGroupedBackground), Color.accentColor)
         case .retired:
             return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
-        }
-    }
-}
-
-// MARK: - Data Types
-
-extension ShoesTab {
-    
-    enum SheetType: Identifiable {
-        case addShoe
-        case setDefaultShoe
-        case addToShoe(workoutID: UUID)
-        
-        var id: UUID {
-            switch self {
-            case .addShoe:
-                return UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-            case .setDefaultShoe:
-                return UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
-            case .addToShoe(let workoutID):
-                return workoutID
-            }
-        }
-        
-        static func == (lhs: SheetType, rhs: SheetType) -> Bool {
-            switch (lhs, rhs) {
-            case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
-                return true
-            case let (.addToShoe(workout1), .addToShoe(workout2)):
-                return workout1 == workout2
-            default:
-                return false
-            }
         }
     }
 }

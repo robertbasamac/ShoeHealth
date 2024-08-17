@@ -22,7 +22,7 @@ struct ShoesListView: View {
     var body: some View {
         List {
             ForEach(shoes) { shoe in
-                ShoeListItem(shoe: shoe, width: 140)
+                ShoeListItem(shoe: shoe)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .listRowInsets(.init(top: 2, leading: 16, bottom: 2, trailing: 16))
                     .listRowSeparator(.hidden)

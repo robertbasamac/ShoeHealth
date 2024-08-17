@@ -5,7 +5,7 @@
 //  Created by Robert Basamac on 25.01.2024.
 //
 
-enum ShoeFilterType: String, Identifiable, CaseIterable {
+enum ShoeCategory: String, Identifiable, CaseIterable {
     var id: Self { self }
 
     case all     = "All Shoes"

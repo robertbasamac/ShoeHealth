@@ -14,7 +14,7 @@ struct BlurredCapsuleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(.accent)
-            .padding(.vertical, 6)
+            .frame(height: 34)
             .padding(.horizontal, 12)
             .background(.bar.opacity(opacity), in: .capsule(style: .circular))
     }

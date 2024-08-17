@@ -21,7 +21,7 @@ final class ShoesViewModel {
     private(set) var shoes: [Shoe] = []
     
     private(set) var searchText: String = ""
-    private(set) var filterType: ShoeFilterType = .active
+    private(set) var filterType: ShoeCategory = .active
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
     
@@ -33,7 +33,7 @@ final class ShoesViewModel {
             set: { self.searchText = $0 }
         )
     }
-    var filterTypeBinding: Binding<ShoeFilterType> {
+    var filterTypeBinding: Binding<ShoeCategory> {
         Binding(
             get: { self.filterType },
             set: { self.filterType = $0 }
@@ -336,7 +336,7 @@ final class ShoesViewModel {
         return Array(recentlyUsedShoes.prefix(5))
     }
     
-    func getShoes(filter: ShoeFilterType = .all) -> [Shoe] {
+    func getShoes(filter: ShoeCategory = .all) -> [Shoe] {
         switch filter {
         case .active:
             return self.shoes.filter({ !$0.isRetired })

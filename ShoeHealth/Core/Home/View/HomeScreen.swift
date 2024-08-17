@@ -23,7 +23,7 @@ struct HomeScreen: View {
             }
             .tag(TabItem.workouts)
             
-            NavigationStack(path: $navigationRouter.shoesTabPath) {
+            NavigationStack {
                 ShoesTab()
             }
             .tabItem {
@@ -64,6 +64,11 @@ struct HomeScreen: View {
             .presentationCornerRadius(20)
             .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
             .interactiveDismissDisabled(sheetType == .setDefaultShoe)
+        }
+        .fullScreenCover(item: $navigationRouter.showShoeDetails) { shoe in
+            NavigationStack {
+                ShoeDetailView(shoe: shoe, backButtonSymbol: "xmark")
+            }
         }
     }
 }

@@ -69,7 +69,7 @@
 		09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09BFD6EE2C4050DF00D112BF /* WearType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearType.swift */; };
 		09BFD6EF2C4050DF00D112BF /* WearType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearType.swift */; };
-		09C1716A2C203D4A005FAB1A /* ShoeFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeFilterType.swift */; };
+		09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeCategory.swift */; };
 		09C1716B2C203D4A005FAB1A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* ShoeSortType.swift */; };
 		09C595802C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
 		09C595812C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
@@ -182,7 +182,7 @@
 		09BFD2DC2B978E97009F4133 /* ShoeStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
 		09BFD6ED2C4050DF00D112BF /* WearType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearType.swift; sourceTree = "<group>"; };
-		09C171672C203D4A005FAB1A /* ShoeFilterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeFilterType.swift; sourceTree = "<group>"; };
+		09C171672C203D4A005FAB1A /* ShoeCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeCategory.swift; sourceTree = "<group>"; };
 		09C171682C203D4A005FAB1A /* ShoeSortType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
 		09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitOfMeasure.swift; sourceTree = "<group>"; };
 		09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShoeViewModel.swift; sourceTree = "<group>"; };
@@ -457,7 +457,7 @@
 		09C171692C203D4A005FAB1A /* Filtering */ = {
 			isa = PBXGroup;
 			children = (
-				09C171672C203D4A005FAB1A /* ShoeFilterType.swift */,
+				09C171672C203D4A005FAB1A /* ShoeCategory.swift */,
 				09C171682C203D4A005FAB1A /* ShoeSortType.swift */,
 			);
 			path = Filtering;
@@ -658,7 +658,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					093742832B7AAD7A008D96BD = {
 						CreatedOnToolsVersion = 15.2;
@@ -764,7 +764,7 @@
 				09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,
-				09C1716A2C203D4A005FAB1A /* ShoeFilterType.swift in Sources */,
+				09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */,
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
 				093F623F2B71700600430AB9 /* EditShoeView.swift in Sources */,
 				0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */,
@@ -1007,7 +1007,6 @@
 		09DE4A7E2B0D3F81001119E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
@@ -1048,7 +1047,6 @@
 		09DE4A7F2B0D3F81001119E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;

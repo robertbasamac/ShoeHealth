@@ -11,9 +11,9 @@ import HealthKit
 final class NavigationRouter: ObservableObject {
     
     @Published var selectedTab: TabItem = .shoes
-    @Published var showSheet: SheetType?
     
-    @Published var shoesTabPath = NavigationPath()
+    @Published var showSheet: SheetType?
+    @Published var showShoeDetails: Shoe?
 }
 
 extension NavigationRouter {
