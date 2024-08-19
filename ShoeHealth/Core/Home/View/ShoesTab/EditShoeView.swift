@@ -22,11 +22,13 @@ struct EditShoeView: View {
     
     init(shoe: Shoe) {
         self.shoe = shoe
-        self._addViewModel = State(initialValue: AddShoeViewModel(selectedPhotoData: shoe.image,
-                                                                  aquisitionDate: shoe.aquisitionDate,
-                                                                  lifespanDistance: shoe.lifespanDistance,
-                                                                  isDefaultShoe: shoe.isDefaultShoe
-                                                                 )
+        self._addViewModel = State(
+            initialValue: AddShoeViewModel(
+                selectedPhotoData: shoe.image,
+                aquisitionDate: shoe.aquisitionDate,
+                lifespanDistance: shoe.lifespanDistance,
+                isDefaultShoe: shoe.isDefaultShoe
+            )
         )
     }
     

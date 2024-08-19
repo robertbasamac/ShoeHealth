@@ -11,20 +11,19 @@ import SwiftUI
 @Model
 final class Shoe {
     
-    var id: UUID
-    
-    @Attribute(.unique) var nickname: String
-    @Attribute(.externalStorage) var image: Data?
-    var brand: String
-    var model: String
-    var lifespanDistance: Double
-    var totalDistance: Double
+    var id: UUID = UUID()
+    var image: Data?
+    var brand: String = ""
+    var model: String = ""
+    var nickname: String = ""
+    var lifespanDistance: Double = 0
+    var totalDistance: Double = 0
     var totalDuration: Double = 0
-    var aquisitionDate: Date
+    var aquisitionDate: Date = Date.now
     var retireDate: Date?
     var lastActivityDate: Date?
-    var isRetired: Bool
-    var isDefaultShoe: Bool
+    var isRetired: Bool = false
+    var isDefaultShoe: Bool = false
     var workouts: [UUID] = []
     var personalBests: [RunningCategory: PersonalBest?] = [:]
     var totalRuns: [RunningCategory: Int] = [:]
@@ -45,8 +44,6 @@ final class Shoe {
         self.lifespanDistance = lifespanDistance
         self.totalDistance = currentDistance
         self.aquisitionDate = aquisitionDate
-        self.retireDate = nil
-        self.lastActivityDate = nil
         self.isRetired = false
         self.isDefaultShoe = isDefaultShoe
         self.image = image

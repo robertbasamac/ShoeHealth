@@ -52,6 +52,8 @@ final class HealthManager {
     // MARK: - Observing new Workouts
     
     func startObserving() {
+        logger.debug("startObserving called")
+
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
@@ -72,6 +74,8 @@ final class HealthManager {
     }
     
     private func enableBackgroundDelivery() async {
+        logger.debug("enableBackgroundDelivery called")
+
         if !HKHealthStore.isHealthDataAvailable() {
             logger.warning("HealthKit not accessable.")
             return
@@ -89,6 +93,8 @@ final class HealthManager {
     }
     
     private func handleNewWorkouts() {
+        logger.debug("handleNewWorkouts called")
+        
         var anchor: HKQueryAnchor?
 
         let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
@@ -103,6 +109,8 @@ final class HealthManager {
     }
     
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
+        logger.debug("updateWorkouts called")
+
         guard let newWorkout = newSamples.last as? HKWorkout else {
             logger.warning("Did not manage to convert HKSample to HKWorkout.")
             return
@@ -123,6 +131,8 @@ final class HealthManager {
         }
         
         Task {
+            logger.debug("updateWorkouts: calling fetchRunningWorkouts")
+
             await self.fetchRunningWorkouts()
         }
     }
@@ -130,6 +140,8 @@ final class HealthManager {
     // MARK: - Handling HealthKit Data
         
     func fetchRunningWorkouts() async {
+        logger.debug("fetchRunningWorkouts called")
+
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
@@ -165,11 +177,15 @@ final class HealthManager {
         logger.debug("\(workouts.count) workouts fetched.")
         
         await MainActor.run {
+            logger.debug("fetchRunningWorkouts: updating workouts")
+
             HealthManager.shared.workouts = workouts
         }
     }
     
     func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {
+        logger.debug("fetchDistanceSamples called")
+
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return

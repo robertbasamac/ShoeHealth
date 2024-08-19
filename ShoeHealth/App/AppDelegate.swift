@@ -24,14 +24,13 @@ class AppDelegate: NSObject {
 
 extension AppDelegate: UIApplicationDelegate {
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {       
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        logger.debug("didFinishLaunchingWithOptions called")
+
         UNUserNotificationCenter.current().delegate = self
         
         NotificationManager.shared.setActionableNotificationTypes()
-            
-        if !isOnboarding {
-            HealthManager.shared.startObserving()
-        }
+        HealthManager.shared.startObserving()
         
         return true
     }

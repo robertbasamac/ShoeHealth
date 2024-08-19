@@ -23,21 +23,15 @@ struct ShoesTab: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
-                lastRunSection(run: HealthManager.shared.getLastRun())
+                lastRunSection
                 
-                defaultShoeSection(shoesViewModel.getDefaultShoe())
+                defaultShoeSection
                 
-                if !shoesViewModel.getRecentlyUsedShoes().isEmpty {
-                    recentlyUsedSection
-                }
+                recentlyUsedSection
                 
-                if !shoesViewModel.getShoes(filter: .active).isEmpty {
-                    activeShoesSection
-                }
+                activeShoesSection
                 
-                if !shoesViewModel.getShoes(filter: .retired).isEmpty {
-                    retiredShoesSection
-                }
+                retiredShoesSection
             }
         }
         .navigationTitle("Shoe Health")
@@ -63,13 +57,13 @@ struct ShoesTab: View {
 extension ShoesTab {
     
     @ViewBuilder
-    private func lastRunSection(run: HKWorkout?) -> some View {
+    private var lastRunSection: some View {
         VStack(spacing: 0) {
             Text("Last Run")
                 .asHeader()
             
             Group {
-                if let lastRun = run {
+                if let lastRun = HealthManager.shared.getLastRun() {
                     VStack(spacing: 8) {
                         HStack {
                             runDateAndTimeSection(lastRun)
@@ -98,12 +92,12 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private func defaultShoeSection(_ shoe: Shoe?) -> some View {
+    private var defaultShoeSection: some View {
         VStack(spacing: 0) {
             Text("Default Shoe")
                 .asHeader()
             
-            if let shoe = shoe {
+            if let shoe = shoesViewModel.getDefaultShoe() {
                 ShoeListItem(shoe: shoe)
                     .roundedContainer()
                     .onTapGesture {
@@ -143,47 +137,59 @@ extension ShoesTab {
     
     @ViewBuilder
     private var recentlyUsedSection: some View {
-        VStack(spacing: 0) {
-            Text("Recently Used")
-                .asHeader()
-            
-            shoesCarousel(shoes: shoesViewModel.getRecentlyUsedShoes())
+        let shoes = shoesViewModel.getRecentlyUsedShoes()
+        
+        if !shoes.isEmpty {
+            VStack(spacing: 0) {
+                Text("Recently Used")
+                    .asHeader()
+                
+                shoesCarousel(shoes: shoes)
+            }
         }
     }
     
     @ViewBuilder
     private var activeShoesSection: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Active Shoes")
-                Image(systemName: "chevron.right")
-                    .imageScale(.small)
-                    .foregroundStyle(.secondary)
+        let shoes = shoesViewModel.getShoes(filter: .active)
+
+        if !shoes.isEmpty {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Active Shoes")
+                    Image(systemName: "chevron.right")
+                        .imageScale(.small)
+                        .foregroundStyle(.secondary)
+                }
+                .asHeader()
+                .onTapGesture {
+                    selectedCategory = .active
+                }
+                
+                shoesCarousel(shoes: shoes)
             }
-            .asHeader()
-            .onTapGesture {
-                selectedCategory = .active
-            }
-            
-            shoesCarousel(shoes: shoesViewModel.getShoes(filter: .active))
         }
     }
     
     @ViewBuilder
     private var retiredShoesSection: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Retired Shoes")
-                Image(systemName: "chevron.right")
-                    .imageScale(.small)
-                    .foregroundStyle(.secondary)
+        let shoes = shoesViewModel.getShoes(filter: .retired)
+
+        if !shoes.isEmpty {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Retired Shoes")
+                    Image(systemName: "chevron.right")
+                        .imageScale(.small)
+                        .foregroundStyle(.secondary)
+                }
+                .asHeader()
+                .onTapGesture {
+                    selectedCategory = .retired
+                }
+                
+                shoesCarousel(shoes: shoes)
             }
-            .asHeader()
-            .onTapGesture {
-                selectedCategory = .retired
-            }
-            
-            shoesCarousel(shoes: shoesViewModel.getShoes(filter: .retired))
         }
     }
     
@@ -377,47 +383,6 @@ extension ShoesTab {
             }
         } label: {
             Label("Delete", systemImage: "trash")
-        }
-    }
-    
-    @ViewBuilder
-    private var emptyShoesView: some View {
-        if shoesViewModel.shoes.isEmpty {
-            ContentUnavailableView {
-                Label("No Shoes in your collection.", systemImage: "shoe.circle")
-            } description: {
-                Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
-            } actions: {
-                Button {
-                    navigationRouter.showSheet = .addShoe
-                } label: {
-                    Text("Add Shoe")
-                        .padding(4)
-                        .foregroundStyle(.black)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-        } else {
-            if shoesViewModel.searchFilteredShoes.isEmpty {
-                if !shoesViewModel.searchText.isEmpty {
-                    ContentUnavailableView.search
-                } else {
-                    ContentUnavailableView {
-                        Label("No \(shoesViewModel.filterType.rawValue) in your collection.", systemImage: "shoe.circle")
-                    } description: {
-                        Text("New shoes you add will appear here.\nTap the button below to add a new shoe.")
-                    } actions: {
-                        Button {
-                            navigationRouter.showSheet = .addShoe
-                        } label: {
-                            Text("Add Shoe")
-                                .padding(4)
-                                .foregroundStyle(.black)
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                }
-            }
         }
     }
     
