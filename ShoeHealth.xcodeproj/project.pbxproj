@@ -20,7 +20,6 @@
 		0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */; };
 		0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */; };
 		093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */; };
-		0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0937428C2B7AAD7B008D96BD /* Assets.xcassets */; };
 		093742912B7AAD7B008D96BD /* ShoeStatsWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		093742952B7AAD9B008D96BD /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385DA2B1340E3005CFF02 /* Shoe.swift */; };
 		093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */; };
@@ -36,10 +35,6 @@
 		09402B812BFD0EFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7D2BFBC54800C943C1 /* RunningCategory.swift */; };
 		0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0948B5DA2C0DE9CA001A7745 /* Prompts.swift */; };
-		0948B5DF2C131257001A7745 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; };
-		0948B5E02C131257001A7745 /* WidgetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 093742612B7A671D008D96BD /* WidgetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		0948B5E22C13125A001A7745 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; };
-		0948B5E32C13125A001A7745 /* SwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 093742632B7A671D008D96BD /* SwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094D13822C1606A1003C6F50 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
 		094D13832C1606F1003C6F50 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
@@ -125,8 +120,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0948B5E32C13125A001A7745 /* SwiftUI.framework in Embed Frameworks */,
-				0948B5E02C131257001A7745 /* WidgetKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,12 +139,9 @@
 		0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimissSwipeGesture.swift; sourceTree = "<group>"; };
 		0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderCell.swift; sourceTree = "<group>"; };
 		0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticHeaderCell.swift; sourceTree = "<group>"; };
-		093742612B7A671D008D96BD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		093742632B7A671D008D96BD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoeStatsWidgetExtension.entitlements; sourceTree = "<group>"; };
 		093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoeStatsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStatsWidgetBundle.swift; sourceTree = "<group>"; };
-		0937428C2B7AAD7B008D96BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0937428E2B7AAD7B008D96BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		093F623E2B71700600430AB9 /* EditShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShoeView.swift; sourceTree = "<group>"; };
 		09402B7B2BFBBB6800C943C1 /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
@@ -216,8 +206,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0948B5E22C13125A001A7745 /* SwiftUI.framework in Frameworks */,
-				0948B5DF2C131257001A7745 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,15 +250,6 @@
 			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
-		093742602B7A671D008D96BD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				093742612B7A671D008D96BD /* WidgetKit.framework */,
-				093742632B7A671D008D96BD /* SwiftUI.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		093742742B7A6A87008D96BD /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -290,7 +269,6 @@
 				093742752B7A6C8A008D96BD /* ShoeStatsWidgetExtension.entitlements */,
 				093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */,
 				09BFD2D82B976E34009F4133 /* ShoeStatsWidget */,
-				0937428C2B7AAD7B008D96BD /* Assets.xcassets */,
 				0937428E2B7AAD7B008D96BD /* Info.plist */,
 			);
 			path = ShoeStatsWidget;
@@ -518,9 +496,8 @@
 			children = (
 				093742742B7A6A87008D96BD /* Shared */,
 				09DE4A712B0D3F7F001119E4 /* ShoeHealth */,
-				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
 				093742872B7AAD7A008D96BD /* ShoeStatsWidget */,
-				093742602B7A671D008D96BD /* Frameworks */,
+				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
 				09DE4A702B0D3F7F001119E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -694,7 +671,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0937428D2B7AAD7B008D96BD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1020,6 +996,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Shoe Health";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health requires access to your running workouts data to efficiently track your running gear health. Access to walking + running distance is needed to enhance the experience by providing personalized insights and statistics.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Shoe Health requires access to your running workouts data to efficiently track your running gear health. Access to walking + running distance is needed to enhance the experience by providing personalized insights and statistics.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1060,6 +1037,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Shoe Health";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Shoe Health requires access to your running workouts data to efficiently track your running gear health. Access to walking + running distance is needed to enhance the experience by providing personalized insights and statistics.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Shoe Health requires access to your running workouts data to efficiently track your running gear health. Access to walking + running distance is needed to enhance the experience by providing personalized insights and statistics.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
