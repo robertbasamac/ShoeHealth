@@ -101,7 +101,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func add(workoutIDs: Set<UUID>, toShoe shoeID: UUID) {
+    func add(workoutIDs: [UUID], toShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         for workoutID in workoutIDs {
@@ -118,6 +118,8 @@ final class ShoesViewModel {
         
         save()
         
+        HealthManager.shared.updateLatestUpdateDate(from: Array(workoutIDs))
+        
         if !shoe.isRetired && shoe.wearType.rawValue > previousWear.rawValue && shoe.wearType != .new && shoe.wearType != .good {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
@@ -126,7 +128,7 @@ final class ShoesViewModel {
         }
     }
     
-    func remove(workoutIDs: Set<UUID>, fromShoe shoeID: UUID) {
+    func remove(workoutIDs: [UUID], fromShoe shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         for workoutID in workoutIDs {

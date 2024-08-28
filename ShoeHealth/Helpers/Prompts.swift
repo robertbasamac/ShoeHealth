@@ -9,13 +9,16 @@ struct Prompts {
     
     struct SelectShoe {
         static let selectDefaultShoeTitle: String = "Select Default Shoe"
-        static let selectDefaultShoeDescription: String = "Choose your default shoe for new workouts. This setting allows you to quickly assign your preferred shoe to each new running session, ensuring consistency and convenience in your routine."
+        static let selectDefaultShoeDescription: String = "Choose your Default Shoe for new workouts. This setting allows you to quickly assign your preferred shoe to each new running session, ensuring consistency and convenience in your routine."
         
         static let selectWorkoutShoeTitle = "Select Shoe for Workout"
-        static let selectWorkoutShoeDescription = "Select the shoe you used for this session to ensure accurate tracking."
+        static let selectWorkoutShoeDescription = "Select the Shoe you used for this running session to ensure accurate tracking."
+        
+        static let selectMultipleWorkoutShoeTitle = "Select Shoe for each Workout"
+        static let selectMultipleWorkoutShoeDescription = "Select the Shoe you used for each running session to ensure accurate tracking."
         
         static let assignWorkoutsTitle = "Assign Workouts to Shoe"
-        static let assignWorkoutsDescription = "Select the new shoe to which you want to assign the selected workouts."
+        static let assignWorkoutsDescription = "Select the new Shoe to which you want to assign the selected workouts."
     }
     
     struct HealthAccess {

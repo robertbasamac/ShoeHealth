@@ -52,23 +52,54 @@ struct HomeScreen: View {
                                       onDone: { shoeID in
                         shoesViewModel.setAsDefaultShoe(shoeID)
                     })
-                case .addToShoe(let workoutID):
-                    ShoeSelectionView(title: Prompts.SelectShoe.assignWorkoutsTitle,
-                                      description: Prompts.SelectShoe.assignWorkoutsDescription,
-                                      systemImage: "shoe.2",
+                case .addWorkoutToShoe(let workoutID):
+                    ShoeSelectionView(title: Prompts.SelectShoe.selectWorkoutShoeTitle,
+                                      description: Prompts.SelectShoe.selectWorkoutShoeDescription,
+                                      systemImage: "figure.run.circle",
                                       onDone: { shoeID in
                         shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
+                    })
+                case .addMultipleWorkoutsToShoe(workoutIDs: let workoutIDs):
+                    MultipleShoeSelectionView(workoutIDs: workoutIDs,
+                                              title: Prompts.SelectShoe.selectMultipleWorkoutShoeTitle,
+                                              description: Prompts.SelectShoe.selectMultipleWorkoutShoeDescription,
+                                              systemImage: "figure.run.circle",
+                                              onDone: { selectionsDict in
+                        for (workoutID, shoe) in selectionsDict {
+                            shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoe.id)
+                        }
                     })
                 }
             }
             .presentationCornerRadius(20)
-            .presentationDragIndicator(sheetType == .addShoe ? .visible : .hidden)
-            .interactiveDismissDisabled(sheetType == .setDefaultShoe)
+            .presentationDragIndicator(
+                {
+                    switch sheetType {
+                    case .addShoe:
+                        return .visible
+                    default:
+                        return .hidden
+                    }
+                }()
+            )
+            .interactiveDismissDisabled(
+                {
+                    switch sheetType {
+                    case .setDefaultShoe, .addMultipleWorkoutsToShoe:
+                        return true
+                    default:
+                        return false
+                    }
+                }()
+            )
         }
         .fullScreenCover(item: $navigationRouter.showShoeDetails) { shoe in
             NavigationStack {
                 ShoeDetailView(shoe: shoe, backButtonSymbol: "xmark")
             }
+        }
+        .task {
+            await HealthManager.shared.fetchRunningWorkouts()
         }
     }
 }

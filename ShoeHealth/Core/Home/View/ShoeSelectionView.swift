@@ -25,13 +25,15 @@ struct ShoeSelectionView: View {
     private let title: String
     private let description: String
     private let systemImage: String
+    private let showCancelButton: Bool
     private let onDone: (UUID) -> Void
     
-    init (selectedShoe: Shoe? = nil, title: String, description: String, systemImage: String, onDone: @escaping (UUID) -> Void) {
+    init (selectedShoe: Shoe? = nil, title: String, description: String, systemImage: String, showCancelButton: Bool = true, onDone: @escaping (UUID) -> Void) {
         self.selectedShoe = selectedShoe
         self.title = title
         self.description = description
         self.systemImage = systemImage
+        self.showCancelButton = showCancelButton
         self.onDone = onDone
     }
     
@@ -121,12 +123,13 @@ extension ShoeSelectionView {
     
     @ToolbarContentBuilder
     private func toolbarItems() -> some ToolbarContent {
-        
-        ToolbarItem(placement: .cancellationAction) {
-            Button {
-                dismiss()
-            } label: {
-                Text("Cancel")
+        if showCancelButton {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                }
             }
         }
         
@@ -138,7 +141,7 @@ extension ShoeSelectionView {
                 
                 dismiss()
             } label: {
-                Text("Save")
+                Text("Done")
             }
             .disabled(isSaveButtonDisabled())
         }

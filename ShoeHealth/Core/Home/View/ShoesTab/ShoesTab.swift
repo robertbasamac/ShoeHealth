@@ -327,7 +327,7 @@ extension ShoesTab {
                     }
                     .contentShape(.rect)
                     .onTapGesture {
-                        navigationRouter.showSheet = .addToShoe(workoutID: run.id)
+                        navigationRouter.showSheet = .addWorkoutToShoe(workoutID: run.id)
                     }
             }
         }

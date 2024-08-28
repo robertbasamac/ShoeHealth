@@ -25,8 +25,6 @@ class AppDelegate: NSObject {
 extension AppDelegate: UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        logger.debug("didFinishLaunchingWithOptions called")
-
         UNUserNotificationCenter.current().delegate = self
         
         NotificationManager.shared.setActionableNotificationTypes()
@@ -46,14 +44,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let categoryIdentifier = response.notification.request.content.categoryIdentifier
         
         if categoryIdentifier == "NEW_RUNNING_WORKOUT_AVAILABLE" {
-            guard let stringWorkoutID = userInfo["WORKOUT_ID"] as? String, let workout = HealthManager.shared.getWorkout(forID: UUID(uuidString: stringWorkoutID) ?? UUID()) else { return }
+            guard let stringWorkoutID = userInfo["WORKOUT_ID"] as? String,
+                  let workoutID = UUID(uuidString: stringWorkoutID)
+            else { return }
             
             switch response.actionIdentifier {
             case "DEFAULT_SHOE_ACTION":
                 logger.debug("\"Use default shoe\" action pressed.")
                 
                 if let shoe = shoesViewModel?.getDefaultShoe() {
-                    shoesViewModel?.add(workoutIDs: [workout.id], toShoe: shoe.id)
+                    shoesViewModel?.add(workoutIDs: [workoutID], toShoe: shoe.id)
                 }
                 break
                 
@@ -63,11 +63,57 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
                 let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
                 
-                NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkout: workout, at: dateComponents)
+                if let workout = HealthManager.shared.getWorkout(forID: workoutID) {
+                    NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: [workout], at: dateComponents)
+                }
                 break
                 
             case UNNotificationDefaultActionIdentifier:
-                navigationRouter?.showSheet = .addToShoe(workoutID: workout.id)
+                logger.debug("\"New Running Workout\" notification pressed.")
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.navigationRouter?.showSheet = .addWorkoutToShoe(workoutID: workoutID)
+                }
+                break
+                
+            default:
+                break
+            }
+        } else if categoryIdentifier == "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE" {
+            logger.debug("MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE notification.")
+
+            guard let stringWorkoutIDs = userInfo["WORKOUT_IDs"] as? [String] else { return }
+
+            let workoutIDs = stringWorkoutIDs.compactMap { UUID(uuidString: $0) }
+
+            guard !workoutIDs.isEmpty else { return }
+                        
+            switch response.actionIdentifier {
+            case "DEFAULT_SHOE_ACTION":
+                logger.debug("\"Use default shoe\" action pressed.")
+                
+                if let shoe = shoesViewModel?.getDefaultShoe() {
+                    shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
+                }
+                break
+                
+            case "REMIND_ME_LATER":
+                logger.debug("\"Remind me later\" action pressed.")
+                
+                let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+                let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+                
+                let workouts = HealthManager.shared.getWorkouts(forIDs: workoutIDs)
+                
+                NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: workouts, at: dateComponents)
+                break
+                
+            case UNNotificationDefaultActionIdentifier:
+                logger.debug("\"Multiple New Running Workouts\" notification pressed.")
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.navigationRouter?.showSheet = .addMultipleWorkoutsToShoe(workoutIDs: workoutIDs)
+                }
                 break
                 
             default:
@@ -97,6 +143,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 break
                 
             case UNNotificationDefaultActionIdentifier:
+                logger.debug("\"Show Wear Update\" notification pressed.")
+
                 guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { break }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -110,6 +158,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         } else if categoryIdentifier == "SET_DEFAULT_SHOE" {
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
+                logger.debug("\"Set Default Shoe\" notification pressed.")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showSheet = .setDefaultShoe
                 }

@@ -12,6 +12,7 @@
 		090E156C2BE8EAAA00BC8124 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* View.swift */; };
 		090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
 		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
+		0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
 		0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */; };
@@ -132,6 +133,7 @@
 		090E156B2BE8EAAA00BC8124 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		090E156D2BEB814D00BC8124 /* StatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCell.swift; sourceTree = "<group>"; };
 		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleShoeSelectionView.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
 		0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechyHeaderViewModifier.swift; sourceTree = "<group>"; };
@@ -445,6 +447,8 @@
 			isa = PBXGroup;
 			children = (
 				094D13882C17871F003C6F50 /* HomeScreen.swift */,
+				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
+				0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
 				094F26202BDC2AD200441A62 /* SettingsTab */,
@@ -552,7 +556,6 @@
 				093F623E2B71700600430AB9 /* EditShoeView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
-				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 			);
 			path = ShoesTab;
 			sourceTree = "<group>";
@@ -771,6 +774,7 @@
 				094D138F2C19EF55003C6F50 /* OnboardingPage.swift in Sources */,
 				0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */,
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
+				0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */,
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
 				094D13892C17871F003C6F50 /* HomeScreen.swift in Sources */,
 				09402B7E2BFBC54800C943C1 /* RunningCategory.swift in Sources */,
@@ -1007,7 +1011,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1048,7 +1052,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

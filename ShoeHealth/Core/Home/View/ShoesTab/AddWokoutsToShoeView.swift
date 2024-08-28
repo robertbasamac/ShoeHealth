@@ -48,7 +48,7 @@ extension AddWokoutsToShoeView {
     private func toolbarItems() -> some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
+                shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                 onAdd()
                 
                 dismiss()

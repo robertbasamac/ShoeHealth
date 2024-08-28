@@ -52,7 +52,7 @@ final class HealthManager {
     // MARK: - Observing new Workouts
     
     func startObserving() {
-        logger.debug("startObserving called")
+        logger.debug("Start observing new workouts.")
 
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
@@ -74,17 +74,15 @@ final class HealthManager {
     }
     
     private func enableBackgroundDelivery() async {
-        logger.debug("enableBackgroundDelivery called")
-
         if !HKHealthStore.isHealthDataAvailable() {
-            logger.warning("HealthKit not accessable.")
+            logger.warning("HealthKit is not available on this device.")
             return
         }
         
         do {
             try await healthStore.enableBackgroundDelivery(for: sampleType, frequency: .immediate)
             
-            logger.info("Background delivery enabled.")
+            logger.debug("Background delivery enabled.")
             
             startObserving()
         } catch {
@@ -93,8 +91,6 @@ final class HealthManager {
     }
     
     private func handleNewWorkouts() {
-        logger.debug("handleNewWorkouts called")
-        
         var anchor: HKQueryAnchor?
 
         let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
@@ -109,30 +105,27 @@ final class HealthManager {
     }
     
     private func updateWorkouts(newSamples: [HKSample], deletedObjects: [HKDeletedObject]) {
-        logger.debug("updateWorkouts called")
-
-        guard let newWorkout = newSamples.last as? HKWorkout else {
-            logger.warning("Did not manage to convert HKSample to HKWorkout.")
+        let newWorkouts = newSamples.compactMap { $0 as? HKWorkout }
+            .filter { $0.endDate > self.latestUpdate }
+        
+        guard !newWorkouts.isEmpty else {
+            logger.warning("Did not manage to convert HKSample to HKWorkout or no new workouts found.")
             return
         }
         
-        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
+        logger.debug("\(newWorkouts.count) new workout(s) found.")
         
-        logger.debug("New workout received: \(dateTimeFormatter.string(from: newWorkout.endDate)) - \(String(format: "%.2f\(unitOfMeasure.symbol)", newWorkout.totalDistance(unit: unitOfMeasure.unit))).")
+        let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
 
-        if self.latestUpdate < newWorkout.endDate && !self.workouts.contains(where: { $0.id == newWorkout.id }) {
-            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
-            
-            NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkout: newWorkout, at: dateComponents)
-            self.latestUpdate = newWorkout.endDate
-        } else {
-            logger.debug("This is an old workout. A custom in app notification will be triggered for this workout (if not assgined already) when user opens the app.")
+        NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: newWorkouts, at: dateComponents)
+        
+        if let endDate = newWorkouts.last?.endDate {
+            self.latestUpdate = endDate
+            logger.debug("latestUpdate date updated to \(self.latestUpdate)")
         }
         
         Task {
-            logger.debug("updateWorkouts: calling fetchRunningWorkouts")
-
             await self.fetchRunningWorkouts()
         }
     }
@@ -140,8 +133,6 @@ final class HealthManager {
     // MARK: - Handling HealthKit Data
         
     func fetchRunningWorkouts() async {
-        logger.debug("fetchRunningWorkouts called")
-
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
@@ -177,15 +168,11 @@ final class HealthManager {
         logger.debug("\(workouts.count) workouts fetched.")
         
         await MainActor.run {
-            logger.debug("fetchRunningWorkouts: updating workouts")
-
             HealthManager.shared.workouts = workouts
         }
     }
     
     func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {
-        logger.debug("fetchDistanceSamples called")
-
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
@@ -225,5 +212,16 @@ final class HealthManager {
     
     func getLastRun() -> HKWorkout? {
         return workouts.first
+    }
+    
+    func updateLatestUpdateDate(from workoutIDs: [UUID]) {
+        let workouts = getWorkouts(forIDs: workoutIDs)
+        
+        guard !workouts.isEmpty else { return }
+        
+        if let mostRecentEndDate = workouts.map(\.endDate).max(), mostRecentEndDate > self.latestUpdate {
+            self.latestUpdate = mostRecentEndDate
+            logger.debug("latestUpdate date updated to \(self.latestUpdate)")
+        }
     }
 }

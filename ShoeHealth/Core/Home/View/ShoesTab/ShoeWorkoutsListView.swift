@@ -69,13 +69,13 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
-                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: selections.first ?? UUID()),
+                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(forID: shoeID),
                                   title: Prompts.SelectShoe.assignWorkoutsTitle,
                                   description: Prompts.SelectShoe.assignWorkoutsDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     withAnimation {
-                        shoesViewModel.add(workoutIDs: selections, toShoe: shoeID)
+                        shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                         updateInterface()
                         
                         selections = Set<UUID>()
@@ -108,6 +108,7 @@ extension ShoeWorkoutsListView {
                 }
             }
             .animation(.none, value: editMode)
+            .disabled(workouts.isEmpty)
         }
         
         if editMode.isEditing {
@@ -139,7 +140,7 @@ extension ShoeWorkoutsListView {
                 
                 Button {
                     withAnimation {
-                        shoesViewModel.remove(workoutIDs: selections, fromShoe: shoeID)
+                        shoesViewModel.remove(workoutIDs: Array(selections), fromShoe: shoeID)
                         updateInterface()
                         
                         selections = Set<UUID>()

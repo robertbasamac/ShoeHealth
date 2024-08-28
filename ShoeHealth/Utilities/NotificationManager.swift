@@ -26,7 +26,7 @@ final class NotificationManager {
         do {
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
             
-            logger.info("Notifications authorized.")
+            logger.debug("Notifications authorized.")
             
             return granted
         } catch {
@@ -47,6 +47,8 @@ final class NotificationManager {
     }
     
     func setActionableNotificationTypes() {
+        logger.debug("Setting up actionable notifications.")
+        
         let defaultShoeAction = UNNotificationAction(identifier: "DEFAULT_SHOE_ACTION",
                                                      title: "Use default Shoe",
                                                      options: [.authenticationRequired],
@@ -58,6 +60,13 @@ final class NotificationManager {
                                                        icon: UNNotificationActionIcon(systemImageName: "clock.arrow.circlepath"))
         
         let runningWorkoutCategory = UNNotificationCategory(identifier: "NEW_RUNNING_WORKOUT_AVAILABLE",
+                                                            actions: [defaultShoeAction, remindMeLaterAction],
+                                                            intentIdentifiers: [],
+                                                            hiddenPreviewsBodyPlaceholder: "preview placeholder",
+                                                            categorySummaryFormat: "format summary",
+                                                            options: [.customDismissAction])
+        
+        let multipleRunningWorkoutsCategory = UNNotificationCategory(identifier: "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE",
                                                             actions: [defaultShoeAction, remindMeLaterAction],
                                                             intentIdentifiers: [],
                                                             hiddenPreviewsBodyPlaceholder: "preview placeholder",
@@ -76,28 +85,46 @@ final class NotificationManager {
                                                         categorySummaryFormat: "format summary",
                                                         options: [.customDismissAction])
         
-        center.setNotificationCategories([runningWorkoutCategory, wearUpdateCategory])
+        center.setNotificationCategories([runningWorkoutCategory, multipleRunningWorkoutsCategory, wearUpdateCategory])
     }
     
-    func scheduleNewWorkoutNotification(forNewWorkout workout: HKWorkout, at dateComponents: DateComponents) {
+    func scheduleNewWorkoutNotification(forNewWorkouts workouts: [HKWorkout], at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
+        
+        logger.debug("Scheduling new workout notifications for \(workouts.count) workouts.")
         
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
-        let distanceString = String(format: "%.2f\(unitOfMeasure.symbol)", workout.totalDistance(unit: unitOfMeasure.unit))
-        let dateString = workout.endDate.formatted(date: .numeric, time: .shortened)
-        
-        content.title = "New Running Workout"
-        content.subtitle = "\(distanceString), \(dateString)"
-        content.sound = .default
-        content.body = "A new running workout has been logged. Tap on this notification to select your shoe manually, or long press to view available options."
-        content.userInfo = ["WORKOUT_ID" : workout.id.uuidString]
-        content.categoryIdentifier = "NEW_RUNNING_WORKOUT_AVAILABLE"
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
-        center.add(request)
+        if workouts.count == 1, let workout = workouts.first {
+            let distanceString = String(format: "%.2f\(unitOfMeasure.symbol)", workout.totalDistance(unit: unitOfMeasure.unit))
+            let dateString = workout.endDate.formatted(date: .numeric, time: .shortened)
+            
+            content.title = "New Running Workout"
+            content.subtitle = "\(distanceString), \(dateString)"
+            content.sound = .default
+            content.body = "A new running workout has been logged. Tap on this notification to manually select your shoe or long press to check available options."
+            content.userInfo = ["WORKOUT_ID" : workout.id.uuidString]
+            content.categoryIdentifier = "NEW_RUNNING_WORKOUT_AVAILABLE"
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            
+            center.add(request)
+        } else {
+            let workoutIDs = workouts.map { $0.uuid.uuidString }
+            
+            content.title = "New Running Workouts"
+            content.subtitle = "\(workouts.count) workouts available"
+            content.sound = .default
+            content.body = "Tap on this notification to manually select your shoe for each workout individually or long press to check available options."
+            content.userInfo = ["WORKOUT_IDs" : workoutIDs]
+            content.categoryIdentifier = "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE"
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            
+            center.add(request)
+        }
         
         if let date = Calendar.current.date(from: dateComponents) {
             logger.debug("New Workout Notification scheduled: \(dateTimeFormatter.string(from: date))")
