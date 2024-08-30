@@ -19,7 +19,7 @@ struct WorkoutListItem: View {
         HStack {
             Image(systemName: "figure.run.circle.fill")
                 .resizable()
-                .foregroundStyle(Color.accentColor, LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.01), Color.accentColor.opacity(0.1)]), startPoint: .leading, endPoint: .trailing))
+                .foregroundStyle(Color.theme.greenEnergy, LinearGradient(gradient: Gradient(colors: [Color.theme.greenEnergy.opacity(0.01), Color.theme.greenEnergy.opacity(0.1)]), startPoint: .leading, endPoint: .trailing))
                 .frame(width: 30, height: 30)
             VStack(alignment: .leading) {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
@@ -31,7 +31,7 @@ struct WorkoutListItem: View {
                         .textScale(.secondary)
                 }
                 .font(.title3)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.theme.greenEnergy)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

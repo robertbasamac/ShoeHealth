@@ -174,7 +174,7 @@ extension AddShoeView {
         Section {
             Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
                 .disabled(shoesViewModel.shoes.isEmpty)
-                .tint(Color.accentColor)
+                .tint(Color.theme.accent)
         }
     }
     

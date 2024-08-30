@@ -158,7 +158,7 @@ extension EditShoeView {
     private var setDefaultSection: some View {
         Section {
             Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
-                .tint(Color.accentColor)
+                .tint(Color.theme.accent)
         }
     }
     

@@ -62,7 +62,7 @@ extension Shoe {
         return percentageFormatter.string(from: NSNumber(value: wearPercentage)) ?? "0"
     }
     
-    var wearType: WearType {
+    var wearCondition: WearCondition {
         if wearPercentage == 0 {
             return .new
         } else if wearPercentage <= 0.5 {
@@ -77,7 +77,7 @@ extension Shoe {
     }
     
     var wearColor: Color {
-        switch wearType {
+        switch wearCondition {
         case .new, .good:
             return .green
         case .moderate:

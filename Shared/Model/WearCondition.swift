@@ -1,17 +1,17 @@
 //
-//  ShoeWearType.swift
+//  WearCondition.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 11.07.2024.
 //
 
-enum WearType: Int, CaseIterable {
+enum WearCondition: Int, CaseIterable {
     
     case new      = 0
-    case good     /*= "Good"*/
-    case moderate /*= "Moderate"*/
-    case high     /*= "High"*/
-    case critical /*= "Critical"*/
+    case good
+    case moderate
+    case high
+    case critical
     
     var name: String {
         switch self {
@@ -27,6 +27,7 @@ enum WearType: Int, CaseIterable {
             return "Critical"
         }
     }
+    
     var description: String {
         switch self {
         case .new:

@@ -279,7 +279,7 @@ extension ShoesTab {
             Divider()
             
             HStack {
-                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: .accentColor, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: Color.theme.greenEnergy, textAlignment: .leading, containerAlignment: .leading)
                 StatCell(label: "Avg Cadence", value: String(format: "%.0f", run.averageCadence), unit: "SPM", color: .cyan, textAlignment: .leading, containerAlignment: .leading)
             }
             
@@ -448,9 +448,9 @@ extension ShoesTab {
     private func getFilteringImageColors() -> (Color, Color) {
         switch shoesViewModel.filterType {
         case .all:
-            return (Color.accentColor, Color(uiColor: .secondarySystemGroupedBackground))
+            return (Color.theme.accent, Color(uiColor: .secondarySystemGroupedBackground))
         case .active:
-            return (Color(uiColor: .secondarySystemGroupedBackground), Color.accentColor)
+            return (Color(uiColor: .secondarySystemGroupedBackground), Color.theme.accent)
         case .retired:
             return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
         }

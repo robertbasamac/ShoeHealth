@@ -135,9 +135,9 @@ final class NotificationManager {
         let content = UNMutableNotificationContent()
           
         content.title = "Shoe Wear Update"
-        content.subtitle = "Shoe wear is now \(shoe.wearType.name)."
+        content.subtitle = "Shoe wear is now \(shoe.wearCondition.name)."
         content.sound = .default
-        content.body = "\"\(shoe.brand) \(shoe.model)\" - \(shoe.wearType.description) \(shoe.wearType.action) Tap on this notification to manually check the shoe."
+        content.body = "\"\(shoe.brand) \(shoe.model)\" - \(shoe.wearCondition.description) \(shoe.wearCondition.action) Tap on this notification to manually check the shoe."
         content.userInfo = ["SHOE_ID" : shoe.id.uuidString]
         content.categoryIdentifier = "SHOE_WEAR_UPDATE"
         

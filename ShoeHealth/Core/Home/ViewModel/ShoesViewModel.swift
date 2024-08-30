@@ -111,7 +111,7 @@ final class ShoesViewModel {
             }
         }
         
-        let previousWear = shoe.wearType
+        let previousWear = shoe.wearCondition
         
         shoe.workouts.append(contentsOf: workoutIDs)
         updateShoeStatistics(shoe)
@@ -120,7 +120,7 @@ final class ShoesViewModel {
         
         HealthManager.shared.updateLatestUpdateDate(from: Array(workoutIDs))
         
-        if !shoe.isRetired && shoe.wearType.rawValue > previousWear.rawValue && shoe.wearType != .new && shoe.wearType != .good {
+        if !shoe.isRetired && shoe.wearCondition.rawValue > previousWear.rawValue && shoe.wearCondition != .new && shoe.wearCondition != .good {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
             

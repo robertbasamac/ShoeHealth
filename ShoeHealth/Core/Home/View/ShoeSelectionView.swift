@@ -85,7 +85,7 @@ extension ShoeSelectionView {
                 HStack(spacing: 4) {
                     Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
                         .imageScale(.large)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.theme.accent)
                     
                     ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
                 }
@@ -106,7 +106,7 @@ extension ShoeSelectionView {
                 HStack(spacing: 4) {
                     Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
                         .imageScale(.large)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.theme.accent)
                     
                     ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
                 }
