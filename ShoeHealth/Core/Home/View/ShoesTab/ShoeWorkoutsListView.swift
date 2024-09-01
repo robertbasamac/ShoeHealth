@@ -12,20 +12,18 @@ struct ShoeWorkoutsListView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
-    private var shoeID: UUID
+    private var shoe: Shoe
     @Binding private var workouts: [HKWorkout]
-    private var updateInterface: () -> Void
     
-    @State private var showAddWorkouts: Bool = false
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
-
+    
+    @State private var showAddWorkouts: Bool = false
     @State private var showAssignToShoe: Bool = false
     
-    init(shoeID: UUID, workouts: Binding<[HKWorkout]>, updateInterface: @escaping () -> Void) {
-        self.shoeID = shoeID
+    init(shoe: Shoe, workouts: Binding<[HKWorkout]>) {
+        self.shoe = shoe
         self._workouts = workouts
-        self.updateInterface = updateInterface
     }
     
     var body: some View {
@@ -40,8 +38,7 @@ struct ShoeWorkoutsListView: View {
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button(role: .destructive) {
                         withAnimation {
-                            shoesViewModel.remove(workoutIDs: [workout.id], fromShoe: shoeID)
-                            updateInterface()
+                            removeWorkouts(workoutIDs: [workout.id])
                         }
                     } label: {
                         Label("Delete", systemImage: "trash")
@@ -59,24 +56,21 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoeID) {
-                    updateInterface()
-                }
-                .navigationTitle("Add Workouts")
-                .navigationBarTitleDisplayMode(.inline)
+                AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
+                    .navigationTitle("Add Workouts")
+                    .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showAssignToShoe) {
             NavigationStack {
-                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(forID: shoeID),
+                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(forID: shoe.id),
                                   title: Prompts.SelectShoe.assignWorkoutsTitle,
                                   description: Prompts.SelectShoe.assignWorkoutsDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     withAnimation {
-                        shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
-                        updateInterface()
+                        addWorkouts(workoutIDs: Array(selections), to: shoeID)
                         
                         selections = Set<UUID>()
                         editMode = .inactive
@@ -140,8 +134,7 @@ extension ShoeWorkoutsListView {
                 
                 Button {
                     withAnimation {
-                        shoesViewModel.remove(workoutIDs: Array(selections), fromShoe: shoeID)
-                        updateInterface()
+                        removeWorkouts(workoutIDs: Array(selections))
                         
                         selections = Set<UUID>()
                         editMode = .inactive
@@ -161,12 +154,33 @@ extension ShoeWorkoutsListView {
     }
 }
 
+// MARK: - Helper Methods
+
+extension ShoeWorkoutsListView {
+    
+    private func removeWorkouts(workoutIDs: [UUID]) {
+        shoesViewModel.remove(workoutIDs: workoutIDs, fromShoe: shoe.id)
+        
+        self.workouts = self.workouts.filter { workout in
+            !workoutIDs.contains(workout.id)
+        }
+    }
+    
+    private func addWorkouts(workoutIDs: [UUID], to shoeID: UUID) {
+        shoesViewModel.add(workoutIDs: workoutIDs, toShoe: shoeID)
+        
+        self.workouts = self.workouts.filter { workout in
+            !selections.contains(workout.id)
+        }
+    }
+}
+
 // MARK: - Previews
 
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeWorkoutsListView(shoeID: Shoe.previewShoe.id, workouts: .constant([])) { }
+            ShoeWorkoutsListView(shoe: Shoe.previewShoe, workouts: .constant([]))
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

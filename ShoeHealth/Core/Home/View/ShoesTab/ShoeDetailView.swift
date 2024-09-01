@@ -33,6 +33,7 @@ struct ShoeDetailView: View {
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
         self.backButtonSymbol = backButtonSymbol
+        self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
     }
     
     var body: some View {
@@ -86,9 +87,7 @@ struct ShoeDetailView: View {
             toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
-            ShoeWorkoutsListView(shoeID: shoe.id, workouts: $workouts) {
-                updateInterface()
-            }
+            ShoeWorkoutsListView(shoe: shoe, workouts: $workouts)
         }
         .sheet(isPresented: $showEditShoe) {
             NavigationStack {
@@ -97,11 +96,11 @@ struct ShoeDetailView: View {
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()
         }
-        .onAppear {
-            updateInterface()
-        }
         .onChange(of: unitOfMeasureString) { _, newValue in
-            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
+            self.unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
+        }
+        .onChange(of: self.workouts) { _, newValue in
+            self.mostRecentWorkouts = Array(newValue.prefix(5))
         }
     }
 }

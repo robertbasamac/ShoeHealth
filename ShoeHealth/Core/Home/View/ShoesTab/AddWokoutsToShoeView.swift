@@ -13,32 +13,30 @@ struct AddWokoutsToShoeView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    private var healthKitManager = HealthManager.shared
-    
-    @State private var selections: Set<UUID> = Set<UUID>()
-    @State private var editMode = EditMode.inactive
-
-    @State private var workouts: [HKWorkout] = []
     private var shoeID: UUID
-    private var onAdd: () -> Void
+    @Binding private var workouts: [HKWorkout]
     
-    init(shoeID: UUID, onAdd: @escaping () -> Void) {
+    @State private var availableWorkouts: [HKWorkout] = []
+    @State private var selections: Set<UUID> = Set<UUID>()
+    @State private var editMode = EditMode.active
+    
+    init(shoeID: UUID, workouts: Binding<[HKWorkout]>) {
         self.shoeID = shoeID
-        self.onAdd = onAdd
+        self._workouts = workouts
     }
     
     var body: some View {
-        List(workouts, selection: $selections) { workout in
+        List(availableWorkouts, selection: $selections) { workout in
             WorkoutListItem(workout: workout)
         }
         .environment(\.editMode, $editMode)
         .toolbar {
             toolbarItems()
         }
-        .onAppear(perform: {
-            workouts = getUnusedWorkouts()
+        .onAppear {
+            getAvailableWorkous()
             editMode = .active
-        })
+        }
     }
 }
 
@@ -49,7 +47,7 @@ extension AddWokoutsToShoeView {
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
-                onAdd()
+                self.workouts.append(contentsOf: HealthManager.shared.getWorkouts(forIDs: Array(selections)))
                 
                 dismiss()
             } label: {
@@ -64,10 +62,9 @@ extension AddWokoutsToShoeView {
 
 extension AddWokoutsToShoeView {
     
-    private func getUnusedWorkouts() -> [HKWorkout] {
+    private func getAvailableWorkous() {
         let allWorkoutsIDs: Set<UUID> = Set(shoesViewModel.shoes.flatMap { $0.workouts } )
-        
-        return HealthManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
+        self.availableWorkouts = HealthManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
     }
 }
 
@@ -75,7 +72,7 @@ extension AddWokoutsToShoeView {
 
 #Preview {
     NavigationStack {
-        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id) { }
+        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: .constant([]))
             .navigationTitle("Add Workouts")
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
     }
