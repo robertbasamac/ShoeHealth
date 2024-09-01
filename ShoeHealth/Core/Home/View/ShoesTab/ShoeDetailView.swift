@@ -33,7 +33,6 @@ struct ShoeDetailView: View {
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
         self.backButtonSymbol = backButtonSymbol
-        self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
     }
     
     var body: some View {
@@ -96,11 +95,11 @@ struct ShoeDetailView: View {
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()
         }
+        .onAppear {
+            updateInterface()
+        }
         .onChange(of: unitOfMeasureString) { _, newValue in
             self.unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
-        }
-        .onChange(of: self.workouts) { _, newValue in
-            self.mostRecentWorkouts = Array(newValue.prefix(5))
         }
     }
 }
@@ -383,7 +382,6 @@ extension ShoeDetailView {
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
     }
     
-    @MainActor
     private func updateInterface() {
         self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
         self.mostRecentWorkouts = Array(workouts.prefix(5))

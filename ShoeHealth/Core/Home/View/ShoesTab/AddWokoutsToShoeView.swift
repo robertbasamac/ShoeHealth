@@ -48,6 +48,7 @@ extension AddWokoutsToShoeView {
             Button {
                 shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                 self.workouts.append(contentsOf: HealthManager.shared.getWorkouts(forIDs: Array(selections)))
+                self.workouts.sort { $0.endDate > $1.endDate }
                 
                 dismiss()
             } label: {
