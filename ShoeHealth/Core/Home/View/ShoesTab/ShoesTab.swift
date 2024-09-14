@@ -13,16 +13,19 @@ struct ShoesTab: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
-    
-    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
-    
+    @Environment(SettingsManager.self) private var settingsManager
+
     @State private var selectedShoe: Shoe?
     @State private var selectedCategory: ShoeCategory?
+    
+    init() {
+        print("ShoesTab init")
+    }
     
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
+//                LastRunView(selectedShoe: $selectedShoe)
                 lastRunSection
                 
                 defaultShoeSection
@@ -46,9 +49,6 @@ struct ShoesTab: View {
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
         }
-        .onChange(of: unitOfMeasureString) { _, newValue in
-            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
-        }
     }
 }
 
@@ -66,8 +66,8 @@ extension ShoesTab {
                 if let lastRun = HealthManager.shared.getLastRun() {
                     VStack(spacing: 8) {
                         HStack {
-                            runDateAndTimeSection(lastRun)
-                            runUsedShoeSection(lastRun)
+                            runDateAndTimeSection(lastRun.workout)
+                            runUsedShoeSection(lastRun.workout)
                         }
                         .padding(.horizontal, 20)
                         
@@ -269,25 +269,25 @@ extension ShoesTab {
     }
     
     @ViewBuilder
-    private func runStatsSection(_ run: HKWorkout) -> some View {
+    private func runStatsSection(_ run: RunningWorkout) -> some View {
         VStack(spacing: 8) {
             HStack {
-                StatCell(label: "Duration", value: run.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Distance", value: String(format: "%.2f", run.totalDistance(unit: unitOfMeasure.unit)), unit: unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Duration", value: run.workout.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Distance", value: String(format: "%.2f", run.workout.totalDistance(unit: settingsManager.unitOfMeasure.unit)), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.averagePower), unit: UnitPower.watts.symbol, color: Color.theme.greenEnergy, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Cadence", value: String(format: "%.0f", run.averageCadence), unit: "SPM", color: .cyan, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.wrappedAveragePower), unit: UnitPower.watts.symbol, color: Color.theme.greenEnergy, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Cadence", value: String(format: "%.0f", run.wrappedAAverageCadence), unit: "SPM", color: .cyan, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.averagePace(unit: unitOfMeasure.unit).minutes, run.averagePace(unit: unitOfMeasure.unit).seconds), unit: "/\(unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Heart Rate", value: String(format: "%.0f", run.averageHeartRate), unit: "BPM", color: .red, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).minutes, run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).seconds), unit: "/\(settingsManager.unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Heart Rate", value: String(format: "%.0f", run.wrappedAverageHeartRate), unit: "BPM", color: .red, textAlignment: .leading, containerAlignment: .leading)
             }
         }
     }
@@ -464,7 +464,9 @@ extension ShoesTab {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.container)
+            .environmentObject(NavigationRouter())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environment(SettingsManager.shared)
     }
 }
 
@@ -473,6 +475,8 @@ extension ShoesTab {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
+            .environmentObject(NavigationRouter())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+            .environment(SettingsManager.shared)
     }
 }

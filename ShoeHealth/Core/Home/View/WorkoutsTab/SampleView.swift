@@ -19,17 +19,23 @@ struct SampleView: View {
             Text("\(samples.count) samples")
             ForEach(samples, id: \.self) { sample in
                 HStack(spacing: 20) {
-                    Text(String(format: "%.2f m", sample.quantity.doubleValue(for: HKUnit.meter()).rounded(toPlaces: 2)))
-
+//                    VStack {
+                        Text(String(format: "%.2f m", sample.quantity.doubleValue(for: HKUnit.meter()).rounded(toPlaces: 2)))
+//                        Text("\(sample.count)")
+//                    }
+                    
                     Spacer()
                     
-                    Text(dateTimeFormatter.string(from: sample.endDate))
+                    VStack {
+                        Text(dateTimeFormatter.string(from: sample.startDate))
+                        Text(dateTimeFormatter.string(from: sample.endDate))
+                    }
                 }
             }
         }
         .task {
             HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
-                self.samples = samples.sorted(by: { $0.endDate > $1.endDate })
+                self.samples = samples
             }
         }
         .navigationTitle("Workout samples")

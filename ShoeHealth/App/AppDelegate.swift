@@ -53,7 +53,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Use default shoe\" action pressed.")
                 
                 if let shoe = shoesViewModel?.getDefaultShoe() {
-                    shoesViewModel?.add(workoutIDs: [workoutID], toShoe: shoe.id)
+                    Task {
+                        await shoesViewModel?.add(workoutIDs: [workoutID], toShoe: shoe.id)
+                    }
                 }
                 break
                 
@@ -93,7 +95,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Use default shoe\" action pressed.")
                 
                 if let shoe = shoesViewModel?.getDefaultShoe() {
-                    shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
+                    Task {
+                        await shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
+                    }
                 }
                 break
                 

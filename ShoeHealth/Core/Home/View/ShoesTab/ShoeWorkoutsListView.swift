@@ -159,7 +159,9 @@ extension ShoeWorkoutsListView {
 extension ShoeWorkoutsListView {
     
     private func removeWorkouts(workoutIDs: [UUID]) {
-        shoesViewModel.remove(workoutIDs: workoutIDs, fromShoe: shoe.id)
+        Task {
+            await shoesViewModel.remove(workoutIDs: workoutIDs, fromShoe: shoe.id)
+        }
         
         self.workouts = self.workouts.filter { workout in
             !workoutIDs.contains(workout.id)
@@ -167,7 +169,9 @@ extension ShoeWorkoutsListView {
     }
     
     private func addWorkouts(workoutIDs: [UUID], to shoeID: UUID) {
-        shoesViewModel.add(workoutIDs: workoutIDs, toShoe: shoeID)
+        Task {
+            await shoesViewModel.add(workoutIDs: workoutIDs, toShoe: shoeID)
+        }
         
         self.workouts = self.workouts.filter { workout in
             !selections.contains(workout.id)

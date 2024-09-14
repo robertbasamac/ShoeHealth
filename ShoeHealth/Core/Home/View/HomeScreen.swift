@@ -57,7 +57,9 @@ struct HomeScreen: View {
                                       description: Prompts.SelectShoe.selectWorkoutShoeDescription,
                                       systemImage: "figure.run.circle",
                                       onDone: { shoeID in
-                        shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
+                        Task {
+                            await shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
+                        }
                     })
                 case .addMultipleWorkoutsToShoe(workoutIDs: let workoutIDs):
                     MultipleShoeSelectionView(workoutIDs: workoutIDs,
@@ -66,7 +68,9 @@ struct HomeScreen: View {
                                               systemImage: "figure.run.circle",
                                               onDone: { selectionsDict in
                         for (workoutID, shoe) in selectionsDict {
-                            shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoe.id)
+                            Task {
+                                await shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoe.id)
+                            }
                         }
                     })
                 }

@@ -41,7 +41,9 @@ struct WorkoutsTab: View {
                                   description: Prompts.SelectShoe.assignWorkoutsDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
-                    shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
+                    Task {
+                        await shoesViewModel.add(workoutIDs: [workout.id], toShoe: shoeID)
+                    }
                 })
             }
             .presentationDetents([.medium, .large])

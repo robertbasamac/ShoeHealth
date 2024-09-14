@@ -54,12 +54,6 @@ extension HKWorkout {
         return distance.doubleValue(for: unit)
     }
     
-    var averagePower: Double {
-        guard let averagePower = self.statistics(for: .init(.runningPower))?.averageQuantity() else { return 0 }
-        
-        return floor(averagePower.doubleValue(for: HKUnit.watt()))
-    }
-    
     var activeKilocalories: Double {
         guard let activeKCal = self.statistics(for: .init(.activeEnergyBurned))?.sumQuantity() else { return 0 }
         
@@ -92,5 +86,11 @@ extension HKWorkout {
         let averageCadence = stepCount.doubleValue(for: HKUnit.count()) / self.duration * 60
         
         return averageCadence
+    }
+    
+    var averagePower: Double {
+        guard let averagePower = self.statistics(for: .init(.runningPower))?.averageQuantity() else { return 0 }
+        
+        return floor(averagePower.doubleValue(for: HKUnit.watt()))
     }
 }

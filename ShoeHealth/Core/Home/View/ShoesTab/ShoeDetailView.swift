@@ -12,6 +12,7 @@ struct ShoeDetailView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
@@ -26,9 +27,6 @@ struct ShoeDetailView: View {
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
-    
-    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
@@ -98,9 +96,6 @@ struct ShoeDetailView: View {
         .onAppear {
             updateInterface()
         }
-        .onChange(of: unitOfMeasureString) { _, newValue in
-            self.unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
-        }
     }
 }
 
@@ -132,8 +127,8 @@ extension ShoeDetailView {
     private var lifespanSection: some View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 12) {
-                StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
             }
             
             ZStack {
@@ -251,14 +246,14 @@ extension ShoeDetailView {
         VStack(spacing: 8) {
             HStack {
                 StatCell(label: "Runs", value: "\(shoe.workouts.count)", color: .gray, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds), unit: "/\(unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds), unit: "/\(settingsManager.unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Total Distance", value: shoe.totalDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Distance", value: shoe.averageDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Total Distance", value: shoe.totalDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(label: "Avg Distance", value: shoe.averageDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
             }
             
             Divider()

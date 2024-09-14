@@ -13,6 +13,9 @@ import SwiftUI
 import HealthKit
 import WidgetKit
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel")
 
 @Observable
 final class ShoesViewModel {
@@ -35,7 +38,7 @@ final class ShoesViewModel {
         setupObservers()
     }
     
-// MARK: - Handling Shoes Methods
+    // MARK: - CRUD operations
     
     func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, image: Data?) {
         let shoe = Shoe(nickname: nickname, brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: image)
@@ -101,25 +104,29 @@ final class ShoesViewModel {
         save()
     }
     
-    func add(workoutIDs: [UUID], toShoe shoeID: UUID) {
+    // MARK: - Handling Shoes Methods
+
+    func add(workoutIDs: [UUID], toShoe shoeID: UUID) async {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         for workoutID in workoutIDs {
             if let oldShoe = getShoe(ofWorkoutID: workoutID) {
                 oldShoe.workouts.removeAll { $0 == workoutID }
-                updateShoeStatistics(oldShoe)
+                
+                await updateShoeStatistics(oldShoe)
             }
         }
         
         let previousWear = shoe.wearCondition
         
         shoe.workouts.append(contentsOf: workoutIDs)
-        updateShoeStatistics(shoe)
+        
+        await updateShoeStatistics(shoe)
         
         save()
         
         HealthManager.shared.updateLatestUpdateDate(from: Array(workoutIDs))
-        
+
         if !shoe.isRetired && shoe.wearCondition.rawValue > previousWear.rawValue && shoe.wearCondition != .new && shoe.wearCondition != .good {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
@@ -128,14 +135,15 @@ final class ShoesViewModel {
         }
     }
     
-    func remove(workoutIDs: [UUID], fromShoe shoeID: UUID) {
+    func remove(workoutIDs: [UUID], fromShoe shoeID: UUID) async {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         for workoutID in workoutIDs {
             shoe.workouts.removeAll { $0 == workoutID }
         }
         
-        updateShoeStatistics(shoe)
+        await updateShoeStatistics(shoe)
+        
         save()
     }
     
@@ -166,10 +174,9 @@ final class ShoesViewModel {
         save()
     }
     
-    func computePersonalBests(for shoe: Shoe) {
+    private func computePersonalBests(for shoe: Shoe) async {
         var personalBests: [RunningCategory: PersonalBest?] = [:]
         var totalRuns: [RunningCategory: Int] = [:]
-        
         var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
         
         let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
@@ -185,32 +192,50 @@ final class ShoesViewModel {
         for category in RunningCategory.allCases {
             guard let workoutsForCategory = filteredWorkouts[category] else { continue }
             
+            logger.debug("Computing PR for category \(category.rawValue)")
+            
             totalRuns[category] = workoutsForCategory.count
             
             for workout in workoutsForCategory {
+                logger.debug("Computing \(workout.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit))")
+
                 group.enter()
                 
                 HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
                     var accumulatedDistance: Double = 0
                     var lastSampleEndDate: Date?
+                    var lastValidSampleEndDate: Date?
+                    
+                    var currentIndex = 0
                     
                     for sample in samples {
                         let sampleDistance = sample.quantity.doubleValue(for: .meter())
 
-                        if accumulatedDistance + sampleDistance >= category.distance {
-                            let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
+                        currentIndex += 1
 
-                            let remainingDistance = category.distance - accumulatedDistance
-                            let proportion = remainingDistance / sampleDistance
-                            let interpolatedTime = proportion * sampleDuration
+                        if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
+                            if accumulatedDistance + sampleDistance >= category.distance {
+                                logger.debug("Accumulated distance greater than the category distance, (+ \(sampleDistance)): \(accumulatedDistance + sampleDistance)")
+                                
+                                let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
+                                
+                                let remainingDistance = category.distance - accumulatedDistance
+                                let proportion = remainingDistance / sampleDistance
+                                let interpolatedTime = proportion * sampleDuration
+                                
+                                lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
+                                break
+                            }
                             
-                            lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
-                            
-                            break
+                            accumulatedDistance += sampleDistance
+                            lastValidSampleEndDate = sample.endDate
+                            logger.debug("\(currentIndex) - Accumulated distance (+ \(sampleDistance), \(sample.endDate)) = \(accumulatedDistance)")
+                        } else {
+                            logger.warning("Sample not satysfying the date condition, skipping: \(sampleDistance), \(sample.startDate)")
                         }
-                        
-                        accumulatedDistance += sampleDistance
                     }
+                    
+                    logger.debug("Total samples counted for category \(category.rawValue), \(currentIndex), from total of \(samples.count)")
                     
                     if let lastSampleEndDate = lastSampleEndDate {
                         let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
@@ -225,13 +250,61 @@ final class ShoesViewModel {
             }
         }
         
-        group.notify(queue: .main) {
-            shoe.personalBests = personalBests
-            shoe.totalRuns = totalRuns
+        await withCheckedContinuation { continuation in
+            group.notify(queue: .main) {
+                shoe.personalBests = personalBests
+                shoe.totalRuns = totalRuns
+                continuation.resume()
+            }
         }
+        
+        logger.debug("Personal bests computed for \(shoe.model).")
     }
     
-    private func updateShoeStatistics(_ shoe: Shoe) {
+    func compareDatesIgnoringMoreGranularComponents(_ date1: Date?, _ date2: Date?) -> Bool {
+        // If both dates are nil, consider them equal
+        if date1 == nil && date2 == nil {
+            return true
+        }
+
+        // If only one date is nil, they are not equal
+        guard let date1 = date1, let date2 = date2 else {
+            return false
+        }
+
+        // Compare the specific components (year, month, day, hour, minute, second)
+        let calendar = Calendar.current
+        let components1 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date1)
+        let components2 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date2)
+
+        if let year1 = components1.year, let year2 = components2.year, year1 != year2 {
+            return year1 > year2
+        }
+        
+        if let month1 = components1.month, let month2 = components2.month, month1 != month2 {
+            return month1 > month2
+        }
+        
+        if let day1 = components1.day, let day2 = components2.day, day1 != day2 {
+            return day1 > day2
+        }
+        
+        if let hour1 = components1.hour, let hour2 = components2.hour, hour1 != hour2 {
+            return hour1 > hour2
+        }
+        
+        if let minute1 = components1.minute, let minute2 = components2.minute, minute1 != minute2 {
+            return minute1 > minute2
+        }
+        
+        if let second1 = components1.second, let second2 = components2.second, second1 != second2 {
+            return second1 > second2
+        }
+        
+        return true
+    }
+    
+    private func updateShoeStatistics(_ shoe: Shoe) async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
         let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
@@ -246,7 +319,7 @@ final class ShoesViewModel {
             return result + workout.duration
         }
         
-        computePersonalBests(for: shoe)
+        await computePersonalBests(for: shoe)
     }
     
     // MARK: - Getters
@@ -306,21 +379,20 @@ final class ShoesViewModel {
     
     
     private func handleCloudKitEvent(notification: Notification) {
-        print("handleCloudKitEvent called")
-        
         guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey] as? NSPersistentCloudKitContainer.Event else {
             return
         }
         
-        if event.endDate != nil && event.type == .import {
-            print("iCloud import event detected, refreshing data...")
-            
-            fetchShoes()
+        if event.endDate != nil {
+            if event.type == .import {
+                fetchShoes()
+            } else if event.type == .export {
+            }
         }
     }
     
     func fetchShoes() {
-        print("Fetching shoes...\(Thread.current)")
+        logger.debug("Fetching shoes...")
 
         do {
             let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
@@ -331,7 +403,7 @@ final class ShoesViewModel {
                 self.shoes = shoes
             }
         } catch {
-            print("Fetching shoes failed, \(error.localizedDescription)")
+            logger.error("Fetching shoes failed, \(error.localizedDescription)")
         }
         
         WidgetCenter.shared.reloadAllTimelines()
@@ -348,7 +420,9 @@ final class ShoesViewModel {
                 shoe.lifespanDistance = shoe.lifespanDistance * 1.60934
             }
 
-            updateShoeStatistics(shoe)
+            Task {
+                await updateShoeStatistics(shoe)
+            }
         }
         
         save()
@@ -363,8 +437,10 @@ final class ShoesViewModel {
     private func save() {
         do {
             try modelContext.save()
+            
+            logger.debug("Context saved successfully.")
         } catch {
-            print("Saving context failed, \(error.localizedDescription)")
+            logger.error("Saving context failed, \(error.localizedDescription)")
         }
         
         fetchShoes()

@@ -12,6 +12,45 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "HealthManager")
 
+struct RunningWorkout {
+    var workout: HKWorkout
+    private var averageHeartRate: Double = 0.0
+    private var averageCadence: Double = 0.0
+    private var averagePower: Double = 0.0
+    
+    init(workout: HKWorkout) {
+        self.workout = workout
+    }
+    
+    var wrappedAveragePace: (Int, Int) {
+        return self.workout.averagePace(unit: SettingsManager.shared.unitOfMeasure.unit)
+    }
+    
+    var wrappedAverageHeartRate: Double {
+        return self.workout.averageHeartRate == 0 ? self.averageHeartRate : self.workout.averageHeartRate
+    }
+    
+    var wrappedAAverageCadence: Double {
+        return self.workout.averageCadence == 0 ? self.averageCadence : self.workout.averageCadence
+    }
+    
+    var wrappedAveragePower: Double {
+        return self.workout.averagePower == 0 ? self.averagePower : self.workout.averagePower
+    }
+    
+    mutating func setAverageHeartRate(_ value: Double) {
+        self.averageHeartRate = value
+    }
+    
+    mutating func setAverageCadence(_ value: Double) {
+        self.averageCadence = value
+    }
+    
+    mutating func setAveragePower(_ value: Double) {
+        self.averagePower = value
+    }
+}
+
 @Observable
 final class HealthManager {
     
@@ -20,13 +59,31 @@ final class HealthManager {
     @ObservationIgnored private var healthStore = HKHealthStore()
     
     @ObservationIgnored private let readTypes: Set = [HKObjectType.workoutType(),
-                                                      HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!]
+                                                      HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
+                                                      HKQuantityType.quantityType(forIdentifier: .heartRate)!,
+                                                      HKQuantityType.quantityType(forIdentifier: .stepCount)!,
+                                                      HKQuantityType.quantityType(forIdentifier: .runningPower)!]
+    
     @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
     @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
     @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) var latestUpdate: Date
     
-    private(set) var workouts: [HKWorkout] = []
+    private(set) var workouts: [HKWorkout] = [] {
+        didSet {
+            if let workout = workouts.first {
+                lastWorkout = RunningWorkout(workout: workout)
+                
+                Task {
+                    await calculateLastRunStats()
+                }
+            } else {
+                lastWorkout = nil
+            }
+        }
+    }
+    
+    private(set) var lastWorkout: RunningWorkout? = nil
     
     private init() { }
     
@@ -130,7 +187,7 @@ final class HealthManager {
         }
     }
     
-    // MARK: - Handling HealthKit Data
+    // MARK: - Fetching HealthKit Data
         
     func fetchRunningWorkouts() async {
         guard HKHealthStore.isHealthDataAvailable() else {
@@ -168,7 +225,7 @@ final class HealthManager {
         logger.debug("\(workouts.count) workouts fetched.")
         
         await MainActor.run {
-            HealthManager.shared.workouts = workouts
+            self.workouts = workouts
         }
     }
     
@@ -178,18 +235,190 @@ final class HealthManager {
             return
         }
         
-        let sampleType = HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!
-        let predicate = HKQuery.predicateForObjects(from: workout)
+        let distanceType = HKQuantityType(.distanceWalkingRunning)
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: [.strictStartDate, .strictStartDate])
         
-        let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, results, error in
-            if let samples = results as? [HKQuantitySample] {
-                completion(samples)
-            } else {
+        var distanceSamples: [HKQuantitySample] = []
+        
+        let seriesQuery = HKQuantitySeriesSampleQuery(quantityType: distanceType, predicate: predicate) { (query, quantity, dateInterval, series, done, error) in
+            if let error = error {
+                logger.error("Error fetching distance samples: \(error.localizedDescription)")
                 completion([])
+                return
+            }
+            
+            if let quantity = quantity {
+                distanceSamples.append(HKQuantitySample(type: .init(.distanceWalkingRunning), quantity: quantity, start: dateInterval?.start ?? Date(), end: dateInterval?.end ?? Date()))
+                logger.debug("\(distanceSamples.count) - New distance sample: \(quantity.doubleValue(for: HKUnit.meter()))")
+            }
+            
+            if done {
+                completion(distanceSamples.sorted(by: { $0.endDate < $1.endDate }))
             }
         }
         
-        healthStore.execute(query)
+        healthStore.execute(seriesQuery)
+    }
+    
+    private func fetchHeartRateSamples(predicate: NSPredicate) async -> [HKQuantitySample] {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return []
+        }
+        
+        return await withCheckedContinuation { continuation in
+            let heartRateType = HKQuantityType(.heartRate)
+            let heartRateQuery = HKSampleQuery(sampleType: heartRateType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, samples, error in
+                guard error == nil, let heartRateSamples = samples as? [HKQuantitySample] else {
+                    logger.error("Error fetching heart rate samples: \(error?.localizedDescription ?? "Unknown error")")
+                    continuation.resume(returning: [])
+                    return
+                }
+                continuation.resume(returning: heartRateSamples)
+            }
+            
+            healthStore.execute(heartRateQuery)
+        }
+    }
+    
+    private func fetchStepCountSamples(predicate: NSPredicate) async -> [HKQuantitySample] {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return []
+        }
+        
+        return await withCheckedContinuation { continuation in
+            let stepCountType = HKQuantityType(.stepCount)
+            let stepCountQuery = HKSampleQuery(sampleType: stepCountType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, samples, error in
+                guard error == nil, let stepSamples = samples as? [HKQuantitySample] else {
+                    print("Error fetching step count samples: \(error?.localizedDescription ?? "Unknown error")")
+                    continuation.resume(returning: [])
+                    return
+                }
+                continuation.resume(returning: stepSamples)
+            }
+            
+            healthStore.execute(stepCountQuery)
+        }
+    }
+    
+    private func fetchPowerSamples(predicate: NSPredicate) async -> [HKQuantitySample] {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            logger.warning("HealthKit is not available on this device.")
+            return []
+        }
+        
+        return await withCheckedContinuation { continuation in
+            let powerType = HKQuantityType(.runningPower)
+            let powerQuery = HKSampleQuery(sampleType: powerType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, samples, error in
+                guard error == nil, let powerSamples = samples as? [HKQuantitySample] else {
+                    logger.error("Error fetching power samples: \(error?.localizedDescription ?? "Unknown error")")
+                    continuation.resume(returning: [])
+                    return
+                }
+                continuation.resume(returning: powerSamples)
+            }
+            
+            healthStore.execute(powerQuery)
+        }
+    }
+    
+    // MARK: - Compute Average Data
+    
+    private func calculateLastRunStats() async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                await self.calculateLastRunAverageHeartRate()
+            }
+            group.addTask {
+                await self.calculateLastRunAverageCadence()
+            }
+            group.addTask {
+                await self.calculateLastRunAveragePower()
+            }
+        }
+    }
+    
+    private func calculateLastRunAverageHeartRate() async {
+        guard let workout = lastWorkout?.workout else {
+            logger.error("No workout available.")
+            return
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: [.strictStartDate, .strictEndDate])
+        
+        let heartRateSamples = await fetchHeartRateSamples(predicate: predicate)
+        
+        guard !heartRateSamples.isEmpty else {
+            logger.warning("No heart rate samples available.")
+            return
+        }
+        
+        let heartRates = heartRateSamples.map { $0.quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())) }
+        let totalHeartRate = heartRates.reduce(0, +)
+        let averageHeartRate = totalHeartRate / Double(heartRates.count)
+        
+        Task { @MainActor in
+            self.lastWorkout?.setAverageHeartRate(averageHeartRate)
+        }
+    }
+    
+    private func calculateLastRunAverageCadence() async {
+        guard let workout = lastWorkout?.workout else {
+            logger.error("No workout available.")
+            return
+        }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: [.strictStartDate, .strictEndDate])
+        
+        let stepSamples = await fetchStepCountSamples(predicate: predicate)
+        
+        guard !stepSamples.isEmpty else {
+            logger.warning("No step count samples available.")
+            return
+        }
+        
+        var totalSteps = 0.0
+        var totalTime: TimeInterval = 0.0
+        
+        for sample in stepSamples {
+            let steps = sample.quantity.doubleValue(for: HKUnit.count())
+            let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
+            
+            totalSteps += steps
+            totalTime += sampleDuration
+        }
+        
+        let averageCadence = (totalSteps / totalTime) * 60.0
+        
+        Task { @MainActor in
+            self.lastWorkout?.setAverageCadence(averageCadence)
+        }
+    }
+    
+    private func calculateLastRunAveragePower() async {
+        guard let workout = lastWorkout?.workout else {
+            logger.warning("No workout available.")
+            return
+        }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: [.strictStartDate, .strictEndDate])
+        
+        let powerSamples = await fetchPowerSamples(predicate: predicate)
+        
+        guard !powerSamples.isEmpty else {
+            logger.warning("No power samples available.")
+            return
+        }
+        
+        let powers = powerSamples.map { $0.quantity.doubleValue(for: HKUnit.watt()) }
+        let totalPower = powers.reduce(0, +)
+        
+        let averagePower = totalPower / Double(powers.count)
+        
+        Task { @MainActor in
+            self.lastWorkout?.setAveragePower(averagePower)
+        }
     }
     
     // MARK: - Helper Methods
@@ -210,8 +439,8 @@ final class HealthManager {
         return filteredWorkouts.sorted { $0.endDate > $1.endDate }
     }
     
-    func getLastRun() -> HKWorkout? {
-        return workouts.first
+    func getLastRun() -> RunningWorkout? {
+        return lastWorkout
     }
     
     func updateLatestUpdateDate(from workoutIDs: [UUID]) {
@@ -224,4 +453,5 @@ final class HealthManager {
             logger.debug("latestUpdate date updated to \(self.latestUpdate)")
         }
     }
+    
 }

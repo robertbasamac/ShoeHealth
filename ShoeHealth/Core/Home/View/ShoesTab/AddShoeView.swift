@@ -11,10 +11,10 @@ import PhotosUI
 struct AddShoeView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     @FocusState private var focusField: FocusField?
     
@@ -70,9 +70,6 @@ struct AddShoeView: View {
         }
         .onChange(of: self.unitOfMeasure) { _, newValue in
             addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
-        }
-        .onChange(of: unitOfMeasureString) { _, newValue in
-            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
         }
     }
 }
@@ -233,14 +230,14 @@ extension AddShoeView {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                let settingsUnitOfMeasure = SettingsManager.shared.unitOfMeasure
+                let settingsUnitOfMeasure = settingsManager.unitOfMeasure
                 
                 if settingsUnitOfMeasure != unitOfMeasure {
                     addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
                 }
                 
                 shoesViewModel.addShoe(nickname: addViewModel.shoeNickname, brand: addViewModel.shoeBrand, model: addViewModel.shoeModel, lifespanDistance: addViewModel.lifespanDistance, aquisitionDate: addViewModel.aquisitionDate, isDefaultShoe: addViewModel.isDefaultShoe, image: addViewModel.selectedPhotoData)
-                SettingsManager.shared.setUnitOfMeasure(to: unitOfMeasure)
+                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
                 
                 dismiss()
             } label: {

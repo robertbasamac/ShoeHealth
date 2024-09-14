@@ -11,6 +11,7 @@ import PhotosUI
 struct EditShoeView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
@@ -18,7 +19,6 @@ struct EditShoeView: View {
     @State private var addViewModel: AddShoeViewModel
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     init(shoe: Shoe) {
         self.shoe = shoe
@@ -59,9 +59,6 @@ struct EditShoeView: View {
         }
         .onChange(of: self.unitOfMeasure) { _, newValue in
             addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
-        }
-        .onChange(of: unitOfMeasureString) { _, newValue in
-            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
         }
     }
 }
@@ -225,14 +222,14 @@ extension EditShoeView {
         
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                let settingsUnitOfMeasure = SettingsManager.shared.unitOfMeasure
+                let settingsUnitOfMeasure = settingsManager.unitOfMeasure
                 
                 if settingsUnitOfMeasure != unitOfMeasure {
                     addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
                 }
                 
                 shoesViewModel.updateShoe(shoeID: shoe.id, nickname: addViewModel.shoeNickname, brand: addViewModel.shoeBrand, model: addViewModel.shoeModel, setDefaultShoe: addViewModel.isDefaultShoe, lifespanDistance: addViewModel.lifespanDistance, aquisitionDate: addViewModel.aquisitionDate, image: addViewModel.selectedPhotoData)
-                SettingsManager.shared.setUnitOfMeasure(to: unitOfMeasure)
+                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
                 
                 dismiss()
             } label: {

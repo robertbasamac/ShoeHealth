@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct SettingsTab: View {
-        
+    
+    @Environment(SettingsManager.self) private var settingsManager
+    
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         Form {
@@ -23,12 +24,17 @@ struct SettingsTab: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
             }
+            
+            Button {
+                Task {
+                    await HealthManager.shared.requestHealthAuthorization()
+                }
+            } label: {
+                Text("Request HK authorization")
+            }
         }
         .onChange(of: unitOfMeasure) { _, newValue in
-            SettingsManager.shared.setUnitOfMeasure(to: newValue)
-        }
-        .onChange(of: unitOfMeasureString) { _, newValue in
-            unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
+            settingsManager.setUnitOfMeasure(to: newValue)
         }
     }
 }
