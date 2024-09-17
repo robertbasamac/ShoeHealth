@@ -23,7 +23,8 @@ struct ShoeDetailView: View {
     
     @State private var showEditShoe: Bool = false
     @State private var showAllWorkouts: Bool = false
-
+    @State private var showAddWorkouts: Bool = false
+    
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
@@ -93,8 +94,19 @@ struct ShoeDetailView: View {
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()
         }
+        .sheet(isPresented: $showAddWorkouts) {
+            NavigationStack {
+                AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
+                    .navigationTitle("Add Workouts")
+//                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDragIndicator(.visible)
+        }
         .onAppear {
-            updateInterface()
+            self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+        }
+        .onChange(of: self.workouts) { _, newValue in
+            self.mostRecentWorkouts = Array(newValue.prefix(5))
         }
     }
 }
@@ -317,6 +329,15 @@ extension ShoeDetailView {
             .onTapGesture {
                 showAllWorkouts.toggle()
             }
+            .overlay(alignment: .trailing, content: {
+                Button {
+                    showAddWorkouts.toggle()
+                } label: {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                }
+                .padding(.trailing, 20)
+            })
             
             VStack(spacing: 4) {
                 ForEach(mostRecentWorkouts) { workout in
@@ -376,11 +397,6 @@ extension ShoeDetailView {
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
     }
-    
-    private func updateInterface() {
-        self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
-        self.mostRecentWorkouts = Array(workouts.prefix(5))
-    }
 }
 
 // MARK: - Preview
@@ -391,6 +407,7 @@ extension ShoeDetailView {
             ShoeDetailView(shoe: Shoe.previewShoe)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environmentObject(NavigationRouter())
+                .environment(SettingsManager.shared)
         }
     }
 }

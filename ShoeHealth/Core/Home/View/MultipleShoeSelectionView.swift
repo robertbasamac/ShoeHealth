@@ -57,7 +57,7 @@ struct MultipleShoeSelectionView: View {
             }
         }
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
     }
 }
@@ -117,7 +117,7 @@ extension MultipleShoeSelectionView {
     }
     
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button {
                 dismiss()

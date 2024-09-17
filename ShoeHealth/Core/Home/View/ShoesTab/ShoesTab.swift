@@ -25,7 +25,6 @@ struct ShoesTab: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 12) {
-//                LastRunView(selectedShoe: $selectedShoe)
                 lastRunSection
                 
                 defaultShoeSection
@@ -48,6 +47,9 @@ struct ShoesTab: View {
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
+        }
+        .refreshable {
+            await HealthManager.shared.fetchRunningWorkouts()
         }
     }
 }
@@ -116,12 +118,23 @@ extension ShoesTab {
                             .multilineTextAlignment(.center)
                         
                         Button {
-                            navigationRouter.showSheet = .setDefaultShoe
+                            if shoesViewModel.shoes.isEmpty {
+                                navigationRouter.showSheet = .addShoe
+                            } else {
+                                navigationRouter.showSheet = .setDefaultShoe
+                            }
                         } label: {
-                            Text("Select Shoe")
-                                .font(.callout)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.black)
+                            if shoesViewModel.shoes.isEmpty {
+                                Text("Add Shoe")
+                                    .font(.callout)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.black)
+                            } else {
+                                Text("Select Shoe")
+                                    .font(.callout)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.black)
+                            }
                         }
                         .tint(.accentColor)
                         .buttonStyle(BorderedProminentButtonStyle())
@@ -388,18 +401,6 @@ extension ShoesTab {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-//        ToolbarItem(placement: .principal) {
-//            VStack(spacing: 0) {
-//                Image(systemName: "shoe.fill")
-//                    .font(.system(size: 17))
-//                    .foregroundStyle(.accent)
-//                
-//                Text("Health")
-//                    .font(.headline)
-//                    .minimumScaleFactor(0.5)
-//            }
-//        }
-        
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 navigationRouter.showSheet = .addShoe
@@ -407,37 +408,6 @@ extension ShoesTab {
                 Image(systemName: "plus")
             }
         }
-        
-//        ToolbarItem(placement: .topBarLeading) {
-//            Menu {
-//                Picker("Filtering", selection: shoesViewModel.filterTypeBinding) {
-//                    ForEach(ShoeFilterType.allCases) { filterType in
-//                        Text(filterType.rawValue)
-//                            .tag(filterType)
-//                    }
-//                }
-//                
-//                Divider()
-//                
-//                Picker("Sorting", selection: shoesViewModel.sortTypeBinding) {
-//                    ForEach(ShoeSortType.allCases) { sortType in
-//                        Text(sortType.rawValue)
-//                            .tag(sortType)
-//                    }
-//                }
-//                
-//                Divider()
-//                
-//                Button {
-//                    shoesViewModel.toggleSortOrder()
-//                } label: {
-//                    Label("Sort Order", systemImage: shoesViewModel.sortOrder == .forward ? "chevron.down" : "chevron.up")
-//                }
-//            } label: {
-//                Image(systemName: "line.3.horizontal.decrease.circle.fill")
-//                    .foregroundStyle(getFilteringImageColors().0, getFilteringImageColors().1)
-//            }
-//        }
     }
 }
 

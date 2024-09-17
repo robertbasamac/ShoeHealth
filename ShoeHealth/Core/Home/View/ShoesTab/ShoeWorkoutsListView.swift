@@ -50,15 +50,19 @@ struct ShoeWorkoutsListView: View {
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
-        .toolbarRole(.editor)
+//        .toolbarRole(.editor)
+        .scrollBounceBehavior(.basedOnSize)
+        .overlay {
+            emptyWorkoutsView
+        }
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
                 AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
                     .navigationTitle("Add Workouts")
-                    .navigationBarTitleDisplayMode(.inline)
+//                    .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
         }
@@ -86,8 +90,19 @@ struct ShoeWorkoutsListView: View {
 
 extension ShoeWorkoutsListView {
     
+    @ViewBuilder
+    private var emptyWorkoutsView: some View {
+        if workouts.isEmpty {
+            ContentUnavailableView {
+                Label("No Workouts", systemImage: "figure.run.circle")
+            } description: {
+                Text("There are currently no running workouts assigned to this Shoe pair. Use the \"Add Workouts\" button below to add some.")
+            }
+        }
+    }
+    
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 withAnimation {

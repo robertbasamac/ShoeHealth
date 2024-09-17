@@ -51,7 +51,7 @@ struct ShoeSelectionView: View {
             .listRowSpacing(4)
         }
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
     }
 }
@@ -122,7 +122,7 @@ extension ShoeSelectionView {
     }
     
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {
         if showCancelButton {
             ToolbarItem(placement: .cancellationAction) {
                 Button {

@@ -29,9 +29,13 @@ struct AddWokoutsToShoeView: View {
         List(availableWorkouts, selection: $selections) { workout in
             WorkoutListItem(workout: workout)
         }
+        .scrollBounceBehavior(.basedOnSize)
         .environment(\.editMode, $editMode)
+        .overlay {
+            emptyWorkoutsView
+        }
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
         .onAppear {
             getAvailableWorkous()
@@ -42,8 +46,37 @@ struct AddWokoutsToShoeView: View {
 
 extension AddWokoutsToShoeView {
     
+    @ViewBuilder
+    private var emptyWorkoutsView: some View {
+        if availableWorkouts.isEmpty {
+            ContentUnavailableView {
+                Label("No Workouts Available", systemImage: "figure.run.circle")
+            } description: {
+                Text("There are currently no unassigned running workouts available in your Apple Health data.")
+            }
+        }
+    }
+    
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {        
+        if editMode.isEditing && !availableWorkouts.isEmpty {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    if selections.count == availableWorkouts.count {
+                        selections = Set<UUID>()
+                    } else {
+                        selections = Set(availableWorkouts.map { $0.id })
+                    }
+                } label: {
+                    if selections.count == availableWorkouts.count {
+                        Text("Deselect All")
+                    } else {
+                        Text("Select All")
+                    }
+                }
+            }
+        }
+        
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 Task {

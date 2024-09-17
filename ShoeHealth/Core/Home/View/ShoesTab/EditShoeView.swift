@@ -55,7 +55,7 @@ struct EditShoeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .toolbar {
-            toolbarItems()
+            toolbarItems
         }
         .onChange(of: self.unitOfMeasure) { _, newValue in
             addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
@@ -211,7 +211,7 @@ extension EditShoeView {
     }
     
     @ToolbarContentBuilder
-    private func toolbarItems() -> some ToolbarContent {
+    private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button {
                 dismiss()
