@@ -76,14 +76,18 @@ final class HealthManager {
                 
                 Task {
                     await calculateLastRunStats()
+                    isLoading = false
                 }
             } else {
                 lastWorkout = nil
+                isLoading = false
             }
         }
     }
     
     private(set) var lastWorkout: RunningWorkout? = nil
+    
+    private(set) var isLoading: Bool = true
     
     private init() { }
     
@@ -192,6 +196,7 @@ final class HealthManager {
     func fetchRunningWorkouts() async {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
+            isLoading = false
             return
         }
 
@@ -203,12 +208,15 @@ final class HealthManager {
                                       resultsHandler: { query, samples, error in
                 if let unwrappedError = error {
                     continuation.resume(throwing: unwrappedError)
+                    self.isLoading = false
                     return
                 }
                 
                 guard let samples = samples else {
                     logger.error("HealthKit not accessable.")
-                    fatalError("Invalid State: This can only fail if there was an error.")
+                    self.isLoading = false
+                    return
+//                    fatalError("Invalid State: This can only fail if there was an error.")
                 }
                 
                 continuation.resume(returning: samples)
@@ -453,5 +461,4 @@ final class HealthManager {
             logger.debug("latestUpdate date updated to \(self.latestUpdate)")
         }
     }
-    
 }
