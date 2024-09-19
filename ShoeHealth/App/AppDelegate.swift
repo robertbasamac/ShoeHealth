@@ -62,8 +62,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
                 
-                let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-                let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+                let date: Date?
+                let remindMeLaterTime = SettingsManager.shared.remindMeLater
+                
+                switch remindMeLaterTime.duration.unit {
+                case .minute, .minutes:
+                    date = Calendar.current.date(byAdding: .minute, value: remindMeLaterTime.duration.value, to: .now)
+                case .hour, .hours:
+                    date = Calendar.current.date(byAdding: .hour, value: remindMeLaterTime.duration.value, to: .now)
+                case .day, .days:
+                    date = Calendar.current.date(byAdding: .day, value: remindMeLaterTime.duration.value, to: .now)
+                }
+                                
+                let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
                 
                 if let workout = HealthManager.shared.getWorkout(forID: workoutID) {
                     NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: [workout], at: dateComponents)
@@ -104,8 +115,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
                 
-                let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-                let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+                let date: Date?
+                let remindMeLaterTime = SettingsManager.shared.remindMeLater
+                
+                switch remindMeLaterTime.duration.unit {
+                case .minute, .minutes:
+                    date = Calendar.current.date(byAdding: .minute, value: remindMeLaterTime.duration.value, to: .now)
+                case .hour, .hours:
+                    date = Calendar.current.date(byAdding: .hour, value: remindMeLaterTime.duration.value, to: .now)
+                case .day, .days:
+                    date = Calendar.current.date(byAdding: .day, value: remindMeLaterTime.duration.value, to: .now)
+                }
+                                
+                let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
                 
                 let workouts = HealthManager.shared.getWorkouts(forIDs: workoutIDs)
                 
@@ -140,7 +162,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     logger.debug("Scheduling Set New Default Shoe notification")
                     
                     let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-                    let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+                    let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
                     
                     NotificationManager.shared.scheduleSetDefaultShoeNotification(at: dateComponents)
                 }

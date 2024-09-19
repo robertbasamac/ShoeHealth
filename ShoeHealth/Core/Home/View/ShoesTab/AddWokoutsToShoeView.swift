@@ -107,8 +107,10 @@ extension AddWokoutsToShoeView {
 // MARK: - Previews
 
 #Preview {
+    @Previewable @State var workouts: [HKWorkout] = []
+    
     NavigationStack {
-        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: .constant([]))
+        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: $workouts)
             .navigationTitle("Add Workouts")
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
     }

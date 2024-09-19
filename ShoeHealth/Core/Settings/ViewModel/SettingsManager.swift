@@ -24,14 +24,21 @@ final class SettingsManager {
         }
     }
     
+    private(set) var remindMeLater: PresetTime {
+        didSet {
+            defaults?.set(remindMeLater.encodedString, forKey: "REMIND_ME_LATER")
+        }
+    }
+    
     private var cancellables = Set<AnyCancellable>()
     private let subject = PassthroughSubject<Void, Never>()
     
     private init() {
-        
         let savedUnitOfMeasure = defaults?.string(forKey: "UNIT_OF_MEASURE") ?? UnitOfMeasure.metric.rawValue
-
         self.unitOfMeasure = UnitOfMeasure(rawValue: savedUnitOfMeasure) ?? .metric
+        
+        let savedRemindMeLater = defaults?.string(forKey: "REMIND_ME_LATER") ?? PresetTime.fiveMinutes.encodedString
+        self.remindMeLater = PresetTime(from: savedRemindMeLater) ?? .fiveMinutes
     }
     
     func addObserver(_ observer: @escaping () -> Void) {
@@ -46,5 +53,9 @@ final class SettingsManager {
         if self.unitOfMeasure != unit {
             self.unitOfMeasure = unit
         }
+    }
+    
+    func setRemindMeLaterTime(to presetTime: PresetTime) {
+        self.remindMeLater = presetTime
     }
 }

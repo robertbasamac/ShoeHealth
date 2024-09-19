@@ -197,9 +197,11 @@ extension ShoeWorkoutsListView {
 // MARK: - Previews
 
 #Preview {
+    @Previewable @State var workouts: [HKWorkout] = []
+    
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeWorkoutsListView(shoe: Shoe.previewShoe, workouts: .constant([]))
+            ShoeWorkoutsListView(shoe: Shoe.previewShoe, workouts: $workouts)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

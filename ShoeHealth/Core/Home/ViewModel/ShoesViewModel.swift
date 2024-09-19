@@ -129,7 +129,7 @@ final class ShoesViewModel {
 
         if !shoe.isRetired && shoe.wearCondition.rawValue > previousWear.rawValue && shoe.wearCondition != .new && shoe.wearCondition != .good {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-            let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date ?? .now)
+            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
             NotificationManager.shared.scheduleShoeWearNotification(forShoe: shoe, at: dateComponents)
         }

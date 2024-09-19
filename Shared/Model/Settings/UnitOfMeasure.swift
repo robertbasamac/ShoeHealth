@@ -9,6 +9,7 @@ import Foundation
 import HealthKit
 
 enum UnitOfMeasure: String {
+    
     case metric = "Metric"
     case imperial = "Imperial"
     

@@ -10,31 +10,41 @@ import SwiftUI
 struct SettingsTab: View {
     
     @Environment(SettingsManager.self) private var settingsManager
+    @Environment(\.dismiss) private var dismiss
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    
+    @State private var remindMeLaterTime: PresetTime = SettingsManager.shared.remindMeLater
+
     var body: some View {
         Form {
-            HStack {
-                Text("Unit of Measure")
-                Spacer(minLength: 40)
-                Picker("Unit", selection: $unitOfMeasure) {
+            Section {
+                Picker("Unit of Measure", selection: $unitOfMeasure) {
                     Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
                     Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
                 }
-                .pickerStyle(SegmentedPickerStyle())
+            } footer: {
+                Text("Used to set the unit for all measurements displayed in the app.")
             }
             
-            Button {
-                Task {
-                    await HealthManager.shared.requestHealthAuthorization()
+            Section {
+                NavigationLink {
+                    ReminderTimeSelectionView(selection: $remindMeLaterTime)
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text("Remind me after")
+                            .badge("\(remindMeLaterTime.duration.value) \(remindMeLaterTime.duration.unit.rawValue)")
+                    }
                 }
-            } label: {
-                Text("Request HK authorization")
+            } footer: {
+                Text("The time set here will be used to reschedule new workout notifications when you select \"Remind me later\" after long pressing on the workout notifications.")
             }
         }
+        .listSectionSpacing(.compact)
         .onChange(of: unitOfMeasure) { _, newValue in
             settingsManager.setUnitOfMeasure(to: newValue)
+        }
+        .onChange(of: remindMeLaterTime) { _, newValue in
+            settingsManager.setRemindMeLaterTime(to: newValue)
         }
     }
 }
@@ -74,5 +84,6 @@ extension SettingsTab {
     NavigationStack {
         SettingsTab()
             .navigationTitle("Settings")
+            .environment(SettingsManager.shared)
     }
 }

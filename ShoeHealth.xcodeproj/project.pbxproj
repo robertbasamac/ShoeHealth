@@ -59,9 +59,12 @@
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
 		097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */; };
 		0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */; };
+		098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
 		09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
+		09A9FF212C9B42B1002507C9 /* PresetTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */; };
+		09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF262C9B49C4002507C9 /* PresetTime.swift */; };
 		09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */; };
 		09BFD2D32B974ECB009F4133 /* ShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2D22B974ECB009F4133 /* ShoeStatsWidget.swift */; };
 		09BFD2D52B9753D7009F4133 /* SelectShoeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2D42B9753D7009F4133 /* SelectShoeIntent.swift */; };
@@ -176,8 +179,11 @@
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
 		097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+PropertyWrapper.swift"; sourceTree = "<group>"; };
+		098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTimeSelectionView.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09A7B9DA2C81F5E100822C03 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTimeCell.swift; sourceTree = "<group>"; };
+		09A9FF262C9B49C4002507C9 /* PresetTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTime.swift; sourceTree = "<group>"; };
 		09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWokoutsToShoeView.swift; sourceTree = "<group>"; };
 		09BFD2D22B974ECB009F4133 /* ShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidget.swift; sourceTree = "<group>"; };
 		09BFD2D42B9753D7009F4133 /* SelectShoeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectShoeIntent.swift; sourceTree = "<group>"; };
@@ -346,14 +352,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		094F26202BDC2AD200441A62 /* SettingsTab */ = {
-			isa = PBXGroup;
-			children = (
-				094F26212BDC2B1200441A62 /* SettingsTab.swift */,
-			);
-			path = SettingsTab;
-			sourceTree = "<group>";
-		};
 		094F26282BE01FC800441A62 /* ScrollTargetBehavior */ = {
 			isa = PBXGroup;
 			children = (
@@ -431,6 +429,42 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		09A9FF222C9B48F4002507C9 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				09A9FF232C9B4908002507C9 /* Model */,
+				09A9FF252C9B491C002507C9 /* View */,
+				09A9FF242C9B490B002507C9 /* ViewModel */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		09A9FF232C9B4908002507C9 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				09A9FF262C9B49C4002507C9 /* PresetTime.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		09A9FF242C9B490B002507C9 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				0969BDE52C58FE9400933469 /* SettingsManager.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		09A9FF252C9B491C002507C9 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				094F26212BDC2B1200441A62 /* SettingsTab.swift */,
+				098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */,
+				09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		09BD131B2B40923B00DFA6B1 /* ViewComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -481,7 +515,6 @@
 				0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
-				094F26202BDC2AD200441A62 /* SettingsTab */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -509,6 +542,7 @@
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
+				09A9FF222C9B48F4002507C9 /* Settings */,
 				09C171662C203CB4005FAB1A /* Home */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09BD131B2B40923B00DFA6B1 /* ViewComponents */,
@@ -615,7 +649,6 @@
 			children = (
 				09DE4A812B0D4CD8001119E4 /* HealthManager.swift */,
 				0907F2602B1E206700EB682A /* NotificationManager.swift */,
-				0969BDE52C58FE9400933469 /* SettingsManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -756,8 +789,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */,
 				0936FF552BD586F600BF5798 /* FrameReader.swift in Sources */,
 				095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */,
+				09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */,
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */,
 				0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */,
@@ -815,6 +850,7 @@
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
 				091AD7122C87786B002D57C4 /* StoreKitManager.swift in Sources */,
 				094D13892C17871F003C6F50 /* HomeScreen.swift in Sources */,
+				09A9FF212C9B42B1002507C9 /* PresetTimeCell.swift in Sources */,
 				09402B7E2BFBC54800C943C1 /* RunningCategory.swift in Sources */,
 				09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */,
 				094F26222BDC2B1200441A62 /* SettingsTab.swift in Sources */,

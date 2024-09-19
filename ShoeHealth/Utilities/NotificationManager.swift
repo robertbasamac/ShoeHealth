@@ -62,14 +62,14 @@ final class NotificationManager {
         let runningWorkoutCategory = UNNotificationCategory(identifier: "NEW_RUNNING_WORKOUT_AVAILABLE",
                                                             actions: [defaultShoeAction, remindMeLaterAction],
                                                             intentIdentifiers: [],
-                                                            hiddenPreviewsBodyPlaceholder: "preview placeholder",
+                                                            hiddenPreviewsBodyPlaceholder: "%u New Workout(s) logged",
                                                             categorySummaryFormat: "format summary",
                                                             options: [.customDismissAction])
         
         let multipleRunningWorkoutsCategory = UNNotificationCategory(identifier: "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE",
                                                             actions: [defaultShoeAction, remindMeLaterAction],
                                                             intentIdentifiers: [],
-                                                            hiddenPreviewsBodyPlaceholder: "preview placeholder",
+                                                            hiddenPreviewsBodyPlaceholder: "New Workouts logged",
                                                             categorySummaryFormat: "format summary",
                                                             options: [.customDismissAction])
         

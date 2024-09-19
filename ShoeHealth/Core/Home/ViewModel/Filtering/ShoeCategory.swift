@@ -6,6 +6,7 @@
 //
 
 enum ShoeCategory: String, Identifiable, CaseIterable {
+    
     var id: Self { self }
 
     case all     = "All Shoes"
