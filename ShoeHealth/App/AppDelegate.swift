@@ -63,7 +63,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Remind me later\" action pressed.")
                 
                 let date: Date?
-                let remindMeLaterTime = SettingsManager.shared.remindMeLater
+                let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
                 
                 switch remindMeLaterTime.duration.unit {
                 case .minute, .minutes:
@@ -116,7 +116,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Remind me later\" action pressed.")
                 
                 let date: Date?
-                let remindMeLaterTime = SettingsManager.shared.remindMeLater
+                let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
                 
                 switch remindMeLaterTime.duration.unit {
                 case .minute, .minutes:

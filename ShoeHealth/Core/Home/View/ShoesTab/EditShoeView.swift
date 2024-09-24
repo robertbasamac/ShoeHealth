@@ -165,11 +165,13 @@ extension EditShoeView {
             HStack {
                 Text("Unit of Measure")
                 Spacer(minLength: 40)
-                Picker("Unit", selection: $unitOfMeasure) {
-                    Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
-                    Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
+                Picker("Unit of Measure", selection: $unitOfMeasure) {
+                    ForEach(UnitOfMeasure.allCases, id: \.self) { unit in
+                        Text(unit.rawValue)
+                            .tag(unit)
+                    }
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
             }
             
             VStack(spacing: 2) {
@@ -196,7 +198,7 @@ extension EditShoeView {
         } header: {
             Text("Lifespan distance")
         } footer: {
-            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight any other factors.")
+            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight and other factors.")
         }
     }
     
@@ -246,6 +248,7 @@ extension EditShoeView {
         NavigationStack {
             EditShoeView(shoe:  Shoe.previewShoe)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(SettingsManager.shared)
         }
     }
 }

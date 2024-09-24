@@ -13,15 +13,25 @@ struct SettingsTab: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @State private var remindMeLaterTime: PresetTime = SettingsManager.shared.remindMeLater
+    @State private var remindMeLaterTime: PresetTime = SettingsManager.shared.remindMeLaterTime
 
+    init() {
+        print("SettingsTab init")
+    }
+    
     var body: some View {
         Form {
             Section {
-                Picker("Unit of Measure", selection: $unitOfMeasure) {
-                    Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
-                    Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
-                }
+//                HStack {
+//                    Text("Unit of Measure")
+//                    Spacer(minLength: 40)
+                    Picker("Unit of Measure", selection: $unitOfMeasure) {
+                        ForEach(UnitOfMeasure.allCases, id: \.self) { unit in
+                            Text(unit.rawValue).tag(unit)
+                        }
+                    }
+//                    .pickerStyle(.segmented)
+//                }
             } footer: {
                 Text("Used to set the unit for all measurements displayed in the app.")
             }
@@ -40,6 +50,9 @@ struct SettingsTab: View {
             }
         }
         .listSectionSpacing(.compact)
+        .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
+            unitOfMeasure = newValue
+        }
         .onChange(of: unitOfMeasure) { _, newValue in
             settingsManager.setUnitOfMeasure(to: newValue)
         }

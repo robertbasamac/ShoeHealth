@@ -12,6 +12,7 @@ struct ShoeDetailView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
@@ -103,7 +104,7 @@ struct ShoeDetailView: View {
             .presentationDragIndicator(.visible)
         }
         .onAppear {
-            self.workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+            self.workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
         }
         .onChange(of: self.workouts) { _, newValue in
             self.mostRecentWorkouts = Array(newValue.prefix(5))
@@ -405,9 +406,10 @@ extension ShoeDetailView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoe)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environmentObject(NavigationRouter())
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
+                .environment(HealthManager.shared)
         }
     }
 }

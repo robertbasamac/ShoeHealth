@@ -328,7 +328,6 @@
 				09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */,
 				09402B7D2BFBC54800C943C1 /* RunningCategory.swift */,
 				09BFD6ED2C4050DF00D112BF /* WearCondition.swift */,
-				09C595822C65F26700A006BE /* Settings */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -443,6 +442,7 @@
 			isa = PBXGroup;
 			children = (
 				09A9FF262C9B49C4002507C9 /* PresetTime.swift */,
+				09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -527,14 +527,6 @@
 				09C171692C203D4A005FAB1A /* Filtering */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		09C595822C65F26700A006BE /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		09D1AF922BD9636700C61E5D /* Core */ = {
@@ -876,7 +868,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
@@ -909,7 +901,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
@@ -1066,7 +1058,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
@@ -1108,7 +1100,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;

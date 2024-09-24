@@ -13,14 +13,11 @@ struct ShoesTab: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
 
     @State private var selectedShoe: Shoe?
     @State private var selectedCategory: ShoeCategory?
-    
-    init() {
-        print("ShoesTab init")
-    }
     
     var body: some View {
         ScrollView(.vertical) {
@@ -49,7 +46,7 @@ struct ShoesTab: View {
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
         }
         .refreshable {
-            await HealthManager.shared.fetchRunningWorkouts()
+            await healthManager.fetchRunningWorkouts()
         }
     }
 }
@@ -65,7 +62,7 @@ extension ShoesTab {
                 .asHeader()
             
             Group {
-                if let lastRun = HealthManager.shared.getLastRun() {
+                if let lastRun = healthManager.getLastRun() {
                     VStack(spacing: 8) {
                         HStack {
                             runDateAndTimeSection(lastRun.workout)
@@ -448,5 +445,6 @@ extension ShoesTab {
             .environmentObject(NavigationRouter())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
             .environment(SettingsManager.shared)
+            .environment(HealthManager.shared)
     }
 }

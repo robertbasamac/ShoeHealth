@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReminderTimeSelectionView: View {
     
+    @Environment(SettingsManager.self) private var settingsManager
     @Binding var selection: PresetTime
     
     @State private var customValue: Int = 1
@@ -199,7 +200,7 @@ extension ReminderTimeSelectionView {
     }
     
     private func initCustomProperties() {
-        let remindMeLaterTime = SettingsManager.shared.remindMeLater
+        let remindMeLaterTime = settingsManager.remindMeLaterTime
         
         switch remindMeLaterTime {
         case .fiveMinutes, .tenMinutes, .fifteenMinutes, .thirtyMinutes, .oneHour:
@@ -219,6 +220,6 @@ extension ReminderTimeSelectionView {
     
     NavigationStack {
         ReminderTimeSelectionView(selection: $selection)
-//            .environment(SettingsManager.shared)
+            .environment(SettingsManager.shared)
     }
 }

@@ -10,15 +10,14 @@ import HealthKit
 
 struct WorkoutsTab: View {
     
-    @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
+    @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     
-    private var healthKitManager = HealthManager.shared
-
     @State private var selectedWorkout: HKWorkout?
     
     var body: some View {
         List {
-            ForEach(healthKitManager.workouts, id: \.self) { workout in
+            ForEach(healthManager.workouts, id: \.self) { workout in
                 NavigationLink {
                     SampleView(workout: workout)
                 } label: {
@@ -51,7 +50,7 @@ struct WorkoutsTab: View {
             .presentationDragIndicator(.visible)
         })
         .refreshable {
-            await healthKitManager.fetchRunningWorkouts()
+            await healthManager.fetchRunningWorkouts()
         }
     }
 }

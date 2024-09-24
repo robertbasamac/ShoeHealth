@@ -11,6 +11,7 @@ import HealthKit
 struct AddWokoutsToShoeView: View {
 
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     @Environment(\.dismiss) private var dismiss
     
     private var shoeID: UUID
@@ -82,7 +83,7 @@ extension AddWokoutsToShoeView {
                 Task {
                     await shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                 }
-                self.workouts.append(contentsOf: HealthManager.shared.getWorkouts(forIDs: Array(selections)))
+                self.workouts.append(contentsOf: healthManager.getWorkouts(forIDs: Array(selections)))
                 self.workouts.sort { $0.endDate > $1.endDate }
                 
                 dismiss()
@@ -100,7 +101,7 @@ extension AddWokoutsToShoeView {
     
     private func getAvailableWorkous() {
         let allWorkoutsIDs: Set<UUID> = Set(shoesViewModel.shoes.flatMap { $0.workouts } )
-        self.availableWorkouts = HealthManager.shared.workouts.filter { !allWorkoutsIDs.contains($0.id) }
+        self.availableWorkouts = healthManager.workouts.filter { !allWorkoutsIDs.contains($0.id) }
     }
 }
 
@@ -113,5 +114,6 @@ extension AddWokoutsToShoeView {
         AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: $workouts)
             .navigationTitle("Add Workouts")
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environment(HealthManager.shared)
     }
 }

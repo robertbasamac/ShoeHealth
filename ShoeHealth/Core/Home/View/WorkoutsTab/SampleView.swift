@@ -10,6 +10,7 @@ import HealthKit
 
 struct SampleView: View {
     
+    @Environment(HealthManager.self) private var healthManager
     var workout: HKWorkout
     
     @State private var samples: [HKQuantitySample] = []
@@ -34,7 +35,7 @@ struct SampleView: View {
             }
         }
         .task {
-            HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
+            healthManager.fetchDistanceSamples(for: workout) { samples in
                 self.samples = samples
             }
         }

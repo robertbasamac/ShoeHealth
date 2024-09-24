@@ -181,11 +181,13 @@ extension AddShoeView {
             HStack {
                 Text("Unit of Measure")
                 Spacer(minLength: 40)
-                Picker("Unit", selection: $unitOfMeasure) {
-                    Text(UnitOfMeasure.metric.rawValue).tag(UnitOfMeasure.metric)
-                    Text(UnitOfMeasure.imperial.rawValue).tag(UnitOfMeasure.imperial)
+                Picker("Unit of Measure", selection: $unitOfMeasure) {
+                    ForEach(UnitOfMeasure.allCases, id: \.self) { unit in
+                        Text(unit.rawValue)
+                            .tag(unit)
+                    }
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(.segmented)
             }
                 
             VStack(spacing: 2) {
@@ -212,7 +214,7 @@ extension AddShoeView {
         } header: {
             Text("Lifespan distance")
         } footer: {
-            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight any other factors.")
+            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight and other factors.")
         }
     }
     
@@ -255,36 +257,6 @@ extension AddShoeView {
     private func isSaveButtonDisabled() -> Bool {
         return addViewModel.shoeBrand.isEmpty || addViewModel.shoeModel.isEmpty || addViewModel.shoeNickname.isEmpty
     }
-    
-    func convertLifespanDistance(_ lifespanDistance: Double, unitOfMeasure: UnitOfMeasure) -> Double {
-        var convertedDistance: Double
-        
-        let distanceRange = unitOfMeasure.range
-        
-        if unitOfMeasure == .metric {
-            convertedDistance = lifespanDistance * 1.60934 // miles to km
-            
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        } else {
-            convertedDistance = lifespanDistance / 1.60934 // km to miles
-            
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        }
-        
-        return roundToNearest50(convertedDistance)
-    }
-    
-    func roundToNearest50(_ value: Double) -> Double {
-        return (value / 50.0).rounded() * 50.0
-    }
 }
 
 // MARK: - Previews
@@ -294,6 +266,7 @@ extension AddShoeView {
         NavigationStack {
             AddShoeView()
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(SettingsManager.shared)
         }
     }
 }

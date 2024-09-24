@@ -25,13 +25,13 @@ struct ContentView: View {
 #Preview("Filled") {
     ContentView()
         .modelContainer(PreviewSampleData.container)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environmentObject(NavigationRouter())
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
 }
 
 #Preview("Empty") {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environmentObject(NavigationRouter())
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
 }

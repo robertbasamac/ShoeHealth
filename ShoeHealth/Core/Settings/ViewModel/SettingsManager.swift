@@ -24,9 +24,9 @@ final class SettingsManager {
         }
     }
     
-    private(set) var remindMeLater: PresetTime {
+    private(set) var remindMeLaterTime: PresetTime {
         didSet {
-            defaults?.set(remindMeLater.encodedString, forKey: "REMIND_ME_LATER")
+            defaults?.set(remindMeLaterTime.encodedString, forKey: "REMIND_ME_LATER")
         }
     }
     
@@ -38,7 +38,7 @@ final class SettingsManager {
         self.unitOfMeasure = UnitOfMeasure(rawValue: savedUnitOfMeasure) ?? .metric
         
         let savedRemindMeLater = defaults?.string(forKey: "REMIND_ME_LATER") ?? PresetTime.fiveMinutes.encodedString
-        self.remindMeLater = PresetTime(from: savedRemindMeLater) ?? .fiveMinutes
+        self.remindMeLaterTime = PresetTime(from: savedRemindMeLater) ?? .fiveMinutes
     }
     
     func addObserver(_ observer: @escaping () -> Void) {
@@ -56,6 +56,6 @@ final class SettingsManager {
     }
     
     func setRemindMeLaterTime(to presetTime: PresetTime) {
-        self.remindMeLater = presetTime
+        self.remindMeLaterTime = presetTime
     }
 }

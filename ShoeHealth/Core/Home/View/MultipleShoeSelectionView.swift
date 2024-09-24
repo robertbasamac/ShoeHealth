@@ -12,6 +12,7 @@ import HealthKit
 struct MultipleShoeSelectionView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     @Environment(\.dismiss) private var dismiss
     
     @State private var selectionsDict: [UUID : Shoe] = [:]
@@ -86,7 +87,7 @@ extension MultipleShoeSelectionView {
     }
     
     private var workoutsList: some View {
-        ForEach(HealthManager.shared.getWorkouts(forIDs: workoutIDs)) { workout in
+        ForEach(healthManager.getWorkouts(forIDs: workoutIDs)) { workout in
             VStack(alignment: .leading, spacing: 0) {
                 WorkoutListItem(workout: workout)
                     .overlay(alignment: .trailing) {
@@ -157,6 +158,7 @@ extension MultipleShoeSelectionView {
                                       systemImage: "figure.run.circle",
                                       onDone: { _ in })
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environment(HealthManager.shared)
         }
     }
 }

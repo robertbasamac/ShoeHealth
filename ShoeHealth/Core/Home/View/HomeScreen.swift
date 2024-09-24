@@ -10,7 +10,8 @@ import SwiftUI
 struct HomeScreen: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @Environment(ShoesViewModel.self) private var shoesViewModel: ShoesViewModel
+    @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
@@ -103,7 +104,7 @@ struct HomeScreen: View {
             }
         }
         .task {
-            await HealthManager.shared.fetchRunningWorkouts()
+            await healthManager.fetchRunningWorkouts()
         }
     }
 }
@@ -113,13 +114,17 @@ struct HomeScreen: View {
 #Preview("Filled") {
     HomeScreen()
         .modelContainer(PreviewSampleData.container)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environmentObject(NavigationRouter())
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        .environment(HealthManager.shared)
+        .environment(SettingsManager.shared)
 }
 
 #Preview("Empty") {
     HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environmentObject(NavigationRouter())
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+        .environment(HealthManager.shared)
+        .environment(SettingsManager.shared)
 }

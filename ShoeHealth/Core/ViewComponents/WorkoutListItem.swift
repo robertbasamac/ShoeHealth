@@ -9,7 +9,9 @@ import SwiftUI
 import HealthKit
 
 struct WorkoutListItem: View {
-        
+    
+    @Environment(SettingsManager.self) private var settingsManager
+    
     var workout: HKWorkout
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
@@ -35,7 +37,7 @@ struct WorkoutListItem: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .onChange(of: SettingsManager.shared.unitOfMeasure) { _, newValue in
+        .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
             unitOfMeasure = newValue
         }
     }

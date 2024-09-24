@@ -13,6 +13,7 @@ import OSLog
 private let logger = Logger(subsystem: "Shoe Health", category: "HealthManager")
 
 struct RunningWorkout {
+    
     var workout: HKWorkout
     private var averageHeartRate: Double = 0.0
     private var averageCadence: Double = 0.0

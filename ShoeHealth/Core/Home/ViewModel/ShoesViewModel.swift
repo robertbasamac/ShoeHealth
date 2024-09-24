@@ -413,19 +413,44 @@ final class ShoesViewModel {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
         for shoe in shoes {
-            switch unitOfMeasure {
-            case .imperial:
-                shoe.lifespanDistance = shoe.lifespanDistance / 1.60934
-            case .metric:
-                shoe.lifespanDistance = shoe.lifespanDistance * 1.60934
-            }
-
+            shoe.lifespanDistance = convertLifespanDistance(shoe.lifespanDistance, unitOfMeasure: unitOfMeasure)
+            
             Task {
                 await updateShoeStatistics(shoe)
             }
         }
         
         save()
+    }
+    
+    private func convertLifespanDistance(_ distance: Double, unitOfMeasure: UnitOfMeasure) -> Double {
+        var convertedDistance: Double
+        
+        let distanceRange = unitOfMeasure.range
+        
+        if unitOfMeasure == .metric {
+            convertedDistance = distance * 1.60934 // miles to km
+            
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        } else {
+            convertedDistance = distance / 1.60934 // km to miles
+            
+            if convertedDistance < distanceRange.lowerBound {
+                convertedDistance = distanceRange.lowerBound
+            } else if convertedDistance > distanceRange.upperBound {
+                convertedDistance = distanceRange.upperBound
+            }
+        }
+        
+        return roundToNearest50(convertedDistance)
+    }
+    
+    private func roundToNearest50(_ value: Double) -> Double {
+        return (value / 50.0).rounded() * 50.0
     }
     
     func toggleSortOrder() {
