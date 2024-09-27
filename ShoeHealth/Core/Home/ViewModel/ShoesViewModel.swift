@@ -191,14 +191,11 @@ final class ShoesViewModel {
         
         for category in RunningCategory.allCases {
             guard let workoutsForCategory = filteredWorkouts[category] else { continue }
-            
-            logger.debug("Computing PR for category \(category.rawValue)")
-            
+                        
             totalRuns[category] = workoutsForCategory.count
             
             for workout in workoutsForCategory {
-                logger.debug("Computing \(workout.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit))")
-
+                
                 group.enter()
                 
                 HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
@@ -215,8 +212,6 @@ final class ShoesViewModel {
 
                         if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
                             if accumulatedDistance + sampleDistance >= category.distance {
-                                logger.debug("Accumulated distance greater than the category distance, (+ \(sampleDistance)): \(accumulatedDistance + sampleDistance)")
-                                
                                 let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
                                 
                                 let remainingDistance = category.distance - accumulatedDistance
@@ -229,14 +224,9 @@ final class ShoesViewModel {
                             
                             accumulatedDistance += sampleDistance
                             lastValidSampleEndDate = sample.endDate
-                            logger.debug("\(currentIndex) - Accumulated distance (+ \(sampleDistance), \(sample.endDate)) = \(accumulatedDistance)")
-                        } else {
-                            logger.warning("Sample not satysfying the date condition, skipping: \(sampleDistance), \(sample.startDate)")
                         }
                     }
-                    
-                    logger.debug("Total samples counted for category \(category.rawValue), \(currentIndex), from total of \(samples.count)")
-                    
+                                        
                     if let lastSampleEndDate = lastSampleEndDate {
                         let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
                         
@@ -367,7 +357,9 @@ final class ShoesViewModel {
     
     private func setupObservers() {
         SettingsManager.shared.addObserver { [weak self] in
-            self?.convertShoesToSelectedUnit()
+            Task {
+                await self?.convertShoesToSelectedUnit()
+            }
         }
         
         NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
@@ -409,15 +401,17 @@ final class ShoesViewModel {
         WidgetCenter.shared.reloadAllTimelines()
     }
     
-    private func convertShoesToSelectedUnit() {
+    private func convertShoesToSelectedUnit() async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
+        let group = DispatchGroup()
+        
         for shoe in shoes {
+            group.enter()
+            
             shoe.lifespanDistance = convertLifespanDistance(shoe.lifespanDistance, unitOfMeasure: unitOfMeasure)
             
-            Task {
-                await updateShoeStatistics(shoe)
-            }
+            await updateShoeStatistics(shoe)
         }
         
         save()

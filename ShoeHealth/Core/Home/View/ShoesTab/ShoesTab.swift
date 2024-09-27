@@ -21,7 +21,7 @@ struct ShoesTab: View {
     
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 12) {
+            VStack(spacing: 0) {
                 lastRunSection
                 
                 defaultShoeSection
@@ -44,6 +44,9 @@ struct ShoesTab: View {
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
+        }
+        .task {
+            await healthManager.fetchRunningWorkouts()
         }
         .refreshable {
             await healthManager.fetchRunningWorkouts()
@@ -88,6 +91,7 @@ extension ShoesTab {
             }
             .roundedContainer()
         }
+        .padding(.top, 8)
     }
     
     @ViewBuilder
@@ -106,7 +110,7 @@ extension ShoesTab {
                 HStack(spacing: 0) {
                     ShoeImage()
                         .frame(width: 140, height: 140)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     VStack {
                         Text("No Default Shoe")
@@ -250,8 +254,13 @@ extension ShoesTab {
                                 Label("Delete", systemImage: "trash")
                             }
                         } preview: {
-                            ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
-                                .padding(10)
+                            if shoe.image == nil {
+                                ShoeCell(shoe: shoe, width: 150, hideImage: true, displayProgress: false, reserveSpace: false)
+                                    .padding(10)
+                            } else {
+                                ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
+                                    .padding(10)
+                            }
                         }
                         .onTapGesture {
                             selectedShoe = shoe
@@ -259,11 +268,11 @@ extension ShoesTab {
                 }
             }
             .scrollTargetLayout()
-            .padding(.horizontal)
-            .padding(.top, 8)
         }
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
+        .contentMargins(.horizontal, 16)
+        .contentMargins(.vertical, 8)
     }
     
     @ViewBuilder
@@ -434,6 +443,7 @@ extension ShoesTab {
             .environmentObject(NavigationRouter())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
             .environment(SettingsManager.shared)
+            .environment(HealthManager.shared)
     }
 }
 

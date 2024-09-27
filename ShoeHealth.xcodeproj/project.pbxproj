@@ -292,7 +292,6 @@
 			children = (
 				0980A7F22BB5AEB4000848A1 /* Helpers */,
 				093742A22B7B9C74008D96BD /* Extensions */,
-				093742A32B7B9C80008D96BD /* Model */,
 				0980A7F32BB5AEFB000848A1 /* Services */,
 				093742A72B84AE29008D96BD /* View */,
 				09E385E82B13FCAF005CFF02 /* PreviewSample */,
@@ -492,6 +491,7 @@
 		09C171662C203CB4005FAB1A /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				093742A32B7B9C80008D96BD /* Model */,
 				09C1716C2C203D8A005FAB1A /* View */,
 				09C1716D2C203D9D005FAB1A /* ViewModel */,
 			);
@@ -534,8 +534,8 @@
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
-				09A9FF222C9B48F4002507C9 /* Settings */,
 				09C171662C203CB4005FAB1A /* Home */,
+				09A9FF222C9B48F4002507C9 /* Settings */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09BD131B2B40923B00DFA6B1 /* ViewComponents */,
 			);

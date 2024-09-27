@@ -10,11 +10,11 @@ import SwiftUI
 struct StaticHeaderScrollTargetBehavior: ScrollTargetBehavior {
     
     func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
-        if target.rect.minY < 75 {
-            if target.rect.minY < 25 {
-                target.rect.origin = .zero
+        if target.rect.minY < 110 {
+            if target.rect.minY < 30 {
+                target.rect.origin.y = .zero
             } else {
-                target.rect.origin = .init(x: 0, y: 75)
+                target.rect.origin.y = 110
             }
         }
     }

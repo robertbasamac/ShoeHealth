@@ -9,20 +9,28 @@ import SwiftUI
 
 struct StaticHeaderCell: View {
     
-    var title: String
-    var subtitle: String
+    var model: String
+    var brand: String
+    var nickname: String
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(subtitle)
-                .font(.headline)
-            Text(title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+        VStack(alignment: .leading, spacing: 6) {
+            Text(nickname)
+                .font(.system(size: 20, weight: .semibold, design: .default))
+                .foregroundStyle(Color.theme.accent)
+                .italic()
                 .lineLimit(1)
                 .minimumScaleFactor(0.4)
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Text(brand)
+                    .font(.system(size: 17, weight: .semibold, design: .default))
+                Text(model)
+                    .font(.system(size: 34, weight: .bold, design: .default))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
+            }
         }
-        .foregroundStyle(.primary)
         .padding(.horizontal)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -32,5 +40,8 @@ struct StaticHeaderCell: View {
 // MARK: - Preview
 
 #Preview {
-    StaticHeaderCell(title: "Pegasus Turbo Next Nature", subtitle: "Nike")
+    VStack {
+        StaticHeaderCell(model: "Pegasus Turbo Next Nature", brand: "Nike", nickname: "Shoey")
+        Spacer()
+    }
 }

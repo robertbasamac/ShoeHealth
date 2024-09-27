@@ -10,41 +10,46 @@ import SwiftUI
 struct StretchyHeaderCell: View {
     
     var height: CGFloat = 300
-    var title: String
-    var subtitle: String
+    var model: String
+    var brand: String
+    var nickname: String
     var imageData: Data?
     var shadowColor: Color = .black.opacity(0.8)
     
     var body: some View {
-        Rectangle()
-            .opacity(0)
-            .overlay {
-                Rectangle().opacity(0.0001)
-                    .overlay {
-                        if let imageData, let uiImage = UIImage(data: imageData) {
+        if let imageData = imageData, let uiImage = UIImage(data: imageData) {
+            Rectangle()
+                .opacity(0)
+                .overlay {
+                    Rectangle().opacity(0.0001)
+                        .overlay {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .allowsHitTesting(false)
                         }
-                    }
-                    .clipped()
-            }
-            .overlay(alignment: .bottomLeading) {
-                StaticHeaderCell(title: title, subtitle: subtitle)
-                    .frame(height: 75)
-                    .background {
-                        LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
-                    }
-            }
-            .asStretchyHeader(startingHeight: height)
+                        .clipped()
+                }
+                .overlay(alignment: .bottomLeading) {
+                    StaticHeaderCell(model: model, brand: brand, nickname: nickname)
+                        .frame(height: 110)
+                        .padding(.top, 20)
+                        .background {
+                            LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
+                        }
+                }
+                .asStretchyHeader(startingHeight: height)
+        } else {
+            StaticHeaderCell(model: model, brand: brand, nickname: nickname)
+                .frame(height: 110)
+        }
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    StretchyHeaderCell(title: Shoe.previewShoe.model, subtitle: Shoe.previewShoe.brand, imageData: Shoe.previewShoe.image)
+    StretchyHeaderCell(model: Shoe.previewShoe.model, brand: Shoe.previewShoe.brand, nickname: Shoe.previewShoe.nickname, imageData: Shoe.previewShoe.image)
         .background(.gray)
         .frame(maxHeight: .infinity, alignment: .top)
 }

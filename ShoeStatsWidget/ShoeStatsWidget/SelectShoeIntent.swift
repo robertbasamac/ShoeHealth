@@ -16,9 +16,11 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "SelectS
 // MARK: - AppEntity
 
 struct ShoeStatsEntity: AppEntity {
+    
     var id: UUID
     var brand: String
     var model: String
+    var nickname: String
     var lifespanDistance: Double
     var totalDistance: Double
     var lastRunDate: Date?
@@ -26,10 +28,11 @@ struct ShoeStatsEntity: AppEntity {
     var wearPercentageAsString: String
     var wearColor: Color
     
-    init(id: UUID, brand: String, model: String, lifespanDistance: Double, totalDistance: Double, lastActivityDate: Date, wearPercentage: Double, wearPercentageAsString: String, wearColor: Color) {
+    init(id: UUID, brand: String, model: String, nickname: String, lifespanDistance: Double, totalDistance: Double, lastActivityDate: Date, wearPercentage: Double, wearPercentageAsString: String, wearColor: Color) {
         self.id = id
         self.brand = brand
         self.model = model
+        self.nickname = nickname
         self.lifespanDistance = lifespanDistance
         self.totalDistance = totalDistance
         self.lastRunDate = lastActivityDate
@@ -42,6 +45,7 @@ struct ShoeStatsEntity: AppEntity {
         self.id = shoe.id
         self.brand = shoe.brand
         self.model = shoe.model
+        self.nickname = shoe.nickname
         self.lifespanDistance = shoe.lifespanDistance
         self.totalDistance = shoe.totalDistance
         self.lastRunDate = shoe.lastActivityDate
@@ -51,7 +55,7 @@ struct ShoeStatsEntity: AppEntity {
     }
     
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(brand) - \(model)")
+        DisplayRepresentation(title: "\(nickname)", subtitle: "\(brand) - \(model)")
     }
     
     static var typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"

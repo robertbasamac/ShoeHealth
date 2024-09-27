@@ -60,19 +60,22 @@ final class HealthManager {
     @ObservationIgnored private var healthStore = HKHealthStore()
     
     @ObservationIgnored private let readTypes: Set = [HKObjectType.workoutType(),
-                                                      HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
-                                                      HKQuantityType.quantityType(forIdentifier: .heartRate)!,
-                                                      HKQuantityType.quantityType(forIdentifier: .stepCount)!,
-                                                      HKQuantityType.quantityType(forIdentifier: .runningPower)!]
+                                                      HKQuantityType(.distanceWalkingRunning),
+                                                      HKQuantityType(.heartRate),
+                                                      HKQuantityType(.stepCount),
+                                                      HKQuantityType(.runningPower)]
     
     @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
     @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
-    @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) var latestUpdate: Date
-    
     private(set) var workouts: [HKWorkout] = [] {
         didSet {
             if let workout = workouts.first {
+                guard workout != lastWorkout?.workout else {
+                    isLoading = false
+                    return
+                }
+                
                 lastWorkout = RunningWorkout(workout: workout)
                 
                 Task {
@@ -89,6 +92,9 @@ final class HealthManager {
     private(set) var lastWorkout: RunningWorkout? = nil
     
     private(set) var isLoading: Bool = true
+    
+    @ObservationIgnored var isFetchingWorkouts: Bool = false
+    @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) var latestUpdate: Date
     
     private init() { }
     
@@ -200,6 +206,14 @@ final class HealthManager {
             isLoading = false
             return
         }
+        
+        guard !isFetchingWorkouts else {
+            logger.debug("Fetching running workouts in progress already.")
+            return
+        }
+        
+        isFetchingWorkouts = true
+        defer { isFetchingWorkouts = false }
 
         let samples = try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
             let query = HKSampleQuery(sampleType: sampleType,
@@ -258,7 +272,6 @@ final class HealthManager {
             
             if let quantity = quantity {
                 distanceSamples.append(HKQuantitySample(type: .init(.distanceWalkingRunning), quantity: quantity, start: dateInterval?.start ?? Date(), end: dateInterval?.end ?? Date()))
-                logger.debug("\(distanceSamples.count) - New distance sample: \(quantity.doubleValue(for: HKUnit.meter()))")
             }
             
             if done {

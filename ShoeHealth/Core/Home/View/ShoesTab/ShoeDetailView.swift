@@ -39,8 +39,8 @@ struct ShoeDetailView: View {
         Group {
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 12) {
-                        StretchyHeaderCell(height: 250, title: shoe.model, subtitle: shoe.brand, imageData: imageData)
+                    LazyVStack(spacing: 0) {
+                        StretchyHeaderCell(height: 250, model: shoe.model, brand: shoe.brand, nickname: shoe.nickname, imageData: imageData)
                             .overlay(content: {
                                 Color(uiColor: .systemBackground)
                                     .opacity(Double(opacity))
@@ -58,9 +58,9 @@ struct ShoeDetailView: View {
                 .scrollTargetBehavior(.stretchyHeader)
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 12) {
-                        StaticHeaderCell(title: shoe.model, subtitle: shoe.brand)
-                            .frame(height: 75)
+                    LazyVStack(spacing: 0) {
+                        StaticHeaderCell(model: shoe.model, brand: shoe.brand, nickname: shoe.nickname)
+                            .frame(height: 110)
                             .overlay(content: {
                                 Color(uiColor: .systemBackground)
                                     .opacity(Double(opacity))
@@ -78,6 +78,7 @@ struct ShoeDetailView: View {
                 .scrollTargetBehavior(.staticHeader)
             }
         }
+        .contentMargins(.bottom, 20)
         .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(navBarTitle)
@@ -121,7 +122,6 @@ extension ShoeDetailView {
         VStack(spacing: 0) {
             Text("Health")
                 .asHeader()
-            
             VStack(spacing: 0) {
                 lifespanSection
                 
@@ -134,6 +134,7 @@ extension ShoeDetailView {
             }
             .roundedContainer()
         }
+        .padding(.top, 8)
     }
     
     @ViewBuilder
@@ -196,7 +197,7 @@ extension ShoeDetailView {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
             
-            if shoe.wearCondition.rawValue > WearCondition.good.rawValue {
+            if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
                 Button {
                     let wasDefaultShoe = shoe.isDefaultShoe
                     
@@ -346,7 +347,7 @@ extension ShoeDetailView {
                         .padding(.horizontal)
                         .padding(.vertical, 6)
                         .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
             .padding(.horizontal)
@@ -392,7 +393,7 @@ extension ShoeDetailView {
         
         opacity = interpolateOpacity(position: frame.maxY,
                                      minPosition: topPadding + showNavBarTitlePadding,
-                                     maxPosition: topPadding + 75,
+                                     maxPosition: topPadding + 110,
                                      reversed: true)
         
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden

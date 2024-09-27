@@ -11,37 +11,48 @@ struct ShoeCell: View {
     
     var shoe: Shoe
     var width: CGFloat = 140
+    var hideImage: Bool = false
     var displayProgress: Bool = true
     var reserveSpace: Bool = true
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ShoeImage(imageData: shoe.image, showBackground: true)
-                .frame(width: width, height: width)
-                .overlay {
-                    if displayProgress {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
+        VStack(alignment: .leading, spacing: 8) {
+            if !hideImage {
+                ShoeImage(imageData: shoe.image, showBackground: true)
+                    .frame(width: width, height: width)
+                    .overlay {
+                        if displayProgress {
+                            RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        }
                     }
-                }
-                .clipShape(.rect(cornerRadius: 12))
-
-            VStack(alignment: .leading) {
-                Text(shoe.brand)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
+                    .clipShape(.rect(cornerRadius: 10))
+            }
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(shoe.nickname)
+                    .font(.system(size: 15, weight: .semibold, design: .default))
+                    .italic()
+                    .foregroundStyle(Color.theme.accent)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 
-                Text(shoe.model)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2, reservesSpace: reserveSpace)
-                    .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(shoe.brand)
+                        .font(.system(size: 13, weight: .regular, design: .default))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                    
+                    Text(shoe.model)
+                        .font(.system(size: 17, weight: .semibold, design: .default))
+                        .lineLimit(2, reservesSpace: reserveSpace)
+                        .multilineTextAlignment(.leading)
+                        .minimumScaleFactor(0.7)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(8)
+            .padding(.horizontal, 8)
         }
         .frame(width: width)
-        .clipShape(.rect(cornerRadius: 12))
     }
 }
 

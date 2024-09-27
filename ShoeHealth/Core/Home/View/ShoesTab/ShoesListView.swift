@@ -23,8 +23,8 @@ struct ShoesListView: View {
         List {
             ForEach(shoes) { shoe in
                 ShoeListItem(shoe: shoe)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    .listRowInsets(.init(top: 2, leading: 16, bottom: 2, trailing: 16))
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
                     .onTapGesture {
@@ -33,6 +33,8 @@ struct ShoesListView: View {
             }
         }
         .listStyle(.plain)
+        .listRowSpacing(4)
+        .contentMargins(.horizontal, 16, for: .scrollContent)
         .toolbarRole(.editor)
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe)

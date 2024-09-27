@@ -87,7 +87,7 @@ extension ShoeSelectionView {
                         .imageScale(.large)
                         .foregroundStyle(Color.theme.accent)
                     
-                    ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                    ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
                 }
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .contentShape(.rect)

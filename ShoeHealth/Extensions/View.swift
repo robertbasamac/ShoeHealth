@@ -22,9 +22,9 @@ extension View {
     func roundedContainer() -> some View {
         self
             .background(Color(uiColor: .secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal)
-            .padding(.top, 8)
+            .padding(.vertical, 8)
     }
     
     func asHeaderTextButton() -> some View {

@@ -24,9 +24,9 @@ struct ShoeListItem: View {
                 ShoeImage(imageData: shoe.image)
                     .frame(width: width, height: width)
                     .overlay {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
                     }
-                    .clipShape(.rect(cornerRadius: 12))
+                    .clipShape(.rect(cornerRadius: 10))
             }
             
             detailsSection
@@ -35,9 +35,9 @@ struct ShoeListItem: View {
                 ShoeImage(imageData: shoe.image)
                     .frame(width: width, height: width)
                     .overlay {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width)
+                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
                     }
-                    .clipShape(.rect(cornerRadius: 12))
+                    .clipShape(.rect(cornerRadius: 10))
             }
         }
         .frame(height: width)
@@ -53,30 +53,35 @@ extension ShoeListItem {
     
     @ViewBuilder
     private var detailsSection: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                Text("\(shoe.brand)")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .overlay(alignment: .trailing) {
-                        if showNavigationLink {
-                            Image(systemName: "chevron.right")
-                                .font(.title2.bold())
-                                .imageScale(.small)
-                                .foregroundStyle(.secondary)
-                        }
+        VStack(alignment: .leading, spacing: 6) {
+            Text(shoe.nickname)
+                .font(.system(size: 15, weight: .semibold, design: .default))
+                .italic()
+                .foregroundStyle(Color.theme.accent)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .overlay(alignment: .trailing) {
+                    if showNavigationLink {
+                        Image(systemName: "chevron.right")
+                            .font(.title2.bold())
+                            .imageScale(.small)
+                            .foregroundStyle(.secondary)
                     }
-                    .contentShape(.rect)
+                }
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Text(shoe.brand)
+                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
                 
                 Text("\(shoe.model)")
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold, design: .default))
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
-                    .minimumScaleFactor(0.4)
+                    .minimumScaleFactor(0.7)
             }
-            .frame(maxHeight: .infinity, alignment: .topLeading)
             
             if showStats {
                 HStack {
@@ -85,9 +90,9 @@ extension ShoeListItem {
                 }
             }
         }
-        .frame(maxWidth: .infinity,  maxHeight: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
     }
 }
 

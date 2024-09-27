@@ -51,7 +51,7 @@ struct EditShoeView: View {
             
             aquisitionDateSection
         }
-        .navigationTitle("Update Shoe")
+        .navigationTitle("Edit Shoe")
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .toolbar {
@@ -77,20 +77,20 @@ extension EditShoeView {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     } else {
                         Image(systemName: "square.fill")
                             .resizable()
                             .foregroundStyle(.secondary)
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                         Image(systemName: "shoe.2.fill")
                             .resizable()
                             .foregroundStyle(.primary)
                             .aspectRatio(contentMode: .fit)
                             .padding()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
                 
