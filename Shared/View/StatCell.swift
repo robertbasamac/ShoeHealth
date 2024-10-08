@@ -40,6 +40,8 @@ struct StatCell: View {
         VStack(alignment: textAlignment, spacing: 0) {
             Text(label)
                 .font(labelFont)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             Group {
                 Text(value) +
                 Text("\(unit.uppercased())")
@@ -49,6 +51,8 @@ struct StatCell: View {
             .fontWeight(.medium)
             .fontDesign(.rounded)
             .foregroundStyle(color)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
         }
         .frame(maxWidth: .infinity, alignment: containerAlignment)
     }

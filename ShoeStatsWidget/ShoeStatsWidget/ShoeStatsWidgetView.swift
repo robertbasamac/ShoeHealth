@@ -29,17 +29,29 @@ struct ShoeStatsSnapshotWidgetView : View {
     var shoe: ShoeStatsEntity
     var unitSymbol: String
     
+    @State private var height: CGFloat = 0
+    @State private var width: CGFloat = 0
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
+            Text(shoe.nickname)
+                .font(.system(size: 14, weight: .semibold, design: .default))
+                .italic()
+                .foregroundStyle(Color.theme.greenEnergy)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            
             VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.brand)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 12, weight: .regular, design: .default))
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
                 
                 Text(shoe.model)
-                    .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 16, weight: .semibold, design: .default))
                     .lineLimit(2, reservesSpace: true)
                     .multilineTextAlignment(.leading)
+                    .minimumScaleFactor(0.6)
             }
                         
             HStack(spacing: 2) {
@@ -52,17 +64,28 @@ struct ShoeStatsSnapshotWidgetView : View {
                 .contentTransition(.numericText(value: shoe.totalDistance))
                 
                 ZStack {
-                    CircularProgressView(progress: shoe.wearPercentage, lineWidth: 4, color: shoe.wearColor)
+                    CircularProgressView(progress: shoe.wearPercentage, lineWidth: 3, color: shoe.wearColor)
+                        .background(
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .preference(key: WidthPreferenceKey.self, value: geometry.size.width)
+                                    .preference(key: HeightPreferenceKey.self, value: geometry.size.height)
+                            }
+                        )
+                    
                     StatCell(label: "WEAR", value: shoe.wearPercentageAsString, labelFont: .system(size: 10), valueFont: .system(size: 12), color: shoe.wearColor)
+                        .padding(.horizontal, getPadding())
+                        .frame(width: width, height: height)
                         .contentTransition(.numericText(value: shoe.totalDistance))
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+                .frame(maxHeight: .infinity, alignment: .trailing)
+                .onPreferenceChange(WidthPreferenceKey.self) { width in
+                    self.width = width
+                }
+                .onPreferenceChange(HeightPreferenceKey.self) { height in
+                    self.height = height
+                }
             }
-            
-            Text("Last Run • \(shoe.lastRunDate != nil ? dateFormatter.string(from: shoe.lastRunDate!) : "N/A")")
-                .font(.system(size: 10))
-                .minimumScaleFactor(0.8)
-                .lineLimit(1)
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,6 +98,10 @@ struct ShoeStatsSnapshotWidgetView : View {
             }
         }
     }
+    
+    private func getPadding() -> CGFloat {
+        return (width - height) / 2 + height / 7
+    }
 }
 
 // MARK: - Previews
@@ -86,3 +113,20 @@ struct ShoeStatsSnapshotWidgetView : View {
     ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[2]))
     ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[3]))
 }
+
+struct WidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value += nextValue()
+    }
+}
+
+struct HeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value += nextValue()
+    }
+}
+

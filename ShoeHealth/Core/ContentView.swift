@@ -27,6 +27,8 @@ struct ContentView: View {
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        .environment(HealthManager.shared)
+        .environment(SettingsManager.shared)
 }
 
 #Preview("Empty") {
@@ -34,4 +36,6 @@ struct ContentView: View {
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+        .environment(HealthManager.shared)
+        .environment(SettingsManager.shared)
 }

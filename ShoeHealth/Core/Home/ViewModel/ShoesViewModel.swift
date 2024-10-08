@@ -109,16 +109,26 @@ final class ShoesViewModel {
     func add(workoutIDs: [UUID], toShoe shoeID: UUID) async {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
+        var oldShoes: [Shoe] = []
+        
         for workoutID in workoutIDs {
             if let oldShoe = getShoe(ofWorkoutID: workoutID) {
                 oldShoe.workouts.removeAll { $0 == workoutID }
-                
-                await updateShoeStatistics(oldShoe)
+                oldShoes.append(oldShoe)
+            }
+        }
+        
+        oldShoes = Array(Set(oldShoes))
+        
+        await withTaskGroup(of: Void.self) { group in
+            for oldShoe in oldShoes {
+                group.addTask {
+                    await self.updateShoeStatistics(oldShoe)
+                }
             }
         }
         
         let previousWear = shoe.wearCondition
-        
         shoe.workouts.append(contentsOf: workoutIDs)
         
         await updateShoeStatistics(shoe)
@@ -174,126 +184,6 @@ final class ShoesViewModel {
         save()
     }
     
-    private func computePersonalBests(for shoe: Shoe) async {
-        var personalBests: [RunningCategory: PersonalBest?] = [:]
-        var totalRuns: [RunningCategory: Int] = [:]
-        var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
-        
-        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
-        
-        for category in RunningCategory.allCases {
-            personalBests[category] = nil
-            totalRuns[category] = 0
-            filteredWorkouts[category] = workouts.filter { $0.totalDistance?.doubleValue(for: .meter()) ?? 0 >= category.distance }
-        }
-        
-        let group = DispatchGroup()
-        
-        for category in RunningCategory.allCases {
-            guard let workoutsForCategory = filteredWorkouts[category] else { continue }
-                        
-            totalRuns[category] = workoutsForCategory.count
-            
-            for workout in workoutsForCategory {
-                
-                group.enter()
-                
-                HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
-                    var accumulatedDistance: Double = 0
-                    var lastSampleEndDate: Date?
-                    var lastValidSampleEndDate: Date?
-                    
-                    var currentIndex = 0
-                    
-                    for sample in samples {
-                        let sampleDistance = sample.quantity.doubleValue(for: .meter())
-
-                        currentIndex += 1
-
-                        if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
-                            if accumulatedDistance + sampleDistance >= category.distance {
-                                let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
-                                
-                                let remainingDistance = category.distance - accumulatedDistance
-                                let proportion = remainingDistance / sampleDistance
-                                let interpolatedTime = proportion * sampleDuration
-                                
-                                lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
-                                break
-                            }
-                            
-                            accumulatedDistance += sampleDistance
-                            lastValidSampleEndDate = sample.endDate
-                        }
-                    }
-                                        
-                    if let lastSampleEndDate = lastSampleEndDate {
-                        let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
-                        
-                        if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
-                            personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
-                        }
-                    }
-                    
-                    group.leave()
-                }
-            }
-        }
-        
-        await withCheckedContinuation { continuation in
-            group.notify(queue: .main) {
-                shoe.personalBests = personalBests
-                shoe.totalRuns = totalRuns
-                continuation.resume()
-            }
-        }
-        
-        logger.debug("Personal bests computed for \(shoe.model).")
-    }
-    
-    func compareDatesIgnoringMoreGranularComponents(_ date1: Date?, _ date2: Date?) -> Bool {
-        // If both dates are nil, consider them equal
-        if date1 == nil && date2 == nil {
-            return true
-        }
-
-        // If only one date is nil, they are not equal
-        guard let date1 = date1, let date2 = date2 else {
-            return false
-        }
-
-        // Compare the specific components (year, month, day, hour, minute, second)
-        let calendar = Calendar.current
-        let components1 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date1)
-        let components2 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date2)
-
-        if let year1 = components1.year, let year2 = components2.year, year1 != year2 {
-            return year1 > year2
-        }
-        
-        if let month1 = components1.month, let month2 = components2.month, month1 != month2 {
-            return month1 > month2
-        }
-        
-        if let day1 = components1.day, let day2 = components2.day, day1 != day2 {
-            return day1 > day2
-        }
-        
-        if let hour1 = components1.hour, let hour2 = components2.hour, hour1 != hour2 {
-            return hour1 > hour2
-        }
-        
-        if let minute1 = components1.minute, let minute2 = components2.minute, minute1 != minute2 {
-            return minute1 > minute2
-        }
-        
-        if let second1 = components1.second, let second2 = components2.second, second1 != second2 {
-            return second1 > second2
-        }
-        
-        return true
-    }
-    
     private func updateShoeStatistics(_ shoe: Shoe) async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
@@ -310,6 +200,75 @@ final class ShoesViewModel {
         }
         
         await computePersonalBests(for: shoe)
+    }
+    
+    private func computePersonalBests(for shoe: Shoe) async {
+        var personalBests: [RunningCategory: PersonalBest?] = [:]
+        var totalRuns: [RunningCategory: Int] = [:]
+        var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
+        
+        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+        
+        for category in RunningCategory.allCases {
+            personalBests[category] = nil
+            totalRuns[category] = 0
+            filteredWorkouts[category] = workouts.filter { $0.totalDistance?.doubleValue(for: .meter()) ?? 0 >= category.distance }
+        }
+        
+        await withTaskGroup(of: Void.self) { group in
+            for category in RunningCategory.allCases {
+                guard let workoutsForCategory = filteredWorkouts[category] else { continue }
+                
+                totalRuns[category] = workoutsForCategory.count
+                
+                for workout in workoutsForCategory {
+                    group.addTask {
+                        HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
+                            var accumulatedDistance: Double = 0
+                            var lastSampleEndDate: Date?
+                            var lastValidSampleEndDate: Date?
+                            
+                            var currentIndex = 0
+                            
+                            for sample in samples {
+                                let sampleDistance = sample.quantity.doubleValue(for: .meter())
+                                
+                                currentIndex += 1
+                                
+                                if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
+                                    if accumulatedDistance + sampleDistance >= category.distance {
+                                        let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
+                                        
+                                        let remainingDistance = category.distance - accumulatedDistance
+                                        let proportion = remainingDistance / sampleDistance
+                                        let interpolatedTime = proportion * sampleDuration
+                                        
+                                        lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
+                                        break
+                                    }
+                                    
+                                    accumulatedDistance += sampleDistance
+                                    lastValidSampleEndDate = sample.endDate
+                                }
+                            }
+                            
+                            if let lastSampleEndDate = lastSampleEndDate {
+                                let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
+                                
+                                if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
+                                    personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        shoe.personalBests = personalBests
+        shoe.totalRuns = totalRuns
+        
+        logger.debug("Personal bests computed for \(shoe.model).")
     }
     
     // MARK: - Getters
@@ -353,7 +312,7 @@ final class ShoesViewModel {
         return filteredShoes.sorted { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
     }
     
-    // MARK: - Other Methods
+    // MARK: - CloudKit Updates Handling
     
     private func setupObservers() {
         SettingsManager.shared.addObserver { [weak self] in
@@ -382,6 +341,8 @@ final class ShoesViewModel {
             }
         }
     }
+    
+    // MARK: - Other Methods
     
     func fetchShoes() {
         logger.debug("Fetching shoes...")
@@ -441,6 +402,49 @@ final class ShoesViewModel {
         }
         
         return roundToNearest50(convertedDistance)
+    }
+    
+    private func compareDatesIgnoringMoreGranularComponents(_ date1: Date?, _ date2: Date?) -> Bool {
+        // If both dates are nil, consider them equal
+        if date1 == nil && date2 == nil {
+            return true
+        }
+
+        // If only one date is nil, they are not equal
+        guard let date1 = date1, let date2 = date2 else {
+            return false
+        }
+
+        // Compare the specific components (year, month, day, hour, minute, second)
+        let calendar = Calendar.current
+        let components1 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date1)
+        let components2 = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date2)
+
+        if let year1 = components1.year, let year2 = components2.year, year1 != year2 {
+            return year1 > year2
+        }
+        
+        if let month1 = components1.month, let month2 = components2.month, month1 != month2 {
+            return month1 > month2
+        }
+        
+        if let day1 = components1.day, let day2 = components2.day, day1 != day2 {
+            return day1 > day2
+        }
+        
+        if let hour1 = components1.hour, let hour2 = components2.hour, hour1 != hour2 {
+            return hour1 > hour2
+        }
+        
+        if let minute1 = components1.minute, let minute2 = components2.minute, minute1 != minute2 {
+            return minute1 > minute2
+        }
+        
+        if let second1 = components1.second, let second2 = components2.second, second1 != second2 {
+            return second1 > second2
+        }
+        
+        return true
     }
     
     private func roundToNearest50(_ value: Double) -> Double {

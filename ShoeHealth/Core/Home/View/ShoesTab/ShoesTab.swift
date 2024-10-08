@@ -35,6 +35,7 @@ struct ShoesTab: View {
         }
         .navigationTitle("Shoe Health")
         .navigationBarTitleDisplayMode(.inline)
+        .scrollIndicators(.hidden)
         .toolbar {
             toolbarItems
         }
