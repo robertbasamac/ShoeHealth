@@ -12,11 +12,11 @@
 		090E156C2BE8EAAA00BC8124 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156B2BE8EAAA00BC8124 /* View.swift */; };
 		090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
 		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
-		091AD7122C87786B002D57C4 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091AD7112C87786B002D57C4 /* StoreKitManager.swift */; };
 		091AD7172C878E6B002D57C4 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 091AD7162C878E6B002D57C4 /* Products.storekit */; };
 		091AD71A2C87A223002D57C4 /* Products.plist in Resources */ = {isa = PBXBuildFile; fileRef = 091AD7192C87A223002D57C4 /* Products.plist */; };
 		091AD7272C902376002D57C4 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 091AD7252C902376002D57C4 /* LICENSE */; };
 		0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */; };
+		0931CB152CB52CD600BDC511 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0931CB142CB52CD600BDC511 /* StoreManager.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
 		0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */; };
@@ -142,11 +142,11 @@
 		090E156B2BE8EAAA00BC8124 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		090E156D2BEB814D00BC8124 /* StatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCell.swift; sourceTree = "<group>"; };
 		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
-		091AD7112C87786B002D57C4 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		091AD7162C878E6B002D57C4 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		091AD7192C87A223002D57C4 /* Products.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Products.plist; sourceTree = "<group>"; };
 		091AD7252C902376002D57C4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleShoeSelectionView.swift; sourceTree = "<group>"; };
+		0931CB142CB52CD600BDC511 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
 		0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechyHeaderViewModifier.swift; sourceTree = "<group>"; };
@@ -266,7 +266,7 @@
 			children = (
 				091AD7162C878E6B002D57C4 /* Products.storekit */,
 				091AD7192C87A223002D57C4 /* Products.plist */,
-				091AD7112C87786B002D57C4 /* StoreKitManager.swift */,
+				0931CB142CB52CD600BDC511 /* StoreManager.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -784,6 +784,7 @@
 				098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */,
 				0936FF552BD586F600BF5798 /* FrameReader.swift in Sources */,
 				095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */,
+				0931CB152CB52CD600BDC511 /* StoreManager.swift in Sources */,
 				09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */,
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */,
@@ -840,7 +841,6 @@
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
 				0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */,
 				0907F25E2B1C965E00EB682A /* AppDelegate.swift in Sources */,
-				091AD7122C87786B002D57C4 /* StoreKitManager.swift in Sources */,
 				094D13892C17871F003C6F50 /* HomeScreen.swift in Sources */,
 				09A9FF212C9B42B1002507C9 /* PresetTimeCell.swift in Sources */,
 				09402B7E2BFBC54800C943C1 /* RunningCategory.swift in Sources */,
