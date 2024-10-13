@@ -120,12 +120,8 @@ final class ShoesViewModel {
         
         oldShoes = Array(Set(oldShoes))
         
-        await withTaskGroup(of: Void.self) { group in
-            for oldShoe in oldShoes {
-                group.addTask {
-                    await self.updateShoeStatistics(oldShoe)
-                }
-            }
+        for oldShoe in oldShoes {
+            await self.updateShoeStatistics(oldShoe)
         }
         
         let previousWear = shoe.wearCondition
@@ -215,58 +211,66 @@ final class ShoesViewModel {
             filteredWorkouts[category] = workouts.filter { $0.totalDistance?.doubleValue(for: .meter()) ?? 0 >= category.distance }
         }
         
-        await withTaskGroup(of: Void.self) { group in
-            for category in RunningCategory.allCases {
-                guard let workoutsForCategory = filteredWorkouts[category] else { continue }
+        let group = DispatchGroup()
+        
+        for category in RunningCategory.allCases {
+            guard let workoutsForCategory = filteredWorkouts[category] else { continue }
+                        
+            totalRuns[category] = workoutsForCategory.count
+            
+            for workout in workoutsForCategory {
                 
-                totalRuns[category] = workoutsForCategory.count
+                group.enter()
                 
-                for workout in workoutsForCategory {
-                    group.addTask {
-                        HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
-                            var accumulatedDistance: Double = 0
-                            var lastSampleEndDate: Date?
-                            var lastValidSampleEndDate: Date?
-                            
-                            var currentIndex = 0
-                            
-                            for sample in samples {
-                                let sampleDistance = sample.quantity.doubleValue(for: .meter())
+                HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
+                    var accumulatedDistance: Double = 0
+                    var lastSampleEndDate: Date?
+                    var lastValidSampleEndDate: Date?
+                    
+                    var currentIndex = 0
+                    
+                    for sample in samples {
+                        let sampleDistance = sample.quantity.doubleValue(for: .meter())
+
+                        currentIndex += 1
+
+                        if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
+                            if accumulatedDistance + sampleDistance >= category.distance {
+                                let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
                                 
-                                currentIndex += 1
+                                let remainingDistance = category.distance - accumulatedDistance
+                                let proportion = remainingDistance / sampleDistance
+                                let interpolatedTime = proportion * sampleDuration
                                 
-                                if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
-                                    if accumulatedDistance + sampleDistance >= category.distance {
-                                        let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
-                                        
-                                        let remainingDistance = category.distance - accumulatedDistance
-                                        let proportion = remainingDistance / sampleDistance
-                                        let interpolatedTime = proportion * sampleDuration
-                                        
-                                        lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
-                                        break
-                                    }
-                                    
-                                    accumulatedDistance += sampleDistance
-                                    lastValidSampleEndDate = sample.endDate
-                                }
+                                lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
+                                break
                             }
                             
-                            if let lastSampleEndDate = lastSampleEndDate {
-                                let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
-                                
-                                if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
-                                    personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
-                                }
-                            }
+                            accumulatedDistance += sampleDistance
+                            lastValidSampleEndDate = sample.endDate
                         }
                     }
+                                        
+                    if let lastSampleEndDate = lastSampleEndDate {
+                        let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
+                        
+                        if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
+                            personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
+                        }
+                    }
+                    
+                    group.leave()
                 }
             }
         }
         
-        shoe.personalBests = personalBests
-        shoe.totalRuns = totalRuns
+        await withCheckedContinuation { continuation in
+            group.notify(queue: .main) {
+                shoe.personalBests = personalBests
+                shoe.totalRuns = totalRuns
+                continuation.resume()
+            }
+        }
         
         logger.debug("Personal bests computed for \(shoe.model).")
     }
