@@ -21,7 +21,7 @@
       "localizations" : [
         {
           "description" : "Get lifetime access to all app features",
-          "displayName" : "Full Access Lifetime",
+          "displayName" : "Lifetime Full Access",
           "locale" : "en_US"
         }
       ],
@@ -34,7 +34,7 @@
     "_applicationInternalID" : "6648781147",
     "_developerTeamID" : "878Q47ZQ84",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 750070045.67053795,
+    "_lastSynchronizedDate" : 750255663.27777696,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -107,8 +107,8 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Annual subscription for complete app access",
-              "displayName" : "Full Access Annual",
+              "description" : "Annual subscription for all app features ",
+              "displayName" : "Annual Full Access",
               "locale" : "en_US"
             }
           ],
@@ -135,8 +135,8 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Monthly subscription for complete app access",
-              "displayName" : "Full Access Montly",
+              "description" : "Monthly subscription for all app features",
+              "displayName" : "Montly Full Access",
               "locale" : "en_US"
             }
           ],

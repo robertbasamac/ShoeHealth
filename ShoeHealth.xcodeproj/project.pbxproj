@@ -57,9 +57,10 @@
 		0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969BDE52C58FE9400933469 /* SettingsManager.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
+		0978E0B22CB562E000DEA781 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0978E0B12CB562E000DEA781 /* PaywallView.swift */; };
 		097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */; };
 		0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */; };
-		098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */; };
+		098988022C9AD4D20036A253 /* RemindMeLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* RemindMeLaterView.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
 		09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
@@ -177,9 +178,10 @@
 		0969BDE52C58FE9400933469 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
+		0978E0B12CB562E000DEA781 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+PropertyWrapper.swift"; sourceTree = "<group>"; };
-		098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTimeSelectionView.swift; sourceTree = "<group>"; };
+		098988012C9AD4D20036A253 /* RemindMeLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeLaterView.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09A7B9DA2C81F5E100822C03 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTimeCell.swift; sourceTree = "<group>"; };
@@ -458,7 +460,7 @@
 			isa = PBXGroup;
 			children = (
 				094F26212BDC2B1200441A62 /* SettingsTab.swift */,
-				098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */,
+				098988012C9AD4D20036A253 /* RemindMeLaterView.swift */,
 				09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */,
 			);
 			path = View;
@@ -533,6 +535,7 @@
 			isa = PBXGroup;
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
+				0978E0B12CB562E000DEA781 /* PaywallView.swift */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
 				09C171662C203CB4005FAB1A /* Home */,
 				09A9FF222C9B48F4002507C9 /* Settings */,
@@ -781,7 +784,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */,
+				098988022C9AD4D20036A253 /* RemindMeLaterView.swift in Sources */,
 				0936FF552BD586F600BF5798 /* FrameReader.swift in Sources */,
 				095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */,
 				0931CB152CB52CD600BDC511 /* StoreManager.swift in Sources */,
@@ -796,6 +799,7 @@
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */,
+				0978E0B22CB562E000DEA781 /* PaywallView.swift in Sources */,
 				09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */,
 				0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */,
 				090E15712BF377F800BC8124 /* Double.swift in Sources */,
@@ -1074,6 +1078,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1116,6 +1121,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

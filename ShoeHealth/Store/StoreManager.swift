@@ -33,20 +33,15 @@ final class StoreManager: ObservableObject {
     @Published private(set) var purchasedProducts: [Product] = []
     @Published private(set) var hasFullAccess: Bool = false
     
-    @Published private(set) var status: String = ""
-    @Published private(set) var info: String = ""
+    @Published private(set) var expireDate: Date?
     
     private var updateListenerTask: Task<Void, Error>? = nil
     
     init() {
-        // Start a transaction listener as close to app launch as possible so you don't miss any transactions.
         updateListenerTask = listenForTransactions()
         
         Task {
-            // During store initialization, request products from the App Store.
-            await requestProducts()
-            
-            // Check the customer's purchase status.
+            await loadProducts()
             await updateCustomerProductStatus()
         }
     }
@@ -56,30 +51,26 @@ final class StoreManager: ObservableObject {
     }
     
     func listenForTransactions() -> Task<Void, Error> {
-        return Task.detached {
-            // Iterate through any transactions that don't come from a direct call to `purchase()`.
+        return Task(priority: .background) {
             for await result in Transaction.updates {
+                logger.debug("New transaction received")
+                
                 do {
                     let transaction = try self.checkVerified(result)
-                    logger.debug("New transaction received.")
                     
-                    // Deliver products to the user.
                     await self.updateCustomerProductStatus()
                     
-                    // Always finish a transaction.
                     await transaction.finish()
                 } catch {
-                    // StoreKit has a transaction that fails verification. Don't deliver content to the user.
-                    print("Transaction failed verification.")
+                    logger.error("Transaction failed verification.")
                 }
             }
         }
     }
     
     @MainActor
-    func requestProducts() async {
+    func loadProducts() async {
         do {
-            // Request products from the App Store
             let storeProducts = try await Product.products(for: ProductID.allCases.map { $0.rawValue })
             logger.debug("\(storeProducts.count) products received from App Store")
             
@@ -103,57 +94,59 @@ final class StoreManager: ObservableObject {
     }
     
     func purchase(_ product: Product) async throws {
-        // Begin purchasing the `Product` the user selects.
         let result = try await product.purchase()
         
         switch result {
         case .success(let verification):
-            // Check whether the transaction is verified. If it isn't,
-            // this function rethrows the verification error.
             let transaction = try checkVerified(verification)
             
-            // The transaction is verified. Deliver content to the user.
             await updateCustomerProductStatus()
             
-            // Always finish a transaction.
             await transaction.finish()
         case .userCancelled:
             logger.debug("User cancelled the purchase.")
         case .pending:
             logger.debug("The purchase is pending.")
         default:
+            logger.debug("Something went wrong while purchasing \"\(product.displayName)\".")
             break
         }
     }
     
     @MainActor
     func updateCustomerProductStatus() async {
-        var purchasedProducts: [Product] = []
-        var isFullAccessPurchased = false
+        var newPurchasedProducts: [Product] = []
         
         // Iterate through all of the user's purchased products.
         for await result in Transaction.currentEntitlements {
             do {
-                // Check whether the transaction is verified. If it isn’t, catch `failedVerification` error.
                 let transaction = try checkVerified(result)
                 
-                // Check if the user has purchased the full access product
                 switch transaction.productType {
                 case .nonConsumable:
                     if let product = lifetimeProduct {
                         if transaction.productID == product.id {
                             logger.debug("\"\(product.displayName)\" product purchased.")
                             
-                            purchasedProducts.append(product)
-                            isFullAccessPurchased = true
+                            newPurchasedProducts.append(product)
                         }
                     }
                 case .autoRenewable:
+                    guard transaction.revocationDate == nil else {
+                        continue
+                    }
+                    
                     if let product = subscriptionProducts.first(where: { $0.id == transaction.productID }) {
                         logger.debug("\"\(product.displayName)\" subscription purchased.")
                         
-                        purchasedProducts.append(product)
-                        isFullAccessPurchased = true
+                        if let expireDate = transaction.expirationDate {
+                            logger.debug("\(dateTimeFormatter.string(from: expireDate))")
+                            if let currentExpireDate = self.expireDate, currentExpireDate < expireDate {
+                                self.expireDate = expireDate
+                            }
+                        }
+                        
+                        newPurchasedProducts.append(product)
                     }
                 default:
                     break
@@ -163,33 +156,84 @@ final class StoreManager: ObservableObject {
             }
         }
         
-        //        if fullAccessPurchased, let lifetimeProduct = lifetimeProduct {
-        //            if purchasedProducts.contains(lifetimeProduct) {
-        //                logger.debug("User has purchased the lifetime product, removing subscriptions.")
-        //                subscriptionProducts.removeAll() // Subscriptions become unavailable
-        //            }
-        //        }
-        
-        // Update the store information with the purchased products.
-        self.purchasedProducts = purchasedProducts
-        self.hasFullAccess = isFullAccessPurchased
+        self.purchasedProducts = Array(Set(newPurchasedProducts))
+        self.hasFullAccess = !self.purchasedProducts.isEmpty
+    }
+    
+    private func getExpireDate(_ product: Product) async -> Date? {
+        do {
+            guard let subscription = product.subscription else {
+                logger.error("Getting subscription info failed.")
+                return nil
+            }
+            
+            let statuses = try await subscription.status
+            
+            var renewalDate: Date?
+            
+            for status in statuses {
+                switch status.state {
+                case .subscribed:
+                    logger.debug("Subscription active.")
+                    
+                    let renewalInfo  = try self.checkVerified(status.renewalInfo)
+                    
+                    renewalDate = renewalInfo.renewalDate
+                    
+                case .expired:
+                    logger.debug("Subscription expired.")
+                case .inGracePeriod:
+                    logger.debug("Subscription in grace period.")
+                case .inBillingRetryPeriod:
+                    logger.debug("Subscription in billing retry period.")
+                case .revoked:
+                    logger.debug("Subscription revoked.")
+                default:
+                    logger.warning("Unknown subscription state.")
+                }
+            }
+            
+            return renewalDate
+        } catch {
+            logger.error("Transaction verification failed.")
+            return nil
+        }
     }
     
     func isPurchased(_ product: Product) -> Bool {
-        // Determine whether the user purchases a given product.
         return purchasedProducts.contains(product)
     }
     
     func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
-        // Check whether the JWS passes StoreKit verification.
         switch result {
         case .unverified:
-            // StoreKit parses the JWS, but it fails verification.
             throw StoreError.failedVerification
         case .verified(let safe):
-            // The result is verified. Return the unwrapped value.
             return safe
         }
+    }
+    
+    // MARK: - Getters
+    
+    func getBadge() -> String {
+        if let product = lifetimeProduct {
+            if isPurchased(product) {
+                return "Lifetime"
+            }
+        }
+        
+        var badge: String = "Free"
+        
+        for product in purchasedProducts {
+            if product.type == .nonRenewable {
+                return "Lifetime"
+            } else if product.type == .autoRenewable {
+                badge = "Subscribed"
+                continue
+            }
+        }
+        
+        return badge
     }
     
     // MARK: - Helper Methods

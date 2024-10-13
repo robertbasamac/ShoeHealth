@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ReminderTimeSelectionView: View {
+struct RemindMeLaterView: View {
     
     @Environment(SettingsManager.self) private var settingsManager
     @Binding var selection: PresetTime
@@ -38,7 +38,7 @@ struct ReminderTimeSelectionView: View {
 
 // MARK: - View Components
 
-extension ReminderTimeSelectionView {
+extension RemindMeLaterView {
     
     @ViewBuilder
     private var selectedTimeInfoSection: some View {
@@ -49,8 +49,8 @@ extension ReminderTimeSelectionView {
                 .foregroundColor(Color.theme.accent) +
             Text(".")
         } footer: {
-            Text("The time set here will be used to reschedule new workout notifications when you select \"Remind me later\" after long pressing on the workout notifications.")
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 20))
+            Text(Prompts.Settings.remindMeLater)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0))
         }
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
@@ -163,7 +163,7 @@ extension ReminderTimeSelectionView {
 
 // MARK: - Helper Methods
 
-extension ReminderTimeSelectionView {
+extension RemindMeLaterView {
     
     private func handleCustomValueChange(_ newValue: Int) {
         customUnit = TimeUnit.unit(for: newValue, unitType: customUnit)
@@ -219,7 +219,7 @@ extension ReminderTimeSelectionView {
     @Previewable @State var selection: PresetTime = .fiveMinutes
     
     NavigationStack {
-        ReminderTimeSelectionView(selection: $selection)
+        RemindMeLaterView(selection: $selection)
             .environment(SettingsManager.shared)
     }
 }
