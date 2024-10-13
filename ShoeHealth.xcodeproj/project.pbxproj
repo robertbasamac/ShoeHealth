@@ -14,6 +14,10 @@
 		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
 		091AD7272C902376002D57C4 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 091AD7252C902376002D57C4 /* LICENSE */; };
 		0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */; };
+		092DDB6E2CBC3CD000263F06 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB6D2CBC3CD000263F06 /* StoreManager.swift */; };
+		092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB6F2CBC3CEB00263F06 /* Products.storekit */; };
+		092DDB722CBC3D0D00263F06 /* Products.plist in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB712CBC3D0D00263F06 /* Products.plist */; };
+		092DDB742CBC3DD600263F06 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB732CBC3DD600263F06 /* PaywallView.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
 		0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */; };
@@ -57,7 +61,7 @@
 		0978E0B02CB53D1400DEA781 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0978E0AF2CB53D1400DEA781 /* Assets.xcassets */; };
 		097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */; };
 		0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */; };
-		098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */; };
+		098988022C9AD4D20036A253 /* RemindMeLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* RemindMeLaterView.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
 		09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
@@ -142,6 +146,10 @@
 		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		091AD7252C902376002D57C4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleShoeSelectionView.swift; sourceTree = "<group>"; };
+		092DDB6D2CBC3CD000263F06 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		092DDB6F2CBC3CEB00263F06 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
+		092DDB712CBC3D0D00263F06 /* Products.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Products.plist; sourceTree = "<group>"; };
+		092DDB732CBC3DD600263F06 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
 		0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechyHeaderViewModifier.swift; sourceTree = "<group>"; };
@@ -175,7 +183,7 @@
 		0978E0AF2CB53D1400DEA781 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+PropertyWrapper.swift"; sourceTree = "<group>"; };
-		098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTimeSelectionView.swift; sourceTree = "<group>"; };
+		098988012C9AD4D20036A253 /* RemindMeLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeLaterView.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09A7B9DA2C81F5E100822C03 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTimeCell.swift; sourceTree = "<group>"; };
@@ -263,6 +271,16 @@
 				091AD7252C902376002D57C4 /* LICENSE */,
 			);
 			path = LICENSE;
+			sourceTree = "<group>";
+		};
+		092DDB6C2CBC3C6000263F06 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				092DDB6F2CBC3CEB00263F06 /* Products.storekit */,
+				092DDB712CBC3D0D00263F06 /* Products.plist */,
+				092DDB6D2CBC3CD000263F06 /* StoreManager.swift */,
+			);
+			path = Store;
 			sourceTree = "<group>";
 		};
 		0936FF512BD14C7B00BF5798 /* ViewModifiers */ = {
@@ -445,7 +463,7 @@
 			isa = PBXGroup;
 			children = (
 				094F26212BDC2B1200441A62 /* SettingsTab.swift */,
-				098988012C9AD4D20036A253 /* ReminderTimeSelectionView.swift */,
+				098988012C9AD4D20036A253 /* RemindMeLaterView.swift */,
 				09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */,
 			);
 			path = View;
@@ -520,11 +538,13 @@
 			isa = PBXGroup;
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
+				092DDB732CBC3DD600263F06 /* PaywallView.swift */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
 				09C171662C203CB4005FAB1A /* Home */,
 				09A9FF222C9B48F4002507C9 /* Settings */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09BD131B2B40923B00DFA6B1 /* ViewComponents */,
+				092DDB6C2CBC3C6000263F06 /* Store */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -725,7 +745,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */,
 				09DE4A7A2B0D3F81001119E4 /* Preview Assets.xcassets in Resources */,
+				092DDB722CBC3D0D00263F06 /* Products.plist in Resources */,
 				09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */,
 				091AD7272C902376002D57C4 /* LICENSE in Resources */,
 			);
@@ -766,9 +788,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				098988022C9AD4D20036A253 /* ReminderTimeSelectionView.swift in Sources */,
+				098988022C9AD4D20036A253 /* RemindMeLaterView.swift in Sources */,
 				0936FF552BD586F600BF5798 /* FrameReader.swift in Sources */,
 				095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */,
+				092DDB6E2CBC3CD000263F06 /* StoreManager.swift in Sources */,
 				09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */,
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */,
@@ -790,6 +813,7 @@
 				09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */,
 				090E156C2BE8EAAA00BC8124 /* View.swift in Sources */,
 				09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */,
+				092DDB742CBC3DD600263F06 /* PaywallView.swift in Sources */,
 				09DE4A752B0D3F7F001119E4 /* ContentView.swift in Sources */,
 				0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */,
 				09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */,

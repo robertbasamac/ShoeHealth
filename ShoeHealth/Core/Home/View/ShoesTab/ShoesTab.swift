@@ -272,7 +272,7 @@ extension ShoesTab {
         }
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16)
+        .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
     }
     

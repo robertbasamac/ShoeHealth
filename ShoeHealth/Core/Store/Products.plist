@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+   Products.plist
+   ShoeHealth
+
+   Created by Robert Basamac on 13.10.2024.
+   Copyright (c) 2024 ___ORGANIZATIONNAME___. All rights reserved.
+-->
+<plist version="1.0">
+<dict>
+    <key>Lifetime Full Access</key>
+    <string>com.robertbasamac.shoehealth.fullaccess.lifetime</string>
+    <key>Anual Full Access</key>
+    <string>com.robertbasamac.shoehealth.fullaccess.subscription.yearly</string>
+    <key>Monthly Full Access</key>
+    <string>com.robertbasamac.shoehealth.fullaccess.subscription.monthly</string>
+</dict>
+</plist>

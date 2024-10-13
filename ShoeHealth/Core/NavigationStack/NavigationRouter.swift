@@ -18,6 +18,7 @@ import HealthKit
 /// - `selectedTab`: The currently selected tab in the tab-based navigation.
 /// - `showSheet`: An optional `SheetType` enum instance representing the sheet that should be displayed.
 /// - `showShoeDetails`: An optional `Shoe` model representing the shoe details to be shown.
+/// - `showPaywall`: A boolean that is being used to display the Paywall for in-app purchases.
 ///
 final class NavigationRouter: ObservableObject {
     
@@ -25,6 +26,7 @@ final class NavigationRouter: ObservableObject {
     
     @Published var showSheet: SheetType?
     @Published var showShoeDetails: Shoe?
+    @Published var showPaywall: Bool = false
 }
 
 extension NavigationRouter {

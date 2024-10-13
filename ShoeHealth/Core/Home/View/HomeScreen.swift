@@ -103,6 +103,11 @@ struct HomeScreen: View {
                 ShoeDetailView(shoe: shoe, backButtonSymbol: "xmark")
             }
         }
+        .fullScreenCover(isPresented: $navigationRouter.showPaywall) {
+            NavigationStack {
+                PaywallView()
+            }
+        }
         .task {
             await healthManager.fetchRunningWorkouts()
         }

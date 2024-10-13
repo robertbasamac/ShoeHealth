@@ -9,7 +9,10 @@ import SwiftUI
 
 struct SettingsTab: View {
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @EnvironmentObject private var store: StoreManager
     @Environment(SettingsManager.self) private var settingsManager
+    
     @Environment(\.dismiss) private var dismiss
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
@@ -24,12 +27,12 @@ struct SettingsTab: View {
                     }
                 }
             } footer: {
-                Text("Used to set the unit for all measurements displayed in the app.")
+                Text(Prompts.Settings.unitOfMeasure)
             }
             
             Section {
                 NavigationLink {
-                    ReminderTimeSelectionView(selection: $remindMeLaterTime)
+                    RemindMeLaterView(selection: $remindMeLaterTime)
                 } label: {
                     VStack(alignment: .leading) {
                         Text("Remind me after")
@@ -37,7 +40,16 @@ struct SettingsTab: View {
                     }
                 }
             } footer: {
-                Text("The time set here will be used to reschedule new workout notifications when you select \"Remind me later\" after long pressing on the workout notifications.")
+                Text(Prompts.Settings.remindMeLater)
+            }
+            
+            Section {
+                Button {
+                    navigationRouter.showPaywall.toggle()
+                } label: {
+                    Text("Unlock Full Access")
+                        .badge(store.getBadge())
+                }
             }
         }
         .listSectionSpacing(.compact)
@@ -89,5 +101,6 @@ extension SettingsTab {
         SettingsTab()
             .navigationTitle("Settings")
             .environment(SettingsManager.shared)
+            .environmentObject(StoreManager())
     }
 }

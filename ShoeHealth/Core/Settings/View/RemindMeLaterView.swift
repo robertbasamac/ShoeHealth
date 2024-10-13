@@ -1,5 +1,5 @@
 //
-//  ReminderTimeSelectionView.swift
+//  RemindMeLaterView.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 18.09.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ReminderTimeSelectionView: View {
+struct RemindMeLaterView: View {
     
     @Environment(SettingsManager.self) private var settingsManager
     @Binding var selection: PresetTime
@@ -38,7 +38,7 @@ struct ReminderTimeSelectionView: View {
 
 // MARK: - View Components
 
-extension ReminderTimeSelectionView {
+extension RemindMeLaterView {
     
     @ViewBuilder
     private var selectedTimeInfoSection: some View {
@@ -163,7 +163,7 @@ extension ReminderTimeSelectionView {
 
 // MARK: - Helper Methods
 
-extension ReminderTimeSelectionView {
+extension RemindMeLaterView {
     
     private func handleCustomValueChange(_ newValue: Int) {
         customUnit = TimeUnit.unit(for: newValue, unitType: customUnit)
@@ -219,7 +219,7 @@ extension ReminderTimeSelectionView {
     @Previewable @State var selection: PresetTime = .fiveMinutes
     
     NavigationStack {
-        ReminderTimeSelectionView(selection: $selection)
+        RemindMeLaterView(selection: $selection)
             .environment(SettingsManager.shared)
     }
 }
