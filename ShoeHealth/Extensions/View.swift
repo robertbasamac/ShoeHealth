@@ -14,7 +14,7 @@ extension View {
             .font(.title2)
             .fontWeight(.bold)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.top, 8)
             .contentShape(.rect)
     }
@@ -23,7 +23,7 @@ extension View {
         self
             .background(Color(uiColor: .secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.vertical, 8)
     }
     

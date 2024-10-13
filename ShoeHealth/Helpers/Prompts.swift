@@ -32,4 +32,9 @@ struct Prompts {
         static let description = "Stay updated with the latest alerts by enabling notifications."
         static let note = ""
     }
+    
+    struct Settings {
+        static let unitOfMeasure = "Used to set the unit for all measurements displayed in the app."
+        static let remindMeLater = "Used to reschedule new workout notifications when you select \"Remind me later\" after long pressing on the workout notifications."
+    }
 }
