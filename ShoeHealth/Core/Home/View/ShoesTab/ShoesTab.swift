@@ -12,6 +12,7 @@ import HealthKit
 struct ShoesTab: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
@@ -410,7 +411,11 @@ extension ShoesTab {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                navigationRouter.showSheet = .addShoe
+                if storeManager.hasFullAccess || shoesViewModel.shoes.count < 3 {
+                    navigationRouter.showSheet = .addShoe
+                } else {
+                    navigationRouter.showLimitAlert.toggle()
+                }
             } label: {
                 Image(systemName: "plus")
             }
@@ -437,24 +442,30 @@ extension ShoesTab {
 // MARK: - Preview
 
 #Preview("Filled") {
+    @Previewable @StateObject var storeManager = StoreManager()
+    
     NavigationStack {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.container)
             .environmentObject(NavigationRouter())
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environmentObject(storeManager)
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: storeManager))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
     }
 }
 
 #Preview("Empty") {
+    @Previewable @StateObject var storeManager = StoreManager()
+    
     NavigationStack {
         ShoesTab()
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
             .environmentObject(NavigationRouter())
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+            .environmentObject(storeManager)
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: storeManager))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
     }

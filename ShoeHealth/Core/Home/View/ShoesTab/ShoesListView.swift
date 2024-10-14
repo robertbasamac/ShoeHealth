@@ -48,7 +48,7 @@ struct ShoesListView: View {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoesListView(shoes: Shoe.previewShoes + Shoe.previewShoes)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
                 .navigationTitle("Shoes")
         }
     }

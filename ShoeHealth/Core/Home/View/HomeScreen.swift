@@ -13,6 +13,8 @@ struct HomeScreen: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
             NavigationStack {
@@ -108,6 +110,23 @@ struct HomeScreen: View {
                 PaywallView()
             }
         }
+        .alert("Limit reached", isPresented: $navigationRouter.showLimitAlert, actions: {
+            Button(role: .cancel) {
+                dismiss()
+            } label: {
+                Text("Cancel")
+            }
+            .foregroundStyle(.accent)
+
+            Button {
+                navigationRouter.showPaywall.toggle()
+            } label: {
+                Text("Upgrade")
+            }
+            .tint(.accent)
+        }, message: {
+            Text("You can only add up to 3 shoes with a free subscription. Upgrade for unlimited access.")
+        })
         .task {
             await healthManager.fetchRunningWorkouts()
         }
@@ -120,7 +139,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
@@ -129,7 +148,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: StoreManager()))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }

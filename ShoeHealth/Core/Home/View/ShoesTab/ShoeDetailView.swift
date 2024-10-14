@@ -408,7 +408,7 @@ extension ShoeDetailView {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)
         }

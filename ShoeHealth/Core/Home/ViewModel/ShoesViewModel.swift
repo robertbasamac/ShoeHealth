@@ -22,6 +22,8 @@ final class ShoesViewModel {
     
     @ObservationIgnored private var modelContext: ModelContext
     
+    private var storeManager: StoreManager
+    
     private(set) var shoes: [Shoe] = []
     
     private(set) var searchText: String = ""
@@ -31,8 +33,9 @@ final class ShoesViewModel {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, storeManager: StoreManager) {
         self.modelContext = modelContext
+        self.storeManager = storeManager
         
         fetchShoes()
         setupObservers()

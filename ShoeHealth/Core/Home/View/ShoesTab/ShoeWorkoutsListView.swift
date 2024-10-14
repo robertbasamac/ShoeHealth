@@ -202,7 +202,7 @@ extension ShoeWorkoutsListView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoeWorkoutsListView(shoe: Shoe.previewShoe, workouts: $workouts)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
         }
     }
 }

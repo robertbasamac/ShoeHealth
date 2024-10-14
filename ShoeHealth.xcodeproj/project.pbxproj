@@ -539,12 +539,12 @@
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
 				092DDB732CBC3DD600263F06 /* PaywallView.swift */,
+				092DDB6C2CBC3C6000263F06 /* Store */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
 				09C171662C203CB4005FAB1A /* Home */,
 				09A9FF222C9B48F4002507C9 /* Settings */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09BD131B2B40923B00DFA6B1 /* ViewComponents */,
-				092DDB6C2CBC3C6000263F06 /* Store */,
 			);
 			path = Core;
 			sourceTree = "<group>";

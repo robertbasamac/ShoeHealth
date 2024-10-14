@@ -157,7 +157,7 @@ extension MultipleShoeSelectionView {
                                       description: Prompts.SelectShoe.selectMultipleWorkoutShoeDescription,
                                       systemImage: "figure.run.circle",
                                       onDone: { _ in })
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
             .environment(HealthManager.shared)
         }
     }
