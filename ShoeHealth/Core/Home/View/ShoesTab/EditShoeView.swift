@@ -247,7 +247,7 @@ extension EditShoeView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             EditShoeView(shoe:  Shoe.previewShoe)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }
     }

@@ -113,7 +113,7 @@ extension AddWokoutsToShoeView {
     NavigationStack {
         AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: $workouts)
             .navigationTitle("Add Workouts")
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
             .environment(HealthManager.shared)
     }
 }

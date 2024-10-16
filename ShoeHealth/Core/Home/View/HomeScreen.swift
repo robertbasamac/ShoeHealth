@@ -125,7 +125,7 @@ struct HomeScreen: View {
             }
             .tint(.accent)
         }, message: {
-            Text("You can only add up to 3 shoes with a free subscription. Upgrade for unlimited access.")
+            Text(shoesViewModel.getLimitReachedPrompt())
         })
         .task {
             await healthManager.fetchRunningWorkouts()
@@ -139,7 +139,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
@@ -148,7 +148,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: StoreManager()))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }

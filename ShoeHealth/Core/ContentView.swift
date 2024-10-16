@@ -26,7 +26,7 @@ struct ContentView: View {
     ContentView()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
@@ -35,7 +35,7 @@ struct ContentView: View {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: StoreManager()))
+        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }

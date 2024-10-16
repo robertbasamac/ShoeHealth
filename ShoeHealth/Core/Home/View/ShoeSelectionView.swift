@@ -167,7 +167,7 @@ extension ShoeSelectionView {
                               description: Prompts.SelectShoe.selectDefaultShoeDescription,
                               systemImage: "shoe.2",
                               onDone: { _ in })
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: StoreManager()))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }
 }

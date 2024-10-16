@@ -61,7 +61,7 @@ struct WorkoutsTab: View {
     NavigationStack {
         WorkoutsTab()
             .navigationTitle("Workouts")
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: StoreManager()))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
     }
 }
     

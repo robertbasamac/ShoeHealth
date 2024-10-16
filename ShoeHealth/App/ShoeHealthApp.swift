@@ -16,19 +16,15 @@ struct ShoeHealthApp: App {
     @Environment(\.scenePhase) private var scenePhase
     
     @StateObject private var navigationRouter = NavigationRouter()
-    @StateObject private var storeManager: StoreManager
+    @StateObject private var storeManager: StoreManager = StoreManager()
     @State private var shoesViewModel: ShoesViewModel
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared
     
     init () {
-        let storeManagerInstance = StoreManager()
-
-        self._storeManager = StateObject(wrappedValue: storeManagerInstance)
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.container.mainContext))
         
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.container.mainContext, storeManager: storeManagerInstance))
-        
-            // override apple's buggy alerts tintColor
+        // override apple's buggy alerts tintColor
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.theme.accent)
     }
     

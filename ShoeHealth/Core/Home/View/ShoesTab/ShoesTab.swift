@@ -411,7 +411,7 @@ extension ShoesTab {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                if storeManager.hasFullAccess || shoesViewModel.shoes.count < 3 {
+                if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
                     navigationRouter.showSheet = .addShoe
                 } else {
                     navigationRouter.showLimitAlert.toggle()
@@ -450,7 +450,7 @@ extension ShoesTab {
             .modelContainer(PreviewSampleData.container)
             .environmentObject(NavigationRouter())
             .environmentObject(storeManager)
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext, storeManager: storeManager))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
     }
@@ -465,7 +465,7 @@ extension ShoesTab {
             .modelContainer(PreviewSampleData.emptyContainer)
             .environmentObject(NavigationRouter())
             .environmentObject(storeManager)
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext, storeManager: storeManager))
+            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
     }

@@ -21,9 +21,7 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel"
 final class ShoesViewModel {
     
     @ObservationIgnored private var modelContext: ModelContext
-    
-    private var storeManager: StoreManager
-    
+        
     private(set) var shoes: [Shoe] = []
     
     private(set) var searchText: String = ""
@@ -31,14 +29,26 @@ final class ShoesViewModel {
     private(set) var sortType: ShoeSortType = .brand
     private(set) var sortOrder: SortOrder = .forward
     
+    /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
+    private let shoesLimit: Int = 5
+    
     private var cancellables = Set<AnyCancellable>()
     
-    init(modelContext: ModelContext, storeManager: StoreManager) {
+    init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        self.storeManager = storeManager
         
         fetchShoes()
         setupObservers()
+    }
+    
+    // MARK: - Premium Content
+    
+    func isShoesLimitReached() -> Bool {
+        return shoes.count >= self.shoesLimit
+    }
+    
+    func getLimitReachedPrompt() -> String {
+        return "You can only add up to \(self.shoesLimit) shoes with a free subscription. Upgrade for unlimited access."
     }
     
     // MARK: - CRUD operations
