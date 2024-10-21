@@ -124,7 +124,7 @@ final class ShoesViewModel {
     func deleteShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        self.shoes.removeAll { $0.id == shoeID }
+        shoes.removeAll { $0.id == shoeID }
         modelContext.delete(shoe)
         
         save()
@@ -132,6 +132,7 @@ final class ShoesViewModel {
     
     // MARK: - Handling Shoes Methods
 
+    @MainActor
     func add(workoutIDs: [UUID], toShoe shoeID: UUID) async {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
@@ -147,7 +148,7 @@ final class ShoesViewModel {
         oldShoes = Array(Set(oldShoes))
         
         for oldShoe in oldShoes {
-            await self.updateShoeStatistics(oldShoe)
+            await updateShoeStatistics(oldShoe)
         }
         
         let previousWear = shoe.wearCondition
@@ -167,6 +168,7 @@ final class ShoesViewModel {
         }
     }
     
+    @MainActor
     func remove(workoutIDs: [UUID], fromShoe shoeID: UUID) async {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
@@ -206,6 +208,7 @@ final class ShoesViewModel {
         save()
     }
     
+    @MainActor
     private func updateShoeStatistics(_ shoe: Shoe) async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
@@ -313,27 +316,35 @@ final class ShoesViewModel {
     // MARK: - Getters
     
     func getShoe(forID shoeID: UUID) -> Shoe? {
-        guard let shoe = self.shoes.first(where: { $0.id == shoeID } ) else { return nil }
-        return shoe
+        return shoes.first { $0.id == shoeID }
     }
     
     func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
-        return shoes.first { shoe in
-            shoe.workouts.contains(workoutID)
-        }
+        return shoes.first { $0.workouts.contains(workoutID) }
     }
     
     func getDefaultShoe() -> Shoe? {
-        guard let shoe = self.shoes.first(where: { $0.isDefaultShoe } ) else { return nil }
-        return shoe
+        return shoes.first { $0.isDefaultShoe }
     }
     
     func getRecentlyUsedShoes() -> [Shoe] {
-        var recentlyUsedShoes: [Shoe] = self.shoes.filter { $0.lastActivityDate != nil  }
-        
-        recentlyUsedShoes.sort { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
-        
+        let recentlyUsedShoes: [Shoe] = self.shoes
+            .filter { $0.lastActivityDate != nil }
+            .sorted { $0.lastActivityDate! > $1.lastActivityDate! }
+                
         return Array(recentlyUsedShoes.prefix(5))
+    }
+    
+    private func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
+        let recentlyAddedShoes: [Shoe] = self.shoes
+            .filter { !excludedShoes.contains($0.id) }
+            .sorted { $0.aquisitionDate > $1.aquisitionDate }
+        
+        if prefix > 0 {
+            return Array(recentlyAddedShoes.prefix(prefix))
+        } else {
+            return recentlyAddedShoes
+        }
     }
     
     func getShoes(filter: ShoeCategory = .all) -> [Shoe] {
@@ -348,7 +359,7 @@ final class ShoesViewModel {
             filteredShoes = self.shoes
         }
         
-        return filteredShoes.sorted { $0.lastActivityDate ?? Date() > $1.lastActivityDate ?? Date() }
+        return filteredShoes.sorted { $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast }
     }
     
     // MARK: - CloudKit Updates Handling
