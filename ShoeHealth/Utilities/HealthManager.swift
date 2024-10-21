@@ -259,7 +259,7 @@ final class HealthManager {
         }
         
         let distanceType = HKQuantityType(.distanceWalkingRunning)
-        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: [.strictStartDate, .strictStartDate])
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
         
         var distanceSamples: [HKQuantitySample] = []
         

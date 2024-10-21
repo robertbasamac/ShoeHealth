@@ -240,6 +240,8 @@ final class ShoesViewModel {
         let group = DispatchGroup()
         
         for category in RunningCategory.allCases {
+            logger.debug("Computing PR for category \(category.rawValue)")
+
             guard let workoutsForCategory = filteredWorkouts[category] else { continue }
                         
             totalRuns[category] = workoutsForCategory.count
@@ -260,8 +262,10 @@ final class ShoesViewModel {
 
                         currentIndex += 1
 
-                        if lastValidSampleEndDate == nil || self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate) {
+                        if lastValidSampleEndDate == nil || ((self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate))) {
                             if accumulatedDistance + sampleDistance >= category.distance {
+                                logger.debug("Accumulated distance greater than the category distance, (+ \(sampleDistance)): \(accumulatedDistance + sampleDistance)")
+                                
                                 let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
                                 
                                 let remainingDistance = category.distance - accumulatedDistance
@@ -274,9 +278,14 @@ final class ShoesViewModel {
                             
                             accumulatedDistance += sampleDistance
                             lastValidSampleEndDate = sample.endDate
+                            logger.debug("\(currentIndex) - Accumulated distance (+ \(sampleDistance), \(sample.endDate)) = \(accumulatedDistance)")
+                        } else {
+                            logger.warning("Sample not satysfying the date condition, skipping: \(sampleDistance), \(sample.startDate)")
                         }
                     }
-                                        
+                    
+                    logger.debug("Total samples counted for category \(category.rawValue), \(currentIndex), from total of \(samples.count)")
+                    
                     if let lastSampleEndDate = lastSampleEndDate {
                         let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
                         
