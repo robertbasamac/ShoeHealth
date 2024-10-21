@@ -41,7 +41,7 @@ struct ShoesTab: View {
             toolbarItems
         }
         .navigationDestination(item: $selectedShoe) { shoe in
-            ShoeDetailView(shoe: shoe)
+            ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
         }
         .navigationDestination(item: $selectedCategory) { category in
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
@@ -105,6 +105,7 @@ extension ShoesTab {
             if let shoe = shoesViewModel.getDefaultShoe() {
                 ShoeListItem(shoe: shoe)
                     .roundedContainer()
+                    .disabled(isShoeRestricted(shoe.id))
                     .onTapGesture {
                         selectedShoe = shoe
                     }
@@ -215,8 +216,9 @@ extension ShoesTab {
             LazyHStack(spacing: 6) {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: 140)
+                        .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if !shoe.isDefaultShoe {
+                            if !shoe.isDefaultShoe && !isShoeRestricted(shoe.id) {
                                 Button {
                                     shoesViewModel.setAsDefaultShoe(shoe.id)
                                 } label: {
@@ -426,6 +428,10 @@ extension ShoesTab {
 // MARK: - Helper Methods
 
 extension ShoesTab {
+    
+    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
+        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
+    }
     
     private func getFilteringImageColors() -> (Color, Color) {
         switch shoesViewModel.filterType {

@@ -11,6 +11,7 @@ import HealthKit
 
 struct MultipleShoeSelectionView: View {
     
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(\.dismiss) private var dismiss
@@ -142,6 +143,10 @@ extension MultipleShoeSelectionView {
 // MARK: - Helper Methods
 
 extension MultipleShoeSelectionView {
+    
+    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
+        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
+    }
     
     private func isSaveButtonDisabled() -> Bool {
         return selectionsDict.count != workoutIDs.count

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ShoeCell: View {
     
+    @Environment(\.isEnabled) private var isEnabled: Bool
+    
     var shoe: Shoe
     var width: CGFloat = 140
     var hideImage: Bool = false
@@ -23,6 +25,10 @@ struct ShoeCell: View {
                     .overlay {
                         if displayProgress {
                             RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        }
+                        
+                        if !isEnabled {
+                            Color.black.opacity(0.4)
                         }
                     }
                     .clipShape(.rect(cornerRadius: 10))
@@ -51,6 +57,7 @@ struct ShoeCell: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 8)
+            .opacity(isEnabled ? 1 : 0.6)
         }
         .frame(width: width)
     }

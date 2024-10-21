@@ -11,6 +11,7 @@ import HealthKit
 
 struct ShoeSelectionView: View {
     
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -85,14 +86,17 @@ extension ShoeSelectionView {
                 HStack(spacing: 4) {
                     Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
                         .imageScale(.large)
-                        .foregroundStyle(Color.theme.accent)
+                        .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
                     
                     ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                        .disabled(isShoeRestricted(shoe.id))
                 }
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .contentShape(.rect)
                 .onTapGesture {
-                    selectedShoe = selectedShoe == shoe ? nil : shoe
+                    if !isShoeRestricted(shoe.id) {
+                        selectedShoe = selectedShoe == shoe ? nil : shoe
+                    }
                 }
             }
         }, header: {
@@ -106,14 +110,17 @@ extension ShoeSelectionView {
                 HStack(spacing: 4) {
                     Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
                         .imageScale(.large)
-                        .foregroundStyle(Color.theme.accent)
+                        .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
                     
                     ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                        .disabled(isShoeRestricted(shoe.id))
                 }
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .contentShape(.rect)
                 .onTapGesture {
-                    selectedShoe = selectedShoe == shoe ? nil : shoe
+                    if !isShoeRestricted(shoe.id) {
+                        selectedShoe = selectedShoe == shoe ? nil : shoe
+                    }
                 }
             }
         }, header: {
@@ -151,6 +158,10 @@ extension ShoeSelectionView {
 // MARK: - Helper Methods
 
 extension ShoeSelectionView {
+    
+    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
+        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
+    }
     
     private func isSaveButtonDisabled() -> Bool {
         return selectedShoe == nil

@@ -13,6 +13,7 @@ struct ShoeWorkoutsListView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     private var shoe: Shoe
+    private var isShoeRestricted: Bool
     @Binding private var workouts: [HKWorkout]
     
     @State private var selections: Set<UUID> = Set<UUID>()
@@ -21,8 +22,9 @@ struct ShoeWorkoutsListView: View {
     @State private var showAddWorkouts: Bool = false
     @State private var showAssignToShoe: Bool = false
     
-    init(shoe: Shoe, workouts: Binding<[HKWorkout]>) {
+    init(shoe: Shoe, workouts: Binding<[HKWorkout]>, isShoeRestricted: Bool = false) {
         self.shoe = shoe
+        self.isShoeRestricted = isShoeRestricted
         self._workouts = workouts
     }
     
@@ -164,6 +166,7 @@ extension ShoeWorkoutsListView {
                 } label: {
                     Text("Add Workouts")
                 }
+                .disabled(isShoeRestricted)
             }
         }
     }

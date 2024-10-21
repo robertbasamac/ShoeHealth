@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShoesListView: View {
     
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     private var shoes: [Shoe] = []
@@ -27,6 +28,7 @@ struct ShoesListView: View {
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
+                    .disabled(isShoeRestricted(shoe.id))
                     .onTapGesture {
                         selectedShoe = shoe
                     }
@@ -37,8 +39,17 @@ struct ShoesListView: View {
         .contentMargins(.horizontal, 16, for: .scrollContent)
         .toolbarRole(.editor)
         .navigationDestination(item: $selectedShoe) { shoe in
-            ShoeDetailView(shoe: shoe)
+            ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
         }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension ShoesListView {
+    
+    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
+        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
     }
 }
 
@@ -49,6 +60,7 @@ struct ShoesListView: View {
         NavigationStack {
             ShoesListView(shoes: Shoe.previewShoes + Shoe.previewShoes)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environmentObject(StoreManager())
                 .navigationTitle("Shoes")
         }
     }

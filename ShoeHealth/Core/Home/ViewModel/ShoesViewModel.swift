@@ -44,11 +44,24 @@ final class ShoesViewModel {
     // MARK: - Premium Content
     
     func isShoesLimitReached() -> Bool {
-        return shoes.count >= self.shoesLimit
+        return shoes.count >= shoesLimit
     }
     
     func getLimitReachedPrompt() -> String {
-        return "You can only add up to \(self.shoesLimit) shoes with a free subscription. Upgrade for unlimited access."
+        return "You can only add up to \(shoesLimit) shoes with a free subscription. Upgrade for unlimited access."
+    }
+    
+    func shouldRestrictShoe(_ shoeID: UUID) -> Bool {
+        var allowedShoes = self.getRecentlyUsedShoes().map { $0.id }
+        
+        if allowedShoes.count < 5 {
+            let neededShoes = 5 - allowedShoes.count
+            let recentlyAddedShoes = getRecentlyAddedShoes(exclude: allowedShoes, prefix: neededShoes).map { $0.id }
+            
+            allowedShoes.append(contentsOf: recentlyAddedShoes)
+        }
+        
+        return !allowedShoes.contains(shoeID) && getDefaultShoe()?.id != shoeID
     }
     
     // MARK: - CRUD operations

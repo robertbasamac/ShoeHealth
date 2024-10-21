@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ShoeListItem: View {
     
+    @Environment(\.isEnabled) private var isEnabled: Bool
+
     var shoe: Shoe
     var width: CGFloat = 140
     var imageAlignment: HorizontalAlignment = .leading
@@ -25,17 +27,26 @@ struct ShoeListItem: View {
                     .frame(width: width, height: width)
                     .overlay {
                         RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        
+                        if !isEnabled {
+                            Color.black.opacity(0.4)
+                        }
                     }
                     .clipShape(.rect(cornerRadius: 10))
             }
             
             detailsSection
+                .opacity(isEnabled ? 1 : 0.6)
             
             if imageAlignment == .trailing {
                 ShoeImage(imageData: shoe.image)
                     .frame(width: width, height: width)
                     .overlay {
                         RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        
+                        if !isEnabled {
+                            Color.black.opacity(0.4)
+                        }
                     }
                     .clipShape(.rect(cornerRadius: 10))
             }
