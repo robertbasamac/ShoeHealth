@@ -128,7 +128,7 @@ final class StoreManager: ObservableObject {
                         if transaction.productID == product.id {
                             logger.debug("\"\(product.displayName)\" product purchased.")
                             
-                            purchasedProducts.append(product)
+                            newPurchasedProducts.append(product)
                         }
                     }
                 case .autoRenewable:
