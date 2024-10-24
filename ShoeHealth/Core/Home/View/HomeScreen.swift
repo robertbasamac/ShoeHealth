@@ -70,8 +70,8 @@ struct HomeScreen: View {
                                               description: Prompts.SelectShoe.selectMultipleWorkoutShoeDescription,
                                               systemImage: "figure.run.circle",
                                               onDone: { selectionsDict in
-                        for (workoutID, shoe) in selectionsDict {
-                            Task {
+                        Task {
+                            for (workoutID, shoe) in selectionsDict {
                                 await shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoe.id)
                             }
                         }
@@ -139,6 +139,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
+        .environmentObject(StoreManager())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
@@ -148,6 +149,7 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
+        .environmentObject(StoreManager())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)

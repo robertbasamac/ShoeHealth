@@ -34,11 +34,29 @@ final class ShoesViewModel {
     
     private var cancellables = Set<AnyCancellable>()
     
+    var searchBinding: Binding<String> {
+        Binding(
+            get: { self.searchText },
+            set: { self.searchText = $0 }
+        )
+    }
+    
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         
         fetchShoes()
         setupObservers()
+    }
+    
+    // MARK: - Filtered Content
+    var filteredShoes: [Shoe] {
+        guard !searchText.isEmpty else { return shoes }
+        
+        return shoes.filter {
+            $0.brand.localizedCaseInsensitiveContains(searchText) ||
+            $0.model.localizedCaseInsensitiveContains(searchText) ||
+            $0.nickname.localizedCaseInsensitiveContains(searchText)
+        }
     }
     
     // MARK: - Premium Content

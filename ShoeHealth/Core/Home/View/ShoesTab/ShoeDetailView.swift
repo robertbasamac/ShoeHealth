@@ -28,7 +28,7 @@ struct ShoeDetailView: View {
     @State private var showAddWorkouts: Bool = false
     
     @State private var opacity: CGFloat = 0
-    @State private var navBarVisibility: Visibility = .hidden
+    @State private var navBarVisibility: Visibility = .automatic
     @State private var navBarTitle: String = ""
     
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left", isShoeRestricted: Bool = false) {

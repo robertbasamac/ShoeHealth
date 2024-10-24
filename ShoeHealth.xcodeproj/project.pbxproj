@@ -18,6 +18,8 @@
 		092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB6F2CBC3CEB00263F06 /* Products.storekit */; };
 		092DDB722CBC3D0D00263F06 /* Products.plist in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB712CBC3D0D00263F06 /* Products.plist */; };
 		092DDB742CBC3DD600263F06 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB732CBC3DD600263F06 /* PaywallView.swift */; };
+		092DDB762CCA63CF00263F06 /* ShoeSearchListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB752CCA63CF00263F06 /* ShoeSearchListView.swift */; };
+		092DDB782CCA63F000263F06 /* ShoesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB772CCA63F000263F06 /* ShoesView.swift */; };
 		0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */; };
 		0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */; };
 		0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */; };
@@ -150,6 +152,8 @@
 		092DDB6F2CBC3CEB00263F06 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		092DDB712CBC3D0D00263F06 /* Products.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Products.plist; sourceTree = "<group>"; };
 		092DDB732CBC3DD600263F06 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		092DDB752CCA63CF00263F06 /* ShoeSearchListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSearchListView.swift; sourceTree = "<group>"; };
+		092DDB772CCA63F000263F06 /* ShoesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesView.swift; sourceTree = "<group>"; };
 		0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesListView.swift; sourceTree = "<group>"; };
 		0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDetailView.swift; sourceTree = "<group>"; };
 		0936FF522BD14CA300BF5798 /* StrechyHeaderViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechyHeaderViewModifier.swift; sourceTree = "<group>"; };
@@ -614,6 +618,8 @@
 			isa = PBXGroup;
 			children = (
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
+				092DDB772CCA63F000263F06 /* ShoesView.swift */,
+				092DDB752CCA63CF00263F06 /* ShoeSearchListView.swift */,
 				0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */,
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,
@@ -801,6 +807,7 @@
 				094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
+				092DDB762CCA63CF00263F06 /* ShoeSearchListView.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */,
 				09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */,
@@ -834,6 +841,7 @@
 				0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */,
 				094F262A2BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift in Sources */,
 				09C1716B2C203D4A005FAB1A /* ShoeSortType.swift in Sources */,
+				092DDB782CCA63F000263F06 /* ShoesView.swift in Sources */,
 				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
 				094D138B2C178A00003C6F50 /* OnboardingScreen.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,
@@ -876,7 +884,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
@@ -909,7 +917,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
@@ -1066,7 +1074,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
@@ -1108,7 +1116,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
