@@ -338,6 +338,7 @@ extension ShoeDetailView {
                     showAddWorkouts.toggle()
                 } label: {
                     Image(systemName: "plus")
+                        .font(.title3)
                         .imageScale(.large)
                 }
                 .padding(.trailing, 20)

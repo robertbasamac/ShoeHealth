@@ -21,18 +21,16 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel"
 final class ShoesViewModel {
     
     @ObservationIgnored private var modelContext: ModelContext
-        
-    private(set) var shoes: [Shoe] = []
+    @ObservationIgnored private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
     
-    private(set) var searchText: String = ""
-    private(set) var filterType: ShoeCategory = .active
-    private(set) var sortType: ShoeSortType = .brand
-    private(set) var sortOrder: SortOrder = .forward
+    private(set) var shoes: [Shoe] = []
     
     /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
     private let shoesLimit: Int = 5
     
-    private var cancellables = Set<AnyCancellable>()
+    /// Searching
+    private(set) var searchText: String = ""
     
     var searchBinding: Binding<String> {
         Binding(
@@ -41,8 +39,41 @@ final class ShoesViewModel {
         )
     }
     
+    /// Sorting
+    var sortingRuleBinding: Binding<SortingRule> {
+        Binding(
+            get: { self.sortingRule },
+            set: { self.sortingRule = $0 }
+        )
+    }
+    
+//    var sortOrderBinding: Binding<SortOrder> {
+//        Binding(
+//            get: { self.sortingOrder },
+//            set: { self.sortingOrder = $0 }
+//        )
+//    }
+    
+    private(set) var sortingRule: SortingRule {
+        didSet {
+            defaults?.set(sortingRule.rawValue, forKey: "SORTING_RULE")
+        }
+    }
+    
+    private(set) var sortingOrder: SortingOrder {
+        didSet {
+            defaults?.set(sortingOrder.rawValue, forKey: "SORTING_ORDER")
+        }
+    }
+    
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
+        
+        let sortingRule = defaults?.string(forKey: "SORTING_RULE") ?? SortingRule.aquisitionDate.rawValue
+        self.sortingRule = SortingRule(rawValue: sortingRule) ?? SortingRule.recentlyUsed
+        
+        let sortingOrder = defaults?.string(forKey: "SORTING_ORDER") ?? SortingOrder.forward.rawValue
+        self.sortingOrder = SortingOrder(rawValue: sortingOrder) ?? SortingOrder.forward
         
         fetchShoes()
         setupObservers()
@@ -377,7 +408,22 @@ final class ShoesViewModel {
             filteredShoes = self.shoes
         }
         
-        return filteredShoes.sorted { $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast }
+        switch sortingRule {
+        case .model:
+            filteredShoes.sort { sortingOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
+        case .brand:
+            filteredShoes.sort { sortingOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
+        case .distance:
+            filteredShoes.sort { sortingOrder == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
+        case .wear:
+            filteredShoes.sort { sortingOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+        case .recentlyUsed:
+            filteredShoes.sort { sortingOrder == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
+        case .aquisitionDate:
+            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
+        }
+        
+        return filteredShoes
     }
     
     // MARK: - CloudKit Updates Handling
@@ -520,7 +566,7 @@ final class ShoesViewModel {
     }
     
     func toggleSortOrder() {
-        sortOrder = sortOrder == .forward ? .reverse : .forward
+        sortingOrder = sortingOrder == .forward ? .reverse : .forward
     }
     
     // MARK: - SwiftData Model Context methods

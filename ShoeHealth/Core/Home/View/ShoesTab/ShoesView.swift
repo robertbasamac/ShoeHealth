@@ -412,6 +412,29 @@ extension ShoesView {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
+        
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker("Sort Rule", selection: shoesViewModel.sortingRuleBinding) {
+                    ForEach(SortingRule.allCases) { rule in
+                        Text(rule.rawValue)
+                            .tag(rule)
+                    }
+                }
+                
+                Divider()
+                
+                Button {
+                    shoesViewModel.toggleSortOrder()
+                } label: {
+                    Label("Sort Order", systemImage: shoesViewModel.sortingOrder == .forward ? "arrow.up" : "arrow.down")
+                }
+            } label: {
+                Image(systemName: "arrow.up.arrow.down")
+                    .imageScale(.medium)
+            }
+        }
+        
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
@@ -434,16 +457,16 @@ extension ShoesView {
         return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
     }
     
-    private func getFilteringImageColors() -> (Color, Color) {
-        switch shoesViewModel.filterType {
-        case .all:
-            return (Color.theme.accent, Color(uiColor: .secondarySystemGroupedBackground))
-        case .active:
-            return (Color(uiColor: .secondarySystemGroupedBackground), Color.theme.accent)
-        case .retired:
-            return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
-        }
-    }
+//    private func getFilteringImageColors() -> (Color, Color) {
+//        switch shoesViewModel.filterType {
+//        case .all:
+//            return (Color.theme.accent, Color(uiColor: .secondarySystemGroupedBackground))
+//        case .active:
+//            return (Color(uiColor: .secondarySystemGroupedBackground), Color.theme.accent)
+//        case .retired:
+//            return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
+//        }
+//    }
 }
 
 // MARK: - Preview

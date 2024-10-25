@@ -38,12 +38,44 @@ struct ShoesListView: View {
         .listRowSpacing(4)
         .contentMargins(.horizontal, 16, for: .scrollContent)
         .toolbarRole(.editor)
+        .toolbar {
+            toolbarItems
+        }
         .navigationDestination(item: $selectedShoe) { shoe in
             ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
         }
     }
 }
 
+// MARK: - View Components
+
+extension ShoesListView {
+    @ToolbarContentBuilder
+    private var toolbarItems: some ToolbarContent {
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Picker("Sort Rule", selection: shoesViewModel.sortingRuleBinding) {
+                    ForEach(SortingRule.allCases) { rule in
+                        Text(rule.rawValue)
+                            .tag(rule)
+                    }
+                }
+                
+                Divider()
+                
+                Button {
+                    shoesViewModel.toggleSortOrder()
+                } label: {
+                    Label("Sort Order", systemImage: shoesViewModel.sortingOrder == .forward ? "chevron.up" : "chevron.down")
+                }
+            } label: {
+                Image(systemName: "arrow.up.arrow.down")
+                    .imageScale(.medium)
+            }
+        }
+    }
+}
 // MARK: - Helper Methods
 
 extension ShoesListView {

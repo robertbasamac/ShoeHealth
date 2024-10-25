@@ -79,7 +79,7 @@
 		09BFD6EE2C4050DF00D112BF /* WearCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearCondition.swift */; };
 		09BFD6EF2C4050DF00D112BF /* WearCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearCondition.swift */; };
 		09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeCategory.swift */; };
-		09C1716B2C203D4A005FAB1A /* ShoeSortType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* ShoeSortType.swift */; };
+		09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* SortingRule+Order.swift */; };
 		09C595802C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
 		09C595812C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
 		09D6B8FA2C3C2856004EDA01 /* AddShoeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */; };
@@ -200,7 +200,7 @@
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
 		09BFD6ED2C4050DF00D112BF /* WearCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearCondition.swift; sourceTree = "<group>"; };
 		09C171672C203D4A005FAB1A /* ShoeCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeCategory.swift; sourceTree = "<group>"; };
-		09C171682C203D4A005FAB1A /* ShoeSortType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeSortType.swift; sourceTree = "<group>"; };
+		09C171682C203D4A005FAB1A /* SortingRule+Order.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SortingRule+Order.swift"; sourceTree = "<group>"; };
 		09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitOfMeasure.swift; sourceTree = "<group>"; };
 		09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShoeViewModel.swift; sourceTree = "<group>"; };
 		09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurredCircleButtonStyle.swift; sourceTree = "<group>"; };
@@ -336,6 +336,7 @@
 				09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */,
 				09402B7D2BFBC54800C943C1 /* RunningCategory.swift */,
 				09BFD6ED2C4050DF00D112BF /* WearCondition.swift */,
+				09C171692C203D4A005FAB1A /* Filtering */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -511,7 +512,7 @@
 			isa = PBXGroup;
 			children = (
 				09C171672C203D4A005FAB1A /* ShoeCategory.swift */,
-				09C171682C203D4A005FAB1A /* ShoeSortType.swift */,
+				09C171682C203D4A005FAB1A /* SortingRule+Order.swift */,
 			);
 			path = Filtering;
 			sourceTree = "<group>";
@@ -533,7 +534,6 @@
 			children = (
 				0975440B2B28769A00B379E2 /* ShoesViewModel.swift */,
 				09D6B8F92C3C284E004EDA01 /* AddShoeViewModel.swift */,
-				09C171692C203D4A005FAB1A /* Filtering */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -840,7 +840,7 @@
 				0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */,
 				0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */,
 				094F262A2BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift in Sources */,
-				09C1716B2C203D4A005FAB1A /* ShoeSortType.swift in Sources */,
+				09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */,
 				092DDB782CCA63F000263F06 /* ShoesView.swift in Sources */,
 				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
 				094D138B2C178A00003C6F50 /* OnboardingScreen.swift in Sources */,
