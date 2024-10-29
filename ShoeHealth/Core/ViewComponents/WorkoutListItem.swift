@@ -23,6 +23,7 @@ struct WorkoutListItem: View {
                 .resizable()
                 .foregroundStyle(Color.theme.greenEnergy, LinearGradient(gradient: Gradient(colors: [Color.theme.greenEnergy.opacity(0.01), Color.theme.greenEnergy.opacity(0.1)]), startPoint: .leading, endPoint: .trailing))
                 .frame(width: 30, height: 30)
+            
             VStack(alignment: .leading) {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
                     .font(.caption)
@@ -33,6 +34,8 @@ struct WorkoutListItem: View {
                         .textScale(.secondary)
                 }
                 .font(.title3)
+                .fontWeight(.medium)
+                .fontDesign(.rounded)
                 .foregroundStyle(Color.theme.greenEnergy)
             }
         }

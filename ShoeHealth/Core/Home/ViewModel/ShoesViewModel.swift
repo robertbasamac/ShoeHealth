@@ -31,7 +31,6 @@ final class ShoesViewModel {
     
     /// Searching
     private(set) var searchText: String = ""
-    
     var searchBinding: Binding<String> {
         Binding(
             get: { self.searchText },
@@ -46,13 +45,6 @@ final class ShoesViewModel {
             set: { self.sortingRule = $0 }
         )
     }
-    
-//    var sortOrderBinding: Binding<SortOrder> {
-//        Binding(
-//            get: { self.sortingOrder },
-//            set: { self.sortingOrder = $0 }
-//        )
-//    }
     
     private(set) var sortingRule: SortingRule {
         didSet {

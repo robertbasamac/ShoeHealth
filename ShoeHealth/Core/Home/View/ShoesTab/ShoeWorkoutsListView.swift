@@ -34,7 +34,7 @@ struct ShoeWorkoutsListView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 6)
                 .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .listRowInsets(.init(top: 2, leading: 16, bottom: 2, trailing: 16))
+                .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -52,7 +52,6 @@ struct ShoeWorkoutsListView: View {
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
-//        .toolbarRole(.editor)
         .scrollBounceBehavior(.basedOnSize)
         .overlay {
             emptyWorkoutsView
@@ -63,8 +62,6 @@ struct ShoeWorkoutsListView: View {
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
                 AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
-                    .navigationTitle("Add Workouts")
-//                    .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
         }

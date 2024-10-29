@@ -36,9 +36,6 @@ struct ShoesView: View {
                 retiredShoesSection
             }
         }
-        .navigationTitle("Shoe Health")
-        .navigationBarTitleDisplayMode(.inline)
-        .scrollIndicators(.hidden)
         .toolbar {
             toolbarItems
         }
@@ -456,17 +453,6 @@ extension ShoesView {
     private func isShoeRestricted(_ shoeID: UUID) -> Bool {
         return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
     }
-    
-//    private func getFilteringImageColors() -> (Color, Color) {
-//        switch shoesViewModel.filterType {
-//        case .all:
-//            return (Color.theme.accent, Color(uiColor: .secondarySystemGroupedBackground))
-//        case .active:
-//            return (Color(uiColor: .secondarySystemGroupedBackground), Color.theme.accent)
-//        case .retired:
-//            return (Color(uiColor: .secondarySystemGroupedBackground), Color.red)
-//        }
-//    }
 }
 
 // MARK: - Preview

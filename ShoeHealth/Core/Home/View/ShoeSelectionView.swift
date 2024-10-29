@@ -112,7 +112,7 @@ extension ShoeSelectionView {
                         .imageScale(.large)
                         .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
                     
-                    ShoeListItem(shoe: shoe, width: 84, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
+                    ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
                         .disabled(isShoeRestricted(shoe.id))
                 }
                 .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))

@@ -19,7 +19,14 @@ struct ShoesTab: View {
     
     var body: some View {
         ShoeSearchListView()
-            .searchable(text: shoesViewModel.searchBinding, prompt: "Search Shoes")
+            .navigationTitle("Shoe Health")
+            .navigationBarTitleDisplayMode(.inline)
+            .scrollIndicators(.hidden)
+            .searchable(
+                text: shoesViewModel.searchBinding,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search Shoes"
+            )
     }
 }
 

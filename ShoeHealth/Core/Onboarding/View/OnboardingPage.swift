@@ -32,11 +32,11 @@ struct OnboardingPage: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             if let _ = UIImage(named: image) {
-                Image(image) // Asset catalog image
+                Image(image)
                     .resizable()
                     .frame(width: 84, height: 84)
             } else {
-                Image(systemName: image) // SF Symbol
+                Image(systemName: image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .foregroundStyle(.red, .white)

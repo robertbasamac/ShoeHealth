@@ -618,8 +618,8 @@
 			isa = PBXGroup;
 			children = (
 				09E385E22B1345D7005CFF02 /* ShoesTab.swift */,
-				092DDB772CCA63F000263F06 /* ShoesView.swift */,
 				092DDB752CCA63CF00263F06 /* ShoeSearchListView.swift */,
+				092DDB772CCA63F000263F06 /* ShoesView.swift */,
 				0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */,
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09E385E42B134B08005CFF02 /* AddShoeView.swift */,

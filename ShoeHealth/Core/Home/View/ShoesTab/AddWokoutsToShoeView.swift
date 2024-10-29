@@ -30,6 +30,8 @@ struct AddWokoutsToShoeView: View {
         List(availableWorkouts, selection: $selections) { workout in
             WorkoutListItem(workout: workout)
         }
+        .navigationTitle("Add Workouts")
+        .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
         .environment(\.editMode, $editMode)
         .overlay {

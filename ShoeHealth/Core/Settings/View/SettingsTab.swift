@@ -45,10 +45,31 @@ struct SettingsTab: View {
             
             Section {
                 Button {
+                    Task {
+                        await HealthManager.shared.requestHealthAuthorization()
+                    }
+                } label: {
+                    Text("Request Health Authorization")
+                }
+            } footer: {
+                Text("You can manually check permissions in system settings.")
+            }
+            
+            Section {
+                Button {
                     navigationRouter.showPaywall.toggle()
                 } label: {
-                    Text("Unlock Full Access")
-                        .badge(store.getBadge())
+                    HStack {
+                        Text("Unlock Full Access")
+                        Spacer()
+                        Text("\(store.getBadge())")
+                            .foregroundStyle(.secondary)
+                        Image(systemName: "chevron.right")
+                            .fontWeight(.semibold)
+                            .imageScale(.small)
+                            .foregroundStyle(.secondary.opacity(0.5))
+                            .imageScale(.small)
+                    }
                 }
             }
         }

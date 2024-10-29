@@ -15,8 +15,6 @@ struct ShoeSearchListView: View {
     var body: some View {
         if isSearching && !shoesViewModel.searchText.isEmpty {
             VStack {
-                Text("Search Results")
-                    .padding(.vertical, 10)
                 ShoesListView(shoes: shoesViewModel.filteredShoes)
             }
         } else {

@@ -36,8 +36,8 @@ struct WorkoutsTab: View {
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
                 ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: workout.id),
-                                  title: Prompts.SelectShoe.assignWorkoutsDescription,
-                                  description: Prompts.SelectShoe.assignWorkoutsDescription,
+                                  title: Prompts.SelectShoe.selectWorkoutShoeTitle,
+                                  description: Prompts.SelectShoe.selectWorkoutShoeDescription,
                                   systemImage: "shoe.2",
                                   onDone: { shoeID in
                     Task {
@@ -45,7 +45,6 @@ struct WorkoutsTab: View {
                     }
                 })
             }
-            .presentationDetents([.medium, .large])
             .presentationCornerRadius(20)
             .presentationDragIndicator(.visible)
         })
@@ -62,6 +61,6 @@ struct WorkoutsTab: View {
         WorkoutsTab()
             .navigationTitle("Workouts")
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+            .environment(HealthManager.shared)
     }
 }
-    

@@ -28,7 +28,7 @@ struct ShoeDetailView: View {
     @State private var showAddWorkouts: Bool = false
     
     @State private var opacity: CGFloat = 0
-    @State private var navBarVisibility: Visibility = .automatic
+    @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
     
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left", isShoeRestricted: Bool = false) {
@@ -101,8 +101,6 @@ struct ShoeDetailView: View {
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
                 AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
-                    .navigationTitle("Add Workouts")
-//                    .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDragIndicator(.visible)
         }
@@ -338,7 +336,6 @@ extension ShoeDetailView {
                     showAddWorkouts.toggle()
                 } label: {
                     Image(systemName: "plus")
-                        .font(.title3)
                         .imageScale(.large)
                 }
                 .padding(.trailing, 20)
@@ -354,7 +351,7 @@ extension ShoeDetailView {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
             .padding(.top, 8)
         }
     }

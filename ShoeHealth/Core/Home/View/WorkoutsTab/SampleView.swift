@@ -20,10 +20,7 @@ struct SampleView: View {
             Text("\(samples.count) samples")
             ForEach(samples, id: \.self) { sample in
                 HStack(spacing: 20) {
-//                    VStack {
-                        Text(String(format: "%.2f m", sample.quantity.doubleValue(for: HKUnit.meter()).rounded(toPlaces: 2)))
-//                        Text("\(sample.count)")
-//                    }
+                    Text(String(format: "%.2f m", sample.quantity.doubleValue(for: HKUnit.meter()).rounded(toPlaces: 2)))
                     
                     Spacer()
                     
