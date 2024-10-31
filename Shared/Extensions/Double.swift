@@ -23,4 +23,8 @@ extension Double {
             return "\(roundedValue)"
         }
     }
+    
+    func roundedToNearest50() -> Double {
+        (self / 50.0).rounded() * 50.0
+    }
 }

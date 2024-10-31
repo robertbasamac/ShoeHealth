@@ -40,6 +40,7 @@ struct ShoeStatsSnapshotWidgetView : View {
                 .foregroundStyle(Color.theme.greenEnergy)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
+                .widgetAccentable(true)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.brand)
@@ -53,6 +54,7 @@ struct ShoeStatsSnapshotWidgetView : View {
                     .multilineTextAlignment(.leading)
                     .minimumScaleFactor(0.6)
             }
+            .widgetAccentable(true)
                         
             HStack(spacing: 2) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -65,6 +67,7 @@ struct ShoeStatsSnapshotWidgetView : View {
                 
                 ZStack {
                     CircularProgressView(progress: shoe.wearPercentage, lineWidth: 3, color: shoe.wearColor)
+                        .widgetAccentable(true)
                         .background(
                             GeometryReader { geometry in
                                 Color.clear

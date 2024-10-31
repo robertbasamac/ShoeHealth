@@ -47,7 +47,7 @@ struct HomeScreen: View {
             NavigationStack {
                 switch sheetType {
                 case .addShoe:
-                    AddShoeView()
+                    ShoeFormView()
                 case .setDefaultShoe:
                     ShoeSelectionView(title: Prompts.SelectShoe.selectDefaultShoeTitle,
                                       description: Prompts.SelectShoe.selectDefaultShoeDescription,

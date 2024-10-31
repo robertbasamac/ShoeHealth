@@ -105,6 +105,70 @@ final class ShoesViewModel {
         return !allowedShoes.contains(shoeID) && getDefaultShoe()?.id != shoeID
     }
     
+    // MARK: - Getters
+    
+    func getShoe(forID shoeID: UUID) -> Shoe? {
+        return shoes.first { $0.id == shoeID }
+    }
+    
+    func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
+        return shoes.first { $0.workouts.contains(workoutID) }
+    }
+    
+    func getDefaultShoe() -> Shoe? {
+        return shoes.first { $0.isDefaultShoe }
+    }
+    
+    func getRecentlyUsedShoes() -> [Shoe] {
+        let recentlyUsedShoes: [Shoe] = self.shoes
+            .filter { $0.lastActivityDate != nil }
+            .sorted { $0.lastActivityDate! > $1.lastActivityDate! }
+                
+        return Array(recentlyUsedShoes.prefix(5))
+    }
+    
+    private func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
+        let recentlyAddedShoes: [Shoe] = self.shoes
+            .filter { !excludedShoes.contains($0.id) }
+            .sorted { $0.aquisitionDate > $1.aquisitionDate }
+        
+        if prefix > 0 {
+            return Array(recentlyAddedShoes.prefix(prefix))
+        } else {
+            return recentlyAddedShoes
+        }
+    }
+    
+    func getShoes(filter: ShoeCategory = .all) -> [Shoe] {
+        var filteredShoes: [Shoe] = []
+        
+        switch filter {
+        case .active:
+            filteredShoes = self.shoes.filter({ !$0.isRetired })
+        case .retired:
+            filteredShoes = self.shoes.filter({ $0.isRetired })
+        case .all:
+            filteredShoes = self.shoes
+        }
+        
+        switch sortingRule {
+        case .model:
+            filteredShoes.sort { sortingOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
+        case .brand:
+            filteredShoes.sort { sortingOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
+        case .distance:
+            filteredShoes.sort { sortingOrder == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
+        case .wear:
+            filteredShoes.sort { sortingOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+        case .recentlyUsed:
+            filteredShoes.sort { sortingOrder == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
+        case .aquisitionDate:
+            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
+        }
+        
+        return filteredShoes
+    }
+    
     // MARK: - CRUD operations
     
     func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, image: Data?) {
@@ -354,70 +418,6 @@ final class ShoesViewModel {
         logger.debug("Personal bests computed for \(shoe.model).")
     }
     
-    // MARK: - Getters
-    
-    func getShoe(forID shoeID: UUID) -> Shoe? {
-        return shoes.first { $0.id == shoeID }
-    }
-    
-    func getShoe(ofWorkoutID workoutID: UUID) -> Shoe? {
-        return shoes.first { $0.workouts.contains(workoutID) }
-    }
-    
-    func getDefaultShoe() -> Shoe? {
-        return shoes.first { $0.isDefaultShoe }
-    }
-    
-    func getRecentlyUsedShoes() -> [Shoe] {
-        let recentlyUsedShoes: [Shoe] = self.shoes
-            .filter { $0.lastActivityDate != nil }
-            .sorted { $0.lastActivityDate! > $1.lastActivityDate! }
-                
-        return Array(recentlyUsedShoes.prefix(5))
-    }
-    
-    private func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
-        let recentlyAddedShoes: [Shoe] = self.shoes
-            .filter { !excludedShoes.contains($0.id) }
-            .sorted { $0.aquisitionDate > $1.aquisitionDate }
-        
-        if prefix > 0 {
-            return Array(recentlyAddedShoes.prefix(prefix))
-        } else {
-            return recentlyAddedShoes
-        }
-    }
-    
-    func getShoes(filter: ShoeCategory = .all) -> [Shoe] {
-        var filteredShoes: [Shoe] = []
-        
-        switch filter {
-        case .active:
-            filteredShoes = self.shoes.filter({ !$0.isRetired })
-        case .retired:
-            filteredShoes = self.shoes.filter({ $0.isRetired })
-        case .all:
-            filteredShoes = self.shoes
-        }
-        
-        switch sortingRule {
-        case .model:
-            filteredShoes.sort { sortingOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
-        case .brand:
-            filteredShoes.sort { sortingOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
-        case .distance:
-            filteredShoes.sort { sortingOrder == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
-        case .wear:
-            filteredShoes.sort { sortingOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
-        case .recentlyUsed:
-            filteredShoes.sort { sortingOrder == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
-        case .aquisitionDate:
-            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
-        }
-        
-        return filteredShoes
-    }
-    
     // MARK: - CloudKit Updates Handling
     
     private func setupObservers() {
@@ -450,24 +450,6 @@ final class ShoesViewModel {
     
     // MARK: - Other Methods
     
-    func fetchShoes() {
-        logger.debug("Fetching shoes...")
-
-        do {
-            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
-            
-            let shoes = try modelContext.fetch(descriptor)
-            
-            Task { @MainActor in
-                self.shoes = shoes
-            }
-        } catch {
-            logger.error("Fetching shoes failed, \(error.localizedDescription)")
-        }
-        
-        WidgetCenter.shared.reloadAllTimelines()
-    }
-    
     private func convertShoesToSelectedUnit() async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
         
@@ -476,38 +458,12 @@ final class ShoesViewModel {
         for shoe in shoes {
             group.enter()
             
-            shoe.lifespanDistance = convertLifespanDistance(shoe.lifespanDistance, unitOfMeasure: unitOfMeasure)
+            shoe.lifespanDistance = UnitOfMeasure.convert(distance: shoe.lifespanDistance, toUnit: unitOfMeasure)
             
             await updateShoeStatistics(shoe)
         }
         
         save()
-    }
-    
-    private func convertLifespanDistance(_ distance: Double, unitOfMeasure: UnitOfMeasure) -> Double {
-        var convertedDistance: Double
-        
-        let distanceRange = unitOfMeasure.range
-        
-        if unitOfMeasure == .metric {
-            convertedDistance = distance * 1.60934 // miles to km
-            
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        } else {
-            convertedDistance = distance / 1.60934 // km to miles
-            
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        }
-        
-        return roundToNearest50(convertedDistance)
     }
     
     private func compareDatesIgnoringMoreGranularComponents(_ date1: Date?, _ date2: Date?) -> Bool {
@@ -553,15 +509,29 @@ final class ShoesViewModel {
         return true
     }
     
-    private func roundToNearest50(_ value: Double) -> Double {
-        return (value / 50.0).rounded() * 50.0
-    }
-    
     func toggleSortOrder() {
         sortingOrder = sortingOrder == .forward ? .reverse : .forward
     }
     
     // MARK: - SwiftData Model Context methods
+    
+    func fetchShoes() {
+        logger.debug("Fetching shoes...")
+
+        do {
+            let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.brand, order: .forward), SortDescriptor(\.model, order: .forward)])
+            
+            let shoes = try modelContext.fetch(descriptor)
+            
+            Task { @MainActor in
+                self.shoes = shoes
+            }
+        } catch {
+            logger.error("Fetching shoes failed, \(error.localizedDescription)")
+        }
+        
+        WidgetCenter.shared.reloadAllTimelines()
+    }
     
     private func save() {
         do {

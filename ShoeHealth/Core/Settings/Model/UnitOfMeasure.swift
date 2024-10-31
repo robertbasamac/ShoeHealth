@@ -34,9 +34,28 @@ enum UnitOfMeasure: String, CaseIterable {
     var range: ClosedRange<Double> {
         switch self {
         case .metric:
-            500.0...1200.0
+            300...1000.0
         case .imperial:
-            300.0...800.0
+            200...600.0
         }
+    }
+    
+    static func convert(distance: Double, toUnit targetUnit: UnitOfMeasure) -> Double {
+        var convertedDistance: Double
+        let targetRange = targetUnit.range
+        
+        if targetUnit == .metric {
+            convertedDistance = distance * 1.60934 // miles to km
+        } else {
+            convertedDistance = distance / 1.60934 // km to miles
+        }
+        
+        if convertedDistance < targetRange.lowerBound {
+            convertedDistance = targetRange.lowerBound
+        } else if convertedDistance > targetRange.upperBound {
+            convertedDistance = targetRange.upperBound
+        }
+        
+        return convertedDistance.roundedToNearest50()
     }
 }

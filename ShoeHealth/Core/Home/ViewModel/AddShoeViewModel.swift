@@ -12,64 +12,60 @@ import SwiftUI
 
 @Observable
 final class AddShoeViewModel {
-
-    var showPhotosPicker: Bool = false
     
-    var selectedPhoto: PhotosPickerItem?
-    var selectedPhotoData: Data?
-    var shoeNickname: String = ""
-    var shoeBrand: String = ""
-    var shoeModel: String = ""
+    var selectedPhotoData: Data? = nil
+    var selectedPhoto: PhotosPickerItem? = nil
+    var showPhotosPicker = false
+    
     var aquisitionDate: Date
     var lifespanDistance: Double
     var isDefaultShoe: Bool
+    var shoeBrand: String
+    var shoeModel: String
+    var shoeNickname: String
+        
+    var shoeID: UUID?
     
-    init(selectedPhotoData: Data? = nil,
-         aquisitionDate: Date = .init(),
-         lifespanDistance: Double = SettingsManager.shared.unitOfMeasure.range.lowerBound,
-         isDefaultShoe: Bool = false
+    // MARK: - Initializer
+    
+    init(
+        selectedPhotoData: Data? = nil,
+        aquisitionDate: Date = .init(),
+        lifespanDistance: Double = SettingsManager.shared.unitOfMeasure.range.lowerBound,
+        isDefaultShoe: Bool = false,
+        shoeBrand: String = "",
+        shoeModel: String = "",
+        shoeNickname: String = "",
+        shoeID: UUID = UUID()
     ) {
         self.selectedPhotoData = selectedPhotoData
         self.aquisitionDate = aquisitionDate
         self.lifespanDistance = lifespanDistance
         self.isDefaultShoe = isDefaultShoe
+        self.shoeBrand = shoeBrand
+        self.shoeModel = shoeModel
+        self.shoeNickname = shoeNickname
+        self.shoeID = shoeID
     }
-
+    
+    // MARK: - Photo Handling
+    
     func loadPhoto() async {
-        if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-            await MainActor.run {
-                selectedPhotoData = data
+        guard let selectedPhoto = selectedPhoto else { return }
+        do {
+            if let data = try await selectedPhoto.loadTransferable(type: Data.self) {
+                await MainActor.run {
+                    self.selectedPhotoData = data
+                }
             }
+        } catch {
+            print("Error loading photo: \(error)")
         }
     }
     
-    func convertLifespanDistance(unitOfMeasure: UnitOfMeasure) {
-        var convertedDistance: Double
-        
-        let distanceRange = unitOfMeasure.range
-        
-        if unitOfMeasure == .metric {
-            convertedDistance = lifespanDistance * 1.60934 // miles to km
-            
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        } else {
-            convertedDistance = lifespanDistance / 1.60934 // km to miles
-
-            if convertedDistance < distanceRange.lowerBound {
-                convertedDistance = distanceRange.lowerBound
-            } else if convertedDistance > distanceRange.upperBound {
-                convertedDistance = distanceRange.upperBound
-            }
-        }
-        
-        self.lifespanDistance = roundToNearest50(convertedDistance)
-    }
+    // MARK: - Lifespan Distance Conversion
     
-    private func roundToNearest50(_ value: Double) -> Double {
-        return (value / 50.0).rounded() * 50.0
+    func convertLifespanDistance(toUnit targetUnit: UnitOfMeasure) {
+        self.lifespanDistance = UnitOfMeasure.convert(distance: lifespanDistance, toUnit: targetUnit)
     }
 }

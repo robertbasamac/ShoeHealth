@@ -93,7 +93,7 @@ struct ShoeDetailView: View {
         }
         .sheet(isPresented: $showEditShoe) {
             NavigationStack {
-                EditShoeView(shoe: shoe)
+                ShoeFormView(shoe: shoe)
             }
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()

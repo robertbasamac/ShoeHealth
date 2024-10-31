@@ -45,18 +45,6 @@ struct SettingsTab: View {
             
             Section {
                 Button {
-                    Task {
-                        await HealthManager.shared.requestHealthAuthorization()
-                    }
-                } label: {
-                    Text("Request Health Authorization")
-                }
-            } footer: {
-                Text("You can manually check permissions in system settings.")
-            }
-            
-            Section {
-                Button {
                     navigationRouter.showPaywall.toggle()
                 } label: {
                     HStack {

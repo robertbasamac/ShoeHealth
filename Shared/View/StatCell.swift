@@ -42,6 +42,7 @@ struct StatCell: View {
                 .font(labelFont)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+            
             Group {
                 Text(value) +
                 Text("\(unit.uppercased())")
@@ -53,6 +54,7 @@ struct StatCell: View {
             .foregroundStyle(color)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
+            .widgetAccentable(true)
         }
         .frame(maxWidth: .infinity, alignment: containerAlignment)
     }

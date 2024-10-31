@@ -1,44 +1,50 @@
 //
-//  EditShoeView.swift
+//  ShoeFormView.swift
 //  ShoeHealth
 //
-//  Created by Robert Basamac on 05.02.2024.
+//  Created by Robert Basamac on 30.10.2024.
 //
 
 import SwiftUI
-import PhotosUI
 
-struct EditShoeView: View {
+struct ShoeFormView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
-    private var shoe: Shoe
-    
-    @State private var addViewModel: AddShoeViewModel
-    
+    @State private var viewModel: AddShoeViewModel
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
-    init(shoe: Shoe) {
-        self.shoe = shoe
-        self._addViewModel = State(
-            initialValue: AddShoeViewModel(
-                selectedPhotoData: shoe.image,
-                aquisitionDate: shoe.aquisitionDate,
-                lifespanDistance: shoe.lifespanDistance,
-                isDefaultShoe: shoe.isDefaultShoe
-            )
-        )
+    @FocusState private var focusField: FocusField?
+    
+    private var isEditing: Bool
+    
+    enum FocusField: Hashable {
+        case brand
+        case model
+        case nickname
+    }
+    
+    init(shoe: Shoe? = nil) {
+        self.isEditing = shoe != nil
+        self._viewModel = State(wrappedValue: AddShoeViewModel(
+            selectedPhotoData: shoe?.image,
+            aquisitionDate: shoe?.aquisitionDate ?? .init(),
+            lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
+            isDefaultShoe: shoe?.isDefaultShoe ?? false,
+            shoeBrand: shoe?.brand ?? "",
+            shoeModel: shoe?.model ?? "",
+            shoeNickname: shoe?.nickname ?? "",
+            shoeID: shoe?.id ?? UUID()
+        ))
     }
     
     var body: some View {
         Form {
             photoSection
-                .task(id: addViewModel.selectedPhoto) {
-                    if addViewModel.selectedPhoto != nil {
-                        await addViewModel.loadPhoto()
-                    }
+                .task(id: viewModel.selectedPhoto) {
+                    await viewModel.loadPhoto()
                 }
             
             detailsSection
@@ -51,28 +57,45 @@ struct EditShoeView: View {
             
             aquisitionDateSection
         }
-        .navigationTitle("Edit Shoe")
+        .navigationTitle(isEditing ? "Edit Shoe" : "Add New Shoe")
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .toolbar {
             toolbarItems
         }
-        .onChange(of: self.unitOfMeasure) { _, newValue in
-            addViewModel.convertLifespanDistance(unitOfMeasure: newValue)
+        .onSubmit {
+            switch focusField {
+            case .brand:
+                focusField = .model
+            case .model:
+                focusField = .nickname
+            case .nickname:
+                focusField = nil
+            case .none:
+                focusField = nil
+            }
+        }
+        .onAppear {
+            if !isEditing {
+                viewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
+            }
+        }
+        .onChange(of: unitOfMeasure) { _, newValue in
+            viewModel.convertLifespanDistance(toUnit: newValue)
         }
     }
 }
 
 // MARK: - View Components
 
-extension EditShoeView {
+extension ShoeFormView {
     
     @ViewBuilder
     private var photoSection: some View {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let data = addViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
+                    if let data = viewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -84,6 +107,7 @@ extension EditShoeView {
                             .foregroundStyle(.secondary)
                             .frame(width: 150, height: 150)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
+                        
                         Image(systemName: "shoe.2.fill")
                             .resizable()
                             .foregroundStyle(.primary)
@@ -103,26 +127,24 @@ extension EditShoeView {
                         .padding(.vertical, 8)
                         .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
                     
-                    if addViewModel.selectedPhotoData != nil {
+                    if viewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
-                            .fontWeight(.semibold)
                             .foregroundStyle(.red)
                             .padding(10)
                             .background(Color(uiColor: .secondarySystemBackground), in: .circle)
                             .onTapGesture {
-                                addViewModel.selectedPhoto = nil
-                                addViewModel.selectedPhotoData = nil
+                                viewModel.selectedPhoto = nil
+                                viewModel.selectedPhotoData = nil
                             }
-
                     }
                 }
-                .animation(.smooth, value: addViewModel.selectedPhotoData)
+                .animation(.smooth, value: viewModel.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $addViewModel.showPhotosPicker, selection: $addViewModel.selectedPhoto, matching: .images, photoLibrary: .shared())
+            .photosPicker(isPresented: $viewModel.showPhotosPicker, selection: $viewModel.selectedPhoto, matching: .images)
             .onTapGesture {
-                addViewModel.showPhotosPicker.toggle()
+                viewModel.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -132,10 +154,13 @@ extension EditShoeView {
     @ViewBuilder
     private var detailsSection: some View {
         Section {
-            TextField(shoe.brand.isEmpty ? "Enter brand here..." : shoe.brand, text: $addViewModel.shoeBrand)
+            TextField("Brand", text: $viewModel.shoeBrand)
+                .focused($focusField, equals: .brand)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
-            TextField(shoe.model.isEmpty ? "Enter model here..." : shoe.model, text: $addViewModel.shoeModel)
+            
+            TextField("Model", text: $viewModel.shoeModel)
+                .focused($focusField, equals: .model)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
         } header: {
@@ -146,7 +171,8 @@ extension EditShoeView {
     @ViewBuilder
     private var nicknameSection: some View {
         Section {
-            TextField(shoe.nickname.isEmpty ? "Enter nickname here..." : shoe.nickname, text: $addViewModel.shoeNickname)
+            TextField("Nickname", text: $viewModel.shoeNickname)
+                .focused($focusField, equals: .nickname)
                 .textInputAutocapitalization(.words)
         }
     }
@@ -154,8 +180,9 @@ extension EditShoeView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
+            Toggle("Set as default shoe", isOn: $viewModel.isDefaultShoe)
                 .tint(Color.theme.accent)
+                .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
         }
     }
     
@@ -164,48 +191,41 @@ extension EditShoeView {
         Section {
             HStack {
                 Text("Unit of Measure")
-                Spacer(minLength: 40)
+                Spacer()
                 Picker("Unit of Measure", selection: $unitOfMeasure) {
                     ForEach(UnitOfMeasure.allCases, id: \.self) { unit in
-                        Text(unit.rawValue)
-                            .tag(unit)
+                        Text(unit.rawValue).tag(unit)
                     }
                 }
                 .pickerStyle(.segmented)
             }
-            
+                
             VStack(spacing: 2) {
-                Text(String(format: "%.0f\(unitOfMeasure.symbol)", addViewModel.lifespanDistance))
+                Text(String(format: "%.0f\(unitOfMeasure.symbol)", viewModel.lifespanDistance))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Slider(value: $addViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
+                Slider(value: $viewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
                     Text("Lifespan distance")
                 } minimumValueLabel: {
-                    VStack {
-                        Text(String(format: "%.0f", unitOfMeasure.range.lowerBound))
-                        Text(unitOfMeasure.symbol)
-                    }
-                    .font(.caption)
+                    Text(String(format: "%.0f \(unitOfMeasure.symbol)", unitOfMeasure.range.lowerBound))
+                        .font(.caption)
                 } maximumValueLabel: {
-                    VStack {
-                        Text(String(format: "%.0f", unitOfMeasure.range.upperBound))
-                        Text(unitOfMeasure.symbol)
-                    }
-                    .font(.caption)
+                    Text(String(format: "%.0f \(unitOfMeasure.symbol)", unitOfMeasure.range.upperBound))
+                        .font(.caption)
                 }
             }
         } header: {
             Text("Lifespan distance")
         } footer: {
-            Text("It's generally accepted that the standard lifespan of road running shoes is somewhere between 300 and 500 miles. It depends on the running surface, running conditions, owner's bodyweight and other factors.")
+            Text("The standard lifespan of road running shoes is \(unitOfMeasure == .metric ? "500-800 kilometers" : "300-500 miles"), depending on factors like running surface, owner's bodyweight and other.")
         }
     }
     
     @ViewBuilder
     private var aquisitionDateSection: some View {
         Section {
-            DatePicker("Aquisition Date", selection: $addViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+            DatePicker("Aquisition Date", selection: $viewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
         } header: {
             Text("Aquisition Date")
@@ -215,28 +235,47 @@ extension EditShoeView {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button {
+            Button("Cancel") {
                 dismiss()
-            } label: {
-                Text("Cancel")
             }
         }
         
         ToolbarItem(placement: .confirmationAction) {
             Button {
                 let settingsUnitOfMeasure = settingsManager.unitOfMeasure
-                
                 if settingsUnitOfMeasure != unitOfMeasure {
-                    addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
+                    viewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? viewModel.lifespanDistance * 1.60934 : viewModel.lifespanDistance / 1.60934
                 }
                 
-                shoesViewModel.updateShoe(shoeID: shoe.id, nickname: addViewModel.shoeNickname, brand: addViewModel.shoeBrand, model: addViewModel.shoeModel, setDefaultShoe: addViewModel.isDefaultShoe, lifespanDistance: addViewModel.lifespanDistance, aquisitionDate: addViewModel.aquisitionDate, image: addViewModel.selectedPhotoData)
-                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
+                if isEditing {
+                    shoesViewModel.updateShoe(
+                        shoeID: viewModel.shoeID ?? UUID(),
+                        nickname: viewModel.shoeNickname,
+                        brand: viewModel.shoeBrand,
+                        model: viewModel.shoeModel,
+                        setDefaultShoe: viewModel.isDefaultShoe,
+                        lifespanDistance: viewModel.lifespanDistance,
+                        aquisitionDate: viewModel.aquisitionDate,
+                        image: viewModel.selectedPhotoData
+                    )
+                } else {
+                    shoesViewModel.addShoe(
+                        nickname: viewModel.shoeNickname,
+                        brand: viewModel.shoeBrand,
+                        model: viewModel.shoeModel,
+                        lifespanDistance: viewModel.lifespanDistance,
+                        aquisitionDate: viewModel.aquisitionDate,
+                        isDefaultShoe: viewModel.isDefaultShoe,
+                        image: viewModel.selectedPhotoData
+                    )
+                }
                 
+                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
                 dismiss()
             } label: {
-                Text("Done")
+                Text("Save")
             }
+            .disabled(viewModel.shoeBrand.isEmpty || viewModel.shoeModel.isEmpty || viewModel.shoeNickname.isEmpty)
         }
     }
 }
@@ -246,7 +285,7 @@ extension EditShoeView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            EditShoeView(shoe:  Shoe.previewShoe)
+            ShoeFormView()
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }
