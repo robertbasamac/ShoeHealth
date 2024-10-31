@@ -25,7 +25,13 @@ struct MultipleShoeSelectionView: View {
     private let systemImage: String
     private let onDone: ([UUID : Shoe]) -> Void
     
-    init (workoutIDs: [UUID] = [], title: String, description: String, systemImage: String, onDone: @escaping ([UUID : Shoe]) -> Void) {
+    init (
+        workoutIDs: [UUID] = [],
+        title: String,
+        description: String,
+        systemImage: String,
+        onDone: @escaping ([UUID : Shoe]) -> Void
+    ) {
         self.workoutIDs = workoutIDs
         self.title = title
         self.description = description

@@ -29,7 +29,16 @@ struct ShoeSelectionView: View {
     private let showCancelButton: Bool
     private let onDone: (UUID) -> Void
     
-    init (selectedShoe: Shoe? = nil, title: String, description: String, systemImage: String, showCancelButton: Bool = true, onDone: @escaping (UUID) -> Void) {
+    init (
+        selectedShoe: Shoe? = nil,
+        title: String,
+        description: String,
+        systemImage: String,
+        showCancelButton: Bool = true,
+        onDone: @escaping (
+            UUID
+        ) -> Void
+    ) {
         self.selectedShoe = selectedShoe
         self.title = title
         self.description = description
@@ -82,23 +91,7 @@ extension ShoeSelectionView {
     
     private var activeShoesSection: some View {
         Section(isExpanded: $isExpandedActive, content: {
-            ForEach(activeShoes) { shoe in
-                HStack(spacing: 4) {
-                    Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                        .imageScale(.large)
-                        .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
-                    
-                    ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
-                        .disabled(isShoeRestricted(shoe.id))
-                }
-                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
-                .contentShape(.rect)
-                .onTapGesture {
-                    if !isShoeRestricted(shoe.id) {
-                        selectedShoe = selectedShoe == shoe ? nil : shoe
-                    }
-                }
-            }
+            shoesList(shoes: activeShoes)
         }, header: {
             Text("Active Shoes")
         })
@@ -106,26 +99,30 @@ extension ShoeSelectionView {
     
     private var retiredShoesSection: some View {
         Section(isExpanded: $isExpandedRetire, content: {
-            ForEach(retiredShoes) { shoe in
-                HStack(spacing: 4) {
-                    Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
-                        .imageScale(.large)
-                        .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
-                    
-                    ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false)
-                        .disabled(isShoeRestricted(shoe.id))
-                }
-                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
-                .contentShape(.rect)
-                .onTapGesture {
-                    if !isShoeRestricted(shoe.id) {
-                        selectedShoe = selectedShoe == shoe ? nil : shoe
-                    }
-                }
-            }
+            shoesList(shoes: retiredShoes)
         }, header: {
             Text("Retired Shoes")
         })
+    }
+    
+    private func shoesList(shoes: [Shoe]) -> some View {
+        ForEach(shoes) { shoe in
+            HStack(spacing: 4) {
+                Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
+                    .imageScale(.large)
+                    .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
+                
+                ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false, reserveSpace: false)
+                    .disabled(isShoeRestricted(shoe.id))
+            }
+            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+            .contentShape(.rect)
+            .onTapGesture {
+                if !isShoeRestricted(shoe.id) {
+                    selectedShoe = selectedShoe == shoe ? nil : shoe
+                }
+            }
+        }
     }
     
     @ToolbarContentBuilder

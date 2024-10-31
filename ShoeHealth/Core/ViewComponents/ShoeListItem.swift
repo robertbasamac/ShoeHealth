@@ -16,6 +16,7 @@ struct ShoeListItem: View {
     var imageAlignment: HorizontalAlignment = .leading
     var showStats: Bool = true
     var showNavigationLink: Bool = true
+    var reserveSpace: Bool = true
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
@@ -89,7 +90,7 @@ extension ShoeListItem {
                 
                 Text("\(shoe.model)")
                     .font(.system(size: 17, weight: .semibold, design: .default))
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(2, reservesSpace: reserveSpace)
                     .multilineTextAlignment(.leading)
                     .minimumScaleFactor(0.7)
             }

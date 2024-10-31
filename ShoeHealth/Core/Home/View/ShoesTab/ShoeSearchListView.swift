@@ -14,9 +14,12 @@ struct ShoeSearchListView: View {
     
     var body: some View {
         if isSearching && !shoesViewModel.searchText.isEmpty {
-            VStack {
-                ShoesListView(shoes: shoesViewModel.filteredShoes)
-            }
+            ShoesListView(shoes: shoesViewModel.filteredShoes)
+                .overlay {
+                    if shoesViewModel.filteredShoes.isEmpty {
+                        ContentUnavailableView.search
+                    }
+                }
         } else {
             ShoesView()
         }

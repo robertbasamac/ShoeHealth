@@ -18,20 +18,19 @@ struct WorkoutsTab: View {
     var body: some View {
         List {
             ForEach(healthManager.workouts, id: \.self) { workout in
-                NavigationLink {
-                    SampleView(workout: workout)
-                } label: {
-                    WorkoutListItem(workout: workout)
-                }
+                WorkoutListItem(workout: workout)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
                         selectedWorkout = workout
                     } label: {
                         Label("Add Shoe", systemImage: "shoe")
                     }
-                    .tint(.orange)
+                    .tint(.gray)
                 }
             }
+        }
+        .overlay {
+            emptyWorkoutsView
         }
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
@@ -50,6 +49,22 @@ struct WorkoutsTab: View {
         })
         .refreshable {
             await healthManager.fetchRunningWorkouts()
+        }
+    }
+}
+
+// MARK: - View Components
+
+extension WorkoutsTab {
+    
+    @ViewBuilder
+    private var emptyWorkoutsView: some View {
+        if healthManager.workouts.isEmpty {
+            ContentUnavailableView {
+                Label("No Workouts Available", systemImage: "figure.run.circle")
+            } description: {
+                Text("There are no running workouts available in your Apple Health data.")
+            }
         }
     }
 }

@@ -46,6 +46,9 @@ struct ShoesView: View {
             ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
                 .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
         }
+        .refreshable {
+            await healthManager.fetchRunningWorkouts()
+        }
     }
 }
 
@@ -317,11 +320,12 @@ extension ShoesView {
             if let shoe = shoesViewModel.getShoe(ofWorkoutID: run.id) {
                 VStack(alignment: .leading) {
                     Text("\(shoe.brand)")
-                        .font(.system(size: 16))
+                        .font(.system(size: 13, weight: .regular, design: .default))
                         .foregroundStyle(.secondary)
                     
                     Text("\(shoe.model)")
-                        .font(.system(size: 18))
+                        .font(.system(size: 17, weight: .semibold, design: .default))
+                        .multilineTextAlignment(.leading)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .overlay(alignment: .trailing) {
@@ -336,7 +340,7 @@ extension ShoesView {
                     selectedShoe = shoe
                 }
             } else {
-                Text("No shoe selected for this workout.")
+                Text("No shoe selected for this workout")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.center)
                     .overlay(alignment: .trailing) {

@@ -478,9 +478,9 @@
 				09E2F3502B1668D700D16101 /* ShoeListItem.swift */,
 				09E2F34A2B15130900D16101 /* WorkoutListItem.swift */,
 				09F18EE72BC6AC03002B73EE /* ShoeCell.swift */,
+				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
 				0936FF5D2BD6DED000BF5798 /* StretchyHeaderCell.swift */,
 				0936FF5F2BD6DEE700BF5798 /* StaticHeaderCell.swift */,
-				0999BFF62B53FC13009BE901 /* ShoeImage.swift */,
 			);
 			path = ViewComponents;
 			sourceTree = "<group>";

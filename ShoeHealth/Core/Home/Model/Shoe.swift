@@ -28,15 +28,17 @@ final class Shoe {
     var personalBests: [RunningCategory: PersonalBest?] = [:]
     var totalRuns: [RunningCategory: Int] = [:]
     
-    init(id: UUID = .init(),
-         nickname: String,
-         brand: String,
-         model: String,
-         lifespanDistance: Double,
-         currentDistance: Double = 0,
-         aquisitionDate: Date,
-         isDefaultShoe: Bool = false,
-         image: Data? = nil) {
+    init(
+        id: UUID = .init(),
+        nickname: String,
+        brand: String,
+        model: String,
+        lifespanDistance: Double,
+        currentDistance: Double = 0,
+        aquisitionDate: Date,
+        isDefaultShoe: Bool = false,
+        image: Data? = nil
+    ) {
         self.id = id
         self.nickname = nickname
         self.brand = brand

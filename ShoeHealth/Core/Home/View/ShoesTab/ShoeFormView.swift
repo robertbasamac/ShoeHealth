@@ -57,7 +57,7 @@ struct ShoeFormView: View {
             
             aquisitionDateSection
         }
-        .navigationTitle(isEditing ? "Edit Shoe" : "Add New Shoe")
+        .navigationTitle(isEditing ? "Edit Shoe" : "Add Shoe")
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .toolbar {
@@ -78,7 +78,11 @@ struct ShoeFormView: View {
         .onAppear {
             if !isEditing {
                 viewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
-            }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.focusField = .brand
+                }
+            }            
         }
         .onChange(of: unitOfMeasure) { _, newValue in
             viewModel.convertLifespanDistance(toUnit: newValue)
