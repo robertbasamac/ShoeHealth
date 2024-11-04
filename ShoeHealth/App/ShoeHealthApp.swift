@@ -30,25 +30,35 @@ struct ShoeHealthApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .defaultAppStorage(UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")!)
-                .environmentObject(navigationRouter)
-                .environmentObject(storeManager)
-                .environment(shoesViewModel)
-                .environment(healthManager)
-                .environment(settingsManager)
-                .onAppear {
-                    appDelegate.shoesViewModel = shoesViewModel
-                    appDelegate.navigationRouter = navigationRouter
-                }
-                .onChange(of: scenePhase) { _, newPhase in
-                    if newPhase == .active {
-                        Task {
-                            await storeManager.updateCustomerProductStatus()
+            ZStack {
+                ContentView()
+                    .preferredColorScheme(.dark)
+                    .defaultAppStorage(UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")!)
+                    .environmentObject(navigationRouter)
+                    .environmentObject(storeManager)
+                    .environment(shoesViewModel)
+                    .environment(healthManager)
+                    .environment(settingsManager)
+                    .onAppear {
+                        appDelegate.shoesViewModel = shoesViewModel
+                        appDelegate.navigationRouter = navigationRouter
+                    }
+                    .onChange(of: scenePhase) { _, newPhase in
+                        if newPhase == .active {
+                            Task {
+                                await storeManager.updateCustomerProductStatus()
+                            }
                         }
                     }
+                
+                ZStack {
+                    if healthManager.isLoading {
+                        LaunchView()
+                            .transition(.opacity)
+                    }
                 }
+                .zIndex(2.0)
+            }
         }
         .modelContainer(ShoesStore.container)
     }

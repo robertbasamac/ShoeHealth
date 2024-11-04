@@ -41,6 +41,8 @@
 		09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B812BFD0EFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
 		09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7D2BFBC54800C943C1 /* RunningCategory.swift */; };
+		0944A7E02CD4DE400042081D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0944A7DF2CD4DE400042081D /* LaunchScreen.storyboard */; };
+		0944A7E22CD4DFDF0042081D /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0944A7E12CD4DFDF0042081D /* LaunchView.swift */; };
 		0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0948B5DA2C0DE9CA001A7745 /* Prompts.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094D13822C1606A1003C6F50 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
@@ -167,6 +169,8 @@
 		09402B7B2BFBBB6800C943C1 /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		09402B7D2BFBC54800C943C1 /* RunningCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningCategory.swift; sourceTree = "<group>"; };
 		09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalBest.swift; sourceTree = "<group>"; };
+		0944A7DF2CD4DE400042081D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0944A7E12CD4DFDF0042081D /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		0948B5DA2C0DE9CA001A7745 /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094D13882C17871F003C6F50 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
@@ -278,9 +282,10 @@
 		092DDB6C2CBC3C6000263F06 /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				0944A7D92CD4DBC00042081D /* Views */,
+				0944A7DA2CD4DBCB0042081D /* ViewModel */,
 				092DDB6F2CBC3CEB00263F06 /* Products.storekit */,
 				092DDB712CBC3D0D00263F06 /* Products.plist */,
-				092DDB6D2CBC3CD000263F06 /* StoreManager.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -347,6 +352,31 @@
 				095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		0944A7D82CD4DB980042081D /* LaunchScreen */ = {
+			isa = PBXGroup;
+			children = (
+				0944A7DF2CD4DE400042081D /* LaunchScreen.storyboard */,
+				0944A7E12CD4DFDF0042081D /* LaunchView.swift */,
+			);
+			path = LaunchScreen;
+			sourceTree = "<group>";
+		};
+		0944A7D92CD4DBC00042081D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				092DDB732CBC3DD600263F06 /* PaywallView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0944A7DA2CD4DBCB0042081D /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				092DDB6D2CBC3CD000263F06 /* StoreManager.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		0948B5DC2C0E1C2A001A7745 /* Extensions */ = {
@@ -540,10 +570,10 @@
 			isa = PBXGroup;
 			children = (
 				09DE4A742B0D3F7F001119E4 /* ContentView.swift */,
-				092DDB732CBC3DD600263F06 /* PaywallView.swift */,
-				092DDB6C2CBC3C6000263F06 /* Store */,
+				0944A7D82CD4DB980042081D /* LaunchScreen */,
 				097C434E2C1DC3C800A1C639 /* Onboarding */,
 				09C171662C203CB4005FAB1A /* Home */,
+				092DDB6C2CBC3C6000263F06 /* Store */,
 				09A9FF222C9B48F4002507C9 /* Settings */,
 				0956EE3A2B4C06F70029445E /* NavigationStack */,
 				09BD131B2B40923B00DFA6B1 /* ViewComponents */,
@@ -751,6 +781,7 @@
 				092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */,
 				09DE4A7A2B0D3F81001119E4 /* Preview Assets.xcassets in Resources */,
 				092DDB722CBC3D0D00263F06 /* Products.plist in Resources */,
+				0944A7E02CD4DE400042081D /* LaunchScreen.storyboard in Resources */,
 				09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */,
 				091AD7272C902376002D57C4 /* LICENSE in Resources */,
 			);
@@ -825,6 +856,7 @@
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
 				0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
+				0944A7E22CD4DFDF0042081D /* LaunchView.swift in Sources */,
 				09BFD6EF2C4050DF00D112BF /* WearCondition.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
@@ -1083,6 +1115,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -1125,6 +1159,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";

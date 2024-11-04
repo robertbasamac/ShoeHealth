@@ -95,7 +95,7 @@ extension ShoeWorkoutsListView {
             ContentUnavailableView {
                 Label("No Workouts", systemImage: "figure.run.circle")
             } description: {
-                Text("There are currently no running workouts assigned to this Shoe pair. Use the \"Add Workouts\" button below to add some.")
+                Text("There are currently no running workouts assigned to this Shoe pair. Use the \"Add Workouts\" button to add some.")
             }
         }
     }

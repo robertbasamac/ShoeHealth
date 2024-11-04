@@ -231,7 +231,6 @@ final class HealthManager {
                     logger.error("HealthKit not accessable.")
                     self.isLoading = false
                     return
-//                    fatalError("Invalid State: This can only fail if there was an error.")
                 }
                 
                 continuation.resume(returning: samples)
