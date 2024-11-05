@@ -45,7 +45,7 @@ class OnboardingViewModel {
         case .denied:
             logger.debug("Opening settings...")
             
-            await openSettings()
+            await notificationManager.openSettings()
         case .authorized, .provisional, .ephemeral:
             logger.debug("Permission already granted.")
         @unknown default:
@@ -64,13 +64,6 @@ class OnboardingViewModel {
             } else {
                 isNotificationsAuthorized = false
             }
-        }
-    }
-    
-    @MainActor
-    private func openSettings() async {
-        if let appNotificationsSettingsURL = URL(string: UIApplication.openNotificationSettingsURLString), UIApplication.shared.canOpenURL(appNotificationsSettingsURL) {
-            await UIApplication.shared.open(appNotificationsSettingsURL)
         }
     }
 }
