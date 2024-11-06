@@ -169,7 +169,7 @@ final class NotificationManager {
             logger.debug("Set Default Shoe Noification scheduled: \(dateTimeFormatter.string(from: date))")
         }
     }
-     
+    
     @MainActor
     func openSettings() async {
         if let appNotificationsSettingsURL = URL(string: UIApplication.openNotificationSettingsURLString), UIApplication.shared.canOpenURL(appNotificationsSettingsURL) {

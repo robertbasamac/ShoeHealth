@@ -26,14 +26,17 @@ struct PaywallView: View {
                             case .success(let image):
                                 image
                                     .resizable()
+                                    .scaledToFill()
                                     .clipShape(.rect(cornerRadius: 25))
                             case .failure(_):
-                                Image("ShoeHealth")
+                                Image("ShoeHealth-unlimited")
                                     .resizable()
+                                    .scaledToFill()
                                     .clipShape(.rect(cornerRadius: 25))
                             case .unavailable:
-                                Image("ShoeHealth")
+                                Image("ShoeHealth-unlimited")
                                     .resizable()
+                                    .scaledToFill()
                                     .clipShape(.rect(cornerRadius: 25))
                             case .loading:
                                 ProgressView()

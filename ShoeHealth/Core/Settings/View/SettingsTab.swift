@@ -59,6 +59,20 @@ struct SettingsTab: View {
                             .imageScale(.small)
                     }
                 }
+            } footer: {
+                HStack {
+                    Spacer()
+
+                    Link("Terms of Use", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                        .font(.caption)
+                    
+                    Text("and")
+    
+                    Link("Privacy Policy", destination: URL(string: "https://github.com/robertbasamac/ShoeHealth/blob/master/APP_POLICY.md")!)
+                        .font(.caption)
+                    
+                    Spacer()
+                }
             }
         }
         .listSectionSpacing(.compact)
