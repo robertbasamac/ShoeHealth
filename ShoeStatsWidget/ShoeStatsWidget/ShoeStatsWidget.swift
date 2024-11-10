@@ -1,6 +1,6 @@
 //
 //  ShoeStatsWidget.swift
-//  ShoeStatsWidget
+//  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
 //
@@ -11,7 +11,7 @@ import SwiftData
 
 struct ShoeStatsWidget: Widget {
     
-    let kind: String = "ShoeStatsWidget"
+    let kind: String = "SmallShoeStatsWidget"
     
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
@@ -23,6 +23,6 @@ struct ShoeStatsWidget: Widget {
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays stats of the selected shoe.")
-        .supportedFamilies([.systemSmall])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
