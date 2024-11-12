@@ -1,4 +1,6 @@
-# Shoe Health App Policy
+# Shoe Health Privacy Policy
+
+**Effective Date:** 08.11.2024
 
 ## 1. Introduction
 
@@ -49,7 +51,7 @@ All data remains on your device and in **iCloud** as long as the app is installe
 
 We may update this policy to reflect changes in app features or privacy practices. You’ll be notified of any significant updates, and we encourage regular review of this page.
 
-## 9. Contact Us
+## 9. Contact Information 
 
 If you have questions or concerns about our data handling practices, contact us at **basamacr@icloud.com**.
 
