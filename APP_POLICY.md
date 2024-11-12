@@ -51,7 +51,7 @@ We may update this policy to reflect changes in app features or privacy practice
 
 ## 9. Contact Us
 
-If you have questions or concerns about our data handling practices, contact us at **[basamacr@icloud.com]**.
+If you have questions or concerns about our data handling practices, contact us at **basamacr@icloud.com**.
 
 ## 10. Acceptance
 
