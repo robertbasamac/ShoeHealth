@@ -44,6 +44,8 @@
 		0944A7E02CD4DE400042081D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0944A7DF2CD4DE400042081D /* LaunchScreen.storyboard */; };
 		0944A7E22CD4DFDF0042081D /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0944A7E12CD4DFDF0042081D /* LaunchView.swift */; };
 		0944A7F22CE23D720042081D /* SFSafariViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0944A7F12CE23D720042081D /* SFSafariViewController.swift */; };
+		0944A7F42CE3CE450042081D /* WelcomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0944A7F32CE3CE450042081D /* WelcomePage.swift */; };
+		0944A7F62CE3E25C0042081D /* WelcomeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0944A7F52CE3E2580042081D /* WelcomeItem.swift */; };
 		0948B5DB2C0DE9CA001A7745 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0948B5DA2C0DE9CA001A7745 /* Prompts.swift */; };
 		094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
 		094D13822C1606A1003C6F50 /* StatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E156D2BEB814D00BC8124 /* StatCell.swift */; };
@@ -173,6 +175,8 @@
 		0944A7DF2CD4DE400042081D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0944A7E12CD4DFDF0042081D /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		0944A7F12CE23D720042081D /* SFSafariViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariViewController.swift; sourceTree = "<group>"; };
+		0944A7F32CE3CE450042081D /* WelcomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage.swift; sourceTree = "<group>"; };
+		0944A7F52CE3E2580042081D /* WelcomeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeItem.swift; sourceTree = "<group>"; };
 		0948B5DA2C0DE9CA001A7745 /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
 		094B75B02B4ECA7000632590 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		094D13882C17871F003C6F50 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
@@ -422,6 +426,7 @@
 		097C434F2C1DC3D700A1C639 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0944A7F52CE3E2580042081D /* WelcomeItem.swift */,
 				094D13902C1B2270003C6F50 /* OnboardingTab.swift */,
 			);
 			path = Model;
@@ -439,6 +444,7 @@
 			isa = PBXGroup;
 			children = (
 				094D138A2C178A00003C6F50 /* OnboardingScreen.swift */,
+				0944A7F32CE3CE450042081D /* WelcomePage.swift */,
 				094D138E2C19EF55003C6F50 /* OnboardingPage.swift */,
 			);
 			path = View;
@@ -840,6 +846,7 @@
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
 				092DDB762CCA63CF00263F06 /* ShoeSearchListView.swift in Sources */,
+				0944A7F62CE3E25C0042081D /* WelcomeItem.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */,
 				09D9B5C82C08EAB10016825A /* BlurredCapsuleButtonStyle.swift in Sources */,
@@ -885,6 +892,7 @@
 				09D6B8FA2C3C2856004EDA01 /* AddShoeViewModel.swift in Sources */,
 				0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */,
 				094D138F2C19EF55003C6F50 /* OnboardingPage.swift in Sources */,
+				0944A7F42CE3CE450042081D /* WelcomePage.swift in Sources */,
 				0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */,
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
 				0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */,
@@ -916,13 +924,13 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -949,13 +957,13 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1106,7 +1114,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
@@ -1124,7 +1132,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1151,7 +1159,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				DEVELOPMENT_TEAM = 878Q47ZQ84;
 				ENABLE_PREVIEWS = YES;
@@ -1169,7 +1177,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

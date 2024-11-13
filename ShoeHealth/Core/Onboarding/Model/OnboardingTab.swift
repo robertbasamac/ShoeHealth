@@ -8,20 +8,25 @@
 import Foundation
 
 enum OnboardingTab: Int, CaseIterable {
+    case welcome
     case healthKitAccess
     case notificationAccess
     
     var image: String {
         switch self {
+        case .welcome:
+            "ShoeHealth"
         case .healthKitAccess:
             "AppleHealth"
         case .notificationAccess:
-            ""
+            "bell.badge.fill"
         }
     }
     
     var title: String {
         switch self {
+        case .welcome:
+            "Welcome to Shoe Health"
         case .healthKitAccess:
             Prompts.HealthAccess.title
         case .notificationAccess:
@@ -31,6 +36,8 @@ enum OnboardingTab: Int, CaseIterable {
     
     var description: String {
         switch self {
+        case .welcome:
+            ""
         case .healthKitAccess:
             Prompts.HealthAccess.description
         case .notificationAccess:

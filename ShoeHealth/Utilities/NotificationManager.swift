@@ -20,21 +20,43 @@ final class NotificationManager {
     private let center = UNUserNotificationCenter.current()
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
 
-    private init() { }
+    var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
+    
+    private init() {
+        Task {
+            await retrieveNotificationAuthorizationStatus()
+        }
+    }
     
     func requestNotificationAuthorization() async -> Bool {
         do {
-            let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
+            try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
             
-            logger.debug("Notifications authorized.")
+            await retrieveNotificationAuthorizationStatus()
             
-            return granted
+            switch notificationAuthorizationStatus {
+            case .notDetermined:
+                logger.debug("Notifications not determined.")
+            case .denied:
+                logger.debug("Notifications denied.")
+            case .authorized:
+                logger.debug("Notifications authorized.")
+            case .provisional:
+                logger.debug("Notifications provisional.")
+            case .ephemeral:
+                logger.debug("Notifications ephemeral.")
+            @unknown default:
+                logger.debug("Notifications status unknown.")
+            }
+            
+            return true
         } catch {
             return false
         }
     }
     
-    func getNotificationAuthorizationStatus() async -> UNAuthorizationStatus {
+    @MainActor
+    func retrieveNotificationAuthorizationStatus() async {
         let settings = await center.notificationSettings()
             
 //        if settings.authorizationStatus == .authorized {
@@ -43,7 +65,7 @@ final class NotificationManager {
 //            }
 //        }
         
-        return settings.authorizationStatus
+        self.notificationAuthorizationStatus = settings.authorizationStatus
     }
     
     func setActionableNotificationTypes() {
@@ -174,6 +196,19 @@ final class NotificationManager {
     func openSettings() async {
         if let appNotificationsSettingsURL = URL(string: UIApplication.openNotificationSettingsURLString), UIApplication.shared.canOpenURL(appNotificationsSettingsURL) {
             await UIApplication.shared.open(appNotificationsSettingsURL)
+        }
+    }
+    
+    func getBadge() -> String {
+        switch notificationAuthorizationStatus {
+        case .notDetermined:
+            return ""
+        case .denied:
+            return "Off"
+        case .authorized, .provisional, .ephemeral:
+            return "On"
+        @unknown default:
+            return ""
         }
     }
 }

@@ -36,6 +36,7 @@ struct PaywallView: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
+        .contentMargins(.bottom, 20)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -128,8 +129,8 @@ extension PaywallView {
         SubscriptionStoreView(subscriptions: store.subscriptionProducts) {
             featuresSection
         }
-        .subscriptionStoreControlStyle(.prominentPicker)
-//        .storeButton(.hidden, for: .cancellation)
+        .subscriptionStoreControlStyle(.picker)
+        .storeButton(.hidden, for: .cancellation)
     }
     
     @ViewBuilder

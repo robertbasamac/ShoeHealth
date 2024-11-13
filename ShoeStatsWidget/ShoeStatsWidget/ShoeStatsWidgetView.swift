@@ -51,7 +51,6 @@ struct SmallShoeStatsSnapshotWidgetView : View {
                 .foregroundStyle(Color.theme.greenEnergy)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-                .widgetAccentable(true)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.brand)
@@ -135,7 +134,6 @@ struct MediumShoeStatsSnapshotWidgetView : View {
                     .foregroundStyle(Color.theme.greenEnergy)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                    .widgetAccentable(true)
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(shoe.brand)

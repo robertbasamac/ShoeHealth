@@ -14,31 +14,27 @@ struct OnboardingScreen: View {
     
     @State private var onboardingViewModel = OnboardingViewModel()
     
-    @State private var selectedTab: OnboardingTab = .healthKitAccess
+    @State private var selectedTab: OnboardingTab = .welcome
 
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
     
     var body: some View {
         VStack(spacing: 0) {
             TabView(selection: $selectedTab) {
-                OnboardingPage(image: "AppleHealth",
+                WelcomePage()
+                    .tag(OnboardingTab.welcome)
+                
+                OnboardingPage(image: OnboardingTab.healthKitAccess.image,
                                title: Prompts.HealthAccess.title,
                                description: Prompts.HealthAccess.description,
-                               note: Prompts.HealthAccess.note,
-                               buttonTitle: "Sync Health Data",
-                               disableButton: onboardingViewModel.isHealthAuthorized,
-                               buttonAction: requestHealthKitAccess
+                               note: Prompts.HealthAccess.note
                 )
                 .tag(OnboardingTab.healthKitAccess)
                 
-                OnboardingPage(image: "bell.badge.fill",
+                OnboardingPage(image: OnboardingTab.notificationAccess.image,
                                title: Prompts.Notifications.title,
                                description: Prompts.Notifications.description,
-                               note: Prompts.Notifications.note,
-                               statusInfo: notificationsStatusInfo(),
-                               buttonTitle: notificationsButtonTitle(),
-                               disableButton: disableNotificationButton(),
-                               buttonAction: requestNotificationAccess
+                               note: Prompts.Notifications.note
                 )
                 .tag(OnboardingTab.notificationAccess)
             }
@@ -47,9 +43,8 @@ struct OnboardingScreen: View {
                 UIScrollView.appearance().isScrollEnabled = false
             }
             
-            nextButton
+            continueButton
                 .animation(.none, value: selectedTab)
-                .disabled(!onboardingViewModel.isHealthAuthorized)
         }
         .task {
             await onboardingViewModel.checkNotificationAuthorizationStatus()
@@ -69,36 +64,50 @@ struct OnboardingScreen: View {
 extension OnboardingScreen {
 
     @ViewBuilder
-    private var nextButton: some View {
+    private var continueButton: some View {
         Button {
             withAnimation {
                 switch selectedTab {
+                case .welcome:
+                    selectedTab = .healthKitAccess
                 case .healthKitAccess:
-                    selectedTab = .notificationAccess
+                    if onboardingViewModel.isHealthAuthorized {
+                        selectedTab = .notificationAccess
+                    } else {
+                        requestHealthKitAccess()
+                    }
                 case .notificationAccess:
-                    isOnboarding = false
+                    if onboardingViewModel.isNotificationsAuthorized{
+                        isOnboarding = false
+                    } else {
+                        requestNotificationAccess()
+                    }
                 }
             }
         } label: {
             Group {
                 switch selectedTab {
-                case .healthKitAccess:
-                    Image(systemName: "arrow.right.circle")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .fontWeight(.light)
+                case .welcome, .healthKitAccess:
+                    Text("Continue")
                 case .notificationAccess:
-                    Text("Get Started")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
+                    if onboardingViewModel.isNotificationsAuthorized {
+                        Text("Get Started")
+                    } else {
+                        Text("Continue")
+                    }
                 }
             }
             .frame(height: 44)
+            .frame(maxWidth: .infinity)
+            .font(.title2)
+            .fontWeight(.semibold)
+            .fontDesign(.rounded)
         }
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle(radius: 15))
         .tint(.white)
-        .padding(.vertical, 10)
         .padding(.bottom, 40)
+        .padding(.horizontal, 40)
     }
 }
 
@@ -115,53 +124,6 @@ extension OnboardingScreen {
     private func requestNotificationAccess() {
         Task {
             await onboardingViewModel.requestNotificationAuthorization()
-        }
-    }
-}
-
-// MARK: - Notifications Helper Methods
-
-extension OnboardingScreen {
-    
-    private func notificationsButtonTitle() -> String {
-        switch onboardingViewModel.notificationAuthorizationStatus {
-        case .denied:
-            return "Open Settings"
-        case .notDetermined, .authorized, .provisional, .ephemeral:
-            return "Enable Notifications"
-        @unknown default:
-            return "Enable Notifications"
-        }
-    }
-    
-    private func notificationsStatusInfo() -> String {
-        switch onboardingViewModel.notificationAuthorizationStatus {
-        case .notDetermined:
-            return ""
-        case .denied:
-            return """
-                Permission denied.
-                Press the button below to manually open your device settings and turn on notifications.
-            """
-        case .authorized, .provisional, .ephemeral:
-            return ""
-        @unknown default:
-            return ""
-        }
-    }
-    
-    private func disableHealthButton() -> Bool {
-        return onboardingViewModel.isHealthAuthorized
-    }
-    
-    private func disableNotificationButton() -> Bool {
-        switch onboardingViewModel.notificationAuthorizationStatus {
-        case .notDetermined, .denied:
-            return false
-        case .authorized, .provisional, .ephemeral:
-            return true
-        @unknown default:
-            return false
         }
     }
 }

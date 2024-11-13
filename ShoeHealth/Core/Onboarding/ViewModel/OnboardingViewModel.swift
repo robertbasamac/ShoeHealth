@@ -16,9 +16,7 @@ class OnboardingViewModel {
     
     var isHealthAuthorized = false
     var isNotificationsAuthorized = false
-    
-    var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
-    
+        
     private let healthManager = HealthManager.shared
     private let notificationManager = NotificationManager.shared
     
@@ -31,16 +29,14 @@ class OnboardingViewModel {
     }
     
     func requestNotificationAuthorization() async {
-        switch notificationAuthorizationStatus {
+        switch notificationManager.notificationAuthorizationStatus {
         case .notDetermined:
             logger.debug("Requesting notification access...")
             
             let authorization = await notificationManager.requestNotificationAuthorization()
-            let authorizationStatus = await notificationManager.getNotificationAuthorizationStatus()
             
             await MainActor.run {
                 isNotificationsAuthorized = authorization
-                notificationAuthorizationStatus = authorizationStatus
             }
         case .denied:
             logger.debug("Opening settings...")
@@ -54,16 +50,6 @@ class OnboardingViewModel {
     }
     
     func checkNotificationAuthorizationStatus() async {
-        let authorizationStatus = await notificationManager.getNotificationAuthorizationStatus()
-        
-        await MainActor.run {
-            notificationAuthorizationStatus = authorizationStatus
-            
-            if notificationAuthorizationStatus == .authorized {
-                isNotificationsAuthorized = true
-            } else {
-                isNotificationsAuthorized = false
-            }
-        }
+        await notificationManager.retrieveNotificationAuthorizationStatus()
     }
 }

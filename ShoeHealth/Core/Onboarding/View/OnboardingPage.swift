@@ -13,20 +13,12 @@ struct OnboardingPage: View {
     private let title: String
     private let description: String
     private let note: String
-    private let additionalInformation: String
-    private let buttonTitle: String
-    private let disableButton: Bool
-    private let buttonAction: () -> Void
-
-    init(image: String, title: String, description: String, note: String = "", statusInfo: String = "", buttonTitle: String, disableButton: Bool = false, buttonAction: @escaping () -> Void) {
+    
+    init(image: String, title: String, description: String, note: String = "") {
         self.image = image
         self.title = title
         self.description = description
         self.note = note
-        self.additionalInformation = statusInfo
-        self.buttonTitle = buttonTitle
-        self.disableButton = disableButton
-        self.buttonAction = buttonAction
     }
     
     var body: some View {
@@ -57,32 +49,11 @@ struct OnboardingPage: View {
                     .foregroundStyle(.pink)
             }
             
-            Spacer()
-            
-            if !additionalInformation.isEmpty {
-                Text(additionalInformation)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .padding(.bottom, 10)
-                    .frame(maxWidth: .infinity)
-            }
-            
-            Button(action: buttonAction) {
-                Text(buttonTitle)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .foregroundStyle(.black)
-            .tint(.white)
-            .disabled(disableButton)
+            Spacer(minLength: 0)
         }
         .fontDesign(.rounded)
-        .padding(.vertical, 60)
+        .padding(.vertical, 20)
+        .padding(.bottom, 30)
         .padding(.horizontal, 40)
     }
 }
@@ -90,18 +61,5 @@ struct OnboardingPage: View {
 // MARK: - Preview
 
 #Preview {
-    TabView {
-        OnboardingPage(image: "AppleHealth",
-                       title: Prompts.HealthAccess.title,
-                       description: Prompts.HealthAccess.description,
-                       note: Prompts.HealthAccess.note,
-                       buttonTitle: "Sync Health Data") {}
-        
-        OnboardingPage(image: "bell.badge.fill",
-                       title: Prompts.Notifications.title,
-                       description: Prompts.Notifications.description,
-                       note: Prompts.Notifications.note,
-                       buttonTitle: "Enable Notifications") {}
-    }
-    .tabViewStyle(.page)
+    OnboardingScreen()
 }
