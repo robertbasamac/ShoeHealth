@@ -5,8 +5,10 @@
 //  Created by Robert Basamac on 05.03.2024.
 //
 
-import Foundation
 import SwiftData
+import SwiftUI
+
+typealias Shoe = ShoesSchemaV1.Shoe
 
 final class ShoesStore {
     
@@ -14,7 +16,7 @@ final class ShoesStore {
         let container: ModelContainer
         
         do {
-            container = try ModelContainer(for: Shoe.self)
+            container = try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
         } catch {
             fatalError("Failed to create ModelContainer for Shoe: \(error)")
         }
