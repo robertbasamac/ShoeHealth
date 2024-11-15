@@ -34,13 +34,13 @@ To install the Shoe Health app, follow these steps:
 3. **Assign Workouts**: Assign workouts to the corresponding shoes to track their lifespan.
 4. **Monitor Lifespan**: Check the app regularly to see the wear status of your shoes and receive notifications.
 
-## App Policy
+## Privacy Policy
 
-For detailed information on data collection, usage, and privacy practices, please refer to our [App Policy](./APP_POLICY.md).
+For detailed information on data collection, usage, and privacy practices, please refer to our [Privacy Policy](./PRIVACY_POLICY.md).
 
 ## Contact
 
-For any questions, feedback, or support, please contact us at **[basamacr@icloud.com]**.
+For any questions, feedback, or support, please contact us at **basamacr@icloud.com**.
 
 ---
 
