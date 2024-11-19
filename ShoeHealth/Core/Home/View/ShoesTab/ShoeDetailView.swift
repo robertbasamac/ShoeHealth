@@ -43,10 +43,10 @@ struct ShoeDetailView: View {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 0) {
                         StretchyHeaderCell(height: 250, model: shoe.model, brand: shoe.brand, nickname: shoe.nickname, imageData: imageData)
-                            .overlay(content: {
+                            .overlay {
                                 Color(uiColor: .systemBackground)
                                     .opacity(Double(opacity))
-                            })
+                            }
                             .readingFrame { frame in
                                 readFrame(frame)
                             }
@@ -63,10 +63,10 @@ struct ShoeDetailView: View {
                     LazyVStack(spacing: 0) {
                         StaticHeaderCell(model: shoe.model, brand: shoe.brand, nickname: shoe.nickname)
                             .frame(height: 110)
-                            .overlay(content: {
+                            .overlay {
                                 Color(uiColor: .systemBackground)
                                     .opacity(Double(opacity))
-                            })
+                            }
                             .readingFrame { frame in
                                 readFrame(frame)
                             }
@@ -199,13 +199,13 @@ extension ShoeDetailView {
             
             if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
                 Button {
-                    let wasDefaultShoe = shoe.isDefaultShoe
+                    let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
                     
                     withAnimation {
                         shoesViewModel.retireShoe(shoe.id)
                     }
                     
-                    if wasDefaultShoe {
+                    if setNewDefaultShoe {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             navigationRouter.showSheet = .setDefaultShoe
                         }

@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ShoeFormView: View {
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
-    @State private var viewModel: AddShoeViewModel
+    @State private var addViewModel: ShoeFormViewModel
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
     @FocusState private var focusField: FocusField?
@@ -28,7 +29,7 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
-        self._viewModel = State(wrappedValue: AddShoeViewModel(
+        self._addViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
             lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
@@ -43,8 +44,8 @@ struct ShoeFormView: View {
     var body: some View {
         Form {
             photoSection
-                .task(id: viewModel.selectedPhoto) {
-                    await viewModel.loadPhoto()
+                .task(id: addViewModel.selectedPhoto) {
+                    await addViewModel.loadPhoto()
                 }
             
             detailsSection
@@ -56,10 +57,22 @@ struct ShoeFormView: View {
             lifespanSection
             
             aquisitionDateSection
+            
+            if isEditing {
+                Button {
+                   deleteShoe()
+                } label: {
+                    Text("Delete Shoe")
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.red)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
         }
         .navigationTitle(isEditing ? "Edit Shoe" : "Add Shoe")
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
+        .contentMargins(.bottom, 40, for: .automatic)
         .toolbar {
             toolbarItems
         }
@@ -77,7 +90,7 @@ struct ShoeFormView: View {
         }
         .onAppear {
             if !isEditing {
-                viewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
+                addViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.focusField = .brand
@@ -85,7 +98,7 @@ struct ShoeFormView: View {
             }            
         }
         .onChange(of: unitOfMeasure) { _, newValue in
-            viewModel.convertLifespanDistance(toUnit: newValue)
+            addViewModel.convertLifespanDistance(toUnit: newValue)
         }
     }
 }
@@ -99,7 +112,7 @@ extension ShoeFormView {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let data = viewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
+                    if let data = addViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -131,24 +144,24 @@ extension ShoeFormView {
                         .padding(.vertical, 8)
                         .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
                     
-                    if viewModel.selectedPhotoData != nil {
+                    if addViewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
                             .foregroundStyle(.red)
                             .padding(10)
                             .background(Color(uiColor: .secondarySystemBackground), in: .circle)
                             .onTapGesture {
-                                viewModel.selectedPhoto = nil
-                                viewModel.selectedPhotoData = nil
+                                addViewModel.selectedPhoto = nil
+                                addViewModel.selectedPhotoData = nil
                             }
                     }
                 }
-                .animation(.smooth, value: viewModel.selectedPhotoData)
+                .animation(.smooth, value: addViewModel.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $viewModel.showPhotosPicker, selection: $viewModel.selectedPhoto, matching: .images)
+            .photosPicker(isPresented: $addViewModel.showPhotosPicker, selection: $addViewModel.selectedPhoto, matching: .images)
             .onTapGesture {
-                viewModel.showPhotosPicker.toggle()
+                addViewModel.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -158,12 +171,12 @@ extension ShoeFormView {
     @ViewBuilder
     private var detailsSection: some View {
         Section {
-            TextField("Brand", text: $viewModel.shoeBrand)
+            TextField("Brand", text: $addViewModel.shoeBrand)
                 .focused($focusField, equals: .brand)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
             
-            TextField("Model", text: $viewModel.shoeModel)
+            TextField("Model", text: $addViewModel.shoeModel)
                 .focused($focusField, equals: .model)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
@@ -175,7 +188,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var nicknameSection: some View {
         Section {
-            TextField("Nickname", text: $viewModel.shoeNickname)
+            TextField("Nickname", text: $addViewModel.shoeNickname)
                 .focused($focusField, equals: .nickname)
                 .textInputAutocapitalization(.words)
         }
@@ -184,7 +197,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $viewModel.isDefaultShoe)
+            Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
                 .tint(Color.theme.accent)
                 .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
         }
@@ -205,11 +218,11 @@ extension ShoeFormView {
             }
                 
             VStack(spacing: 2) {
-                Text(String(format: "%.0f\(unitOfMeasure.symbol)", viewModel.lifespanDistance))
+                Text(String(format: "%.0f\(unitOfMeasure.symbol)", addViewModel.lifespanDistance))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Slider(value: $viewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
+                Slider(value: $addViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
                     Text("Lifespan distance")
                 } minimumValueLabel: {
                     Text(String(format: "%.0f \(unitOfMeasure.symbol)", unitOfMeasure.range.lowerBound))
@@ -229,7 +242,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var aquisitionDateSection: some View {
         Section {
-            DatePicker("Aquisition Date", selection: $viewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+            DatePicker("Aquisition Date", selection: $addViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
         } header: {
             Text("Aquisition Date")
@@ -248,29 +261,29 @@ extension ShoeFormView {
             Button {
                 let settingsUnitOfMeasure = settingsManager.unitOfMeasure
                 if settingsUnitOfMeasure != unitOfMeasure {
-                    viewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? viewModel.lifespanDistance * 1.60934 : viewModel.lifespanDistance / 1.60934
+                    addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
                 }
                 
                 if isEditing {
                     shoesViewModel.updateShoe(
-                        shoeID: viewModel.shoeID ?? UUID(),
-                        nickname: viewModel.shoeNickname,
-                        brand: viewModel.shoeBrand,
-                        model: viewModel.shoeModel,
-                        setDefaultShoe: viewModel.isDefaultShoe,
-                        lifespanDistance: viewModel.lifespanDistance,
-                        aquisitionDate: viewModel.aquisitionDate,
-                        image: viewModel.selectedPhotoData
+                        shoeID: addViewModel.shoeID ?? UUID(),
+                        nickname: addViewModel.shoeNickname,
+                        brand: addViewModel.shoeBrand,
+                        model: addViewModel.shoeModel,
+                        setDefaultShoe: addViewModel.isDefaultShoe,
+                        lifespanDistance: addViewModel.lifespanDistance,
+                        aquisitionDate: addViewModel.aquisitionDate,
+                        image: addViewModel.selectedPhotoData
                     )
                 } else {
                     shoesViewModel.addShoe(
-                        nickname: viewModel.shoeNickname,
-                        brand: viewModel.shoeBrand,
-                        model: viewModel.shoeModel,
-                        lifespanDistance: viewModel.lifespanDistance,
-                        aquisitionDate: viewModel.aquisitionDate,
-                        isDefaultShoe: viewModel.isDefaultShoe,
-                        image: viewModel.selectedPhotoData
+                        nickname: addViewModel.shoeNickname,
+                        brand: addViewModel.shoeBrand,
+                        model: addViewModel.shoeModel,
+                        lifespanDistance: addViewModel.lifespanDistance,
+                        aquisitionDate: addViewModel.aquisitionDate,
+                        isDefaultShoe: addViewModel.isDefaultShoe,
+                        image: addViewModel.selectedPhotoData
                     )
                 }
                 
@@ -279,8 +292,22 @@ extension ShoeFormView {
             } label: {
                 Text("Save")
             }
-            .disabled(viewModel.shoeBrand.isEmpty || viewModel.shoeModel.isEmpty || viewModel.shoeNickname.isEmpty)
+            .disabled(addViewModel.shoeBrand.isEmpty || addViewModel.shoeModel.isEmpty || addViewModel.shoeNickname.isEmpty)
         }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension ShoeFormView {
+    
+    private func deleteShoe() {
+        withAnimation {
+            shoesViewModel.deleteShoe(addViewModel.shoeID ?? UUID())
+        }
+        
+        dismiss()        
+        navigationRouter.navigateBack()
     }
 }
 

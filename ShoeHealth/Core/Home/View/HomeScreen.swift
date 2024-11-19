@@ -26,7 +26,7 @@ struct HomeScreen: View {
             }
             .tag(TabItem.workouts)
             
-            NavigationStack {
+            NavigationStack(path: $navigationRouter.shoesNavigationPath) {
                 ShoesTab()
             }
             .tabItem {

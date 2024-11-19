@@ -17,7 +17,8 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var showManagedSubscriptions: Bool = false
-    
+    @State private var redeemSheetIsPresented = false
+
     var body: some View {
         ScrollView {
             if let product = store.lifetimeProduct {
@@ -26,6 +27,20 @@ struct PaywallView: View {
                     
                     subscriptionsSection
                         .disabled(store.isPurchased(product))
+                    
+                    redeemCodeButton
+                        .offerCodeRedemption(isPresented: $redeemSheetIsPresented) { result in
+                            switch result {
+                            case .success:
+                                // Handle successful redemption
+                                print("Offer code redemption was successful.")
+                                // Optionally update your UI or app state here
+                            case .failure(let error):
+                                // Handle the error that occurred
+                                print("Offer code redemption failed with error: \(error.localizedDescription)")
+                                // You can show an alert to the user or log the error for debugging
+                            }
+                        }
                     
                     restorePurchasesButton
                     
@@ -140,6 +155,16 @@ extension PaywallView {
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 40)
+    }
+    
+    @ViewBuilder
+    private var redeemCodeButton: some View {
+        Button {
+            redeemSheetIsPresented = true
+        } label: {
+            Text("Redeem Code")
+                .fontWeight(.semibold)
+        }
     }
     
     @ViewBuilder

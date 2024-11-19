@@ -154,11 +154,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 
                 guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { break }
                                 
-                let wasDefaultShoe = shoe.isDefaultShoe
+                let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
                 
                 shoesViewModel?.retireShoe(shoeID)
                                 
-                if wasDefaultShoe && shoe.isRetired {
+                if setNewDefaultShoe {
                     logger.debug("Scheduling Set New Default Shoe notification")
                     
                     let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)

@@ -1,5 +1,5 @@
 //
-//  AddShoeViewModel.swift
+//  ShoeFormViewModel.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 08.07.2024.
@@ -11,7 +11,7 @@ import PhotosUI
 import SwiftUI
 
 @Observable
-final class AddShoeViewModel {
+final class ShoeFormViewModel {
     
     var selectedPhotoData: Data? = nil
     var selectedPhoto: PhotosPickerItem? = nil
@@ -23,7 +23,6 @@ final class AddShoeViewModel {
     var shoeBrand: String
     var shoeModel: String
     var shoeNickname: String
-        
     var shoeID: UUID?
     
     // MARK: - Initializer

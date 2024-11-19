@@ -19,9 +19,6 @@ struct ShoesView: View {
     @Environment(\.isSearching) var isSearching
     @Environment(\.dismissSearch) var dismissSearch
     
-    @State private var selectedShoe: Shoe?
-    @State private var selectedCategory: ShoeCategory?
-
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
@@ -39,12 +36,11 @@ struct ShoesView: View {
         .toolbar {
             toolbarItems
         }
-        .navigationDestination(item: $selectedShoe) { shoe in
+        .navigationDestination(for: Shoe.self) { shoe in
             ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
         }
-        .navigationDestination(item: $selectedCategory) { category in
-            ShoesListView(shoes: shoesViewModel.getShoes(filter: category))
-                .navigationTitle(category == .active ? "Active Shoes" : "Retired Shoes")
+        .navigationDestination(for: ShoeCategory.self) { category in
+            ShoesListView(forCategory: category)
         }
         .refreshable {
             await healthManager.fetchRunningWorkouts()
@@ -103,7 +99,7 @@ extension ShoesView {
                     .disabled(isShoeRestricted(shoe.id))
                     .onTapGesture {
                         dismissSearch()
-                        selectedShoe = shoe
+                        navigationRouter.navigate(to: .shoe(shoe))
                     }
             } else {
                 HStack(spacing: 0) {
@@ -164,7 +160,7 @@ extension ShoesView {
     
     @ViewBuilder
     private var activeShoesSection: some View {
-        let shoes = shoesViewModel.getShoes(filter: .active)
+        let shoes = shoesViewModel.getShoes(for: .active)
 
         if !shoes.isEmpty {
             VStack(spacing: 0) {
@@ -177,7 +173,7 @@ extension ShoesView {
                 .asHeader()
                 .onTapGesture {
                     dismissSearch()
-                    selectedCategory = .active
+                    navigationRouter.navigate(to: .category(.active))
                 }
                 
                 shoesCarousel(shoes: shoes)
@@ -187,7 +183,7 @@ extension ShoesView {
     
     @ViewBuilder
     private var retiredShoesSection: some View {
-        let shoes = shoesViewModel.getShoes(filter: .retired)
+        let shoes = shoesViewModel.getShoes(for: .retired)
 
         if !shoes.isEmpty {
             VStack(spacing: 0) {
@@ -200,7 +196,7 @@ extension ShoesView {
                 .asHeader()
                 .onTapGesture {
                     dismissSearch()
-                    selectedCategory = .retired
+                    navigationRouter.navigate(to: .category(.retired))
                 }
                 
                 shoesCarousel(shoes: shoes)
@@ -225,11 +221,11 @@ extension ShoesView {
                             }
                             
                             Button {
-                                let wasDefaultShoe = shoe.isDefaultShoe
+                                let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
 
                                 shoesViewModel.retireShoe(shoe.id)
                                 
-                                if wasDefaultShoe {
+                                if setNewDefaultShoe {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                         navigationRouter.showSheet = .setDefaultShoe
                                     }
@@ -266,7 +262,7 @@ extension ShoesView {
                         }
                         .onTapGesture {
                             dismissSearch()
-                            selectedShoe = shoe
+                            navigationRouter.navigate(to: .shoe(shoe))
                         }
                 }
             }
@@ -337,7 +333,7 @@ extension ShoesView {
                 .contentShape(.rect)
                 .onTapGesture {
                     dismissSearch()
-                    selectedShoe = shoe
+                    navigationRouter.navigate(to: .shoe(shoe))
                 }
             } else {
                 Text("No shoe selected for this workout")
@@ -362,52 +358,6 @@ extension ShoesView {
                 .scaledToFit()
                 .frame(width: 44, height: 44)
                 .offset(x: -50)
-        }
-    }
-    
-    @ViewBuilder
-    private func swipeRightActions(shoe: Shoe) -> some View {
-        Button {
-            let wasDefaultShoe = shoe.isDefaultShoe
-            
-            shoesViewModel.retireShoe(shoe.id)
-            
-            if wasDefaultShoe {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe
-                }
-            }
-        } label: {
-            if shoe.isRetired {
-                Label("Reinstate", systemImage: "bolt.fill")
-            } else {
-                Label("Retire", systemImage: "bolt.slash.fill")
-            }
-        }
-        .tint(shoe.isRetired ? .green : .red)
-        
-        if !shoe.isDefaultShoe {
-            Button {
-                shoesViewModel.setAsDefaultShoe(shoe.id)
-            } label: {
-                Label("Set Default", systemImage: "shoe.2")
-            }
-            .tint(Color.gray)
-        }
-    }
-    
-    @ViewBuilder
-    private func swipeLeftActions(shoe: Shoe) -> some View {
-        Button(role: .destructive) {
-            withAnimation {
-                shoesViewModel.deleteShoe(shoe.id)
-            }
-            
-            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                navigationRouter.showSheet = .setDefaultShoe
-            }
-        } label: {
-            Label("Delete", systemImage: "trash")
         }
     }
     

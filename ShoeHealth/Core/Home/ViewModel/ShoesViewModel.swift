@@ -139,10 +139,10 @@ final class ShoesViewModel {
         }
     }
     
-    func getShoes(filter: ShoeCategory = .all) -> [Shoe] {
+    func getShoes(for category: ShoeCategory = .all) -> [Shoe] {
         var filteredShoes: [Shoe] = []
         
-        switch filter {
+        switch category {
         case .active:
             filteredShoes = self.shoes.filter({ !$0.isRetired })
         case .retired:

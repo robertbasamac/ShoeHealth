@@ -16,6 +16,7 @@ import HealthKit
 ///
 /// This class exposes the following properties:
 /// - `selectedTab`: The currently selected tab in the tab-based navigation.
+/// - `shoesNavigationPath`: A `NavigationPath` that tracks the navigation history and current state of views related to shoes. It manages the stack of views for navigating between categories, shoe details, and other shoe-related screens.
 /// - `showSheet`: An optional `SheetType` enum instance representing the sheet that should be displayed.
 /// - `showShoeDetails`: An optional `Shoe` model representing the shoe details to be shown.
 /// - `showLimitAlert`: A boolean that is being used to show an alert if 3 shoes limit has been reached without having unlimited access
@@ -25,11 +26,44 @@ final class NavigationRouter: ObservableObject {
     
     @Published var selectedTab: TabItem = .shoes
     
+    @Published var shoesNavigationPath: NavigationPath = NavigationPath()
+    
     @Published var showSheet: SheetType?
     @Published var showShoeDetails: Shoe?
     @Published var showLimitAlert: Bool = false
     @Published var showPaywall: Bool = false
 }
+
+// MARK: - Navigation Destination
+
+extension NavigationRouter {
+    
+    enum Destination {
+        case category(ShoeCategory)
+        case shoe(Shoe)
+    }
+    
+    func navigate(to destination: Destination) {
+        switch destination {
+        case .category(let category):
+            shoesNavigationPath.append(category)
+        case .shoe(let shoe):
+            shoesNavigationPath.append(shoe)
+        }
+    }
+    
+    func navigateBack() {
+        if !shoesNavigationPath.isEmpty {
+            shoesNavigationPath.removeLast()
+        }
+    }
+    
+    func navigateToRoot() {
+        shoesNavigationPath = NavigationPath()
+    }
+}
+
+// MARK: - Sheet Type
 
 extension NavigationRouter {
     
