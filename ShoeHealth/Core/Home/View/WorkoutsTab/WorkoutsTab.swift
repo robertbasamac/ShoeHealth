@@ -19,16 +19,25 @@ struct WorkoutsTab: View {
         List {
             ForEach(healthManager.workouts, id: \.self) { workout in
                 WorkoutListItem(workout: workout)
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button {
-                        selectedWorkout = workout
-                    } label: {
-                        Label("Add Shoe", systemImage: "shoe")
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button {
+                            selectedWorkout = workout
+                        } label: {
+                            Label("Add Shoe", systemImage: "shoe")
+                        }
+                        .tint(.gray)
                     }
-                    .tint(.gray)
-                }
             }
         }
+        .listStyle(.plain)
+        .listRowSpacing(4)
+        .contentMargins(.horizontal, 20, for: .scrollContent)
         .overlay {
             emptyWorkoutsView
         }

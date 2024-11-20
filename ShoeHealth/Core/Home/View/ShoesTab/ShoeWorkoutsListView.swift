@@ -34,7 +34,7 @@ struct ShoeWorkoutsListView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 6)
                 .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
+                .listRowInsets(.init(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -48,6 +48,8 @@ struct ShoeWorkoutsListView: View {
                 }
         }
         .listStyle(.plain)
+        .listRowSpacing(4)
+        .contentMargins(.trailing, 20, for: .scrollContent)
         .environment(\.editMode, $editMode)
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)

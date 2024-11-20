@@ -19,6 +19,9 @@ struct ShoesView: View {
     @Environment(\.isSearching) var isSearching
     @Environment(\.dismissSearch) var dismissSearch
     
+    @State private var showDeletionConfirmation: Bool = false
+    @State private var shoeForDeletion: Shoe? = nil
+    
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
@@ -33,11 +36,22 @@ struct ShoesView: View {
                 retiredShoesSection
             }
         }
+        .confirmationDialog(
+            "Delete this shoe?",
+            isPresented: $showDeletionConfirmation,
+            titleVisibility: .visible,
+            presenting: shoeForDeletion,
+            actions: { shoe in
+                confirmationActions(shoe: shoe)
+            },
+            message: { shoe in
+                Text("Deleting \'\(shoe.brand) \(shoe.brand)\' shoe cannot be undone.")
+            })
         .toolbar {
             toolbarItems
         }
         .navigationDestination(for: Shoe.self) { shoe in
-            ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
+            ShoeDetailView(shoe: shoe)
         }
         .navigationDestination(for: ShoeCategory.self) { category in
             ShoesListView(forCategory: category)
@@ -214,7 +228,9 @@ extension ShoesView {
                         .contextMenu {
                             if !shoe.isDefaultShoe && !isShoeRestricted(shoe.id) {
                                 Button {
-                                    shoesViewModel.setAsDefaultShoe(shoe.id)
+                                    withAnimation {
+                                        shoesViewModel.setAsDefaultShoe(shoe.id)
+                                    }
                                 } label: {
                                     Label("Set Default", systemImage: "shoe.2")
                                 }
@@ -223,7 +239,9 @@ extension ShoesView {
                             Button {
                                 let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
 
-                                shoesViewModel.retireShoe(shoe.id)
+                                withAnimation {
+                                    shoesViewModel.retireShoe(shoe.id)
+                                }
                                 
                                 if setNewDefaultShoe {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -239,15 +257,8 @@ extension ShoesView {
                             }
                             
                             Button(role: .destructive) {
-                                withAnimation {
-                                    shoesViewModel.deleteShoe(shoe.id)
-                                }
-                                
-                                if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        navigationRouter.showSheet = .setDefaultShoe
-                                    }
-                                }
+                                shoeForDeletion = shoe
+                                showDeletionConfirmation.toggle()
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -358,6 +369,27 @@ extension ShoesView {
                 .scaledToFit()
                 .frame(width: 44, height: 44)
                 .offset(x: -50)
+        }
+    }
+    
+    @ViewBuilder
+    private func confirmationActions(shoe: Shoe) -> some View {
+        Button("Cancel", role: .cancel) {
+            shoeForDeletion = nil
+        }
+        
+        Button("Delete", role: .destructive) {
+            shoeForDeletion = nil
+            
+            withAnimation {
+                shoesViewModel.deleteShoe(shoe.id)
+            }
+            
+            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe
+                }
+            }
         }
     }
     

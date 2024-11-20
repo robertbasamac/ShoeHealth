@@ -15,6 +15,9 @@ struct ShoesListView: View {
     
     @State private var category: ShoeCategory = .all
     
+    @State private var showDeletionConfirmation: Bool = false
+    @State private var shoeForDeletion: Shoe? = nil
+    
     init(forCategory category: ShoeCategory = .all) {
         self._category = State(wrappedValue: category)
     }
@@ -28,35 +31,35 @@ struct ShoesListView: View {
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
                     .disabled(isShoeRestricted(shoe.id))
-                    .onTapGesture {
-                        navigationRouter.navigate(to: .shoe(shoe))
-                    }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         swipeLeftActions(shoe: shoe)
+                    }
+                    .onTapGesture {
+                        navigationRouter.navigate(to: .shoe(shoe))
                     }
             }
         }
         .listStyle(.plain)
         .listRowSpacing(4)
-        .contentMargins(.horizontal, 16, for: .scrollContent)
+        .contentMargins(.horizontal, 20, for: .scrollContent)
         .contentMargins(.top, 10, for: .scrollContent)
         .contentMargins(.top, 10, for: .scrollIndicators)
-//        .scrollBounceBehavior(.basedOnSize)
         .navigationTitle(category.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
+        .confirmationDialog(
+            "Delete this shoe?",
+            isPresented: $showDeletionConfirmation,
+            titleVisibility: .visible,
+            presenting: shoeForDeletion,
+            actions: { shoe in
+                confirmationActions(shoe: shoe)
+            },
+            message: { shoe in
+                Text("Deleting \'\(shoe.brand) \(shoe.brand)\' shoe cannot be undone.")
+            })
         .safeAreaInset(edge: .bottom) {
-            Picker("Category", selection: $category) {
-                ForEach(ShoeCategory.allCases) { category in
-                    Text(category.rawValue)
-                        .tag(category)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.bottom, 1)
-            .background(.bar, in: .rect(cornerRadius: 8))
-            .padding(.bottom, 10)
-            .padding(.horizontal, 40)
+            shoeCategoryPicker
         }
         .overlay {
             emptyShoesView
@@ -65,7 +68,7 @@ struct ShoesListView: View {
             toolbarItems
         }
         .navigationDestination(for: Shoe.self) { shoe in
-            ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
+            ShoeDetailView(shoe: shoe)
         }
     }
 }
@@ -76,20 +79,15 @@ extension ShoesListView {
     
     @ViewBuilder
     private func swipeLeftActions(shoe: Shoe) -> some View {
-        Button(role: .destructive) {
-            withAnimation {
-                shoesViewModel.deleteShoe(shoe.id)
-            }
-            
-            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                navigationRouter.showSheet = .setDefaultShoe
-            }
+        Button {
+            shoeForDeletion = shoe
+            showDeletionConfirmation.toggle()
         } label: {
             Label("Delete", systemImage: "trash")
         }
         .tint(.red)
         
-        Button {
+        Button(role: .destructive) {
             let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
             
             withAnimation {
@@ -109,6 +107,27 @@ extension ShoesListView {
             }
         }
         .tint(shoe.isRetired ? .green : .red)
+    }
+    
+    @ViewBuilder
+    private func confirmationActions(shoe: Shoe) -> some View {
+        Button("Cancel", role: .cancel) {
+            shoeForDeletion = nil
+        }
+        
+        Button("Delete", role: .destructive) {
+            shoeForDeletion = nil
+            
+            withAnimation {
+                shoesViewModel.deleteShoe(shoe.id)
+            }
+            
+            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe
+                }
+            }
+        }
     }
     
     @ToolbarContentBuilder
@@ -135,6 +154,21 @@ extension ShoesListView {
             }
             .disabled(shoesViewModel.getShoes(for: category).isEmpty)
         }
+    }
+    
+    @ViewBuilder
+    private var shoeCategoryPicker: some View {
+        Picker("Category", selection: $category) {
+            ForEach(ShoeCategory.allCases) { category in
+                Text(category.rawValue)
+                    .tag(category)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.bottom, 1)
+        .background(.bar, in: .rect(cornerRadius: 8))
+        .padding(.bottom, 10)
+        .padding(.horizontal, 40)
     }
     
     @ViewBuilder

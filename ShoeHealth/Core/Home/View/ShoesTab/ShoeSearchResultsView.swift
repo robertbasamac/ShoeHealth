@@ -31,7 +31,7 @@ struct ShoeSearchResultsView: View {
         .listRowSpacing(4)
         .contentMargins(.horizontal, 16, for: .scrollContent)
         .navigationDestination(for: Shoe.self) { shoe in
-            ShoeDetailView(shoe: shoe, isShoeRestricted: isShoeRestricted(shoe.id))
+            ShoeDetailView(shoe: shoe)
         }
         .overlay {
             if shoesViewModel.filteredShoes.isEmpty {

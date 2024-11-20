@@ -11,6 +11,7 @@ import HealthKit
 struct ShoeDetailView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
@@ -18,7 +19,6 @@ struct ShoeDetailView: View {
     
     private var shoe: Shoe
     private var backButtonSymbol: String
-    private var isShoeRestricted: Bool
     
     @State private var workouts: [HKWorkout] = []
     @State private var mostRecentWorkouts: [HKWorkout] = []
@@ -31,10 +31,9 @@ struct ShoeDetailView: View {
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
     
-    init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left", isShoeRestricted: Bool = false) {
+    init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
         self.backButtonSymbol = backButtonSymbol
-        self.isShoeRestricted = isShoeRestricted
     }
     
     var body: some View {
@@ -89,7 +88,7 @@ struct ShoeDetailView: View {
             toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
-            ShoeWorkoutsListView(shoe: shoe, workouts: $workouts, isShoeRestricted: isShoeRestricted)
+            ShoeWorkoutsListView(shoe: shoe, workouts: $workouts, isShoeRestricted: isShoeRestricted())
         }
         .sheet(isPresented: $showEditShoe) {
             NavigationStack {
@@ -339,7 +338,7 @@ extension ShoeDetailView {
                         .imageScale(.large)
                 }
                 .padding(.trailing, 20)
-                .disabled(isShoeRestricted)
+                .disabled(isShoeRestricted())
             })
             
             VStack(spacing: 4) {
@@ -376,7 +375,7 @@ extension ShoeDetailView {
                 Text("Edit")
             }
             .buttonStyle(.blurredCapsule(Double(1-opacity)))
-            .disabled(isShoeRestricted)
+            .disabled(isShoeRestricted())
         }
     }
 }
@@ -384,6 +383,10 @@ extension ShoeDetailView {
 // MARK: - Helpers
 
 extension ShoeDetailView {
+    
+    private func isShoeRestricted() -> Bool {
+        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoe.id)
+    }
     
     private func readFrame(_ frame: CGRect) {
         guard frame.maxY > 0 else {
@@ -410,6 +413,7 @@ extension ShoeDetailView {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)

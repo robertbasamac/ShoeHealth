@@ -17,6 +17,8 @@ struct ShoeFormView: View {
     @State private var addViewModel: ShoeFormViewModel
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
+    @State private var showDeletionConfirmation: Bool = false
+    
     @FocusState private var focusField: FocusField?
     
     private var isEditing: Bool
@@ -60,13 +62,22 @@ struct ShoeFormView: View {
             
             if isEditing {
                 Button {
-                   deleteShoe()
+                    showDeletionConfirmation.toggle()
                 } label: {
                     Text("Delete Shoe")
                         .fontWeight(.semibold)
                         .foregroundStyle(.red)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
+                .confirmationDialog("Delete this shoe?", isPresented: $showDeletionConfirmation, titleVisibility: .visible) {
+                    Button("Cancel", role: .cancel) { }
+                    
+                    Button("Delete", role: .destructive) {
+                        deleteShoe()
+                    }
+                } message: {
+                    Text("This action cannot be undone.")
+                }
             }
         }
         .navigationTitle(isEditing ? "Edit Shoe" : "Add Shoe")
@@ -316,7 +327,7 @@ extension ShoeFormView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeFormView()
+            ShoeFormView(shoe: Shoe.previewShoe)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }
