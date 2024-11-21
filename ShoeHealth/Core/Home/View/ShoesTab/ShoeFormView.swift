@@ -14,7 +14,7 @@ struct ShoeFormView: View {
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
-    @State private var addViewModel: ShoeFormViewModel
+    @State private var shoeFormViewModel: ShoeFormViewModel
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
     @State private var showDeletionConfirmation: Bool = false
@@ -31,7 +31,7 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
-        self._addViewModel = State(wrappedValue: ShoeFormViewModel(
+        self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
             lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
@@ -46,8 +46,8 @@ struct ShoeFormView: View {
     var body: some View {
         Form {
             photoSection
-                .task(id: addViewModel.selectedPhoto) {
-                    await addViewModel.loadPhoto()
+                .task(id: shoeFormViewModel.selectedPhoto) {
+                    await shoeFormViewModel.loadPhoto()
                 }
             
             detailsSection
@@ -76,7 +76,7 @@ struct ShoeFormView: View {
                         deleteShoe()
                     }
                 } message: {
-                    Text("This action cannot be undone.")
+                    Text("Deleting \'\(shoeFormViewModel.brand) \(shoeFormViewModel.model) - \(shoeFormViewModel.nickname)\' shoe is permanent. This action cannot be undone.")
                 }
             }
         }
@@ -101,7 +101,7 @@ struct ShoeFormView: View {
         }
         .onAppear {
             if !isEditing {
-                addViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
+                shoeFormViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.focusField = .brand
@@ -109,7 +109,7 @@ struct ShoeFormView: View {
             }            
         }
         .onChange(of: unitOfMeasure) { _, newValue in
-            addViewModel.convertLifespanDistance(toUnit: newValue)
+            shoeFormViewModel.convertLifespanDistance(toUnit: newValue)
         }
     }
 }
@@ -123,7 +123,7 @@ extension ShoeFormView {
         Section {
             VStack(spacing: 12) {
                 ZStack {
-                    if let data = addViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
+                    if let data = shoeFormViewModel.selectedPhotoData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -155,24 +155,24 @@ extension ShoeFormView {
                         .padding(.vertical, 8)
                         .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
                     
-                    if addViewModel.selectedPhotoData != nil {
+                    if shoeFormViewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
                             .foregroundStyle(.red)
                             .padding(10)
                             .background(Color(uiColor: .secondarySystemBackground), in: .circle)
                             .onTapGesture {
-                                addViewModel.selectedPhoto = nil
-                                addViewModel.selectedPhotoData = nil
+                                shoeFormViewModel.selectedPhoto = nil
+                                shoeFormViewModel.selectedPhotoData = nil
                             }
                     }
                 }
-                .animation(.smooth, value: addViewModel.selectedPhotoData)
+                .animation(.smooth, value: shoeFormViewModel.selectedPhotoData)
             }
             .frame(maxWidth: .infinity)
-            .photosPicker(isPresented: $addViewModel.showPhotosPicker, selection: $addViewModel.selectedPhoto, matching: .images)
+            .photosPicker(isPresented: $shoeFormViewModel.showPhotosPicker, selection: $shoeFormViewModel.selectedPhoto, matching: .images)
             .onTapGesture {
-                addViewModel.showPhotosPicker.toggle()
+                shoeFormViewModel.showPhotosPicker.toggle()
             }
         }
         .listRowBackground(Color.clear)
@@ -182,12 +182,12 @@ extension ShoeFormView {
     @ViewBuilder
     private var detailsSection: some View {
         Section {
-            TextField("Brand", text: $addViewModel.shoeBrand)
+            TextField("Brand", text: $shoeFormViewModel.brand)
                 .focused($focusField, equals: .brand)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
             
-            TextField("Model", text: $addViewModel.shoeModel)
+            TextField("Model", text: $shoeFormViewModel.model)
                 .focused($focusField, equals: .model)
                 .textInputAutocapitalization(.words)
                 .submitLabel(.next)
@@ -199,7 +199,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var nicknameSection: some View {
         Section {
-            TextField("Nickname", text: $addViewModel.shoeNickname)
+            TextField("Nickname", text: $shoeFormViewModel.nickname)
                 .focused($focusField, equals: .nickname)
                 .textInputAutocapitalization(.words)
         }
@@ -208,7 +208,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $addViewModel.isDefaultShoe)
+            Toggle("Set as default shoe", isOn: $shoeFormViewModel.isDefaultShoe)
                 .tint(Color.theme.accent)
                 .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
         }
@@ -229,11 +229,11 @@ extension ShoeFormView {
             }
                 
             VStack(spacing: 2) {
-                Text(String(format: "%.0f\(unitOfMeasure.symbol)", addViewModel.lifespanDistance))
+                Text(String(format: "%.0f\(unitOfMeasure.symbol)", shoeFormViewModel.lifespanDistance))
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Slider(value: $addViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
+                Slider(value: $shoeFormViewModel.lifespanDistance, in: unitOfMeasure.range, step: 50) {
                     Text("Lifespan distance")
                 } minimumValueLabel: {
                     Text(String(format: "%.0f \(unitOfMeasure.symbol)", unitOfMeasure.range.lowerBound))
@@ -253,7 +253,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var aquisitionDateSection: some View {
         Section {
-            DatePicker("Aquisition Date", selection: $addViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
+            DatePicker("Aquisition Date", selection: $shoeFormViewModel.aquisitionDate, in: ...Date.now, displayedComponents: [.date])
                 .datePickerStyle(.graphical)
         } header: {
             Text("Aquisition Date")
@@ -272,29 +272,29 @@ extension ShoeFormView {
             Button {
                 let settingsUnitOfMeasure = settingsManager.unitOfMeasure
                 if settingsUnitOfMeasure != unitOfMeasure {
-                    addViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? addViewModel.lifespanDistance * 1.60934 : addViewModel.lifespanDistance / 1.60934
+                    shoeFormViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? shoeFormViewModel.lifespanDistance * 1.60934 : shoeFormViewModel.lifespanDistance / 1.60934
                 }
                 
                 if isEditing {
                     shoesViewModel.updateShoe(
-                        shoeID: addViewModel.shoeID ?? UUID(),
-                        nickname: addViewModel.shoeNickname,
-                        brand: addViewModel.shoeBrand,
-                        model: addViewModel.shoeModel,
-                        setDefaultShoe: addViewModel.isDefaultShoe,
-                        lifespanDistance: addViewModel.lifespanDistance,
-                        aquisitionDate: addViewModel.aquisitionDate,
-                        image: addViewModel.selectedPhotoData
+                        shoeID: shoeFormViewModel.shoeID ?? UUID(),
+                        nickname: shoeFormViewModel.nickname,
+                        brand: shoeFormViewModel.brand,
+                        model: shoeFormViewModel.model,
+                        setDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                        lifespanDistance: shoeFormViewModel.lifespanDistance,
+                        aquisitionDate: shoeFormViewModel.aquisitionDate,
+                        image: shoeFormViewModel.selectedPhotoData
                     )
                 } else {
                     shoesViewModel.addShoe(
-                        nickname: addViewModel.shoeNickname,
-                        brand: addViewModel.shoeBrand,
-                        model: addViewModel.shoeModel,
-                        lifespanDistance: addViewModel.lifespanDistance,
-                        aquisitionDate: addViewModel.aquisitionDate,
-                        isDefaultShoe: addViewModel.isDefaultShoe,
-                        image: addViewModel.selectedPhotoData
+                        nickname: shoeFormViewModel.nickname,
+                        brand: shoeFormViewModel.brand,
+                        model: shoeFormViewModel.model,
+                        lifespanDistance: shoeFormViewModel.lifespanDistance,
+                        aquisitionDate: shoeFormViewModel.aquisitionDate,
+                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                        image: shoeFormViewModel.selectedPhotoData
                     )
                 }
                 
@@ -303,7 +303,7 @@ extension ShoeFormView {
             } label: {
                 Text("Save")
             }
-            .disabled(addViewModel.shoeBrand.isEmpty || addViewModel.shoeModel.isEmpty || addViewModel.shoeNickname.isEmpty)
+            .disabled(shoeFormViewModel.brand.isEmpty || shoeFormViewModel.model.isEmpty || shoeFormViewModel.nickname.isEmpty)
         }
     }
 }
@@ -314,7 +314,7 @@ extension ShoeFormView {
     
     private func deleteShoe() {
         withAnimation {
-            shoesViewModel.deleteShoe(addViewModel.shoeID ?? UUID())
+            shoesViewModel.deleteShoe(shoeFormViewModel.shoeID ?? UUID())
         }
         
         dismiss()        

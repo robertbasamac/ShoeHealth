@@ -20,9 +20,9 @@ final class ShoeFormViewModel {
     var aquisitionDate: Date
     var lifespanDistance: Double
     var isDefaultShoe: Bool
-    var shoeBrand: String
-    var shoeModel: String
-    var shoeNickname: String
+    var brand: String
+    var model: String
+    var nickname: String
     var shoeID: UUID?
     
     // MARK: - Initializer
@@ -41,9 +41,9 @@ final class ShoeFormViewModel {
         self.aquisitionDate = aquisitionDate
         self.lifespanDistance = lifespanDistance
         self.isDefaultShoe = isDefaultShoe
-        self.shoeBrand = shoeBrand
-        self.shoeModel = shoeModel
-        self.shoeNickname = shoeNickname
+        self.brand = shoeBrand
+        self.model = shoeModel
+        self.nickname = shoeNickname
         self.shoeID = shoeID
     }
     

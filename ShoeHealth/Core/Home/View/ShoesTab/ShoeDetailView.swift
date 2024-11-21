@@ -26,6 +26,7 @@ struct ShoeDetailView: View {
     @State private var showEditShoe: Bool = false
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
+    @State private var showDeletionConfirmation: Bool = false
     
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
@@ -84,6 +85,19 @@ struct ShoeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(navBarTitle)
         .toolbarBackground(navBarVisibility, for: .navigationBar)
+        .confirmationDialog(
+            "Delete this shoe?",
+            isPresented: $showDeletionConfirmation,
+            titleVisibility: .visible,
+            presenting: shoe,
+            actions: { shoe in
+                Button("Delete", role: .destructive) {
+                    deleteShoe()
+                }
+            },
+            message: { shoe in
+                Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+            })
         .toolbar {
             toolbarItems
         }
@@ -369,13 +383,25 @@ extension ShoeDetailView {
         }
         
         ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                showEditShoe.toggle()
+            Menu {
+                Button {
+                    showEditShoe.toggle()
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+                .buttonStyle(.blurredCapsule(Double(1-opacity)))
+                .disabled(isShoeRestricted())
+                
+                Button(role: .destructive) {
+                    showDeletionConfirmation.toggle()
+                } label : {
+                    Label("Delete", systemImage: "trash")
+                }
             } label: {
-                Text("Edit")
+                Image(systemName: "ellipsis")
+                    .frame(width: 34, height: 34)
+                    .background(.bar.opacity(Double(1-opacity)), in: .circle)
             }
-            .buttonStyle(.blurredCapsule(Double(1-opacity)))
-            .disabled(isShoeRestricted())
         }
     }
 }
@@ -383,6 +409,14 @@ extension ShoeDetailView {
 // MARK: - Helpers
 
 extension ShoeDetailView {
+    
+    private func deleteShoe() {
+        withAnimation {
+            shoesViewModel.deleteShoe(shoe.id)
+        }
+        
+        navigationRouter.navigateBack()
+    }
     
     private func isShoeRestricted() -> Bool {
         return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoe.id)

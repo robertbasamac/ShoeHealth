@@ -27,8 +27,8 @@ struct StaticHeaderCell: View {
                     .font(.system(size: 17, weight: .semibold, design: .default))
                 Text(model)
                     .font(.system(size: 34, weight: .bold, design: .default))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
+                    .lineLimit(2)
+//                    .minimumScaleFactor(0.4)
             }
         }
         .padding(.horizontal)

@@ -56,7 +56,7 @@ struct ShoesListView: View {
                 confirmationActions(shoe: shoe)
             },
             message: { shoe in
-                Text("Deleting \'\(shoe.brand) \(shoe.brand)\' shoe cannot be undone.")
+                Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
             })
         .safeAreaInset(edge: .bottom) {
             shoeCategoryPicker
