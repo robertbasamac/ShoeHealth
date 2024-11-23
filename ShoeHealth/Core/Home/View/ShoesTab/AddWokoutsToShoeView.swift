@@ -15,15 +15,13 @@ struct AddWokoutsToShoeView: View {
     @Environment(\.dismiss) private var dismiss
     
     private var shoeID: UUID
-    @Binding private var workouts: [HKWorkout]
     
     @State private var availableWorkouts: [HKWorkout] = []
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.active
     
-    init(shoeID: UUID, workouts: Binding<[HKWorkout]>) {
+    init(shoeID: UUID) {
         self.shoeID = shoeID
-        self._workouts = workouts
     }
     
     var body: some View {
@@ -94,8 +92,6 @@ extension AddWokoutsToShoeView {
                 Task {
                     await shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                 }
-                self.workouts.append(contentsOf: healthManager.getWorkouts(forIDs: Array(selections)))
-                self.workouts.sort { $0.endDate > $1.endDate }
                 
                 dismiss()
             } label: {
@@ -119,10 +115,8 @@ extension AddWokoutsToShoeView {
 // MARK: - Previews
 
 #Preview {
-    @Previewable @State var workouts: [HKWorkout] = []
-    
     NavigationStack {
-        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id, workouts: $workouts)
+        AddWokoutsToShoeView(shoeID: Shoe.previewShoe.id)
             .navigationTitle("Add Workouts")
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
             .environment(HealthManager.shared)

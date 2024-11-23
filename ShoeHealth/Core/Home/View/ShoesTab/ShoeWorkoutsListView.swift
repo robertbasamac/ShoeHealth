@@ -11,10 +11,12 @@ import HealthKit
 struct ShoeWorkoutsListView: View {
     
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
     
-    private var shoe: Shoe
+    @State private var shoe: Shoe
     private var isShoeRestricted: Bool
-    @Binding private var workouts: [HKWorkout]
+    
+    @State private var workouts: [HKWorkout] = []
     
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
@@ -22,10 +24,9 @@ struct ShoeWorkoutsListView: View {
     @State private var showAddWorkouts: Bool = false
     @State private var showAssignToShoe: Bool = false
     
-    init(shoe: Shoe, workouts: Binding<[HKWorkout]>, isShoeRestricted: Bool = false) {
+    init(shoe: Shoe, isShoeRestricted: Bool = false) {
         self.shoe = shoe
         self.isShoeRestricted = isShoeRestricted
-        self._workouts = workouts
     }
     
     var body: some View {
@@ -63,7 +64,7 @@ struct ShoeWorkoutsListView: View {
         }
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
+                AddWokoutsToShoeView(shoeID: shoe.id)
             }
             .presentationDragIndicator(.visible)
         }
@@ -83,6 +84,12 @@ struct ShoeWorkoutsListView: View {
                 })
             }
             .presentationDragIndicator(.visible)
+        }
+        .onAppear {
+            workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
+        }
+        .onChange(of: shoe.workouts) { _, _ in
+            workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
         }
     }
 }
@@ -179,19 +186,11 @@ extension ShoeWorkoutsListView {
         Task {
             await shoesViewModel.remove(workoutIDs: workoutIDs, fromShoe: shoe.id)
         }
-        
-        self.workouts = self.workouts.filter { workout in
-            !workoutIDs.contains(workout.id)
-        }
     }
     
     private func addWorkouts(workoutIDs: [UUID], to shoeID: UUID) {
         Task {
             await shoesViewModel.add(workoutIDs: workoutIDs, toShoe: shoeID)
-        }
-        
-        self.workouts = self.workouts.filter { workout in
-            !selections.contains(workout.id)
         }
     }
 }
@@ -199,11 +198,9 @@ extension ShoeWorkoutsListView {
 // MARK: - Previews
 
 #Preview {
-    @Previewable @State var workouts: [HKWorkout] = []
-    
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeWorkoutsListView(shoe: Shoe.previewShoe, workouts: $workouts)
+            ShoeWorkoutsListView(shoe: Shoe.previewShoe)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

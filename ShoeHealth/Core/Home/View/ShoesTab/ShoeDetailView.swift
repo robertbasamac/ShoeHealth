@@ -20,10 +20,7 @@ struct ShoeDetailView: View {
     
     private var shoe: Shoe
     private var backButtonSymbol: String
-    
-    @State private var workouts: [HKWorkout] = []
-    @State private var mostRecentWorkouts: [HKWorkout] = []
-    
+        
     @State private var showEditShoe: Bool = false
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
@@ -103,7 +100,7 @@ struct ShoeDetailView: View {
             toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
-            ShoeWorkoutsListView(shoe: shoe, workouts: $workouts, isShoeRestricted: isShoeRestricted())
+            ShoeWorkoutsListView(shoe: shoe, isShoeRestricted: isShoeRestricted())
         }
         .sheet(isPresented: $showEditShoe) {
             NavigationStack {
@@ -114,15 +111,9 @@ struct ShoeDetailView: View {
         }
         .sheet(isPresented: $showAddWorkouts) {
             NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoe.id, workouts: $workouts)
+                AddWokoutsToShoeView(shoeID: shoe.id)
             }
             .presentationDragIndicator(.visible)
-        }
-        .onAppear {
-            self.workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
-        }
-        .onChange(of: self.workouts) { _, newValue in
-            self.mostRecentWorkouts = Array(newValue.prefix(5))
         }
     }
 }
@@ -357,7 +348,7 @@ extension ShoeDetailView {
             })
             
             VStack(spacing: 4) {
-                ForEach(mostRecentWorkouts) { workout in
+                ForEach(getShoeMostRecentlyWorkouts()) { workout in
                     WorkoutListItem(workout: workout)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
@@ -410,6 +401,13 @@ extension ShoeDetailView {
 // MARK: - Helpers
 
 extension ShoeDetailView {
+    
+    private func getShoeWorkouts() -> [HKWorkout] {
+        return healthManager.getWorkouts(forIDs: shoe.workouts)
+    }
+    private func getShoeMostRecentlyWorkouts() -> [HKWorkout] {
+        return Array(getShoeWorkouts().prefix(5))
+    }
     
     private func deleteShoe() {
         withAnimation {
