@@ -15,6 +15,7 @@ struct ShoeDetailView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
+    
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
@@ -415,7 +416,13 @@ extension ShoeDetailView {
             shoesViewModel.deleteShoe(shoe.id)
         }
         
-        navigationRouter.navigateBack()
+        navigationRouter.deleteShoe(shoe.id)
+        
+        if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe
+            }
+        }
     }
     
     private func isShoeRestricted() -> Bool {

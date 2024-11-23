@@ -20,7 +20,7 @@ struct ShoeCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if !hideImage {
-                ShoeImage(imageData: shoe.image, showBackground: true)
+                ShoeImage(imageData: shoe.image, width: width)
                     .frame(width: width, height: width)
                     .overlay {
                         if displayProgress {

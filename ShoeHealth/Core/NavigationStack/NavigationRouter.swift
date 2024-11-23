@@ -7,6 +7,9 @@
 
 import SwiftUI
 import HealthKit
+import OSLog
+
+private let logger = Logger(subsystem: "Shoe Health", category: "NavigationRouter")
 
 /// A `NavigationRouter` that manages the navigation state of the app's tabbed and sheet-based UI components.
 ///
@@ -27,6 +30,10 @@ final class NavigationRouter: ObservableObject {
     @Published var selectedTab: TabItem = .shoes
     
     @Published var shoesNavigationPath: NavigationPath = NavigationPath()
+    private var shoesStack: [AnyHashable] = []
+
+    @Published var workoutsNavigationPath: NavigationPath = NavigationPath()
+    private var workoutsStack: [AnyHashable] = []
     
     @Published var showSheet: SheetType?
     @Published var showShoeDetails: Shoe?
@@ -34,7 +41,7 @@ final class NavigationRouter: ObservableObject {
     @Published var showPaywall: Bool = false
 }
 
-// MARK: - Navigation Destination
+// MARK: - Navigation Handling
 
 extension NavigationRouter {
     
@@ -46,20 +53,77 @@ extension NavigationRouter {
     func navigate(to destination: Destination) {
         switch destination {
         case .category(let category):
-            shoesNavigationPath.append(category)
+            switch selectedTab {
+            case .shoes:
+                shoesNavigationPath.append(category)
+                shoesStack.append(category)
+            case .workouts:
+                return
+            case .settings:
+                return
+            }
         case .shoe(let shoe):
-            shoesNavigationPath.append(shoe)
+            switch selectedTab {
+            case .shoes:
+                shoesNavigationPath.append(shoe)
+                shoesStack.append(shoe)
+            case .workouts:
+                workoutsNavigationPath.append(shoe)
+                workoutsStack.append(shoe)
+            case .settings:
+                return
+            }
         }
     }
     
     func navigateBack() {
-        if !shoesNavigationPath.isEmpty {
-            shoesNavigationPath.removeLast()
+        switch selectedTab {
+        case .shoes:
+            if !shoesNavigationPath.isEmpty {
+                shoesNavigationPath.removeLast()
+                shoesStack.removeLast()
+            }
+        case .workouts:
+            if !workoutsNavigationPath.isEmpty {
+                workoutsNavigationPath.removeLast()
+                workoutsStack.removeLast()
+            }
+        case .settings:
+            return
         }
     }
     
     func navigateToRoot() {
-        shoesNavigationPath = NavigationPath()
+        switch selectedTab {
+        case .shoes:
+            shoesNavigationPath = NavigationPath()
+            shoesStack.removeAll()
+        case .workouts:
+            workoutsNavigationPath = NavigationPath()
+            workoutsStack.removeAll()
+        case .settings:
+            return
+        }
+    }
+    
+    func deleteShoe(_ shoeID: UUID) {
+        if showShoeDetails?.id == shoeID {
+            showShoeDetails = nil
+        }
+        
+        removeShoe(from: &shoesStack, navigationPath: &shoesNavigationPath, shoeID: shoeID)
+        removeShoe(from: &workoutsStack, navigationPath: &workoutsNavigationPath, shoeID: shoeID)
+    }
+    
+    private func removeShoe(from stack: inout [AnyHashable], navigationPath: inout NavigationPath, shoeID: UUID) {
+        guard let _ = stack.first(where: { ($0 as? Shoe)?.id == shoeID }) else {
+            logger.debug("Shoe not found.")
+            return
+        }
+        
+        logger.debug("Shoe found.")
+        
+        navigationPath.removeLast()
     }
 }
 

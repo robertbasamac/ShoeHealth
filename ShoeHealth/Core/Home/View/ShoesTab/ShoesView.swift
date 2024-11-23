@@ -117,7 +117,7 @@ extension ShoesView {
                     }
             } else {
                 HStack(spacing: 0) {
-                    ShoeImage()
+                    ShoeImage(width: 140)
                         .frame(width: 140, height: 140)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     
@@ -384,6 +384,8 @@ extension ShoesView {
             withAnimation {
                 shoesViewModel.deleteShoe(shoe.id)
             }
+            
+            navigationRouter.deleteShoe(shoe.id)
             
             if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

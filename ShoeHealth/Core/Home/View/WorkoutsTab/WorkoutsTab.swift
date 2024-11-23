@@ -10,6 +10,7 @@ import HealthKit
 
 struct WorkoutsTab: View {
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     
@@ -18,21 +19,31 @@ struct WorkoutsTab: View {
     var body: some View {
         List {
             ForEach(healthManager.workouts, id: \.self) { workout in
-                WorkoutListItem(workout: workout)
-                    .padding(.horizontal)
-                    .padding(.vertical, 6)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button {
-                            selectedWorkout = workout
-                        } label: {
-                            Label("Add Shoe", systemImage: "shoe")
-                        }
-                        .tint(.gray)
+                HStack(spacing: 2) {
+                    WorkoutListItem(workout: workout)
+                    if let shoe = shoesViewModel.getShoe(ofWorkoutID: workout.id) {
+                        ShoeImage(imageData: shoe.image, width: 64)
+                            .frame(width: 64, height: 64)
+                            .clipShape(.rect(cornerRadius: 10))
+                            .onTapGesture {
+                                navigationRouter.navigate(to: .shoe(shoe))
+                            }
                     }
+                }
+                .frame(height: 64)
+                .padding(.leading)
+                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button {
+                        selectedWorkout = workout
+                    } label: {
+                        Label("Add Shoe", systemImage: "shoe")
+                    }
+                    .tint(.gray)
+                }
             }
         }
         .listStyle(.plain)
@@ -41,6 +52,9 @@ struct WorkoutsTab: View {
         .overlay {
             emptyWorkoutsView
         }
+        .navigationDestination(for: Shoe.self, destination: { shoe in
+            ShoeDetailView(shoe: shoe)
+        })
         .sheet(item: $selectedWorkout, content: { workout in
             NavigationStack {
                 ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(ofWorkoutID: workout.id),

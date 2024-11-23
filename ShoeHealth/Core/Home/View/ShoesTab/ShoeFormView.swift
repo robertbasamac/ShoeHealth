@@ -21,6 +21,7 @@ struct ShoeFormView: View {
     
     @FocusState private var focusField: FocusField?
     
+    private var wasDefaultShoe: Bool = false
     private var isEditing: Bool
     
     enum FocusField: Hashable {
@@ -31,6 +32,7 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
+        self.wasDefaultShoe = shoe?.isDefaultShoe ?? false
         self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
@@ -318,7 +320,13 @@ extension ShoeFormView {
         }
         
         dismiss()        
-        navigationRouter.navigateBack()
+        navigationRouter.deleteShoe(shoeFormViewModel.shoeID ?? UUID())
+        
+        if wasDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe
+            }
+        }
     }
 }
 

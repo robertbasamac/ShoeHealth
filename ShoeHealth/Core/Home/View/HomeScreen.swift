@@ -17,7 +17,7 @@ struct HomeScreen: View {
     
     var body: some View {
         TabView(selection: $navigationRouter.selectedTab) {
-            NavigationStack {
+            NavigationStack(path: $navigationRouter.workoutsNavigationPath) {
                 WorkoutsTab()
                     .navigationTitle("Workouts")
             }

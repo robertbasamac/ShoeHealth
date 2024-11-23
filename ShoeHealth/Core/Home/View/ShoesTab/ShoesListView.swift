@@ -122,6 +122,8 @@ extension ShoesListView {
                 shoesViewModel.deleteShoe(shoe.id)
             }
             
+            navigationRouter.deleteShoe(shoe.id)
+            
             if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     navigationRouter.showSheet = .setDefaultShoe

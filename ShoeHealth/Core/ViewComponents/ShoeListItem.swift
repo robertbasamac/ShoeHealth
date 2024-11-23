@@ -24,7 +24,7 @@ struct ShoeListItem: View {
     var body: some View {
         HStack(spacing: 0) {
             if imageAlignment == .leading {
-                ShoeImage(imageData: shoe.image)
+                ShoeImage(imageData: shoe.image, width: width)
                     .frame(width: width, height: width)
                     .overlay {
                         RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
@@ -40,7 +40,7 @@ struct ShoeListItem: View {
                 .opacity(isEnabled ? 1 : 0.6)
             
             if imageAlignment == .trailing {
-                ShoeImage(imageData: shoe.image)
+                ShoeImage(imageData: shoe.image, width: width)
                     .frame(width: width, height: width)
                     .overlay {
                         RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)

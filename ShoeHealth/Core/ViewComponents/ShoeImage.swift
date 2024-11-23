@@ -11,10 +11,12 @@ struct ShoeImage: View {
     
     private var imageData: Data?
     private var showBackground: Bool
+    private var width: CGFloat
     
-    init(imageData: Data? = nil, showBackground: Bool = true) {
+    init(imageData: Data? = nil, showBackground: Bool = true, width: CGFloat = 100) {
         self.imageData = imageData
         self.showBackground = showBackground
+        self.width = width
     }
     
     var body: some View {
@@ -39,7 +41,7 @@ struct ShoeImage: View {
                     .resizable()
                     .foregroundStyle(.white)
                     .aspectRatio(contentMode: .fit)
-                    .padding(30)
+                    .padding(width / 4)
             }
         }
     }
