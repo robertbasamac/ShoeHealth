@@ -21,12 +21,35 @@ struct WorkoutsTab: View {
             ForEach(healthManager.workouts, id: \.self) { workout in
                 HStack(spacing: 2) {
                     WorkoutListItem(workout: workout)
+                    
                     if let shoe = shoesViewModel.getShoe(ofWorkoutID: workout.id) {
-                        ShoeImage(imageData: shoe.image, width: 64)
+                        HStack {
+                            Text(shoe.nickname)
+                                .font(.system(size: 15, weight: .semibold, design: .default))
+                                .italic()
+                                .foregroundStyle(Color.theme.accent)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .minimumScaleFactor(0.7)
+                            
+                            ShoeImage(imageData: shoe.image, width: 64)
+                                .frame(width: 64, height: 64)
+                                .clipShape(.rect(cornerRadius: 10))
+                                .onTapGesture {
+                                    navigationRouter.navigate(to: .shoe(shoe))
+                                }
+                        }
+                    } else {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .fontWeight(.light)
+                            .foregroundStyle(Color.theme.accent)
+                            .padding(20)
                             .frame(width: 64, height: 64)
-                            .clipShape(.rect(cornerRadius: 10))
+                            .contentShape(.rect)
                             .onTapGesture {
-                                navigationRouter.navigate(to: .shoe(shoe))
+                                selectedWorkout = workout
                             }
                     }
                 }
@@ -36,14 +59,6 @@ struct WorkoutsTab: View {
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button {
-                        selectedWorkout = workout
-                    } label: {
-                        Label("Add Shoe", systemImage: "shoe")
-                    }
-                    .tint(.gray)
-                }
             }
         }
         .listStyle(.plain)
