@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Example Output: "Nov 29, 2024"
 var dateFormatter: DateFormatter {
     let formatter = DateFormatter()
     
@@ -15,6 +16,7 @@ var dateFormatter: DateFormatter {
     return formatter
 }
 
+/// Example Output: "Nov 29, 2024 at 2:45 PM"
 var dateTimeFormatter: DateFormatter {
     let formatter = DateFormatter()
     
@@ -24,6 +26,7 @@ var dateTimeFormatter: DateFormatter {
     return formatter
 }
 
+/// Example Output: "1:23:45" (1 hour, 23 minutes, 45 seconds)
 var dateComponentsFormatter: DateComponentsFormatter {
     let formatter = DateComponentsFormatter()
     
@@ -34,6 +37,7 @@ var dateComponentsFormatter: DateComponentsFormatter {
     return formatter
 }
 
+/// Example Output: "1.2 km" or "3.45 mi" depending on the locale and unit system.
 var distanceFormatter: LengthFormatter {
     let formatter = LengthFormatter()
     
@@ -44,6 +48,7 @@ var distanceFormatter: LengthFormatter {
     return formatter
 }
 
+/// Example Output: "45.6%" or "100.00%"
 var percentageFormatter: NumberFormatter {
     let formatter = NumberFormatter()
     

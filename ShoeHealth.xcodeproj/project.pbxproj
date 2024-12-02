@@ -75,6 +75,7 @@
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
 		09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
+		09A81FE12CFB342300D6E72B /* WorkoutGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A81FE02CFB342300D6E72B /* WorkoutGroup.swift */; };
 		09A9FF212C9B42B1002507C9 /* PresetTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */; };
 		09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF262C9B49C4002507C9 /* PresetTime.swift */; };
 		09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */; };
@@ -204,6 +205,7 @@
 		098988012C9AD4D20036A253 /* RemindMeLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeLaterView.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09A7B9DA2C81F5E100822C03 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		09A81FE02CFB342300D6E72B /* WorkoutGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutGroup.swift; sourceTree = "<group>"; };
 		09A9FF202C9B42B1002507C9 /* PresetTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTimeCell.swift; sourceTree = "<group>"; };
 		09A9FF262C9B49C4002507C9 /* PresetTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTime.swift; sourceTree = "<group>"; };
 		09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFormView.swift; sourceTree = "<group>"; };
@@ -554,6 +556,7 @@
 		09C171692C203D4A005FAB1A /* Filtering */ = {
 			isa = PBXGroup;
 			children = (
+				09A81FE02CFB342300D6E72B /* WorkoutGroup.swift */,
 				09C171672C203D4A005FAB1A /* ShoeCategory.swift */,
 				09C171682C203D4A005FAB1A /* SortingRule+Order.swift */,
 			);
@@ -855,6 +858,7 @@
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
 				092DDB762CCA63CF00263F06 /* ShoeSearchListView.swift in Sources */,
+				09A81FE12CFB342300D6E72B /* WorkoutGroup.swift in Sources */,
 				0944A7F62CE3E25C0042081D /* WelcomeItem.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */,
@@ -946,7 +950,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -979,7 +983,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1147,7 +1151,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1192,7 +1196,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.3.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

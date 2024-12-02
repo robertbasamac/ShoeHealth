@@ -14,56 +14,64 @@ struct WorkoutsTab: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     
+    @State private var groupedWorkouts: [WorkoutGroup] = []
     @State private var selectedWorkout: HKWorkout?
     
     var body: some View {
         List {
-            ForEach(healthManager.workouts, id: \.self) { workout in
-                HStack(spacing: 2) {
-                    WorkoutListItem(workout: workout)
-                    
-                    if let shoe = shoesViewModel.getShoe(ofWorkoutID: workout.id) {
-                        HStack {
-                            Text(shoe.nickname)
-                                .font(.system(size: 15, weight: .semibold, design: .default))
-                                .italic()
-                                .foregroundStyle(Color.theme.accent)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                                .minimumScaleFactor(0.7)
+            ForEach(groupedWorkouts) { group in
+                Section {
+                    ForEach(group.workouts) { workout in
+                        HStack(spacing: 2) {
+                            WorkoutListItem(workout: workout)
                             
-                            ShoeImage(imageData: shoe.image, width: 64)
-                                .frame(width: 64, height: 64)
-                                .clipShape(.rect(cornerRadius: 10))
-                                .onTapGesture {
-                                    navigationRouter.navigate(to: .shoe(shoe))
+                            if let shoe = shoesViewModel.getShoe(ofWorkoutID: workout.id) {
+                                HStack {
+                                    Text(shoe.nickname)
+                                        .font(.system(size: 15, weight: .semibold, design: .default))
+                                        .italic()
+                                        .foregroundStyle(Color.theme.accent)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.center)
+                                        .minimumScaleFactor(0.7)
+                                    
+                                    ShoeImage(imageData: shoe.image, width: 64)
+                                        .frame(width: 64, height: 64)
+                                        .clipShape(.rect(cornerRadius: 10))
+                                        .onTapGesture {
+                                            navigationRouter.navigate(to: .shoe(shoe))
+                                        }
                                 }
-                        }
-                    } else {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .scaledToFit()
-                            .fontWeight(.light)
-                            .foregroundStyle(Color.theme.accent)
-                            .padding(20)
-                            .frame(width: 64, height: 64)
-                            .contentShape(.rect)
-                            .onTapGesture {
-                                selectedWorkout = workout
+                            } else {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .fontWeight(.light)
+                                    .foregroundStyle(Color.theme.accent)
+                                    .padding(20)
+                                    .frame(width: 64, height: 64)
+                                    .contentShape(.rect)
+                                    .onTapGesture {
+                                        selectedWorkout = workout
+                                    }
                             }
+                        }
+                        .frame(height: 64)
+                        .padding(.leading)
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
+                        .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
+                } header: {
+                    Text(group.title)
+                        .headerProminence(.increased)
                 }
-                .frame(height: 64)
-                .padding(.leading)
-                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
+                .listSectionSeparator(.hidden)
             }
         }
-        .listStyle(.plain)
-        .listRowSpacing(4)
-        .contentMargins(.horizontal, 20, for: .scrollContent)
+        .listStyle(.grouped)
+        .listSectionSpacing(.custom(4))
         .overlay {
             emptyWorkoutsView
         }
@@ -87,6 +95,12 @@ struct WorkoutsTab: View {
         })
         .refreshable {
             await healthManager.fetchRunningWorkouts()
+        }
+        .onAppear {
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.workouts)
+        }
+        .onChange(of: healthManager.workouts) { _, newValue in
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: newValue)
         }
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import HealthKit
 
 struct ShoeWorkoutsListView: View {
     
@@ -16,46 +15,54 @@ struct ShoeWorkoutsListView: View {
     @State private var shoe: Shoe
     private var isShoeRestricted: Bool
     
-    @State private var workouts: [HKWorkout] = []
-    
+    @State private var groupedWorkouts: [WorkoutGroup] = []
+
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
     
     @State private var showAddWorkouts: Bool = false
     @State private var showAssignToShoe: Bool = false
-    
+
     init(shoe: Shoe, isShoeRestricted: Bool = false) {
         self.shoe = shoe
         self.isShoeRestricted = isShoeRestricted
     }
     
     var body: some View {
-        List(workouts, selection: $selections) { workout in
-            WorkoutListItem(workout: workout)
-                .padding(.horizontal)
-                .padding(.vertical, 6)
-                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .listRowInsets(.init(top: 0, leading: 20, bottom: 0, trailing: 0))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        withAnimation {
-                            removeWorkouts(workoutIDs: [workout.id])
-                        }
-                    } label: {
-                        Label("Delete", systemImage: "trash")
+        List(selection: $selections) {
+            ForEach(groupedWorkouts) { group in
+                Section {
+                    ForEach(group.workouts) { workout in
+                        WorkoutListItem(workout: workout)
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
+                            .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    withAnimation {
+                                        removeWorkouts(workoutIDs: [workout.id])
+                                    }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
+                } header: {
+                    Text(group.title)
+                        .headerProminence(.increased)
                 }
+                .listSectionSeparator(.hidden)
+            }
         }
-        .listStyle(.plain)
-        .listRowSpacing(4)
-        .contentMargins(.trailing, 20, for: .scrollContent)
+        .listStyle(.grouped)
+        .listSectionSpacing(.custom(4))
         .environment(\.editMode, $editMode)
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
-        .scrollBounceBehavior(.basedOnSize)
         .overlay {
             emptyWorkoutsView
         }
@@ -86,10 +93,10 @@ struct ShoeWorkoutsListView: View {
             .presentationDragIndicator(.visible)
         }
         .onAppear {
-            workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.getWorkouts(forIDs: shoe.workouts))
         }
         .onChange(of: shoe.workouts) { _, _ in
-            workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.getWorkouts(forIDs: shoe.workouts))
         }
     }
 }
@@ -100,7 +107,7 @@ extension ShoeWorkoutsListView {
     
     @ViewBuilder
     private var emptyWorkoutsView: some View {
-        if workouts.isEmpty {
+        if shoe.workouts.isEmpty {
             ContentUnavailableView {
                 Label("No Workouts", systemImage: "figure.run.circle")
             } description: {
@@ -125,19 +132,21 @@ extension ShoeWorkoutsListView {
                 }
             }
             .animation(.none, value: editMode)
-            .disabled(workouts.isEmpty)
+            .disabled(shoe.workouts.isEmpty)
         }
         
         if editMode.isEditing {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    if selections.count == workouts.count {
+                    let allWorkoutIDs = groupedWorkouts.flatMap { $0.workouts.map { $0.id } }
+
+                    if selections.count == allWorkoutIDs.count {
                         selections = Set<UUID>()
                     } else {
-                        selections = Set(workouts.map { $0.id })
+                        selections = Set(allWorkoutIDs)
                     }
                 } label: {
-                    if selections.count == workouts.count {
+                    if selections.count == groupedWorkouts.flatMap({ $0.workouts }).count {
                         Text("Deselect All")
                     } else {
                         Text("Select All")
@@ -202,6 +211,7 @@ extension ShoeWorkoutsListView {
         NavigationStack {
             ShoeWorkoutsListView(shoe: Shoe.previewShoe)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(HealthManager.shared)
         }
     }
 }
