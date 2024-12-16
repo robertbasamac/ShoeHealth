@@ -19,6 +19,8 @@ struct MultipleShoeSelectionView: View {
     @State private var selectionsDict: [UUID : Shoe] = [:]
     @State private var selectedWorkout: HKWorkout?
     
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 84
+    
     private let workoutIDs: [UUID]
     private let title: String
     private let description: String
@@ -81,6 +83,7 @@ extension MultipleShoeSelectionView {
                 .scaledToFit()
                 .frame(width: 84, height: 84, alignment: .center)
                 .foregroundStyle(.secondary)
+            
             Text(title)
                 .font(.title2.bold())
             
@@ -107,7 +110,13 @@ extension MultipleShoeSelectionView {
                     .padding(.vertical, 8)
                 
                 if let shoe = selectionsDict[workout.id] {
-                    ShoeListItem(shoe: shoe, width: 84, imageAlignment: .leading, showStats: false, showNavigationLink: false)
+                    ShoeListItem(
+                        shoe: shoe,
+                        width: size,
+                        imageAlignment: .leading,
+                        showStats: false,
+                        showNavigationLink: false
+                    )
                         .padding([.leading, .bottom], 8)
                 } else {
                     Text("No shoe selected")

@@ -49,14 +49,14 @@ var distanceFormatter: LengthFormatter {
 }
 
 /// Example Output: "45.6%" or "100.00%"
-var percentageFormatter: NumberFormatter {
+func percentageFormatter(withDecimals decimals: Int) -> NumberFormatter {
     let formatter = NumberFormatter()
     
     formatter.numberStyle = .percent
     formatter.minimumIntegerDigits = 1
     formatter.maximumIntegerDigits = 2
-    formatter.minimumFractionDigits = 1
-    formatter.maximumFractionDigits = 2
+    formatter.minimumFractionDigits = 0
+    formatter.maximumFractionDigits = decimals
     
     return formatter
 }

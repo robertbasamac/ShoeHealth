@@ -17,6 +17,8 @@ struct WorkoutsTab: View {
     @State private var groupedWorkouts: [WorkoutGroup] = []
     @State private var selectedWorkout: HKWorkout?
     
+    @ScaledMetric(relativeTo: .largeTitle) var size: CGFloat = 64
+    
     var body: some View {
         List {
             ForEach(groupedWorkouts) { group in
@@ -28,15 +30,15 @@ struct WorkoutsTab: View {
                             if let shoe = shoesViewModel.getShoe(ofWorkoutID: workout.id) {
                                 HStack {
                                     Text(shoe.nickname)
-                                        .font(.system(size: 15, weight: .semibold, design: .default))
+                                        .font(.headline)
                                         .italic()
+                                        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xLarge)
                                         .foregroundStyle(Color.theme.accent)
                                         .lineLimit(2)
                                         .multilineTextAlignment(.center)
-                                        .minimumScaleFactor(0.7)
                                     
                                     ShoeImage(imageData: shoe.image, width: 64)
-                                        .frame(width: 64, height: 64)
+                                        .frame(width: size, height: size)
                                         .clipShape(.rect(cornerRadius: 10))
                                         .onTapGesture {
                                             navigationRouter.navigate(to: .shoe(shoe))
@@ -48,15 +50,15 @@ struct WorkoutsTab: View {
                                     .scaledToFit()
                                     .fontWeight(.light)
                                     .foregroundStyle(Color.theme.accent)
-                                    .padding(20)
-                                    .frame(width: 64, height: 64)
+                                    .padding(size / 3)
+                                    .frame(width: size, height: size)
                                     .contentShape(.rect)
                                     .onTapGesture {
                                         selectedWorkout = workout
                                     }
                             }
                         }
-                        .frame(height: 64)
+                        .frame(height: size)
                         .padding(.leading)
                         .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
                         .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))

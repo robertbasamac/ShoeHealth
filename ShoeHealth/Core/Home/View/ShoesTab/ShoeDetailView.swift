@@ -20,7 +20,7 @@ struct ShoeDetailView: View {
     
     private var shoe: Shoe
     private var backButtonSymbol: String
-        
+    
     @State private var showEditShoe: Bool = false
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
@@ -29,6 +29,8 @@ struct ShoeDetailView: View {
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
+    
+    @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 100
     
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
         self.shoe = shoe
@@ -127,6 +129,7 @@ extension ShoeDetailView {
         VStack(spacing: 0) {
             Text("Health")
                 .asHeader()
+            
             VStack(spacing: 0) {
                 lifespanSection
                 
@@ -146,33 +149,37 @@ extension ShoeDetailView {
     private var lifespanSection: some View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 12) {
-                StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, labelFont: .system(size: 14), valueFont: .system(size: 20), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Current",
+                    value: shoe.totalDistance.as2DecimalsString(),
+                    unit: settingsManager.unitOfMeasure.symbol,
+                    color: .blue,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                StatCell(
+                    label: "Remaining",
+                    value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(),
+                    unit: settingsManager.unitOfMeasure.symbol,
+                    color: shoe.wearColor,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
             
             ZStack {
                 CircularProgressView(progress: shoe.wearPercentage, lineWidth: 6, color: shoe.wearColor)
-                StatCell(label: "WEAR", value: shoe.wearPercentageAsString, labelFont: .system(size: 14), valueFont: .system(size: 20), color: shoe.wearColor)
+                StatCell(
+                    label: "Wear",
+                    value: shoe.wearPercentageAsString(),
+                    color: shoe.wearColor,
+                    showLabel: false
+                )
             }
-            .padding(16)
-            .frame(width: 140, height: 140)
+            .frame(width: progressCircleSize, height: progressCircleSize)
         }
-        .padding(.leading, 20)
-        .overlay {
-            if shoe.isRetired {
-                VStack(spacing: 10) {
-                    Image(systemName: "bolt.slash")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 44, height: 44)
-                    
-                    Text("Retired")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                }
-                .foregroundStyle(.gray)
-            }
-        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
     }
     
     @ViewBuilder
@@ -180,18 +187,17 @@ extension ShoeDetailView {
         VStack(spacing: 20) {
             HStack(spacing: 20) {
                 VStack(spacing: 10) {
-                    Image(systemName: shoe.wearCondition.iconName)
+                    Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 44, height: 44)
                     
-                    Text(shoe.wearCondition.name)
+                    Text(shoe.isRetired ? "Retired" : "Critical")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                 }
-                .foregroundStyle(shoe.wearColor)
-                .frame(width: 70)
-
+                .foregroundStyle(shoe.isRetired ? .gray : shoe.wearColor)
+                .padding(.leading, 10)
                 
                 VStack(spacing: 10) {
                     Text("\(shoe.wearCondition.description)")
@@ -204,17 +210,7 @@ extension ShoeDetailView {
             
             if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
                 Button {
-                    let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
-                    
-                    withAnimation {
-                        shoesViewModel.retireShoe(shoe.id)
-                    }
-                    
-                    if setNewDefaultShoe {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            navigationRouter.showSheet = .setDefaultShoe
-                        }
-                    }
+                    retireShoe()
                 } label: {
                     Group {
                         if shoe.isRetired {
@@ -253,7 +249,6 @@ extension ShoeDetailView {
                 personalBestsSection
                     .padding(.horizontal, 20)
             }
-            .font(.system(size: 17))
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
             .roundedContainer()
@@ -264,22 +259,61 @@ extension ShoeDetailView {
     private var averagesSection: some View {
         VStack(spacing: 8) {
             HStack {
-                StatCell(label: "Runs", value: "\(shoe.workouts.count)", color: .gray, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds), unit: "/\(settingsManager.unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Runs",
+                    value: "\(shoe.workouts.count)",
+                    color: .gray,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                StatCell(
+                    label: "Avg Pace",
+                    value: String(format: "%d'%02d\"", shoe.averagePace.minutes, shoe.averagePace.seconds),
+                    unit: "/\(settingsManager.unitOfMeasure.symbol)",
+                    color: .teal,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Total Distance", value: shoe.totalDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Distance", value: shoe.averageDistance.as2DecimalsString(), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Total Distance",
+                    value: shoe.totalDistance.as2DecimalsString(),
+                    unit: settingsManager.unitOfMeasure.symbol,
+                    color: .blue,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                StatCell(
+                    label: "Avg Distance",
+                    value: shoe.averageDistance.as2DecimalsString(),
+                    unit: settingsManager.unitOfMeasure.symbol,
+                    color: .blue,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Total Duration", value: shoe.formattedTotalDuration, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Duration", value: shoe.formatterAverageDuration, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Total Duration",
+                    value: shoe.formattedTotalDuration,
+                    color: .yellow,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                StatCell(
+                    label: "Avg Duration",
+                    value: shoe.formatterAverageDuration,
+                    color: .yellow,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
         }
     }
@@ -292,32 +326,40 @@ extension ShoeDetailView {
                     .gridCellColumns(2)
 
                 Text("PR")
+                    .lineLimit(1)
                     .gridCellColumns(3)
 
                 Text("Runs")
-                    .gridCellColumns(1)
-
+                    .lineLimit(1)
+                    .gridCellColumns(2)
             }
-            .font(.system(size: 17))
+            .font(.caption)
+            .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
             .foregroundStyle(.secondary)
             
             ForEach(RunningCategory.allCases, id: \.self) { category in
                 GridRow {
                     Text("\(category.shortTitle)")
-                        .font(.system(size: 17))
+                        .font(.subheadline)
+                        .fontDesign(.default)
+                        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .gridCellColumns(2)
                     
                     Text(shoe.formattedPersonalBest(for: category))
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .gridCellColumns(3)
-
                     
                     Text("\(shoe.totalRuns[category] ?? 0)")
+                        .fontWeight(.medium)
+                        .fontDesign(.rounded)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .gridCellColumns(1)
+                        .gridCellColumns(2)
                 }
-                .font(.system(size: 20, weight: .medium, design: .rounded))
+                .font(.headline)
+                .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
             }
         })
     }
@@ -409,6 +451,20 @@ extension ShoeDetailView {
         return Array(getShoeWorkouts().prefix(5))
     }
     
+    private func retireShoe() {
+        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+        
+        withAnimation {
+            shoesViewModel.retireShoe(shoe.id)
+        }
+        
+        if setNewDefaultShoe {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe
+            }
+        }
+    }
+    
     private func deleteShoe() {
         withAnimation {
             shoesViewModel.deleteShoe(shoe.id)
@@ -450,7 +506,7 @@ extension ShoeDetailView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeDetailView(shoe: Shoe.previewShoe)
+            ShoeDetailView(shoe: Shoe.previewShoes[3])
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))

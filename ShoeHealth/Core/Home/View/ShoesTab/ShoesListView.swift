@@ -18,6 +18,8 @@ struct ShoesListView: View {
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
     
+    @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
+    
     init(forCategory category: ShoeCategory = .all) {
         self._category = State(wrappedValue: category)
     }
@@ -25,7 +27,7 @@ struct ShoesListView: View {
     var body: some View {
         List {
             ForEach(shoesViewModel.getShoes(for: category)) { shoe in
-                ShoeListItem(shoe: shoe)
+                ShoeListItem(shoe: shoe, width: width)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)

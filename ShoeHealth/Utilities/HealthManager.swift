@@ -31,7 +31,7 @@ struct RunningWorkout {
         return self.workout.averageHeartRate == 0 ? self.averageHeartRate : self.workout.averageHeartRate
     }
     
-    var wrappedAAverageCadence: Double {
+    var wrappedAverageCadence: Double {
         return self.workout.averageCadence == 0 ? self.averageCadence : self.workout.averageCadence
     }
     
@@ -72,7 +72,7 @@ final class HealthManager {
         didSet {
             if let workout = workouts.first {
                 guard workout != lastWorkout?.workout else {
-                    isLoading = false
+                    HealthManager.shared.isLoading = false
                     return
                 }
                 
@@ -80,11 +80,11 @@ final class HealthManager {
                 
                 Task {
                     await calculateLastRunStats()
-                    isLoading = false
+                    HealthManager.shared.isLoading = false
                 }
             } else {
                 lastWorkout = nil
-                isLoading = false
+                HealthManager.shared.isLoading = false
             }
         }
     }
@@ -203,7 +203,7 @@ final class HealthManager {
     func fetchRunningWorkouts() async {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
-            isLoading = false
+            HealthManager.shared.isLoading = false
             return
         }
         
@@ -223,13 +223,13 @@ final class HealthManager {
                                       resultsHandler: { query, samples, error in
                 if let unwrappedError = error {
                     continuation.resume(throwing: unwrappedError)
-                    self.isLoading = false
+                    HealthManager.shared.isLoading = false
                     return
                 }
                 
                 guard let samples = samples else {
                     logger.error("HealthKit not accessable.")
-                    self.isLoading = false
+                    HealthManager.shared.isLoading = false
                     return
                 }
                 

@@ -43,13 +43,18 @@ extension RemindMeLaterView {
     @ViewBuilder
     private var selectedTimeInfoSection: some View {
         Section {
-            Text("You've set your time to ") +
+            Text("You've set your time to ")
+                .font(.body) +
             Text("\(selection.duration.value) \(selection.duration.unit.rawValue)")
+                .font(.body)
                 .fontWeight(.bold)
                 .foregroundColor(Color.theme.accent) +
             Text(".")
+                .font(.body)
+
         } footer: {
             Text("The time set here will be used to reschedule new workout notifications when you select \"Remind me later\" after long pressing on the workout notifications.")
+                .font(.footnote)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 20))
         }
         .listRowBackground(Color.clear)
@@ -104,11 +109,12 @@ extension RemindMeLaterView {
                         selection = PresetTime.custom(value: customValue, unit: customUnit)
                     }
             }
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         } header: {
             Text("Preset Times")
+                .font(.footnote)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
     }
     
     @ViewBuilder
@@ -144,8 +150,12 @@ extension RemindMeLaterView {
             }
         } header: {
             Text("Custom time input")
+                .font(.footnote)
+
         } footer: {
             Text("Value must be greater than 0.")
+                .font(.footnote)
+
         }
     }
     

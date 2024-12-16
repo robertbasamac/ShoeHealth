@@ -12,6 +12,7 @@ import SwiftUI
 struct ShoeStatsWidgetBundle: WidgetBundle {
     
     var body: some Widget {
-        ShoeStatsWidget()
+        SmallShoeStatsWidget()
+        MediumShoeStatsWidget()
     }
 }

@@ -12,7 +12,7 @@ struct ShoeCell: View {
     @Environment(\.isEnabled) private var isEnabled: Bool
     
     var shoe: Shoe
-    var width: CGFloat = 140
+    var width: CGFloat
     var hideImage: Bool = false
     var displayProgress: Bool = true
     var reserveSpace: Bool = true
@@ -34,27 +34,27 @@ struct ShoeCell: View {
                     .clipShape(.rect(cornerRadius: 10))
             }
             
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.nickname)
-                    .font(.system(size: 15, weight: .semibold, design: .default))
+                    .font(.headline)
                     .italic()
                     .foregroundStyle(Color.theme.accent)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(shoe.brand)
-                        .font(.system(size: 13, weight: .regular, design: .default))
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                     
                     Text(shoe.model)
-                        .font(.system(size: 17, weight: .semibold, design: .default))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
                         .lineLimit(2, reservesSpace: reserveSpace)
                         .multilineTextAlignment(.leading)
-                        .minimumScaleFactor(0.7)
                 }
             }
+            .dynamicTypeSize(DynamicTypeSize.medium...DynamicTypeSize.xxLarge)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 8)
             .opacity(isEnabled ? 1 : 0.6)
@@ -66,10 +66,12 @@ struct ShoeCell: View {
 // MARK: - Preview
 
 #Preview {
+    @Previewable @ScaledMetric(relativeTo: .largeTitle) var width: CGFloat = 140
+    
     ScrollView(.horizontal) {
         LazyHStack(spacing: 10) {
             ForEach(Shoe.previewShoes) { shoe in
-                ShoeCell(shoe: shoe)
+                ShoeCell(shoe: shoe,width: width)
             }
         }
         .padding(.horizontal)

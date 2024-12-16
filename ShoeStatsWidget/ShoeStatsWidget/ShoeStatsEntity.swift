@@ -1,5 +1,5 @@
 //
-//  SelectShoeIntent.swift
+//  ShoeStatsEntity.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -23,18 +23,41 @@ struct ShoeStatsEntity: AppEntity {
     var nickname: String
     var lifespanDistance: Double
     var totalDistance: Double
+    var totalDuration: String
+    var averageDistance: Double
+    var averagePace: (minutes: Int, seconds: Int)
+    var averageDuration: String
     var lastRunDate: Date?
     var wearPercentage: Double
     var wearPercentageAsString: String
     var wearColor: Color
     
-    init(id: UUID, brand: String, model: String, nickname: String, lifespanDistance: Double, totalDistance: Double, lastActivityDate: Date, wearPercentage: Double, wearPercentageAsString: String, wearColor: Color) {
+    init(
+        id: UUID,
+        brand: String,
+        model: String,
+        nickname: String,
+        lifespanDistance: Double,
+        totalDistance: Double,
+        totalDuration: String,
+        averageDistance: Double,
+        averagePace: (Int,Int),
+        averageDiration: String,
+        lastActivityDate: Date,
+        wearPercentage: Double,
+        wearPercentageAsString: String,
+        wearColor: Color
+    ) {
         self.id = id
         self.brand = brand
         self.model = model
         self.nickname = nickname
         self.lifespanDistance = lifespanDistance
         self.totalDistance = totalDistance
+        self.totalDuration = totalDuration
+        self.averageDistance = averageDistance
+        self.averagePace = averagePace
+        self.averageDuration = averageDiration
         self.lastRunDate = lastActivityDate
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
@@ -48,18 +71,22 @@ struct ShoeStatsEntity: AppEntity {
         self.nickname = shoe.nickname
         self.lifespanDistance = shoe.lifespanDistance
         self.totalDistance = shoe.totalDistance
+        self.totalDuration = shoe.formattedTotalDuration
+        self.averageDistance = shoe.averageDistance
+        self.averagePace = shoe.averagePace
+        self.averageDuration = shoe.formatterAverageDuration
         self.lastRunDate = shoe.lastActivityDate
         self.wearPercentage = shoe.wearPercentage
-        self.wearPercentageAsString = shoe.wearPercentageAsString
+        self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
         self.wearColor = shoe.wearColor
     }
+    
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"
+    static let defaultQuery = ShoeStatsQuery()
     
     var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(nickname)", subtitle: "\(brand) - \(model)")
     }
-    
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"
-    static var defaultQuery = ShoeStatsQuery()
 }
 
 // MARK: - EntityStringQuery
@@ -71,7 +98,7 @@ struct ShoeStatsQuery: EntityStringQuery {
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
-                                                                      sortBy: [.init(\.brand), .init(\.model)]))
+                                                                        sortBy: [.init(\.brand), .init(\.model)]))
             return shoes.map { ShoeStatsEntity(from: $0) }
         } catch {
             logger.error("Error fetching shoes, \(error).")
@@ -108,26 +135,39 @@ struct ShoeStatsQuery: EntityStringQuery {
     }
 }
 
-// MARK: - WidgetConfigurationIntent
+// MARK: - ShoeStatMetric
 
-struct SelectShoeIntent: WidgetConfigurationIntent {
+enum ShoeStatMetric: String, CaseIterable, AppEnum {
     
-    static var title: LocalizedStringResource = "Select Shoe"
-    static var description: IntentDescription = IntentDescription("Selects the shoe to display stats for.")
+    case totalDuration     = "Total Time"
+    case averageDistance   = "Avg Distance"
+    case averagePace       = "Avg Pace"
+    case averageDuration   = "Avg Time"
     
-    @Parameter(title: "Use Default Shoe", default: true)
-    var useDefaultShoe: Bool
+    // The display name for this enum
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        "Shoe Stat Metric"
+    }
     
-    @Parameter(title: "Shoe", default: nil)
-    var shoeEntity: ShoeStatsEntity?
-    
-    static var parameterSummary: some ParameterSummary {
-        When(\.$useDefaultShoe, .equalTo, true) {
-            Summary("Use Default Shoe \(\.$useDefaultShoe)")
-        } otherwise: {
-            Summary("Shoe \(\.$useDefaultShoe)") {
-                \.$shoeEntity
-            }
-        }
+    // Display names for each case
+    static var caseDisplayRepresentations: [ShoeStatMetric: DisplayRepresentation] {
+        [
+            .totalDuration: DisplayRepresentation(
+                title: "Total Time",
+                subtitle: "The accumulated time of all runs"
+            ),
+            .averageDistance: DisplayRepresentation(
+                title: "Average Distance",
+                subtitle: "The average distance covered"
+            ),
+            .averagePace: DisplayRepresentation(
+                title: "Average Pace",
+                subtitle: "The average pace maintained"
+            ),
+            .averageDuration: DisplayRepresentation(
+                title: "Average Time",
+                subtitle: "The average workout time"
+            )
+        ]
     }
 }

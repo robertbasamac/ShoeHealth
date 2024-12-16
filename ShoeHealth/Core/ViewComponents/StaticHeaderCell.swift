@@ -20,15 +20,13 @@ struct StaticHeaderCell: View {
                 .foregroundStyle(Color.theme.accent)
                 .italic()
                 .lineLimit(1)
-                .minimumScaleFactor(0.4)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(brand)
-                    .font(.system(size: 17, weight: .semibold, design: .default))
+                    .font(.system(size: 16, weight: .semibold, design: .default))
                 Text(model)
-                    .font(.system(size: 34, weight: .bold, design: .default))
+                    .font(.system(size: 32, weight: .bold, design: .default))
                     .lineLimit(2)
-//                    .minimumScaleFactor(0.4)
             }
         }
         .padding(.horizontal)

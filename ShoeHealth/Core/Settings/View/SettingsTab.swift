@@ -65,6 +65,7 @@ extension SettingsTab {
             }
         } footer: {
             Text(Prompts.Settings.unitOfMeasure)
+                .font(.footnote)
         }
     }
     
@@ -77,11 +78,13 @@ extension SettingsTab {
             } label: {
                 VStack(alignment: .leading) {
                     Text("Remind me after")
+                        .font(.body)
                         .badge("\(remindMeLaterTime.duration.value) \(remindMeLaterTime.duration.unit.rawValue)")
                 }
             }
         } footer: {
             Text(Prompts.Settings.remindMeLater)
+                .font(.footnote)
         }
     }
     
@@ -102,14 +105,15 @@ extension SettingsTab {
             } label: {
                 HStack {
                     Text("Notifications")
+                        .font(.body)
                     Spacer()
                     Text("\(NotificationManager.shared.getBadge())")
                         .foregroundStyle(.secondary)
                     Image(systemName: "chevron.right")
+                        .font(.body)
                         .fontWeight(.semibold)
                         .imageScale(.small)
                         .foregroundStyle(.secondary.opacity(0.5))
-                        .imageScale(.small)
                 }
             }
             .foregroundStyle(.primary)
@@ -131,8 +135,8 @@ extension SettingsTab {
                         .fontWeight(.semibold)
                         .imageScale(.small)
                         .foregroundStyle(.secondary.opacity(0.5))
-                        .imageScale(.small)
                 }
+                .font(.body)
             }
             .foregroundStyle(.primary)
         } footer: {

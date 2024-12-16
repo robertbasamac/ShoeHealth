@@ -9,11 +9,11 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-enum ShoesSchemaV1: VersionedSchema {
+enum ShoesSchemaV1: @preconcurrency VersionedSchema {
     
-    static var versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
+    @MainActor static let versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
     
-    static var models: [any PersistentModel.Type] = [Shoe.self]
+    static let models: [any PersistentModel.Type] = [Shoe.self]
     
     // MARK: ShoeSchemaV1 Model
     
@@ -65,8 +65,8 @@ enum ShoesSchemaV1: VersionedSchema {
             return totalDistance / lifespanDistance
         }
         
-        var wearPercentageAsString: String {
-            return percentageFormatter.string(from: NSNumber(value: wearPercentage)) ?? "0"
+        func wearPercentageAsString(withDecimals decimals: Int = 2) -> String {
+            return percentageFormatter(withDecimals: decimals).string(from: NSNumber(value: wearPercentage)) ?? "0"
         }
         
         var wearCondition: WearCondition {

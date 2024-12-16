@@ -12,7 +12,7 @@ struct ShoeListItem: View {
     @Environment(\.isEnabled) private var isEnabled: Bool
 
     var shoe: Shoe
-    var width: CGFloat = 140
+    var width: CGFloat
     var imageAlignment: HorizontalAlignment = .leading
     var showStats: Bool = true
     var showNavigationLink: Bool = true
@@ -53,6 +53,16 @@ struct ShoeListItem: View {
             }
         }
         .frame(height: width)
+        .overlay(alignment: .topTrailing) {
+            if showNavigationLink {
+                Image(systemName: "chevron.right")
+                    .font(.title2.bold())
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+                    .padding(.trailing, 20)
+                    .padding(.top, 8)
+            }
+        }
         .onChange(of: unitOfMeasureString) { _, newValue in
             unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric
         }
@@ -65,57 +75,80 @@ extension ShoeListItem {
     
     @ViewBuilder
     private var detailsSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(shoe.nickname)
-                .font(.system(size: 15, weight: .semibold, design: .default))
+                .font(.headline)
                 .italic()
                 .foregroundStyle(Color.theme.accent)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .overlay(alignment: .trailing) {
-                    if showNavigationLink {
-                        Image(systemName: "chevron.right")
-                            .font(.title2.bold())
-                            .imageScale(.small)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                .padding(.trailing, 35)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(shoe.brand)
-                    .font(.system(size: 13, weight: .regular, design: .default))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                 
                 Text("\(shoe.model)")
-                    .font(.system(size: 17, weight: .semibold, design: .default))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .lineLimit(2, reservesSpace: reserveSpace)
                     .multilineTextAlignment(.leading)
-                    .minimumScaleFactor(0.7)
             }
             
+            Spacer(minLength: 0)
+            
             if showStats {
-                HStack {
-                    StatCell(label: "CURRENT", value: shoe.totalDistance.as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: .blue, textAlignment: .leading, containerAlignment: .leading)
-                    StatCell(label: "REMAINING", value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(), unit: unitOfMeasure.symbol, labelFont: .system(size: 12), valueFont: .system(size: 18), color: shoe.wearColor, textAlignment: .leading, containerAlignment: .leading)
-                }
+                distanceStat
             }
         }
+        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxxLarge)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(.horizontal)
         .padding(.vertical, 8)
+    }
+    
+    @ViewBuilder
+    private var distanceStat: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Distance")
+                .font(.caption)
+                .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+                .lineLimit(1)
+            
+            Group {
+                Text("\(Int(shoe.totalDistance))")
+                    .foregroundStyle(shoe.wearColor) +
+                Text("/")
+                    .foregroundStyle(.gray) +
+                Text("\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))")
+                    .foregroundStyle(.blue) +
+                Text("\(unitOfMeasure.symbol.uppercased())")
+                    .textScale(.secondary)
+                    .foregroundStyle(.blue)
+            }
+            .font(.headline)
+            .fontWeight(.medium)
+            .fontDesign(.rounded)
+            .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
+            .lineLimit(1)
+            .widgetAccentable(true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 // MARK: - Previews
 
 #Preview {
+    @Previewable @ScaledMetric(relativeTo: .largeTitle) var width: CGFloat = 140
+
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             List {
                 ForEach(Shoe.previewShoes) { shoe in
-                    ShoeListItem(shoe: shoe)
+                    ShoeListItem(shoe: shoe, width: width)
                         .listRowInsets(EdgeInsets())
                 }
             }

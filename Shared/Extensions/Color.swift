@@ -14,6 +14,7 @@ extension Color {
 }
 
 struct ColorTheme {
+    
     let accent = Color("AccentColor")
     let greenEnergy = Color("GreenEnergy")
     let background = Color(uiColor: .systemBackground)

@@ -11,54 +11,64 @@ struct StatCell: View {
     
     private var label: String
     private var value: String
+    private var unit: String
     private var labelFont: Font
     private var valueFont: Font
-    private var unit: String
     private var color: Color
+    private var showLabel: Bool
+    private var verticalAlignment: Bool
     private var textAlignment: HorizontalAlignment
     private var containerAlignment: Alignment
     
     init(label: String,
          value: String,
          unit: String = "",
-         labelFont: Font = .system(size: 17, weight: .regular, design: .rounded),
-         valueFont: Font = .system(size: 20, weight: .regular, design: .rounded),
+         labelFont: Font = .caption,
+         valueFont: Font = .headline,
          color: Color,
+         showLabel: Bool = true,
+         verticalAlignment: Bool = true,
          textAlignment: HorizontalAlignment = .center,
          containerAlignment: Alignment = .center) {
         self.label = label
         self.value = value
+        self.unit = unit
         self.labelFont = labelFont
         self.valueFont = valueFont
-        self.unit = unit
         self.color = color
+        self.showLabel = showLabel
+        self.verticalAlignment = verticalAlignment
         self.textAlignment = textAlignment
         self.containerAlignment = containerAlignment
     }
     
     var body: some View {
         VStack(alignment: textAlignment, spacing: 0) {
-            Text(label)
-                .font(labelFont)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
+            if showLabel {
+                Text(label)
+                    .font(labelFont)
+                    .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+                    .lineLimit(1)
+            }
             
             Group {
                 Text(value) +
                 Text("\(unit.uppercased())")
                     .textScale(.secondary)
             }
+            .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
             .font(valueFont)
             .fontWeight(.medium)
             .fontDesign(.rounded)
             .foregroundStyle(color)
             .lineLimit(1)
-            .minimumScaleFactor(0.5)
             .widgetAccentable(true)
         }
         .frame(maxWidth: .infinity, alignment: containerAlignment)
     }
 }
+
+// MARK: - Previews
 
 #Preview(traits: .sizeThatFitsLayout) {
     GroupBox {

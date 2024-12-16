@@ -27,15 +27,17 @@ struct WorkoutListItem: View {
             VStack(alignment: .leading) {
                 Text("\(workout.endDate.formatted(date: .numeric, time: .shortened))")    
                     .font(.caption)
-                
+                    .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+
                 Group {
                     Text(String(format: "%.2f", workout.totalDistance(unit: unitOfMeasure.unit))) +
                     Text("\(unitOfMeasure.symbol)")
                         .textScale(.secondary)
                 }
-                .font(.title3)
+                .font(.headline)
                 .fontWeight(.medium)
                 .fontDesign(.rounded)
+                .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
                 .foregroundStyle(Color.theme.greenEnergy)
             }
         }

@@ -16,13 +16,13 @@ struct ShoeWorkoutsListView: View {
     private var isShoeRestricted: Bool
     
     @State private var groupedWorkouts: [WorkoutGroup] = []
-
+    
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
     
     @State private var showAddWorkouts: Bool = false
     @State private var showAssignToShoe: Bool = false
-
+    
     init(shoe: Shoe, isShoeRestricted: Bool = false) {
         self.shoe = shoe
         self.isShoeRestricted = isShoeRestricted

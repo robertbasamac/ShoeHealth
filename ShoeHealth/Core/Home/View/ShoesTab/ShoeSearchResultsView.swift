@@ -12,11 +12,13 @@ struct ShoeSearchResultsView: View {
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
-       
+    
+    @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
+    
     var body: some View {
         List {
             ForEach(shoesViewModel.filteredShoes) { shoe in
-                ShoeListItem(shoe: shoe)
+                ShoeListItem(shoe: shoe, width: width)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)

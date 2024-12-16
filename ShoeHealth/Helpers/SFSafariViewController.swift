@@ -10,6 +10,7 @@ import SwiftUI
 import SafariServices
 
 // MARK: - UIViewControllerRepresentable
+
 struct SFSafariView: UIViewControllerRepresentable {
     
     let url: URL
@@ -24,6 +25,7 @@ struct SFSafariView: UIViewControllerRepresentable {
 }
 
 // MARK: - View Modifier
+
 private struct SafariViewControllerViewModifier: ViewModifier {
     
     @State private var urlToOpen: URL?

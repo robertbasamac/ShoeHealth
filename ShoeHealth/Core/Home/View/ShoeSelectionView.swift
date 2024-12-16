@@ -23,6 +23,8 @@ struct ShoeSelectionView: View {
     @State private var isExpandedActive: Bool = true
     @State private var isExpandedRetire: Bool = false
     
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 84
+    
     private let title: String
     private let description: String
     private let systemImage: String
@@ -75,7 +77,7 @@ extension ShoeSelectionView {
             Image(systemName: systemImage)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 84, height: 84, alignment: .center)
+                .frame(width: size, height: size, alignment: .center)
                 .foregroundStyle(.secondary)
             Text(title)
                 .font(.title2.bold())
@@ -112,8 +114,15 @@ extension ShoeSelectionView {
                     .imageScale(.large)
                     .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
                 
-                ShoeListItem(shoe: shoe, width: 100, imageAlignment: .trailing, showStats: false, showNavigationLink: false, reserveSpace: false)
-                    .disabled(isShoeRestricted(shoe.id))
+                ShoeListItem(
+                    shoe: shoe,
+                    width: size,
+                    imageAlignment: .trailing,
+                    showStats: false,
+                    showNavigationLink: false,
+                    reserveSpace: false
+                )
+                .disabled(isShoeRestricted(shoe.id))
             }
             .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
             .contentShape(.rect)

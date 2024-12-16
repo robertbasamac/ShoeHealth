@@ -22,6 +22,8 @@ struct ShoesView: View {
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
     
+    @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
+    
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
@@ -108,7 +110,7 @@ extension ShoesView {
                 .asHeader()
             
             if let shoe = shoesViewModel.getDefaultShoe() {
-                ShoeListItem(shoe: shoe)
+                ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
                     .disabled(isShoeRestricted(shoe.id))
                     .onTapGesture {
@@ -117,8 +119,8 @@ extension ShoesView {
                     }
             } else {
                 HStack(spacing: 0) {
-                    ShoeImage(width: 140)
-                        .frame(width: 140, height: 140)
+                    ShoeImage(width: width)
+                        .frame(width: width, height: width)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     VStack {
@@ -223,7 +225,7 @@ extension ShoesView {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 6) {
                 ForEach(shoes) { shoe in
-                    ShoeCell(shoe: shoe, width: 140)
+                    ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
                             if !shoe.isDefaultShoe && !isShoeRestricted(shoe.id) {
@@ -293,7 +295,8 @@ extension ShoesView {
                 .foregroundStyle(.secondary)
                 .textScale(.secondary)
         }
-        .font(.system(size: 17, weight: .regular))
+        .font(.callout)
+        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
@@ -301,22 +304,82 @@ extension ShoesView {
     private func runStatsSection(_ run: RunningWorkout) -> some View {
         VStack(spacing: 8) {
             HStack {
-                StatCell(label: "Duration", value: run.workout.durationAsString, color: .yellow, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Distance", value: String(format: "%.2f", run.workout.totalDistance(unit: settingsManager.unitOfMeasure.unit)), unit: settingsManager.unitOfMeasure.symbol, color: .blue, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Duration",
+                    value: run.workout.durationAsString,
+                    color: .yellow,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                
+                StatCell(
+                    label: "Distance",
+                    value: String(
+                        format: "%.2f",
+                        run.workout.totalDistance(unit: settingsManager.unitOfMeasure.unit)
+                    ),
+                    unit: settingsManager.unitOfMeasure.symbol,
+                    color: .blue,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Avg Power", value: String(format: "%0.0f", run.wrappedAveragePower), unit: UnitPower.watts.symbol, color: Color.theme.greenEnergy, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Cadence", value: String(format: "%.0f", run.wrappedAAverageCadence), unit: "SPM", color: .cyan, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Avg Power",
+                    value: String(
+                        format: "%0.0f",
+                        run.wrappedAveragePower
+                    ),
+                    unit: UnitPower.watts.symbol,
+                    color: Color.theme.greenEnergy,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                
+                StatCell(
+                    label: "Avg Cadence",
+                    value: String(
+                        format: "%.0f",
+                        run.wrappedAverageCadence
+                    ),
+                    unit: "SPM",
+                    color: .cyan,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
             
             Divider()
             
             HStack {
-                StatCell(label: "Avg Pace", value: String(format: "%d'%02d\"", run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).minutes, run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).seconds), unit: "/\(settingsManager.unitOfMeasure.symbol)", color: .teal, textAlignment: .leading, containerAlignment: .leading)
-                StatCell(label: "Avg Heart Rate", value: String(format: "%.0f", run.wrappedAverageHeartRate), unit: "BPM", color: .red, textAlignment: .leading, containerAlignment: .leading)
+                StatCell(
+                    label: "Avg Pace",
+                    value: String(
+                        format: "%d'%02d\"",
+                        run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).minutes,
+                        run.workout.averagePace(unit: settingsManager.unitOfMeasure.unit).seconds
+                    ),
+                    unit: "/\(settingsManager.unitOfMeasure.symbol)",
+                    color: .teal,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
+                
+                StatCell(
+                    label: "Avg Heart Rate",
+                    value: String(
+                        format: "%.0f",
+                        run.wrappedAverageHeartRate
+                    ),
+                    unit: "BPM",
+                    color: .red,
+                    textAlignment: .leading,
+                    containerAlignment: .leading
+                )
             }
         }
     }
@@ -327,14 +390,17 @@ extension ShoesView {
             if let shoe = shoesViewModel.getShoe(ofWorkoutID: run.id) {
                 VStack(alignment: .leading) {
                     Text("\(shoe.brand)")
-                        .font(.system(size: 13, weight: .regular, design: .default))
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                     
                     Text("\(shoe.model)")
-                        .font(.system(size: 17, weight: .semibold, design: .default))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
                         .multilineTextAlignment(.leading)
                 }
+                .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, 30)
                 .overlay(alignment: .trailing) {
                     Image(systemName: "chevron.right")
                         .font(.title2.bold())
@@ -348,8 +414,12 @@ extension ShoesView {
                 }
             } else {
                 Text("No shoe selected for this workout")
+                    .font(.callout)
+                    .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.center)
+                    .padding(.trailing, 30)
                     .overlay(alignment: .trailing) {
                         Image(systemName: "chevron.right")
                             .font(.title2.bold())
@@ -363,13 +433,13 @@ extension ShoesView {
                     }
             }
         }
-        .overlay(alignment: .leading) {
-            Image(systemName: "shoe.2.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 44, height: 44)
-                .offset(x: -50)
-        }
+//        .overlay(alignment: .leading) {
+//            Image(systemName: "shoe.2.fill")
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 44, height: 44)
+//                .offset(x: -50)
+//        }
     }
     
     @ViewBuilder
