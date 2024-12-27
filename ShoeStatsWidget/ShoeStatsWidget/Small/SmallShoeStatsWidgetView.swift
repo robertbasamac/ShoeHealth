@@ -36,7 +36,7 @@ struct SmallShoeStatsSnapshotWidgetView : View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
-            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 4, color: shoe.wearColor)
+            CircularProgressView(progress: shoe.wearPercentage, lineWidth: 5, color: shoe.wearColor)
                 .widgetAccentable(true)
                 .overlay {
                     statCell(
@@ -68,10 +68,9 @@ struct SmallShoeStatsSnapshotWidgetView : View {
                     .font(.caption)
                     .fontWeight(.semibold)
                     .lineLimit(1)
-                    .multilineTextAlignment(.leading)
                     .widgetAccentable(true)
             }
-            .dynamicTypeSize(DynamicTypeSize.xSmall...DynamicTypeSize.xLarge)
+            .dynamicTypeSize(DynamicTypeSize.xSmall)
             .frame(maxWidth: .infinity, alignment: .center)
         }
         .foregroundStyle(.white)
@@ -122,7 +121,7 @@ extension SmallShoeStatsSnapshotWidgetView {
             .lineLimit(1)
             .widgetAccentable(true)
         }
-        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xLarge)
+        .dynamicTypeSize(DynamicTypeSize.large)
         .frame(alignment: containerAlignment)
     }
 }

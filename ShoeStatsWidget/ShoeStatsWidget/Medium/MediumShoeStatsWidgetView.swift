@@ -40,7 +40,7 @@ struct MediumShoeStatsSnapshotWidgetView : View {
     var unitSymbol: String
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 8) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(shoe.nickname)
@@ -62,10 +62,10 @@ struct MediumShoeStatsSnapshotWidgetView : View {
                         .multilineTextAlignment(.leading)
                         .widgetAccentable(true)
                 }
-                .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .dynamicTypeSize(DynamicTypeSize.large)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 
-                CircularProgressView(progress: shoe.wearPercentage, lineWidth: 4, color: shoe.wearColor)
+                CircularProgressView(progress: shoe.wearPercentage, lineWidth: 5, color: shoe.wearColor)
                     .widgetAccentable(true)
                     .overlay {
                         statCell(
@@ -78,7 +78,6 @@ struct MediumShoeStatsSnapshotWidgetView : View {
                         .padding(.horizontal, 8)
                         .contentTransition(.numericText(value: shoe.totalDistance))
                     }
-                    .padding(.bottom, 4)
             }
             
             HStack(spacing: 0) {
@@ -187,7 +186,7 @@ extension MediumShoeStatsSnapshotWidgetView {
             .lineLimit(1)
             .widgetAccentable(true)
         }
-        .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xLarge)
+        .dynamicTypeSize(DynamicTypeSize.large)
         .frame(alignment: containerAlignment)
     }
 }
