@@ -27,4 +27,14 @@ extension Double {
     func roundedToNearest50() -> Double {
         (self / 50.0).rounded() * 50.0
     }
+    
+    func formatAsPercentage(withDecimals decimals: Int) -> String {
+        let formatter = percentageFormatter(withDecimals: decimals)
+        
+        let scaledValue = self * 100
+        if let formattedNumber = formatter.string(from: NSNumber(value: self * 100)) {
+            return "\(formattedNumber)%"
+        }
+        return "\(scaledValue)%"
+    }
 }

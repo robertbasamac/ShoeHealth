@@ -66,7 +66,7 @@ enum ShoesSchemaV1: @preconcurrency VersionedSchema {
         }
         
         func wearPercentageAsString(withDecimals decimals: Int = 2) -> String {
-            return percentageFormatter(withDecimals: decimals).string(from: NSNumber(value: wearPercentage)) ?? "0"
+            return wearPercentage.formatAsPercentage(withDecimals: decimals)
         }
         
         var wearCondition: WearCondition {
@@ -156,9 +156,9 @@ enum ShoesSchemaV1: @preconcurrency VersionedSchema {
         static var previewShoes: [Shoe] {
             [
                 Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, aquisitionDate: Date.now, isDefaultShoe: false, image: UIImage(named: "pegasus")?.pngData()),
-                Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData()),
-                Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 280.25, aquisitionDate: Date.now, isDefaultShoe: false),
-                Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 715.42, aquisitionDate: Date.now, isDefaultShoe: false)
+                Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature Bla bla bla", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData()),
+                Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 745, aquisitionDate: Date.now, isDefaultShoe: false),
+                Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 853.43, aquisitionDate: Date.now, isDefaultShoe: false)
             ]
         }
     }

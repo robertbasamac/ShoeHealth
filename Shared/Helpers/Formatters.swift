@@ -52,9 +52,8 @@ var distanceFormatter: LengthFormatter {
 func percentageFormatter(withDecimals decimals: Int) -> NumberFormatter {
     let formatter = NumberFormatter()
     
-    formatter.numberStyle = .percent
+    formatter.numberStyle = .decimal
     formatter.minimumIntegerDigits = 1
-    formatter.maximumIntegerDigits = 2
     formatter.minimumFractionDigits = 0
     formatter.maximumFractionDigits = decimals
     

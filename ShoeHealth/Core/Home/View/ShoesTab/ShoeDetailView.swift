@@ -171,7 +171,7 @@ extension ShoeDetailView {
                 CircularProgressView(progress: shoe.wearPercentage, lineWidth: 6, color: shoe.wearColor)
                 StatCell(
                     label: "Wear",
-                    value: shoe.wearPercentageAsString(),
+                    value: shoe.wearPercentageAsString(withDecimals: 1),
                     color: shoe.wearColor,
                     showLabel: false
                 )
