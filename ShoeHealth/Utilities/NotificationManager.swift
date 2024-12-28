@@ -71,6 +71,7 @@ final class NotificationManager {
     func setActionableNotificationTypes() {
         logger.debug("Setting up actionable notifications.")
         
+        // actions
         let defaultShoeAction = UNNotificationAction(identifier: "DEFAULT_SHOE_ACTION",
                                                      title: "Use default Shoe",
                                                      options: [.authenticationRequired],
@@ -81,30 +82,31 @@ final class NotificationManager {
                                                        options: [.authenticationRequired],
                                                        icon: UNNotificationActionIcon(systemImageName: "clock.arrow.circlepath"))
         
+        let retireShoeAction = UNNotificationAction(identifier: "RETIRE_SHOE_ACTION",
+                                                    title: "Retire Shoe",
+                                                    options: [.authenticationRequired, .destructive],
+                                                    icon: UNNotificationActionIcon(systemImageName: "bolt.slash.fill"))
+        
+        // categories
         let runningWorkoutCategory = UNNotificationCategory(identifier: "NEW_RUNNING_WORKOUT_AVAILABLE",
                                                             actions: [defaultShoeAction, remindMeLaterAction],
                                                             intentIdentifiers: [],
                                                             hiddenPreviewsBodyPlaceholder: "%u New Workout(s) logged",
-                                                            categorySummaryFormat: "format summary",
+                                                            categorySummaryFormat: "There are %u new workouts.",
                                                             options: [.customDismissAction])
         
         let multipleRunningWorkoutsCategory = UNNotificationCategory(identifier: "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE",
                                                             actions: [defaultShoeAction, remindMeLaterAction],
                                                             intentIdentifiers: [],
                                                             hiddenPreviewsBodyPlaceholder: "New Workouts logged",
-                                                            categorySummaryFormat: "format summary",
+                                                            categorySummaryFormat: "There are %u new workouts.",
                                                             options: [.customDismissAction])
-        
-        let retireShoeAction = UNNotificationAction(identifier: "RETIRE_SHOE_ACTION",
-                                                    title: "Retire Shoe",
-                                                    options: [.authenticationRequired, .destructive],
-                                                    icon: UNNotificationActionIcon(systemImageName: "bolt.slash.fill"))
         
         let wearUpdateCategory = UNNotificationCategory(identifier: "SHOE_WEAR_UPDATE",
                                                         actions: [retireShoeAction],
                                                         intentIdentifiers: [],
-                                                        hiddenPreviewsBodyPlaceholder: "preview placeholder",
-                                                        categorySummaryFormat: "format summary",
+                                                        hiddenPreviewsBodyPlaceholder: "Shoe wear update",
+                                                        categorySummaryFormat: "There are %u shoe wear updates.",
                                                         options: [.customDismissAction])
         
         center.setNotificationCategories([runningWorkoutCategory, multipleRunningWorkoutsCategory, wearUpdateCategory])

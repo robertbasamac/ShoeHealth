@@ -52,33 +52,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "DEFAULT_SHOE_ACTION":
                 logger.debug("\"Use default shoe\" action pressed.")
                 
-                if let shoe = shoesViewModel?.getDefaultShoe() {
-                    Task {
-                        await shoesViewModel?.add(workoutIDs: [workoutID], toShoe: shoe.id)
-                    }
-                }
+                handleDefaultShoeAction(forWorkoutIDs: [workoutID])
+                
                 break
                 
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
                 
-                let date: Date?
-                let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
-                
-                switch remindMeLaterTime.duration.unit {
-                case .minute, .minutes:
-                    date = Calendar.current.date(byAdding: .minute, value: remindMeLaterTime.duration.value, to: .now)
-                case .hour, .hours:
-                    date = Calendar.current.date(byAdding: .hour, value: remindMeLaterTime.duration.value, to: .now)
-                case .day, .days:
-                    date = Calendar.current.date(byAdding: .day, value: remindMeLaterTime.duration.value, to: .now)
-                }
-                                
-                let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
-                
-                if let workout = HealthManager.shared.getWorkout(forID: workoutID) {
-                    NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: [workout], at: dateComponents)
-                }
+                handleRemindMeLaterAction(forWorkoutIDs: [workoutID])
                 break
                 
             case UNNotificationDefaultActionIdentifier:
@@ -105,33 +86,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "DEFAULT_SHOE_ACTION":
                 logger.debug("\"Use default shoe\" action pressed.")
                 
-                if let shoe = shoesViewModel?.getDefaultShoe() {
-                    Task {
-                        await shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
-                    }
-                }
+                handleDefaultShoeAction(forWorkoutIDs: workoutIDs)
                 break
                 
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
                 
-                let date: Date?
-                let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
-                
-                switch remindMeLaterTime.duration.unit {
-                case .minute, .minutes:
-                    date = Calendar.current.date(byAdding: .minute, value: remindMeLaterTime.duration.value, to: .now)
-                case .hour, .hours:
-                    date = Calendar.current.date(byAdding: .hour, value: remindMeLaterTime.duration.value, to: .now)
-                case .day, .days:
-                    date = Calendar.current.date(byAdding: .day, value: remindMeLaterTime.duration.value, to: .now)
-                }
-                                
-                let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
-                
-                let workouts = HealthManager.shared.getWorkouts(forIDs: workoutIDs)
-                
-                NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: workouts, at: dateComponents)
+                handleRemindMeLaterAction(forWorkoutIDs: workoutIDs)
                 break
                 
             case UNNotificationDefaultActionIdentifier:
@@ -152,20 +113,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "RETIRE_SHOE_ACTION":
                 logger.debug("\"Retire Shoe\" action pressed.")
                 
-                guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { break }
-                                
-                let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
-                
-                shoesViewModel?.retireShoe(shoeID)
-                                
-                if setNewDefaultShoe {
-                    logger.debug("Scheduling Set New Default Shoe notification")
-                    
-                    let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
-                    let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
-                    
-                    NotificationManager.shared.scheduleSetDefaultShoeNotification(at: dateComponents)
-                }
+                handleRetireShoeAction(forShoeID: shoeID)
                 break
                 
             case UNNotificationDefaultActionIdentifier:
@@ -185,6 +133,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
                 logger.debug("\"Set Default Shoe\" notification pressed.")
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showSheet = .setDefaultShoe
                 }
@@ -196,5 +145,50 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         
         completionHandler()
+    }
+    
+    private func handleDefaultShoeAction(forWorkoutIDs workoutIDs: [UUID]) {
+        if let shoe = shoesViewModel?.getDefaultShoe() {
+            Task {
+                await shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
+            }
+        }
+    }
+    
+    private func handleRemindMeLaterAction(forWorkoutIDs workoutIDs: [UUID]) {
+        let date: Date?
+        let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
+        
+        switch remindMeLaterTime.duration.unit {
+        case .minute, .minutes:
+            date = Calendar.current.date(byAdding: .minute, value: remindMeLaterTime.duration.value, to: .now)
+        case .hour, .hours:
+            date = Calendar.current.date(byAdding: .hour, value: remindMeLaterTime.duration.value, to: .now)
+        case .day, .days:
+            date = Calendar.current.date(byAdding: .day, value: remindMeLaterTime.duration.value, to: .now)
+        }
+                        
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
+        
+        let workouts = HealthManager.shared.getWorkouts(forIDs: workoutIDs)
+        
+        NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: workouts, at: dateComponents)
+    }
+    
+    private func handleRetireShoeAction(forShoeID shoeID: UUID) {
+        guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
+        
+        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+        
+        shoesViewModel?.retireShoe(shoeID)
+        
+        if setNewDefaultShoe {
+            logger.debug("Scheduling Set New Default Shoe notification")
+            
+            let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
+            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
+            
+            NotificationManager.shared.scheduleSetDefaultShoeNotification(at: dateComponents)
+        }
     }
 }
