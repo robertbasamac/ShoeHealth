@@ -187,21 +187,28 @@ extension ShoeDetailView {
         VStack(spacing: 20) {
             HStack(spacing: 20) {
                 VStack(spacing: 10) {
-                    Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
+                    Image(systemName: !shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 44, height: 44)
                     
-                    Text(shoe.isRetired ? "Retired" : "Critical")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                    VStack {
+                        Text(!shoe.isRetired ? "Retired" : "Critical")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
                 }
                 .foregroundStyle(shoe.isRetired ? .gray : shoe.wearColor)
                 .padding(.leading, 10)
                 
                 VStack(spacing: 10) {
-                    Text("\(shoe.wearCondition.description)")
-                    Text("\(shoe.wearCondition.action)")
+                    if shoe.isRetired {
+                        Text("This shoe is retired since")
+                        Text("\(dateFormatter.string(from: shoe.retireDate ?? .now))")
+                    } else {
+                        Text("\(shoe.wearCondition.description)")
+                        Text("\(shoe.wearCondition.action)")
+                    }
                 }
                 .font(.callout)
                 .multilineTextAlignment(.center)

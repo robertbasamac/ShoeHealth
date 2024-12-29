@@ -326,7 +326,7 @@
 			children = (
 				0980A7F22BB5AEB4000848A1 /* Helpers */,
 				093742A22B7B9C74008D96BD /* Extensions */,
-				0980A7F32BB5AEFB000848A1 /* ShoeStore */,
+				0980A7F32BB5AEFB000848A1 /* ShoesStore */,
 				093742A72B84AE29008D96BD /* View */,
 				09E385E82B13FCAF005CFF02 /* PreviewSample */,
 			);
@@ -502,14 +502,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		0980A7F32BB5AEFB000848A1 /* ShoeStore */ = {
+		0980A7F32BB5AEFB000848A1 /* ShoesStore */ = {
 			isa = PBXGroup;
 			children = (
 				09BFD2E82B979C81009F4133 /* ShoesStore.swift */,
 				0944A7F82CE60AF20042081D /* ShoesMigrationPlan.swift */,
 				0944A7FB2CE60B1A0042081D /* ShoesSchemaV1.swift */,
 			);
-			path = ShoeStore;
+			path = ShoesStore;
 			sourceTree = "<group>";
 		};
 		09A9FF222C9B48F4002507C9 /* Settings */ = {
