@@ -93,17 +93,23 @@ final class ShoesViewModel {
     }
     
     func shouldRestrictShoe(_ shoeID: UUID) -> Bool {
-        var allowedShoes = self.getRecentlyUsedShoes().map { $0.id }
+        var allowedShoes = getAllDefaultShoes().map { $0.id }
+        
+        if allowedShoes.count < 5 {
+            let neededShoes = 5 - allowedShoes.count
+            let recentlyUsedShoes = getRecentlyUsedShoes(exclude: allowedShoes, prefix: neededShoes).map { $0.id }
+            allowedShoes.append(contentsOf: recentlyUsedShoes)
+        }
         
         if allowedShoes.count < 5 {
             let neededShoes = 5 - allowedShoes.count
             let recentlyAddedShoes = getRecentlyAddedShoes(exclude: allowedShoes, prefix: neededShoes).map { $0.id }
-            
             allowedShoes.append(contentsOf: recentlyAddedShoes)
         }
         
-        return !allowedShoes.contains(shoeID) && getDefaultShoe()?.id != shoeID
+        return !allowedShoes.contains(shoeID)
     }
+
     
     // MARK: - Getters
     
@@ -115,16 +121,20 @@ final class ShoesViewModel {
         return shoes.first { $0.workouts.contains(workoutID) }
     }
     
-    func getDefaultShoe() -> Shoe? {
-        return shoes.first { $0.isDefaultShoe }
+    func getDefaultShoe(for runType: RunType) -> Shoe? {
+        return shoes.first(where: { $0.defaultRunTypes.contains(runType) })
     }
     
-    func getRecentlyUsedShoes() -> [Shoe] {
+    func getAllDefaultShoes() -> [Shoe] {
+        return shoes.filter { !$0.defaultRunTypes.isEmpty }
+    }
+    
+    func getRecentlyUsedShoes(exclude excludedShoes: [UUID] = [], prefix: Int = 5) -> [Shoe] {
         let recentlyUsedShoes: [Shoe] = self.shoes
-            .filter { $0.lastActivityDate != nil }
+            .filter { !excludedShoes.contains($0.id) && $0.lastActivityDate != nil}
             .sorted { $0.lastActivityDate! > $1.lastActivityDate! }
                 
-        return Array(recentlyUsedShoes.prefix(5))
+        return Array(recentlyUsedShoes.prefix(prefix))
     }
     
     private func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
@@ -171,15 +181,13 @@ final class ShoesViewModel {
     
     // MARK: - CRUD operations
     
-    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, image: Data?) {
-        let shoe = Shoe(nickname: nickname, brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, image: image)
+    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, defaultRunTypes: [RunType], image: Data?) {
+        let shoe = Shoe(image: image, brand: brand, model: model, nickname: nickname, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, defaultRunTypes: defaultRunTypes)
         
-        if isDefaultShoe, let previousDefaultShoe = shoes.first(where: { $0.isDefaultShoe} ) {
-            previousDefaultShoe.isDefaultShoe = false
-        }
-        
-        if shoes.isEmpty {
-            shoe.isDefaultShoe = true
+        if !defaultRunTypes.isEmpty {
+            for otherShoe in shoes {
+                otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+            }
         }
         
         modelContext.insert(shoe)
@@ -187,7 +195,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, setDefaultShoe: Bool, lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
+    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         if !brand.isEmpty {
@@ -200,18 +208,17 @@ final class ShoesViewModel {
             shoe.nickname = nickname
         }
         
-        if setDefaultShoe {
-            if let defaultShoe = getDefaultShoe() {
-                defaultShoe.isDefaultShoe = false
-            }
-            
-            shoe.isDefaultShoe = setDefaultShoe
-            shoe.isRetired = false
-        }
-        
         shoe.image = image
         shoe.aquisitionDate = aquisitionDate
         shoe.lifespanDistance = lifespanDistance
+        
+        if !defaultRunTypes.isEmpty {
+            for otherShoe in shoes {
+                otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+            }
+            
+            shoe.defaultRunTypes = defaultRunTypes
+        }
         
         save()
     }
@@ -286,14 +293,20 @@ final class ShoesViewModel {
         save()
     }
     
-    func setAsDefaultShoe(_ shoeID: UUID) {
+    func setAsDefaultShoe(_ shoeID: UUID, for runTypes: [RunType]) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
-        if let defaultShoe = getDefaultShoe() {
-            defaultShoe.isDefaultShoe = false
+        for otherShoe in shoes {
+            otherShoe.defaultRunTypes.removeAll(where: { runTypes.contains($0) })
         }
         
-        shoe.isDefaultShoe = true
+        var shoeDefaultRunRypes: [RunType] = []
+        
+        for runType in runTypes {
+            shoeDefaultRunRypes.append(runType)
+        }
+        
+        shoe.defaultRunTypes = shoeDefaultRunRypes
         shoe.isRetired = false
         
         save()
@@ -305,9 +318,8 @@ final class ShoesViewModel {
         shoe.isRetired.toggle()
         shoe.retireDate = shoe.isRetired ? .now : nil
         
-        // no retired shoe can be default shoe
-        if shoe.isRetired && shoe.isDefaultShoe {
-            shoe.isDefaultShoe = false
+        if !shoe.defaultRunTypes.isEmpty && shoe.isRetired {
+            shoe.defaultRunTypes = []
         }
         
         save()
@@ -443,8 +455,7 @@ final class ShoesViewModel {
         if event.endDate != nil {
             if event.type == .import {
                 fetchShoes()
-            } else if event.type == .export {
-            }
+            } else if event.type == .export { }
         }
     }
     

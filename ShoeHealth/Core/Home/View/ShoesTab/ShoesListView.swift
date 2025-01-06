@@ -90,7 +90,7 @@ extension ShoesListView {
         .tint(.red)
         
         Button(role: .destructive) {
-            let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+            let setNewDefaultShoe = shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
             
             withAnimation {
                 shoesViewModel.retireShoe(shoe.id)
@@ -126,7 +126,7 @@ extension ShoesListView {
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            if shoe.defaultRunTypes.contains(.daily) && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     navigationRouter.showSheet = .setDefaultShoe
                 }

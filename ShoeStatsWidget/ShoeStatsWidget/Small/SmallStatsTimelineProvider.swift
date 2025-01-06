@@ -9,7 +9,7 @@ import SwiftData
 import WidgetKit
 import OSLog
 
-private let logger = Logger(subsystem: "Shoe Health Widgets", category: "ShoeStatsTimelineProvider")
+private let logger = Logger(subsystem: "Shoe Health Widgets", category: "SmallShoeStatsTimelineProvider")
 
 // MARK: - AppIntentTimelineProvider
 
@@ -22,7 +22,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
     func placeholder(in context: Context) -> Entry {
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
             
             guard let shoe = shoes.first else {
                 if context.isPreview {
@@ -53,7 +53,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
             
             guard let shoe = shoes.first else {
                 if context.isPreview {
@@ -103,7 +103,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
         if configuration.useDefaultShoe {
             do {
-                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
+                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
                 
                 guard let shoe = shoes.first else {
                     return Timeline(entries: [Entry.empty], policy: .never)

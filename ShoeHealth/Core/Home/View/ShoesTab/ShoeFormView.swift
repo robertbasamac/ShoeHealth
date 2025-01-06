@@ -24,6 +24,8 @@ struct ShoeFormView: View {
     private var wasDefaultShoe: Bool = false
     private var isEditing: Bool
     
+    @State private var showRunTypeSelection: Bool = false
+    
     enum FocusField: Hashable {
         case brand
         case model
@@ -32,12 +34,12 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
-        self.wasDefaultShoe = shoe?.isDefaultShoe ?? false
+        self.wasDefaultShoe = shoe?.defaultRunTypes.contains(.daily) ?? false
         self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
             lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
-            isDefaultShoe: shoe?.isDefaultShoe ?? false,
+            defaultRunTypes: shoe?.defaultRunTypes ?? [],
             shoeBrand: shoe?.brand ?? "",
             shoeModel: shoe?.model ?? "",
             shoeNickname: shoe?.nickname ?? "",
@@ -103,7 +105,7 @@ struct ShoeFormView: View {
         }
         .onAppear {
             if !isEditing {
-                shoeFormViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
+                shoeFormViewModel.defaultRunTypes = shoesViewModel.shoes.isEmpty ? [.daily] : []
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.focusField = .brand
@@ -210,9 +212,49 @@ extension ShoeFormView {
     @ViewBuilder
     private var setDefaultSection: some View {
         Section {
-            Toggle("Set as default shoe", isOn: $shoeFormViewModel.isDefaultShoe)
-                .tint(Color.theme.accent)
-                .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
+            Toggle("Set as default shoe", isOn: Binding(
+                get: { !shoeFormViewModel.defaultRunTypes.isEmpty },
+                set: { isOn in
+                    if isOn {
+                        if !shoeFormViewModel.defaultRunTypes.contains(.daily) {
+                            shoeFormViewModel.defaultRunTypes = [.daily]
+                        }
+                        showRunTypeSelection = true
+                    } else {
+                        shoeFormViewModel.defaultRunTypes.removeAll()
+                    }
+                }
+            ))
+            .tint(Color.theme.accent)
+            .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
+            
+            if !shoeFormViewModel.defaultRunTypes.isEmpty {
+                Button {
+                    showRunTypeSelection = true
+
+                } label: {
+                    HStack {
+                        Text(shoeFormViewModel.defaultRunTypes.map { $0.rawValue.lowercased() }.joined(separator: ", "))
+                            .font(.footnote)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .fontWeight(.semibold)
+                            .imageScale(.small)
+                            .foregroundStyle(.secondary.opacity(0.5))
+                    }
+                    .font(.body)
+                }
+                .sheet(isPresented: $showRunTypeSelection) {
+                    NavigationStack {
+                        RunTypeSelectionView(
+                            selectedRunTypes: $shoeFormViewModel.defaultRunTypes
+                        )
+                    }
+                    .presentationDetents([.medium])
+                }
+            }
         }
     }
     
@@ -283,7 +325,7 @@ extension ShoeFormView {
                         nickname: shoeFormViewModel.nickname,
                         brand: shoeFormViewModel.brand,
                         model: shoeFormViewModel.model,
-                        setDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
                         lifespanDistance: shoeFormViewModel.lifespanDistance,
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
                         image: shoeFormViewModel.selectedPhotoData
@@ -295,7 +337,7 @@ extension ShoeFormView {
                         model: shoeFormViewModel.model,
                         lifespanDistance: shoeFormViewModel.lifespanDistance,
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
-                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
                         image: shoeFormViewModel.selectedPhotoData
                     )
                 }

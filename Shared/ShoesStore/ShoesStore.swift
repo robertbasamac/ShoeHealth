@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 
-typealias Shoe = ShoesSchemaV1.Shoe
+typealias Shoe = ShoesSchemaV2.Shoe
 
 final class ShoesStore {
     

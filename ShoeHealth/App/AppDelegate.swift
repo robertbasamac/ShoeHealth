@@ -45,14 +45,42 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         if categoryIdentifier == "NEW_RUNNING_WORKOUT_AVAILABLE" {
             guard let stringWorkoutID = userInfo["WORKOUT_ID"] as? String,
-                  let workoutID = UUID(uuidString: stringWorkoutID)
+                  let workoutID =  UUID(uuidString: stringWorkoutID)
             else { return }
             
             switch response.actionIdentifier {
-            case "DEFAULT_SHOE_ACTION":
-                logger.debug("\"Use default shoe\" action pressed.")
+            case "DEFAULT_SHOE_ACTION_DAILY":
+                logger.debug("\"Use Daily Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TEMPO":
+                logger.debug("\"Use Tempo Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_LONG":
+                logger.debug("\"Use Long Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_RACE":
+                logger.debug("\"Use Race default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TRAIL":
+                logger.debug("\"Use Train Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
                 
                 break
                 
@@ -83,10 +111,39 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             guard !workoutIDs.isEmpty else { return }
                         
             switch response.actionIdentifier {
-            case "DEFAULT_SHOE_ACTION":
-                logger.debug("\"Use default shoe\" action pressed.")
+            case "DEFAULT_SHOE_ACTION_DAILY":
+                logger.debug("\"Use Daily Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TEMPO":
+                logger.debug("\"Use Tempo Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_LONG":
+                logger.debug("\"Use Long Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_RACE":
+                logger.debug("\"Use Race default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TRAIL":
+                logger.debug("\"Use Train Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
                 break
                 
             case "REMIND_ME_LATER":
@@ -147,8 +204,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler()
     }
     
-    private func handleDefaultShoeAction(forWorkoutIDs workoutIDs: [UUID]) {
-        if let shoe = shoesViewModel?.getDefaultShoe() {
+    private func handleDefaultShoeAction(for runType: RunType, forWorkoutIDs workoutIDs: [UUID]) {
+        if let shoe = shoesViewModel?.getDefaultShoe(for: runType) {
             Task {
                 await shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
             }
@@ -178,7 +235,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     private func handleRetireShoeAction(forShoeID shoeID: UUID) {
         guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
         
-        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+        let setNewDefaultShoe = !shoe.defaultRunTypes.isEmpty && !shoe.isRetired
         
         shoesViewModel?.retireShoe(shoeID)
         

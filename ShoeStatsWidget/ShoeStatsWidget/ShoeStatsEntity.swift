@@ -64,7 +64,24 @@ struct ShoeStatsEntity: AppEntity {
         self.wearColor = wearColor
     }
     
-    init(from shoe: Shoe) {
+    init(from shoe: ShoesSchemaV1.Shoe) {
+        self.id = shoe.id
+        self.brand = shoe.brand
+        self.model = shoe.model
+        self.nickname = shoe.nickname
+        self.lifespanDistance = shoe.lifespanDistance
+        self.totalDistance = shoe.totalDistance
+        self.totalDuration = shoe.formattedTotalDuration
+        self.averageDistance = shoe.averageDistance
+        self.averagePace = shoe.averagePace
+        self.averageDuration = shoe.formatterAverageDuration
+        self.lastRunDate = shoe.lastActivityDate
+        self.wearPercentage = shoe.wearPercentage
+        self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
+        self.wearColor = shoe.wearColor
+    }
+    
+    init(from shoe: ShoesSchemaV2.Shoe) {
         self.id = shoe.id
         self.brand = shoe.brand
         self.model = shoe.model

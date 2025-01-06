@@ -19,7 +19,7 @@ struct HomeScreen: View {
         TabView(selection: $navigationRouter.selectedTab) {
             NavigationStack(path: $navigationRouter.workoutsNavigationPath) {
                 WorkoutsTab()
-                    .navigationTitle("Workouts")
+                    .navigationTitle("Workouts") 
             }
             .tabItem {
                 Label(TabItem.workouts.rawValue, systemImage: TabItem.workouts.systemImageName)
@@ -53,7 +53,7 @@ struct HomeScreen: View {
                                       description: Prompts.SelectShoe.selectDefaultShoeDescription,
                                       systemImage: "shoe.2",
                                       onDone: { shoeID in
-                        shoesViewModel.setAsDefaultShoe(shoeID)
+                        shoesViewModel.setAsDefaultShoe(shoeID, for: [.daily])
                     })
                 case .addWorkoutToShoe(let workoutID):
                     ShoeSelectionView(title: Prompts.SelectShoe.selectWorkoutShoeTitle,

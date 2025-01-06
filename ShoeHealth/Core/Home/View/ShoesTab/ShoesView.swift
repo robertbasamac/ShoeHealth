@@ -109,7 +109,7 @@ extension ShoesView {
             Text("Default Shoe")
                 .asHeader()
             
-            if let shoe = shoesViewModel.getDefaultShoe() {
+            if let shoe = shoesViewModel.getDefaultShoe(for: .daily) {
                 ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
                     .disabled(isShoeRestricted(shoe.id))
@@ -228,10 +228,10 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if !shoe.isDefaultShoe && !isShoeRestricted(shoe.id) {
+                            if !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
                                 Button {
                                     withAnimation {
-                                        shoesViewModel.setAsDefaultShoe(shoe.id)
+                                        shoesViewModel.setAsDefaultShoe(shoe.id, for: [.daily])
                                     }
                                 } label: {
                                     Label("Set Default", systemImage: "shoe.2")
@@ -239,7 +239,7 @@ extension ShoesView {
                             }
                             
                             Button {
-                                let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+                                let setNewDefaultShoe = shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
 
                                 withAnimation {
                                     shoesViewModel.retireShoe(shoe.id)
@@ -457,7 +457,7 @@ extension ShoesView {
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            if shoe.defaultRunTypes.contains(.daily) && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     navigationRouter.showSheet = .setDefaultShoe
                 }
