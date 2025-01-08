@@ -218,19 +218,28 @@ extension ShoeFormView {
                 get: { shoeFormViewModel.isDefaultShoe },
                 set: { isOn in
                     if isOn {
-                        shoeFormViewModel.isDefaultShoe = true
+                        withAnimation {
+                            shoeFormViewModel.isDefaultShoe = true
+                        }
                         
                         if shoeFormViewModel.defaultRunTypes.isEmpty {
                             shoeFormViewModel.defaultRunTypes = [.daily]
                             showRunTypeSelection = true
                         }
                     } else {
-                        shoeFormViewModel.defaultRunTypes.removeAll() // TO_DO maybe do not remove these in order to be saved between toggles and make sure to not save them to persistency if isDefaultSHoe is false
+                        withAnimation {
+                            shoeFormViewModel.isDefaultShoe = false
+                        }
                     }
                 }
             ))
             .tint(Color.theme.accent)
             .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
+            .onChange(of: shoeFormViewModel.defaultRunTypes) { _, newValue in
+                withAnimation {
+                    shoeFormViewModel.isDefaultShoe = !newValue.isEmpty
+                }
+            }
             
             if shoeFormViewModel.isDefaultShoe {
                 Button {

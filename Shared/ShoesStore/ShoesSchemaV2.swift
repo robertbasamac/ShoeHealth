@@ -72,7 +72,7 @@ extension ShoesSchemaV2 {
             self.isRetired = isRetired
             self.retireDate = retireDate
             self.isDefaultShoe = isDefaultShoe
-            self.defaultRunTypes = defaultRunTypes
+            self.defaultRunTypes = isDefaultShoe ? (defaultRunTypes.isEmpty ? [.daily] : defaultRunTypes) : []
             self.workouts = workouts
             self.personalBests = personalBests
             self.totalRuns = totalRuns
