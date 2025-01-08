@@ -34,6 +34,7 @@ extension ShoesSchemaV2 {
         var lastActivityDate: Date?
         var isRetired: Bool = false
         var retireDate: Date?
+        var isDefaultShoe: Bool = false
         var defaultRunTypes: [RunType] = []
         var workouts: [UUID] = []
         var personalBests: [RunningCategory: PersonalBest?] = [:]
@@ -52,11 +53,11 @@ extension ShoesSchemaV2 {
             lastActivityDate: Date? = nil,
             isRetired: Bool = false,
             retireDate: Date? = nil,
+            isDefaultShoe: Bool = false,
             defaultRunTypes: [RunType] = [],
             workouts: [UUID] = [],
             personalBests: [RunningCategory: PersonalBest?] = [:],
             totalRuns: [RunningCategory: Int] = [:]
-
         ) {
             self.id = id
             self.image = image
@@ -70,6 +71,7 @@ extension ShoesSchemaV2 {
             self.lastActivityDate = lastActivityDate
             self.isRetired = isRetired
             self.retireDate = retireDate
+            self.isDefaultShoe = isDefaultShoe
             self.defaultRunTypes = defaultRunTypes
             self.workouts = workouts
             self.personalBests = personalBests
@@ -113,13 +115,16 @@ extension ShoesSchemaV2 {
             }
         }
         
+        func isDefaultShoe(for runType: RunType) -> Bool {
+            return self.isDefaultShoe && self.defaultRunTypes.contains(runType)
+        }
+        
         var averageDuration: Double {
             guard self.workouts.count != 0 else {
                 return 0
             }
             return self.totalDuration / Double(self.workouts.count)
         }
-            
         
         var averageDistance: Double {
             guard self.workouts.count != 0 else {

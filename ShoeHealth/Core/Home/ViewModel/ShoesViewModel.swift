@@ -122,11 +122,11 @@ final class ShoesViewModel {
     }
     
     func getDefaultShoe(for runType: RunType) -> Shoe? {
-        return shoes.first(where: { $0.defaultRunTypes.contains(runType) })
+        return shoes.first(where: { $0.isDefaultShoe && $0.defaultRunTypes.contains(runType) })
     }
     
     func getAllDefaultShoes() -> [Shoe] {
-        return shoes.filter { !$0.defaultRunTypes.isEmpty }
+        return shoes.filter { $0.isDefaultShoe && !$0.defaultRunTypes.isEmpty }
     }
     
     func getRecentlyUsedShoes(exclude excludedShoes: [UUID] = [], prefix: Int = 5) -> [Shoe] {
@@ -181,12 +181,16 @@ final class ShoesViewModel {
     
     // MARK: - CRUD operations
     
-    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, defaultRunTypes: [RunType], image: Data?) {
-        let shoe = Shoe(image: image, brand: brand, model: model, nickname: nickname, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, defaultRunTypes: defaultRunTypes)
+    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, defaultRunTypes: [RunType], image: Data?) {
+        let shoe = Shoe(image: image, brand: brand, model: model, nickname: nickname, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, defaultRunTypes: defaultRunTypes)
         
-        if !defaultRunTypes.isEmpty {
+        if isDefaultShoe {
             for otherShoe in shoes {
                 otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+                
+                if otherShoe.defaultRunTypes.isEmpty {
+                    otherShoe.isDefaultShoe = false
+                }
             }
         }
         
@@ -195,7 +199,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
+    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, isDefaultShoe: Bool, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         if !brand.isEmpty {
@@ -212,11 +216,16 @@ final class ShoesViewModel {
         shoe.aquisitionDate = aquisitionDate
         shoe.lifespanDistance = lifespanDistance
         
-        if !defaultRunTypes.isEmpty {
+        if isDefaultShoe {
             for otherShoe in shoes {
                 otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+                
+                if otherShoe.defaultRunTypes.isEmpty {
+                    otherShoe.isDefaultShoe = false
+                }
             }
             
+            shoe.isDefaultShoe = true
             shoe.defaultRunTypes = defaultRunTypes
         }
         
@@ -318,7 +327,8 @@ final class ShoesViewModel {
         shoe.isRetired.toggle()
         shoe.retireDate = shoe.isRetired ? .now : nil
         
-        if !shoe.defaultRunTypes.isEmpty && shoe.isRetired {
+        if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && shoe.isRetired {
+            shoe.isDefaultShoe = false
             shoe.defaultRunTypes = []
         }
         

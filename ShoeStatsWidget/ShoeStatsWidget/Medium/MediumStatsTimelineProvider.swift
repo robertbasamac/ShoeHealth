@@ -15,7 +15,7 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "MediumS
 
 struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
-    let modelContext = ModelContext(ShoesStore.container)
+    let modelContext = ModelContext(ShoesStore.shared.modelContainer)
     
     typealias Entry = MediumShoeStatsWidgetEntry
     typealias Intent = MediumSelectShoeIntent
@@ -24,7 +24,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
         let unitSymbol = getUnitSymbol()
         
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty } ))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
             logger.error("Defaut shoes fetched, \(shoes.count).")
             
             guard let shoe = shoes.first else {
@@ -52,7 +52,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
         let unitSymbol = getUnitSymbol()
         
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty } ))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
             logger.error("Defaut shoes fetched, \(shoes.count).")
             
             guard let shoe = shoes.first else {
@@ -117,7 +117,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
         
         if configuration.useDefaultShoe {
             do {
-                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty } ))
+                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
                 logger.error("Defaut shoes fetched, \(shoes.count).")
                 
                 guard let shoe = shoes.first else {

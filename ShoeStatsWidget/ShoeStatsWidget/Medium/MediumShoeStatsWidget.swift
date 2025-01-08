@@ -20,6 +20,7 @@ struct MediumShoeStatsWidget: Widget {
             provider: MediumShoeStatsTimelineProvider()
         ) { entry in
             MediumShoeStatsWidgetView(entry: entry)
+                .modelContainer(ShoesStore.shared.modelContainer)
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays health and statistics of the selected shoe.")

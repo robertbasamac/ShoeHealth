@@ -34,11 +34,12 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
-        self.wasDefaultShoe = shoe?.defaultRunTypes.contains(.daily) ?? false
+        self.wasDefaultShoe = shoe?.isDefaultShoe ?? false
         self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
             lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
+            isDefaultShoe: shoe?.isDefaultShoe ?? false,
             defaultRunTypes: shoe?.defaultRunTypes ?? [],
             shoeBrand: shoe?.brand ?? "",
             shoeModel: shoe?.model ?? "",
@@ -105,6 +106,7 @@ struct ShoeFormView: View {
         }
         .onAppear {
             if !isEditing {
+                shoeFormViewModel.isDefaultShoe = shoesViewModel.shoes.isEmpty
                 shoeFormViewModel.defaultRunTypes = shoesViewModel.shoes.isEmpty ? [.daily] : []
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -213,25 +215,26 @@ extension ShoeFormView {
     private var setDefaultSection: some View {
         Section {
             Toggle("Set as default shoe", isOn: Binding(
-                get: { !shoeFormViewModel.defaultRunTypes.isEmpty },
+                get: { shoeFormViewModel.isDefaultShoe },
                 set: { isOn in
                     if isOn {
-                        if !shoeFormViewModel.defaultRunTypes.contains(.daily) {
+                        shoeFormViewModel.isDefaultShoe = true
+                        
+                        if shoeFormViewModel.defaultRunTypes.isEmpty {
                             shoeFormViewModel.defaultRunTypes = [.daily]
+                            showRunTypeSelection = true
                         }
-                        showRunTypeSelection = true
                     } else {
-                        shoeFormViewModel.defaultRunTypes.removeAll()
+                        shoeFormViewModel.defaultRunTypes.removeAll() // TO_DO maybe do not remove these in order to be saved between toggles and make sure to not save them to persistency if isDefaultSHoe is false
                     }
                 }
             ))
             .tint(Color.theme.accent)
             .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
             
-            if !shoeFormViewModel.defaultRunTypes.isEmpty {
+            if shoeFormViewModel.isDefaultShoe {
                 Button {
                     showRunTypeSelection = true
-
                 } label: {
                     HStack {
                         Text(shoeFormViewModel.defaultRunTypes.map { $0.rawValue.lowercased() }.joined(separator: ", "))
@@ -325,6 +328,7 @@ extension ShoeFormView {
                         nickname: shoeFormViewModel.nickname,
                         brand: shoeFormViewModel.brand,
                         model: shoeFormViewModel.model,
+                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
                         defaultRunTypes: shoeFormViewModel.defaultRunTypes,
                         lifespanDistance: shoeFormViewModel.lifespanDistance,
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
@@ -337,6 +341,7 @@ extension ShoeFormView {
                         model: shoeFormViewModel.model,
                         lifespanDistance: shoeFormViewModel.lifespanDistance,
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
+                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
                         defaultRunTypes: shoeFormViewModel.defaultRunTypes,
                         image: shoeFormViewModel.selectedPhotoData
                     )

@@ -111,7 +111,7 @@ struct ShoeStatsEntity: AppEntity {
 struct ShoeStatsQuery: EntityStringQuery {
     
     func entities(matching string: String) async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
@@ -125,7 +125,7 @@ struct ShoeStatsQuery: EntityStringQuery {
     }
     
     func entities(for identifiers: [ShoeStatsEntity.ID]) async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) },
@@ -139,7 +139,7 @@ struct ShoeStatsQuery: EntityStringQuery {
     }
     
     func suggestedEntities() async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))

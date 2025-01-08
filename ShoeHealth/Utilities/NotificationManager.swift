@@ -229,7 +229,7 @@ final class NotificationManager {
         }
     }
     
-    func scheduleSetDefaultShoeNotification(at dateComponents: DateComponents) {
+    func scheduleSetDefaultShoeNotification(for: [RunType], at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
           
         content.title = "Set Default Shoe"

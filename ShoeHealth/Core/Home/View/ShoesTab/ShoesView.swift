@@ -228,7 +228,7 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
+                            if shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
                                 Button {
                                     withAnimation {
                                         shoesViewModel.setAsDefaultShoe(shoe.id, for: [.daily])
@@ -239,7 +239,7 @@ extension ShoesView {
                             }
                             
                             Button {
-                                let setNewDefaultShoe = shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+                                let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
 
                                 withAnimation {
                                     shoesViewModel.retireShoe(shoe.id)
@@ -457,9 +457,9 @@ extension ShoesView {
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.defaultRunTypes.contains(.daily) && !shoesViewModel.shoes.isEmpty {
+            if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe
+                    navigationRouter.showSheet = .setDefaultShoe // TO_DO pass all run types to select default shoe for
                 }
             }
         }

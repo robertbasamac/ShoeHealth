@@ -15,7 +15,7 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "SmallSh
 
 struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
-    let modelContext = ModelContext(ShoesStore.container)
+    let modelContext = ModelContext(ShoesStore.shared.modelContainer)
     
     typealias Entry = SmallShoeStatsWidgetEntry
     typealias Intent = SmallSelectShoeIntent
@@ -53,7 +53,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
             
             guard let shoe = shoes.first else {
                 if context.isPreview {
@@ -103,7 +103,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
         if configuration.useDefaultShoe {
             do {
-                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
+                let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
                 
                 guard let shoe = shoes.first else {
                     return Timeline(entries: [Entry.empty], policy: .never)

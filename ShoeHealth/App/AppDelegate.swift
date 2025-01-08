@@ -235,7 +235,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     private func handleRetireShoeAction(forShoeID shoeID: UUID) {
         guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
         
-        let setNewDefaultShoe = !shoe.defaultRunTypes.isEmpty && !shoe.isRetired
+        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoe.isRetired
         
         shoesViewModel?.retireShoe(shoeID)
         
@@ -245,7 +245,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
-            NotificationManager.shared.scheduleSetDefaultShoeNotification(at: dateComponents)
+            NotificationManager.shared.scheduleSetDefaultShoeNotification(for: shoe.defaultRunTypes, at: dateComponents)
         }
     }
 }

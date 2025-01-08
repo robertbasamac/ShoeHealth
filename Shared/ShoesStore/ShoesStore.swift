@@ -10,17 +10,21 @@ import SwiftUI
 
 typealias Shoe = ShoesSchemaV2.Shoe
 
-final class ShoesStore {
+actor ShoesStore {
     
-    static let container = {
-        let container: ModelContainer
+    static let shared = ShoesStore()
+    
+    private init() {}
+    
+    nonisolated lazy var modelContainer: ModelContainer = {
+        let modelContainer: ModelContainer
         
         do {
-            container = try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
+            modelContainer = try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
         } catch {
-            fatalError("Failed to create ModelContainer for Shoe: \(error)")
+            fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
         }
         
-        return container
+        return modelContainer
     }()
 }

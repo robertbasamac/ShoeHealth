@@ -19,6 +19,7 @@ final class ShoeFormViewModel {
     
     var aquisitionDate: Date
     var lifespanDistance: Double
+    var isDefaultShoe: Bool
     var defaultRunTypes: [RunType]
     var brand: String
     var model: String
@@ -31,6 +32,7 @@ final class ShoeFormViewModel {
         selectedPhotoData: Data? = nil,
         aquisitionDate: Date = .init(),
         lifespanDistance: Double = SettingsManager.shared.unitOfMeasure.range.lowerBound,
+        isDefaultShoe: Bool = false,
         defaultRunTypes: [RunType] = [],
         shoeBrand: String = "",
         shoeModel: String = "",
@@ -40,6 +42,7 @@ final class ShoeFormViewModel {
         self.selectedPhotoData = selectedPhotoData
         self.aquisitionDate = aquisitionDate
         self.lifespanDistance = lifespanDistance
+        self.isDefaultShoe = isDefaultShoe
         self.defaultRunTypes = defaultRunTypes
         self.brand = shoeBrand
         self.model = shoeModel
