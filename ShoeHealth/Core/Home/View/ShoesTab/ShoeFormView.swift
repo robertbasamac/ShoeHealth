@@ -261,7 +261,9 @@ extension ShoeFormView {
                 .sheet(isPresented: $showRunTypeSelection) {
                     NavigationStack {
                         RunTypeSelectionView(
-                            selectedRunTypes: $shoeFormViewModel.defaultRunTypes
+                            selectedRunTypes: $shoeFormViewModel.defaultRunTypes,
+                            isEditing: isEditing,
+                            hasShoes: !shoesViewModel.shoes.isEmpty
                         )
                     }
                     .presentationDetents([.medium])

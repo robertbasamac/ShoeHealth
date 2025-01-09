@@ -13,6 +13,9 @@ struct RunTypeSelectionView: View {
     
     @Binding var selectedRunTypes: [RunType]
     
+    var isEditing: Bool
+    var hasShoes: Bool
+    
     var body: some View {
         List(RunType.allCases, id: \.self) { runType in
             HStack {
@@ -28,6 +31,10 @@ struct RunTypeSelectionView: View {
             .contentShape(.rect)
             .onTapGesture {
                 if selectedRunTypes.contains(runType) {
+                    // Prevent deselecting .daily if the condition applies
+                    if runType == .daily && !isEditing && !hasShoes {
+                        return // Do nothing
+                    }
                     selectedRunTypes.removeAll { $0 == runType }
                 } else {
                     selectedRunTypes.append(runType)
@@ -46,10 +53,11 @@ struct RunTypeSelectionView: View {
     }
 }
 
+
 // MARK: - Preview
 
 #Preview {
-    @Previewable @State var runTypeSelections: [RunType] = []
+    @Previewable @State var runTypeSelections: [RunType] = [.daily]
     
-    RunTypeSelectionView(selectedRunTypes: $runTypeSelections)
+    RunTypeSelectionView(selectedRunTypes: $runTypeSelections, isEditing: false, hasShoes: false)
 }

@@ -190,7 +190,9 @@ extension ShoesSchemaV2 {
                     brand: "Nike",
                     model: "Pegasus 40",
                     nickname: "Shoey",
-                    lifespanDistance: 600
+                    lifespanDistance: 600,
+                    isDefaultShoe: true,
+                    defaultRunTypes: [.daily]
                 ),
                 Shoe(
                     image: UIImage(named: "pegasus")?.pngData(),
