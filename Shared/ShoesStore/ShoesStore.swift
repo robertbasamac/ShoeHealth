@@ -17,10 +17,36 @@ actor ShoesStore {
     private init() {}
     
     nonisolated lazy var modelContainer: ModelContainer = {
+        let modelContainer: ModelContainer
+        
+        let schema = Schema([Shoe.self])
+        let cloudConfig: ModelConfiguration = .init()
+        let localConfig: ModelConfiguration = .init(cloudKitDatabase: .none)
+        
         do {
-            return try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
+            _ = try? ModelContainer(
+                for: schema,
+                migrationPlan: ShoesMigrationPlan.self,
+                configurations: localConfig
+            )
+            
+            if let iCloudContainer = try? ModelContainer(
+                for: schema,
+                migrationPlan: ShoesMigrationPlan.self,
+                configurations: cloudConfig
+            ) {
+                modelContainer = iCloudContainer
+            } else {
+                modelContainer = try ModelContainer(
+                    for: schema,
+                    migrationPlan: ShoesMigrationPlan.self,
+                    configurations: localConfig
+                )
+            }
+            
+            return modelContainer
         } catch {
-            fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
+            fatalError("Failed to create the model container: \(error)")
         }
     }()
 }
