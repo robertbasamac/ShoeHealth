@@ -17,14 +17,10 @@ actor ShoesStore {
     private init() {}
     
     nonisolated lazy var modelContainer: ModelContainer = {
-        let modelContainer: ModelContainer
-        
         do {
-            modelContainer = try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
+            return try ModelContainer(for: Shoe.self, migrationPlan: ShoesMigrationPlan.self)
         } catch {
             fatalError("Failed to create ModelContainer: \(error.localizedDescription)")
         }
-        
-        return modelContainer
     }()
 }

@@ -22,7 +22,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
     
     func placeholder(in context: Context) -> Entry {
         do {
-            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { !$0.defaultRunTypes.isEmpty }))
+            let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
             
             guard let shoe = shoes.first else {
                 if context.isPreview {

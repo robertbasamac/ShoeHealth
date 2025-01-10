@@ -228,7 +228,7 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
+                            if !shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
                                 Button {
                                     withAnimation {
                                         shoesViewModel.setAsDefaultShoe(shoe.id, for: [.daily])

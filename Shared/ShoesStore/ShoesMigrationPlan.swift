@@ -22,15 +22,15 @@ enum ShoesMigrationPlan: SchemaMigrationPlan {
         toVersion: ShoesSchemaV2.self,
         willMigrate: nil,
         didMigrate: { context in
-            let shoes = try context.fetch(FetchDescriptor<ShoesSchemaV2.Shoe>())
+            let shoes = try? context.fetch(FetchDescriptor<ShoesSchemaV2.Shoe>())
             
-            shoes.forEach { shoe in
+            shoes?.forEach { shoe in
                 print("Migration: \(shoe.brand) \(shoe.model)")
                 
                 shoe.defaultRunTypes = shoe.isDefaultShoe ? [.daily] : []
             }
             
-            try context.save()
+            try? context.save()
         }
     )
 }

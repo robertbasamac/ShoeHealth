@@ -307,15 +307,14 @@ final class ShoesViewModel {
         
         for otherShoe in shoes {
             otherShoe.defaultRunTypes.removeAll(where: { runTypes.contains($0) })
+            
+            if otherShoe.defaultRunTypes.isEmpty {
+                otherShoe.isDefaultShoe = false
+            }
         }
         
-        var shoeDefaultRunRypes: [RunType] = []
-        
-        for runType in runTypes {
-            shoeDefaultRunRypes.append(runType)
-        }
-        
-        shoe.defaultRunTypes = shoeDefaultRunRypes
+        shoe.defaultRunTypes.append(contentsOf: runTypes)
+        shoe.isDefaultShoe = true
         shoe.isRetired = false
         
         save()

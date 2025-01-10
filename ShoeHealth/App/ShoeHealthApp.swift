@@ -21,8 +21,10 @@ struct ShoeHealthApp: App {
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared
     
+    let container = ShoesStore.shared.modelContainer
+    
     init () {
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.shared.modelContainer.mainContext))
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: container.mainContext))
         
         // override apple's buggy alerts tintColor
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.theme.accent)
@@ -60,6 +62,6 @@ struct ShoeHealthApp: App {
                 .zIndex(2.0)
             }
         }
-        .modelContainer(ShoesStore.shared.modelContainer)
+        .modelContainer(container)
     }
 }
