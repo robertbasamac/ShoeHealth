@@ -24,6 +24,9 @@ actor ShoesStore {
         let localConfig: ModelConfiguration = .init(cloudKitDatabase: .none)
         
         do {
+            /* Creating the containers in this way to avoid crash when migrating from V1 to V2 schema when iCloud sync is enabled
+             * Remove if bug will be fixed
+             */
             _ = try? ModelContainer(
                 for: schema,
                 migrationPlan: ShoesMigrationPlan.self,

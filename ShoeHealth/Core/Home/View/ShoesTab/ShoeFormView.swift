@@ -112,7 +112,13 @@ struct ShoeFormView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.focusField = .brand
                 }
-            }            
+            } else {
+                /* to fix displaying toggled ON (isDefaultShoe) when installing App with SchemaV2
+                 * while there is no App with SchemaV1 installed on the deivce but there is a SchemaV1 database on iCloud
+                 * (App with SchemaV1 was previously installed but then deleted).
+                 */
+                shoeFormViewModel.isDefaultShoe = !shoeFormViewModel.defaultRunTypes.isEmpty
+            }
         }
         .onChange(of: unitOfMeasure) { _, newValue in
             shoeFormViewModel.convertLifespanDistance(toUnit: newValue)
