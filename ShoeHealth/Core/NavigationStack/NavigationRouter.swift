@@ -123,7 +123,11 @@ extension NavigationRouter {
         
         logger.debug("Shoe found.")
         
-        navigationPath.removeLast()
+        if !navigationPath.isEmpty {
+            navigationPath.removeLast()
+        }
+        
+        stack.removeLast()
     }
 }
 
