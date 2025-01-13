@@ -22,6 +22,9 @@ struct ShoesView: View {
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
     
+    @State private var selectedDefaulRunType: RunType = .daily
+    @Namespace private var animation
+    
     @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
     
     var body: some View {
@@ -106,10 +109,40 @@ extension ShoesView {
     @ViewBuilder
     private var defaultShoeSection: some View {
         VStack(spacing: 0) {
-            Text("Default Shoe")
+            Text("Default Shoes")
                 .asHeader()
             
-            if let shoe = shoesViewModel.getDefaultShoe(for: .daily) {
+            ScrollView(.horizontal) {
+                HStack(spacing: 8) {
+                    ForEach(RunType.allCases, id: \.self) { runType in
+                        Text(runType.rawValue.capitalized)
+                            .font(.callout)
+                            .foregroundStyle(selectedDefaulRunType == runType ? Color.black : Color.primary)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 16)
+                            .background {
+                                if selectedDefaulRunType == runType {
+                                    Capsule()
+                                        .fill(Color.theme.accent)
+                                        .matchedGeometryEffect(id: "ACTIVERUNTYPE", in: animation)
+                                } else {
+                                    Capsule()
+                                        .fill(Color.theme.containerBackground)
+                                }
+                            }
+                            .contentShape(RoundedRectangle(cornerRadius: 20))
+                            .onTapGesture {
+                                withAnimation {
+                                    selectedDefaulRunType = runType
+                                }
+                            }
+                    }
+                }
+            }
+            .contentMargins(.horizontal, 20)
+            .contentMargins(.top, 8)
+            
+            if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
                 ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
                     .disabled(isShoeRestricted(shoe.id))
@@ -121,7 +154,7 @@ extension ShoesView {
                 HStack(spacing: 0) {
                     ShoeImage(width: width)
                         .frame(width: width, height: width)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     VStack {
                         Text("No Default Shoe")

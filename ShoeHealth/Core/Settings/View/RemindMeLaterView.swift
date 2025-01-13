@@ -102,7 +102,7 @@ extension RemindMeLaterView {
                                 lineWidth: 2
                             )
                             .padding(1)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                     .onTapGesture {
                         isCustomInputFocused = true

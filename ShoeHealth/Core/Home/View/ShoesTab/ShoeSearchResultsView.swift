@@ -19,7 +19,7 @@ struct ShoeSearchResultsView: View {
         List {
             ForEach(shoesViewModel.filteredShoes) { shoe in
                 ShoeListItem(shoe: shoe, width: width)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)

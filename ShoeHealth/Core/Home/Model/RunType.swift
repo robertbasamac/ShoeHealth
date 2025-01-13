@@ -10,6 +10,6 @@ enum RunType: String, CaseIterable, Codable {
     case daily
     case long
     case tempo
-    case trail
     case race
+    case trail
 }

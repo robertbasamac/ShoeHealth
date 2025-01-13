@@ -401,8 +401,7 @@ extension ShoeDetailView {
                     WorkoutListItem(workout: workout)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
-                        .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
             .padding(.horizontal, 20)

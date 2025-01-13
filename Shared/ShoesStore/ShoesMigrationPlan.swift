@@ -25,8 +25,6 @@ enum ShoesMigrationPlan: SchemaMigrationPlan {
             let shoes = try? context.fetch(FetchDescriptor<ShoesSchemaV2.Shoe>())
             
             shoes?.forEach { shoe in
-                print("Migration: \(shoe.brand) \(shoe.model)")
-                
                 shoe.defaultRunTypes = shoe.isDefaultShoe ? [.daily] : []
             }
             

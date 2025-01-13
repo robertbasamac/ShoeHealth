@@ -140,13 +140,13 @@ extension ShoeFormView {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     } else {
                         Image(systemName: "square.fill")
                             .resizable()
                             .foregroundStyle(.secondary)
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         
                         Image(systemName: "shoe.2.fill")
                             .resizable()
@@ -154,7 +154,7 @@ extension ShoeFormView {
                             .aspectRatio(contentMode: .fit)
                             .padding()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                 }
                 
@@ -165,14 +165,14 @@ extension ShoeFormView {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(Color(uiColor: .secondarySystemBackground), in: .capsule(style: .circular))
+                        .background(Color.theme.containerBackground, in: .capsule(style: .circular))
                     
                     if shoeFormViewModel.selectedPhotoData != nil {
                         Image(systemName: "xmark")
                             .font(.callout)
                             .foregroundStyle(.red)
                             .padding(10)
-                            .background(Color(uiColor: .secondarySystemBackground), in: .circle)
+                            .background(Color.theme.containerBackground, in: .circle)
                             .onTapGesture {
                                 shoeFormViewModel.selectedPhoto = nil
                                 shoeFormViewModel.selectedPhotoData = nil
