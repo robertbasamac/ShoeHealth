@@ -55,7 +55,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
             logger.error("Defaut shoes fetched, \(shoes.count).")
             
-            guard let shoe = shoes.first else {
+            guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                 if context.isPreview {
                     return Entry(
                         date: .now,
@@ -79,7 +79,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
                     unitSymbol: unitSymbol
                 )
             } else {
-                let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil)
+                let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil)  // display default shoe if no other shoe is available
                 
                 if let shoeEntity = shoeEntityToReturn {
                     return Entry(
@@ -97,7 +97,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
             logger.error("Error fetching shoe, \(error).")
         }
         
-        let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil)
+        let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil)  // display preview shoe if no other shoe is available
         
         if let shoeEntity = shoeEntityToReturn {
             return Entry(
@@ -120,7 +120,7 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
                 logger.error("Defaut shoes fetched, \(shoes.count).")
                 
-                guard let shoe = shoes.first else {
+                guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                     return Timeline(entries: [Entry.empty], policy: .never)
                 }
                 

@@ -20,12 +20,17 @@ struct SmallSelectShoeIntent: WidgetConfigurationIntent {
     @Parameter(title: "Use Default Shoe", default: true)
     var useDefaultShoe: Bool
     
+    @Parameter(title: "for Run Type", default: RunType.daily)
+    var runType: RunType
+    
     @Parameter(title: "Shoe", default: nil)
     var shoeEntity: ShoeStatsEntity?
     
     static var parameterSummary: some ParameterSummary {
         When(\.$useDefaultShoe, .equalTo, true) {
-            Summary("Use Default Shoe \(\.$useDefaultShoe)")
+            Summary("Use Default Shoe \(\.$useDefaultShoe)") {
+                \.$runType
+            }
         } otherwise: {
             Summary("Shoe \(\.$useDefaultShoe)") {
                 \.$shoeEntity

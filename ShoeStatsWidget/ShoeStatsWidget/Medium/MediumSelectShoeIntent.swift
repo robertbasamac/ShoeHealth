@@ -20,6 +20,9 @@ struct MediumSelectShoeIntent: WidgetConfigurationIntent {
     @Parameter(title: "Use Default Shoe", default: true)
     var useDefaultShoe: Bool
     
+    @Parameter(title: "for Run Type", default: RunType.daily)
+    var runType: RunType
+    
     @Parameter(title: "Shoe", default: nil)
     var shoeEntity: ShoeStatsEntity?
     
@@ -32,7 +35,7 @@ struct MediumSelectShoeIntent: WidgetConfigurationIntent {
     static var parameterSummary: some ParameterSummary {
         When(\.$useDefaultShoe, .equalTo, true) {
             Summary("Use Default Shoe \(\.$useDefaultShoe)") {
-                \.$firstStat; \.$secondStat
+                \.$runType; \.$firstStat; \.$secondStat
             }
         } otherwise: {
             Summary("Shoe \(\.$useDefaultShoe)") {

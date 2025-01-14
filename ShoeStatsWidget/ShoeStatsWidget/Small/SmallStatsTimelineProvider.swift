@@ -36,7 +36,10 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
             }
             
             let shoeEntity = ShoeStatsEntity(from: shoe)
-            return Entry(date: shoe.aquisitionDate, shoe: shoeEntity)
+            return Entry(
+                date: shoe.aquisitionDate,
+                shoe: shoeEntity
+            )
         } catch {
             logger.error("Error fetching shoes, \(error).")
         }
@@ -55,7 +58,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
             
-            guard let shoe = shoes.first else {
+            guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                 if context.isPreview {
                     return Entry(
                         date: .now,
@@ -73,7 +76,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
                     shoe: shoeEntity
                 )
             } else {
-                let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil)
+                let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil) // display one default shoe if no other shoe is available
                 
                 if let shoeEntity = shoeEntityToReturn {
                     return Entry(
@@ -88,7 +91,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
             logger.error("Error fetching shoe, \(error).")
         }
         
-        let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil)
+        let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil) // display preview shoe if no other shoe is available
         
         if let shoeEntity = shoeEntityToReturn {
             return Entry(
@@ -105,7 +108,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
             do {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
                 
-                guard let shoe = shoes.first else {
+                guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                     return Timeline(entries: [Entry.empty], policy: .never)
                 }
                 
