@@ -146,7 +146,7 @@ extension NavigationRouter {
     /// of different sheet types, enabling smooth transitions and updates to the UI.
     enum SheetType: Identifiable {
         case addShoe
-        case setDefaultShoe
+        case setDefaultShoe(forRunType: RunType)
         case addWorkoutToShoe(workoutID: UUID)
         case addMultipleWorkoutsToShoe(workoutIDs: [UUID])
         
@@ -154,8 +154,10 @@ extension NavigationRouter {
             switch self {
             case .addShoe:
                 return UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-            case .setDefaultShoe:
-                return UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+            case .setDefaultShoe(let runType):
+                let paddedHash = String(format: "%032x", runType.hashValue) // Create a 32-character hexadecimal string
+                let uuidString = "\(paddedHash.prefix(8))-\(paddedHash.dropFirst(8).prefix(4))-\(paddedHash.dropFirst(12).prefix(4))-\(paddedHash.dropFirst(16).prefix(4))-\(paddedHash.dropFirst(20).prefix(12))"
+                return UUID(uuidString: uuidString)!
             case .addWorkoutToShoe(let workoutID):
                 return workoutID
             case .addMultipleWorkoutsToShoe(let workoutIDs):
@@ -165,8 +167,10 @@ extension NavigationRouter {
         
         static func == (lhs: SheetType, rhs: SheetType) -> Bool {
             switch (lhs, rhs) {
-            case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
+            case (.addShoe, .addShoe):
                 return true
+            case let (.setDefaultShoe(runType1), .setDefaultShoe(runType2)):
+                return runType1 == runType2
             case let (.addWorkoutToShoe(workout1), .addWorkoutToShoe(workout2)):
                 return workout1 == workout2
             case let (.addMultipleWorkoutsToShoe(workouts1), .addMultipleWorkoutsToShoe(workouts2)):
@@ -176,4 +180,5 @@ extension NavigationRouter {
             }
         }
     }
+
 }

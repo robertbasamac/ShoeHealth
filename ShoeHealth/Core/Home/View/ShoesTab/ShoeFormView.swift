@@ -21,7 +21,7 @@ struct ShoeFormView: View {
     
     @FocusState private var focusField: FocusField?
     
-    private var wasDefaultShoe: Bool = false
+    private var wasDailyDefaultShoe: Bool = false
     private var isEditing: Bool
     
     @State private var showRunTypeSelection: Bool = false
@@ -34,7 +34,7 @@ struct ShoeFormView: View {
     
     init(shoe: Shoe? = nil) {
         self.isEditing = shoe != nil
-        self.wasDefaultShoe = shoe?.isDefaultShoe ?? false
+        self.wasDailyDefaultShoe = shoe?.isDefaultShoe ?? false && shoe?.defaultRunTypes.contains(.daily) ?? false
         self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
             aquisitionDate: shoe?.aquisitionDate ?? .init(),
@@ -240,7 +240,7 @@ extension ShoeFormView {
                 }
             ))
             .tint(Color.theme.accent)
-            .disabled(!isEditing && shoesViewModel.shoes.isEmpty)
+            .disabled(shouldPreventDefaultOff())
             .onChange(of: shoeFormViewModel.defaultRunTypes) { _, newValue in
                 withAnimation {
                     shoeFormViewModel.isDefaultShoe = !newValue.isEmpty
@@ -267,12 +267,14 @@ extension ShoeFormView {
                 .sheet(isPresented: $showRunTypeSelection) {
                     NavigationStack {
                         RunTypeSelectionView(
-                            selectedRunTypes: $shoeFormViewModel.defaultRunTypes,
-                            isEditing: isEditing,
-                            hasShoes: !shoesViewModel.shoes.isEmpty
-                        )
+                            selectedRunTypes: shoeFormViewModel.defaultRunTypes,
+                            preventDeselectingDaily: shouldPreventDefaultOff()
+                        ) { selectedRunTypes in
+                            shoeFormViewModel.defaultRunTypes = selectedRunTypes
+                        }
                     }
                     .presentationDetents([.medium])
+                    .interactiveDismissDisabled()
                 }
             }
         }
@@ -351,6 +353,12 @@ extension ShoeFormView {
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
                         image: shoeFormViewModel.selectedPhotoData
                     )
+                    
+                    if wasDailyDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                        }
+                    }
                 } else {
                     shoesViewModel.addShoe(
                         nickname: shoeFormViewModel.nickname,
@@ -386,11 +394,15 @@ extension ShoeFormView {
         dismiss()        
         navigationRouter.deleteShoe(shoeFormViewModel.shoeID ?? UUID())
         
-        if wasDefaultShoe && !shoesViewModel.shoes.isEmpty {
+        if wasDailyDefaultShoe && !shoesViewModel.shoes.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationRouter.showSheet = .setDefaultShoe
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
             }
         }
+    }
+    
+    private func shouldPreventDefaultOff() -> Bool {
+        return (!isEditing && shoesViewModel.shoes.isEmpty) || (isEditing && shoesViewModel.shoes.count == 1)
     }
 }
 
@@ -400,6 +412,7 @@ extension ShoeFormView {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoeFormView(shoe: Shoe.previewShoe)
+                .environmentObject(NavigationRouter())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }

@@ -192,7 +192,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Set Default Shoe\" notification pressed.")
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.navigationRouter?.showSheet = .setDefaultShoe
+                    self.navigationRouter?.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
                 break
                 
@@ -235,11 +235,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     private func handleRetireShoeAction(forShoeID shoeID: UUID) {
         guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
         
-        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoe.isRetired
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
         
         shoesViewModel?.retireShoe(shoeID)
         
-        if setNewDefaultShoe {
+        if setNewDefaultShoe && (!(shoesViewModel?.shoes.isEmpty ?? true)) {
             logger.debug("Scheduling Set New Default Shoe notification")
             
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)

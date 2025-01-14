@@ -90,15 +90,15 @@ extension ShoesListView {
         .tint(.red)
         
         Button(role: .destructive) {
-            let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoe.isRetired
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
             
             withAnimation {
                 shoesViewModel.retireShoe(shoe.id)
             }
             
-            if setNewDefaultShoe {
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe // TO_DO pass all run types to select default shoe for
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
             }
         } label: {
@@ -120,15 +120,17 @@ extension ShoesListView {
         Button("Delete", role: .destructive) {
             shoeForDeletion = nil
             
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
+            
             withAnimation {
                 shoesViewModel.deleteShoe(shoe.id)
             }
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoesViewModel.shoes.isEmpty {
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe // TO_DO pass all run types to select default shoe for
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
             }
         }

@@ -21,6 +21,7 @@ struct ShoesView: View {
     
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
+    @State private var shoeForDefaultSelection: Shoe? = nil
     
     @State private var selectedDefaulRunType: RunType = .daily
     @Namespace private var animation
@@ -133,7 +134,11 @@ extension ShoesView {
                             .contentShape(RoundedRectangle(cornerRadius: 20))
                             .onTapGesture {
                                 withAnimation {
-                                    selectedDefaulRunType = runType
+                                    if selectedDefaulRunType == runType {
+                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                                    } else {
+                                        selectedDefaulRunType = runType
+                                    }
                                 }
                             }
                     }
@@ -157,16 +162,15 @@ extension ShoesView {
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     VStack {
-                        Text("No Default Shoe")
-                            .font(.title3)
-                            .fontWeight(.semibold)
+                        Text("No default shoe selected for \(selectedDefaulRunType.rawValue.capitalized)")
+                            .font(.callout)
                             .multilineTextAlignment(.center)
                         
                         Button {
                             if shoesViewModel.shoes.isEmpty {
                                 navigationRouter.showSheet = .addShoe
                             } else {
-                                navigationRouter.showSheet = .setDefaultShoe
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: selectedDefaulRunType)
                             }
                         } label: {
                             if shoesViewModel.shoes.isEmpty {
@@ -261,15 +265,13 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if !shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
+//                            if !shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
                                 Button {
-                                    withAnimation {
-                                        shoesViewModel.setAsDefaultShoe(shoe.id, for: [.daily])
-                                    }
+                                    shoeForDefaultSelection = shoe
                                 } label: {
                                     Label("Set Default", systemImage: "shoe.2")
                                 }
-                            }
+//                            }
                             
                             Button {
                                 let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
@@ -278,9 +280,9 @@ extension ShoesView {
                                     shoesViewModel.retireShoe(shoe.id)
                                 }
                                 
-                                if setNewDefaultShoe {
+                                if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        navigationRouter.showSheet = .setDefaultShoe
+                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                                     }
                                 }
                             } label: {
@@ -318,6 +320,17 @@ extension ShoesView {
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
+        .sheet(item: $shoeForDefaultSelection) { shoe in
+            NavigationStack {
+                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    withAnimation {
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+            .interactiveDismissDisabled()
+        }
     }
     
     @ViewBuilder
@@ -484,15 +497,17 @@ extension ShoesView {
         Button("Delete", role: .destructive) {
             shoeForDeletion = nil
             
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
+            
             withAnimation {
                 shoesViewModel.deleteShoe(shoe.id)
             }
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && !shoesViewModel.shoes.isEmpty {
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe // TO_DO pass all run types to select default shoe for
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
             }
         }

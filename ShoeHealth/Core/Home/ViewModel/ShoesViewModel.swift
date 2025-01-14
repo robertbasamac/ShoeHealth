@@ -215,6 +215,8 @@ final class ShoesViewModel {
         shoe.image = image
         shoe.aquisitionDate = aquisitionDate
         shoe.lifespanDistance = lifespanDistance
+        shoe.isDefaultShoe = isDefaultShoe
+        shoe.defaultRunTypes = isDefaultShoe ? defaultRunTypes : []
         
         if isDefaultShoe {
             for otherShoe in shoes {
@@ -224,9 +226,6 @@ final class ShoesViewModel {
                     otherShoe.isDefaultShoe = false
                 }
             }
-            
-            shoe.isDefaultShoe = true
-            shoe.defaultRunTypes = defaultRunTypes
         }
         
         save()

@@ -11,10 +11,10 @@ struct RunTypeSelectionView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    @Binding var selectedRunTypes: [RunType]
+    @State var selectedRunTypes: [RunType]
     
-    var isEditing: Bool
-    var hasShoes: Bool
+    var preventDeselectingDaily: Bool = false
+    var onDone: ([RunType]) -> Void
     
     var body: some View {
         List(RunType.allCases, id: \.self) { runType in
@@ -31,9 +31,8 @@ struct RunTypeSelectionView: View {
             .contentShape(.rect)
             .onTapGesture {
                 if selectedRunTypes.contains(runType) {
-                    // Prevent deselecting .daily if the condition applies
-                    if runType == .daily && !isEditing && !hasShoes {
-                        return // Do nothing
+                    if runType == .daily && preventDeselectingDaily {
+                        return
                     }
                     selectedRunTypes.removeAll { $0 == runType }
                 } else {
@@ -46,6 +45,14 @@ struct RunTypeSelectionView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Done") {
+                    onDone(selectedRunTypes)
+                    dismiss()
+                }
+                .disabled(selectedRunTypes.isEmpty)
+            }
+            
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") {
                     dismiss()
                 }
             }
@@ -59,5 +66,5 @@ struct RunTypeSelectionView: View {
 #Preview {
     @Previewable @State var runTypeSelections: [RunType] = [.daily]
     
-    RunTypeSelectionView(selectedRunTypes: $runTypeSelections, isEditing: false, hasShoes: false)
+    RunTypeSelectionView(selectedRunTypes: runTypeSelections, preventDeselectingDaily: false) { _ in }
 }

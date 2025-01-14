@@ -673,9 +673,9 @@
 			children = (
 				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
-				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				0948B5DC2C0E1C2A001A7745 /* Extensions */,
 				090D76ED2BB2DEE600D23762 /* Helpers */,
+				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				09D1AF922BD9636700C61E5D /* Core */,
 				09DE4A782B0D3F81001119E4 /* Preview Content */,
 				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,

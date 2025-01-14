@@ -48,18 +48,23 @@ struct HomeScreen: View {
                 switch sheetType {
                 case .addShoe:
                     ShoeFormView()
-                case .setDefaultShoe:
-                    ShoeSelectionView(title: Prompts.SelectShoe.selectDefaultShoeTitle,
-                                      description: Prompts.SelectShoe.selectDefaultShoeDescription,
-                                      systemImage: "shoe.2",
-                                      onDone: { shoeID in
-                        shoesViewModel.setAsDefaultShoe(shoeID, for: [.daily])
+                case .setDefaultShoe(let runType):
+                    ShoeSelectionView(
+                        selectedShoe: shoesViewModel.getDefaultShoe(for: runType),
+                        title: Prompts.SelectShoe.selectDefaultShoeTitle(for: runType),
+                        description: Prompts.SelectShoe.selectDefaultShoeDescription(for: runType),
+                        systemImage: "shoe.2",
+                        onDone: { shoeID in
+                            withAnimation {
+                                shoesViewModel.setAsDefaultShoe(shoeID, for: [runType])
+                            }
                     })
                 case .addWorkoutToShoe(let workoutID):
-                    ShoeSelectionView(title: Prompts.SelectShoe.selectWorkoutShoeTitle,
-                                      description: Prompts.SelectShoe.selectWorkoutShoeDescription,
-                                      systemImage: "figure.run.circle",
-                                      onDone: { shoeID in
+                    ShoeSelectionView(
+                        title: Prompts.SelectShoe.selectWorkoutShoeTitle,
+                        description: Prompts.SelectShoe.selectWorkoutShoeDescription,
+                        systemImage: "figure.run.circle",
+                        onDone: { shoeID in
                         Task {
                             await shoesViewModel.add(workoutIDs: [workoutID], toShoe: shoeID)
                         }
