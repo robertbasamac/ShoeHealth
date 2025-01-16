@@ -16,10 +16,11 @@ struct SmallShoeStatsWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: SmallSelectShoeIntent.self,
-            provider: SmallShoeStatsTimelineProvider()
+            intent: SmallShoeSelectionIntent.self,
+            provider: SmallShoeStatsAppIntentProvider()
         ) { entry in
             SmallShoeStatsWidgetView(entry: entry)
+                .widgetURL(entry.shoe?.url)
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays health of the selected shoe.")

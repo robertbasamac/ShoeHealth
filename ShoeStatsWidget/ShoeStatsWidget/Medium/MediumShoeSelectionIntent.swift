@@ -1,5 +1,5 @@
 //
-//  SmallSelectShoeIntent.swift
+//  MediumShoeSelectionIntent.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 10.12.2024.
@@ -12,7 +12,7 @@ import OSLog
 
 // MARK: - WidgetConfigurationIntent
 
-struct SmallSelectShoeIntent: WidgetConfigurationIntent {
+struct MediumShoeSelectionIntent: WidgetConfigurationIntent {
     
     static let title: LocalizedStringResource = "Select Shoe"
     static let description: IntentDescription = IntentDescription("Selects the shoe to display stats for.")
@@ -26,14 +26,20 @@ struct SmallSelectShoeIntent: WidgetConfigurationIntent {
     @Parameter(title: "Shoe", default: nil)
     var shoeEntity: ShoeStatsEntity?
     
+    @Parameter(title: "First Stat", default: ShoeStatMetric.averagePace)
+    var firstStat: ShoeStatMetric
+    
+    @Parameter(title: "Second Stat", default: ShoeStatMetric.averageDistance)
+    var secondStat: ShoeStatMetric
+    
     static var parameterSummary: some ParameterSummary {
         When(\.$useDefaultShoe, .equalTo, true) {
             Summary("Use Default Shoe \(\.$useDefaultShoe)") {
-                \.$runType
+                \.$runType; \.$firstStat; \.$secondStat
             }
         } otherwise: {
             Summary("Shoe \(\.$useDefaultShoe)") {
-                \.$shoeEntity
+                \.$shoeEntity; \.$firstStat; \.$secondStat
             }
         }
     }

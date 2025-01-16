@@ -15,8 +15,8 @@ struct SmallShoeStatsWidgetView: View {
     var entry: SmallShoeStatsWidgetEntry
     
     var body: some View {
-        if let stats = entry.shoe {
-            SmallShoeStatsSnapshotWidgetView(shoe: stats)
+        if let shoe = entry.shoe {
+            SmallShoeStatsSnapshotWidgetView(shoe: shoe)
         } else {
             Text("No Shoe")
                 .foregroundStyle(.secondary)
@@ -85,6 +85,7 @@ struct SmallShoeStatsSnapshotWidgetView : View {
                 )
             }
         }
+        .widgetURL(shoe.url)
     }
 }
     

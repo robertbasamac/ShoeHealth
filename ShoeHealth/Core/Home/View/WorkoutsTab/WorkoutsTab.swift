@@ -74,6 +74,7 @@ struct WorkoutsTab: View {
         }
         .listStyle(.grouped)
         .listSectionSpacing(.custom(4))
+        .navigationTitle("Workouts")
         .overlay {
             emptyWorkoutsView
         }

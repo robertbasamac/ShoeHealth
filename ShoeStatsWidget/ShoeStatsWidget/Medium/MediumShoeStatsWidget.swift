@@ -16,11 +16,11 @@ struct MediumShoeStatsWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: MediumSelectShoeIntent.self,
-            provider: MediumShoeStatsTimelineProvider()
+            intent: MediumShoeSelectionIntent.self,
+            provider: MediumShoeStatsAppIntentProvider()
         ) { entry in
             MediumShoeStatsWidgetView(entry: entry)
-                .modelContainer(ShoesStore.shared.modelContainer)
+                .widgetURL(entry.shoe?.url)
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays health and statistics of the selected shoe.")

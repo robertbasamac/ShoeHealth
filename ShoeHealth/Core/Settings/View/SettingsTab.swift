@@ -29,6 +29,7 @@ struct SettingsTab: View {
             unlockFullAccessSection
         }
         .listSectionSpacing(.compact)
+        .navigationTitle("Settings")
         .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
             unitOfMeasure = newValue
         }

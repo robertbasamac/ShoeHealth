@@ -169,6 +169,10 @@ extension ShoesSchemaV2 {
             }
         }
         
+        var url: URL {
+            URL(string: "shoeHealthApp://\(self.brand)-\(self.model)-\(self.id.uuidString.prefix(8))")!
+        }
+        
         // MARK: ShoeSchemaV2 Shoe - Preview data
         
         static var previewShoe: Shoe {

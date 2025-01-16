@@ -1,5 +1,5 @@
 //
-//  SmalltatsTimelineProvider.swift
+//  SmallShoeStatsAppIntentProvider.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -13,12 +13,12 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "SmallSh
 
 // MARK: - AppIntentTimelineProvider
 
-struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
+struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     
     let modelContext = ModelContext(ShoesStore.shared.modelContainer)
     
     typealias Entry = SmallShoeStatsWidgetEntry
-    typealias Intent = SmallSelectShoeIntent
+    typealias Intent = SmallShoeSelectionIntent
     
     func placeholder(in context: Context) -> Entry {
         do {
@@ -41,7 +41,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 shoe: shoeEntity
             )
         } catch {
-            logger.error("Error fetching shoes, \(error).")
+            logger.error("Error fetching default shoes, \(error).")
         }
         
         if context.isPreview {
@@ -88,7 +88,7 @@ struct SmallShoeStatsTimelineProvider: AppIntentTimelineProvider {
                 }
             }
         } catch {
-            logger.error("Error fetching shoe, \(error).")
+            logger.error("Error fetching default shoes, \(error).")
         }
         
         let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: Shoe.previewShoe) : nil) // display preview shoe if no other shoe is available

@@ -1,5 +1,5 @@
 //
-//  MediumStatsTimelineProvider.swift
+//  MediumShoeStatsAppIntentProvider.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -13,36 +13,47 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "MediumS
 
 // MARK: - AppIntentTimelineProvider
 
-struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
+struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     
     let modelContext = ModelContext(ShoesStore.shared.modelContainer)
     
     typealias Entry = MediumShoeStatsWidgetEntry
-    typealias Intent = MediumSelectShoeIntent
+    typealias Intent = MediumShoeSelectionIntent
     
     func placeholder(in context: Context) -> Entry {
         let unitSymbol = getUnitSymbol()
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
-            logger.error("Defaut shoes fetched, \(shoes.count).")
             
             guard let shoe = shoes.first else {
                 if context.isPreview {
-                    return Entry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoe), unitSymbol: unitSymbol)
+                    return Entry(
+                        date: .now,
+                        shoe: ShoeStatsEntity(from: Shoe.previewShoe),
+                        unitSymbol: unitSymbol
+                    )
                 } else {
                     return Entry.empty
                 }
             }
             
             let shoeEntity = ShoeStatsEntity(from: shoe)
-            return Entry(date: shoe.aquisitionDate, shoe: shoeEntity, unitSymbol: unitSymbol)
+            return Entry(
+                date: shoe.aquisitionDate,
+                shoe: shoeEntity,
+                unitSymbol: unitSymbol
+            )
         } catch {
             logger.error("Error fetching shoes, \(error).")
         }
         
         if context.isPreview {
-            return Entry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoe), unitSymbol: unitSymbol)
+            return Entry(
+                date: .now,
+                shoe: ShoeStatsEntity(from: Shoe.previewShoe),
+                unitSymbol: unitSymbol
+            )
         } else {
             return Entry.empty
         }
@@ -53,7 +64,6 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
-            logger.error("Defaut shoes fetched, \(shoes.count).")
             
             guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                 if context.isPreview {
@@ -118,7 +128,6 @@ struct MediumShoeStatsTimelineProvider: AppIntentTimelineProvider {
         if configuration.useDefaultShoe {
             do {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
-                logger.error("Defaut shoes fetched, \(shoes.count).")
                 
                 guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
                     return Timeline(entries: [Entry.empty], policy: .never)

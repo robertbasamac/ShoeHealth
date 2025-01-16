@@ -24,7 +24,7 @@ enum RunType: String, CaseIterable, Codable, Hashable, AppEnum {
             .daily: "Daily Runs",
             .long: "Long Runs",
             .tempo: "Tempo Runs",
-            .race: "Recovery Runs",
+            .race: "Race Runs",
             .trail: "Trail Runs"
         ]
     }

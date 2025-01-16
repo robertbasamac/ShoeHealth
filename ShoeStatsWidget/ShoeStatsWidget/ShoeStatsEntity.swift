@@ -31,6 +31,7 @@ struct ShoeStatsEntity: AppEntity {
     var wearPercentage: Double
     var wearPercentageAsString: String
     var wearColor: Color
+    var url: URL?
     
     init(
         id: UUID,
@@ -46,7 +47,8 @@ struct ShoeStatsEntity: AppEntity {
         lastActivityDate: Date,
         wearPercentage: Double,
         wearPercentageAsString: String,
-        wearColor: Color
+        wearColor: Color,
+        url: URL?
     ) {
         self.id = id
         self.brand = brand
@@ -62,9 +64,10 @@ struct ShoeStatsEntity: AppEntity {
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
         self.wearColor = wearColor
+        self.url = url
     }
     
-    init(from shoe: ShoesSchemaV1.Shoe) {
+    init(from shoe: Shoe) {
         self.id = shoe.id
         self.brand = shoe.brand
         self.model = shoe.model
@@ -79,23 +82,7 @@ struct ShoeStatsEntity: AppEntity {
         self.wearPercentage = shoe.wearPercentage
         self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
         self.wearColor = shoe.wearColor
-    }
-    
-    init(from shoe: ShoesSchemaV2.Shoe) {
-        self.id = shoe.id
-        self.brand = shoe.brand
-        self.model = shoe.model
-        self.nickname = shoe.nickname
-        self.lifespanDistance = shoe.lifespanDistance
-        self.totalDistance = shoe.totalDistance
-        self.totalDuration = shoe.formattedTotalDuration
-        self.averageDistance = shoe.averageDistance
-        self.averagePace = shoe.averagePace
-        self.averageDuration = shoe.formatterAverageDuration
-        self.lastRunDate = shoe.lastActivityDate
-        self.wearPercentage = shoe.wearPercentage
-        self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
-        self.wearColor = shoe.wearColor
+        self.url = shoe.url
     }
     
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"

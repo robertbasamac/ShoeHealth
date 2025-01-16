@@ -107,6 +107,7 @@ struct MediumShoeStatsSnapshotWidgetView : View {
                 )
             }
         }
+        .widgetURL(shoe.url)
     }
 }
 
