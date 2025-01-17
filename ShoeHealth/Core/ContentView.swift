@@ -114,9 +114,11 @@ struct ContentView: View {
             .onOpenURL { (url) in
                 guard url.scheme == "shoeHealthApp" else { return }
                 
-                if let matchShoe = shoesViewModel.shoes.compactMap({ shoe in
-                    url == shoe.url ? shoe : nil
-                }).first {
+                if let matchShoe = shoesViewModel.shoes.first(where: { $0.url == url }),
+                   navigationRouter.showShoeDetails != matchShoe,
+                   navigationRouter.showSheet == nil,
+                   navigationRouter.showPaywall == false,
+                   !navigationRouter.isShoeInCurrentStack(matchShoe.id) {
                     navigationRouter.showShoeDetails = matchShoe
                 }
             }
