@@ -116,31 +116,7 @@ extension ShoesView {
             ScrollView(.horizontal) {
                 HStack(spacing: 8) {
                     ForEach(RunType.allCases, id: \.self) { runType in
-                        Text(runType.rawValue.capitalized)
-                            .font(.callout)
-                            .foregroundStyle(selectedDefaulRunType == runType ? Color.black : Color.primary)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 16)
-                            .background {
-                                if selectedDefaulRunType == runType {
-                                    Capsule()
-                                        .fill(Color.theme.accent)
-                                        .matchedGeometryEffect(id: "ACTIVERUNTYPE", in: animation)
-                                } else {
-                                    Capsule()
-                                        .fill(Color.theme.containerBackground)
-                                }
-                            }
-                            .contentShape(RoundedRectangle(cornerRadius: 20))
-                            .onTapGesture {
-                                withAnimation {
-                                    if selectedDefaulRunType == runType {
-                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
-                                    } else {
-                                        selectedDefaulRunType = runType
-                                    }
-                                }
-                            }
+                        runTypeButton(runType)
                     }
                 }
             }
@@ -489,6 +465,39 @@ extension ShoesView {
     }
     
     @ViewBuilder
+    private func runTypeButton(_ runType: RunType) -> some View {
+        Button {
+            withAnimation {
+                if featureDisabled(for: runType) {
+                    navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
+                } else {
+                    if selectedDefaulRunType == runType {
+                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                    } else {
+                        selectedDefaulRunType = runType
+                    }
+                }
+            }
+        } label: {
+            Text(runType.rawValue.capitalized)
+                .font(.callout)
+                .foregroundStyle(featureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary))
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .background {
+                    if selectedDefaulRunType == runType {
+                        Capsule()
+                            .fill(Color.theme.accent)
+                            .matchedGeometryEffect(id: "ACTIVERUNTYPE", in: animation)
+                    } else {
+                        Capsule()
+                            .fill(Color.theme.containerBackground)
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder
     private func confirmationActions(shoe: Shoe) -> some View {
         Button("Cancel", role: .cancel) {
             shoeForDeletion = nil
@@ -543,7 +552,7 @@ extension ShoesView {
                 if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
                     navigationRouter.showSheet = .addShoe
                 } else {
-                    navigationRouter.showLimitAlert.toggle()
+                    navigationRouter.showFeatureRestrictedAlert(.limitReached)
                 }
             } label: {
                 Image(systemName: "plus")
@@ -558,6 +567,10 @@ extension ShoesView {
     
     private func isShoeRestricted(_ shoeID: UUID) -> Bool {
         return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
+    }
+    
+    private func featureDisabled(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
     }
 }
 

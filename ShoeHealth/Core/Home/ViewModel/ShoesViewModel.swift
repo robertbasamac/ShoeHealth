@@ -25,10 +25,6 @@ final class ShoesViewModel {
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
     
     private(set) var shoes: [Shoe] = []
-    
-    /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
-    private let shoesLimit: Int = 5
-    
     /// Searching
     private(set) var searchText: String = ""
     var searchBinding: Binding<String> {
@@ -85,11 +81,7 @@ final class ShoesViewModel {
     // MARK: - Premium Content
     
     func isShoesLimitReached() -> Bool {
-        return shoes.count >= shoesLimit
-    }
-    
-    func getLimitReachedPrompt() -> String {
-        return "You can only add up to \(shoesLimit) shoes with a free subscription. Upgrade for unlimited access."
+        return shoes.count >= StoreManager.shoesLimit
     }
     
     func shouldRestrictShoe(_ shoeID: UUID) -> Bool {

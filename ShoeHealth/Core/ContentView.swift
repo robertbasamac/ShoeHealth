@@ -11,6 +11,8 @@ import HealthKit
 struct ContentView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @EnvironmentObject private var storeManager: StoreManager
+
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @Environment(\.dismiss) private var dismiss
@@ -94,7 +96,7 @@ struct ContentView: View {
                     }()
                 )
             }
-            .alert("Limit reached", isPresented: $navigationRouter.showLimitAlert, actions: {
+            .alert(navigationRouter.featureAlert?.title ?? "", isPresented: $navigationRouter.showFeatureRestrictedAlert, actions: {
                 Button(role: .cancel) {
                     dismiss()
                 } label: {
@@ -109,7 +111,7 @@ struct ContentView: View {
                 }
                 .tint(.accent)
             }, message: {
-                Text(shoesViewModel.getLimitReachedPrompt())
+                Text(navigationRouter.featureAlert?.message ?? "")
             })
             .onOpenURL { (url) in
                 guard url.scheme == "shoeHealthApp" else { return }

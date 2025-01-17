@@ -151,7 +151,9 @@ extension PaywallView {
     @ViewBuilder
     private var featuresSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            featureItem(title: "Unlimited Shoes")
+            ForEach(StoreManager.premiumFeatures, id: \.self) { feature in
+                featureItem(feature)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, 40)
@@ -193,14 +195,14 @@ extension PaywallView {
     }
     
     @ViewBuilder
-    private func featureItem(title: String) -> some View {
+    private func featureItem(_ feature: StoreManager.PremiumFeature) -> some View {
         HStack(spacing: 10) {
             Image(systemName: "checkmark.circle")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(store.hasFullAccess ? Color.theme.accent : .gray)
             
-            Text(title)
+            Text(feature.title)
                 .font(.callout)
                 .italic()
         }

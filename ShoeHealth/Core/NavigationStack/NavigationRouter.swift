@@ -38,8 +38,10 @@ final class NavigationRouter: ObservableObject {
     
     @Published var showSheet: SheetType?
     @Published var showShoeDetails: Shoe?
-    @Published var showLimitAlert: Bool = false
     @Published var showPaywall: Bool = false
+    
+    @Published var showFeatureRestrictedAlert: Bool = false
+    var featureAlert: FeatureAlertType? = nil
     
     private var cancellables = Set<AnyCancellable>()
     private let queue = DispatchQueue(label: "com.shoehealth.navigationrouter.sync.queue", attributes: .concurrent)
@@ -164,6 +166,11 @@ extension NavigationRouter {
         
         removeShoe(from: &shoesStack, navigationPath: &shoesNavigationPath, shoeID: shoeID)
         removeShoe(from: &workoutsStack, navigationPath: &workoutsNavigationPath, shoeID: shoeID)
+    }
+    
+    func showFeatureRestrictedAlert(_ alert: FeatureAlertType) {
+        featureAlert = alert
+        showFeatureRestrictedAlert.toggle()
     }
     
     private func removeShoe(from stack: inout [AnyHashable], navigationPath: inout NavigationPath, shoeID: UUID) {

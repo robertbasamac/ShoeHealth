@@ -38,6 +38,24 @@ final class StoreManager: ObservableObject {
     
     private var updateListenerTask: Task<Void, Error>? = nil
     
+    // MARK: Premium Features
+    
+    struct PremiumFeature: Identifiable, Hashable {
+        let id = UUID()
+        let title: String
+    }
+    
+    /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
+    static let shoesLimit: Int = 5
+    
+    /// - `premiumFeatures`: an array of features that the user can get when purchasing a subscription
+    static let premiumFeatures: [PremiumFeature] = [
+        PremiumFeature(title: "Unlimited Shoes"),
+        PremiumFeature(title: "Multiple Run Types for Default Shoes")
+    ]
+    
+    // MARK: - init and deinit
+    
     init() {
         updateListenerTask = listenForTransactions()
         
@@ -50,6 +68,8 @@ final class StoreManager: ObservableObject {
     deinit {
         updateListenerTask?.cancel()
     }
+    
+    // MARK: - Store Methods
     
     func listenForTransactions() -> Task<Void, Error> {
         return Task(priority: .background) {
