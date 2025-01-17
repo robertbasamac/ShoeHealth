@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 import OSLog
+import Combine
 
 private let logger = Logger(subsystem: "Shoe Health", category: "NavigationRouter")
 
@@ -39,6 +40,45 @@ final class NavigationRouter: ObservableObject {
     @Published var showShoeDetails: Shoe?
     @Published var showLimitAlert: Bool = false
     @Published var showPaywall: Bool = false
+    
+    private var cancellables = Set<AnyCancellable>()
+    private let queue = DispatchQueue(label: "com.shoehealth.navigationrouter.sync.queue", attributes: .concurrent)
+    
+    init() {
+        setupBindings()
+    }
+    
+    private func setupBindings() {
+        $shoesNavigationPath
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [weak self] newPath in
+                self?.synchronizeShoesStack(with: newPath)
+            }
+            .store(in: &cancellables)
+        
+        $workoutsNavigationPath
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [weak self] newPath in
+                self?.synchronizeWorkoutsStack(with: newPath)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func synchronizeShoesStack(with newPath: NavigationPath) {
+        queue.async(flags: .barrier) {
+            if newPath.count < self.shoesStack.count {
+                self.shoesStack.removeLast(self.shoesStack.count - newPath.count)
+            }
+        }
+    }
+    
+    private func synchronizeWorkoutsStack(with newPath: NavigationPath) {
+        queue.async(flags: .barrier) { // Asigură acces exclusiv la aceste proprietăți
+            if newPath.count < self.workoutsStack.count {
+                self.workoutsStack.removeLast(self.workoutsStack.count - newPath.count)
+            }
+        }
+    }
 }
 
 // MARK: - Navigation Handling
@@ -57,9 +97,7 @@ extension NavigationRouter {
             case .shoes:
                 shoesNavigationPath.append(category)
                 shoesStack.append(category)
-            case .workouts:
-                return
-            case .settings:
+            case .workouts, .settings:
                 return
             }
         case .shoe(let shoe):
@@ -67,6 +105,7 @@ extension NavigationRouter {
             case .shoes:
                 shoesNavigationPath.append(shoe)
                 shoesStack.append(shoe)
+                
             case .workouts:
                 workoutsNavigationPath.append(shoe)
                 workoutsStack.append(shoe)
@@ -74,6 +113,7 @@ extension NavigationRouter {
                 return
             }
         }
+        
     }
     
     func navigateBack() {
@@ -106,6 +146,17 @@ extension NavigationRouter {
         }
     }
     
+    func isShoeInCurrentStack(_ shoeID: UUID) -> Bool {
+        switch selectedTab {
+        case .shoes:
+            return shoesStack.contains(where: { ($0 as? Shoe)?.id == shoeID })
+        case .workouts:
+            return workoutsStack.contains(where: { ($0 as? Shoe)?.id == shoeID })
+        case .settings:
+            return false
+        }
+    }
+    
     func deleteShoe(_ shoeID: UUID) {
         if showShoeDetails?.id == shoeID {
             showShoeDetails = nil
@@ -117,7 +168,6 @@ extension NavigationRouter {
     
     private func removeShoe(from stack: inout [AnyHashable], navigationPath: inout NavigationPath, shoeID: UUID) {
         guard let _ = stack.first(where: { ($0 as? Shoe)?.id == shoeID }) else {
-            logger.debug("Shoe not found.")
             return
         }
         
@@ -126,8 +176,6 @@ extension NavigationRouter {
         if !navigationPath.isEmpty {
             navigationPath.removeLast()
         }
-        
-        stack.removeLast()
     }
 }
 
