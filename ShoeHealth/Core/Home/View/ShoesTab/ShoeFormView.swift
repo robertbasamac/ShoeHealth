@@ -354,7 +354,7 @@ extension ShoeFormView {
                         image: shoeFormViewModel.selectedPhotoData
                     )
                     
-                    if wasDailyDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                    if wasDailyDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) && !shoesViewModel.shoes.isEmpty {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                         }
@@ -413,6 +413,7 @@ extension ShoeFormView {
         NavigationStack {
             ShoeFormView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }
