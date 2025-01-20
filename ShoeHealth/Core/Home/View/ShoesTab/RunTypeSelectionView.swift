@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RunTypeSelectionView: View {
     
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(\.dismiss) private var dismiss
     
     @State var selectedRunTypes: [RunType]
@@ -17,27 +18,35 @@ struct RunTypeSelectionView: View {
     var onDone: ([RunType]) -> Void
     
     var body: some View {
-        List(RunType.allCases, id: \.self) { runType in
-            HStack {
-                Text(runType.rawValue.capitalized)
-                
-                Spacer()
-                
-                if selectedRunTypes.contains(runType) {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(Color.theme.accent)
-                }
-            }
-            .contentShape(.rect)
-            .onTapGesture {
-                if selectedRunTypes.contains(runType) {
-                    if runType == .daily && preventDeselectingDaily {
-                        return
+        List {
+            Section {
+                ForEach(RunType.allCases, id: \.self) { runType in
+                    HStack {
+                        Text(runType.rawValue.capitalized)
+                            .foregroundStyle(disableFeature(for: runType) ? .secondary : .primary)
+                        
+                        Spacer()
+                        
+                        if selectedRunTypes.contains(runType) {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(disableFeature(for: runType) ? .secondary : Color.theme.accent)
+                        }
                     }
-                    selectedRunTypes.removeAll { $0 == runType }
-                } else {
-                    selectedRunTypes.append(runType)
+                    .contentShape(.rect)
+                    .onTapGesture {
+                        if selectedRunTypes.contains(runType) {
+                            if runType == .daily && preventDeselectingDaily {
+                                return
+                            }
+                            selectedRunTypes.removeAll { $0 == runType }
+                        } else {
+                            selectedRunTypes.append(runType)
+                        }
+                    }
+                    .allowsHitTesting(!disableFeature(for: runType))
                 }
+            } footer: {
+                Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
             }
         }
         .navigationTitle("Default Run Types")
@@ -48,7 +57,6 @@ struct RunTypeSelectionView: View {
                     onDone(selectedRunTypes)
                     dismiss()
                 }
-                .disabled(selectedRunTypes.isEmpty)
             }
             
             ToolbarItem(placement: .cancellationAction) {
@@ -60,6 +68,14 @@ struct RunTypeSelectionView: View {
     }
 }
 
+// MARK: - Helper Methods
+
+extension RunTypeSelectionView {
+    
+    private func disableFeature(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
+    }
+}
 
 // MARK: - Preview
 
@@ -67,4 +83,5 @@ struct RunTypeSelectionView: View {
     @Previewable @State var runTypeSelections: [RunType] = [.daily]
     
     RunTypeSelectionView(selectedRunTypes: runTypeSelections, preventDeselectingDaily: false) { _ in }
+        .environmentObject(StoreManager())
 }
