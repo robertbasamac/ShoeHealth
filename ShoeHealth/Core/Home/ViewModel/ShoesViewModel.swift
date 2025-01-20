@@ -211,7 +211,7 @@ final class ShoesViewModel {
         shoe.defaultRunTypes = isDefaultShoe ? defaultRunTypes : []
         
         if isDefaultShoe {
-            for otherShoe in shoes {
+            for otherShoe in shoes.filter({ $0.id != shoeID }) {
                 otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
                 
                 if otherShoe.defaultRunTypes.isEmpty {
