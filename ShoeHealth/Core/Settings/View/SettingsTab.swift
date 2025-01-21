@@ -162,7 +162,7 @@ extension SettingsTab {
         SettingsTab()
             .navigationTitle("Settings")
             .environmentObject(NavigationRouter())
+            .environmentObject(StoreManager.shared)
             .environment(SettingsManager.shared)
-            .environmentObject(StoreManager())
     }
 }

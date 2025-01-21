@@ -199,7 +199,7 @@ extension NavigationRouter {
     /// The `SheetType` enum conforms to `Identifiable` by providing a unique `id` for each case, which is used to
     /// identify the sheet currently being presented. Additionally, it conforms to `Equatable` to facilitate comparison
     /// of different sheet types, enabling smooth transitions and updates to the UI.
-    enum SheetType: Identifiable {
+    enum SheetType: Identifiable, Equatable {
         case addShoe
         case setDefaultShoe(forRunType: RunType)
         case addWorkoutToShoe(workoutID: UUID)
@@ -235,5 +235,4 @@ extension NavigationRouter {
             }
         }
     }
-
 }

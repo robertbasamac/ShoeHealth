@@ -15,6 +15,10 @@ enum RunType: String, CaseIterable, Codable, Hashable, AppEnum {
     case race
     case trail
     
+    static func create(from string: String) -> RunType {
+        return RunType(rawValue: string) ?? .daily
+    }
+    
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
         "Run Type"
     }

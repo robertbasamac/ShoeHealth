@@ -11,16 +11,56 @@ import WidgetKit
 // MARK: - Widget View
 
 struct SmallShoeStatsWidgetView: View {
-        
+    
+    let storeManager = StoreManager.shared
+    
     var entry: SmallShoeStatsWidgetEntry
     
     var body: some View {
-        if let shoe = entry.shoe {
-            SmallShoeStatsSnapshotWidgetView(shoe: shoe)
-        } else {
-            Text("No Shoe")
+        Group {
+            if storeManager.hasFullAccess {
+                shoeWidgetView
+            } else if let runType = entry.runType, runType != .daily {
+                VStack(spacing: 10) {
+                    Text("'\(runType.rawValue.capitalized)' Run is not available for free users")
+                        .font(.subheadline)
+                    Text("Tap to show upgrade options")
+                        .font(.caption)
+                }
                 .foregroundStyle(.secondary)
-                .containerBackground(.fill, for: .widget)
+                .dynamicTypeSize(DynamicTypeSize.xSmall)
+                .multilineTextAlignment(.center)
+                .containerBackground(.background, for: .widget)
+                .widgetURL(URL(string: "shoeHealthApp://show-paywall"))
+            } else {
+                shoeWidgetView
+            }
+        }
+    }
+    
+    var shoeWidgetView: some View {
+        Group {
+            if let shoe = entry.shoe {
+                SmallShoeStatsSnapshotWidgetView(shoe: shoe)
+            } else if let runType = entry.runType {
+                VStack(spacing: 10) {
+                    Text("No Shoe selected for '\(runType.rawValue.capitalized)' Runs")
+                        .font(.subheadline)
+                    Text("Tap to select a shoe")
+                        .font(.caption)
+                }
+                .foregroundStyle(.secondary)
+                .dynamicTypeSize(DynamicTypeSize.xSmall)
+                .multilineTextAlignment(.center)
+                .containerBackground(.background, for: .widget)
+                .widgetURL(URL(string: "shoeHealthApp://show-selectShoe?runType=\(runType.rawValue)"))
+            } else {
+                Text("No Shoe")
+                    .foregroundStyle(.secondary)
+                    .dynamicTypeSize(DynamicTypeSize.xSmall)
+                    .containerBackground(.background, for: .widget)
+                    .widgetURL(URL(string: "shoeHealthApp://show-addShoe"))
+            }
         }
     }
 }

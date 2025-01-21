@@ -205,7 +205,7 @@ extension ShoesListView {
         NavigationStack {
             ShoesListView(forCategory: .all)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .navigationTitle("Shoes")
         }

@@ -31,7 +31,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                         shoe: ShoeStatsEntity(from: Shoe.previewShoe)
                     )
                 } else {
-                    return Entry.empty
+                    return Entry.empty()
                 }
             }
             
@@ -50,7 +50,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                 shoe: ShoeStatsEntity(from: Shoe.previewShoe)
             )
         } else {
-            return Entry.empty
+            return Entry.empty()
         }
     }
     
@@ -65,7 +65,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                         shoe: ShoeStatsEntity(from: Shoe.previewShoe)
                     )
                 } else {
-                    return Entry.empty
+                    return Entry.empty()
                 }
             }
             
@@ -84,7 +84,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                         shoe: shoeEntity
                     )
                 } else {
-                    return Entry.empty
+                    return Entry.empty()
                 }
             }
         } catch {
@@ -99,7 +99,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                 shoe: shoeEntity
             )
         } else {
-            return Entry.empty
+            return Entry.empty()
         }
     }
     
@@ -109,20 +109,21 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe }))
                 
                 guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
-                    return Timeline(entries: [Entry.empty], policy: .never)
+                    return Timeline(entries: [Entry.empty(runType: configuration.runType)], policy: .never)
                 }
                 
                 let shoeEntity = ShoeStatsEntity(from: shoe)
                 let entry = Entry(
                     date: .now,
-                    shoe: shoeEntity
+                    shoe: shoeEntity,
+                    runType: configuration.runType
                 )
                 return Timeline(entries: [entry], policy: .never)
             } catch {
                 logger.error("Error fetching shoes, \(error).")
             }
             
-            return Timeline(entries: [Entry.empty], policy: .never)
+            return Timeline(entries: [Entry.empty(runType: configuration.runType)], policy: .never)
         } else {
             let entry = Entry(
                 date: .now,
@@ -139,16 +140,19 @@ struct SmallShoeStatsWidgetEntry: TimelineEntry {
     
     let date: Date
     let shoe: ShoeStatsEntity?
+    let runType: RunType?
     
     init(
         date: Date,
-        shoe: ShoeStatsEntity? = nil
+        shoe: ShoeStatsEntity? = nil,
+        runType: RunType? = nil
     ) {
         self.date = date
         self.shoe = shoe
+        self.runType = runType
     }
     
-    static var empty: Self {
-        Self(date: .now)
+    static func empty(runType: RunType? = nil) -> Self {
+        Self(date: .now, runType: runType)
     }
 }

@@ -27,6 +27,8 @@ enum ProductID: String, CaseIterable {
 
 final class StoreManager: ObservableObject {
     
+    static let shared = StoreManager()
+    
     @Published private(set) var lifetimeProduct: Product?
     @Published private(set) var subscriptionProducts: [Product] = []
     
@@ -51,12 +53,12 @@ final class StoreManager: ObservableObject {
     /// - `premiumFeatures`: an array of features that the user can get when purchasing a subscription
     static let premiumFeatures: [PremiumFeature] = [
         PremiumFeature(title: "Unlimited Shoes"),
-        PremiumFeature(title: "Multiple Run Types for Default Shoes")
+        PremiumFeature(title: "Default Shoes for multiple run types")
     ]
     
     // MARK: - init and deinit
     
-    init() {
+    private init() {
         updateListenerTask = listenForTransactions()
         
         Task {

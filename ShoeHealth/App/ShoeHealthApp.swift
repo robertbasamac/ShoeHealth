@@ -16,7 +16,7 @@ struct ShoeHealthApp: App {
     @Environment(\.scenePhase) private var scenePhase
     
     @StateObject private var navigationRouter = NavigationRouter()
-    @StateObject private var storeManager: StoreManager = StoreManager()
+    @StateObject private var storeManager: StoreManager = StoreManager.shared
     @State private var shoesViewModel: ShoesViewModel
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared

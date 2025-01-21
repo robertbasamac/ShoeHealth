@@ -113,17 +113,49 @@ struct ContentView: View {
             }, message: {
                 Text(navigationRouter.featureAlert?.message ?? "")
             })
-            .onOpenURL { (url) in
-                guard url.scheme == "shoeHealthApp" else { return }
-                
-                if let matchShoe = shoesViewModel.shoes.first(where: { $0.url == url }),
-                   navigationRouter.showShoeDetails != matchShoe,
-                   navigationRouter.showSheet == nil,
-                   navigationRouter.showPaywall == false,
-                   !navigationRouter.isShoeInCurrentStack(matchShoe.id) {
-                    navigationRouter.showShoeDetails = matchShoe
-                }
+            .onOpenURL { url in
+                handleIncomingURL(url)
             }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension ContentView {
+    
+    private func handleIncomingURL(_ url: URL) {
+        guard url.scheme == "shoeHealthApp" else { return }
+        
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
+        
+        if let action = components.host, action == "show-paywall", !navigationRouter.showPaywall {
+            navigationRouter.showPaywall.toggle()
+            return
+        }
+        
+        if let action = components.host, action == "show-addShoe", navigationRouter.showSheet != .addShoe {
+            navigationRouter.showSheet = .addShoe
+            return
+        }
+        
+        if let action = components.host, action == "show-selectShoe",
+           let runTypeName = components.queryItems?.first(where: { $0.name == "runType" })?.value {
+            let runType = RunType.create(from: runTypeName)
+            
+            if navigationRouter.showSheet != .setDefaultShoe(forRunType: runType) {
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                return
+            }
+        }
+        
+        if let matchShoe = shoesViewModel.shoes.first(where: { $0.url == url }),
+           navigationRouter.showShoeDetails != matchShoe,
+           navigationRouter.showSheet == nil,
+           navigationRouter.showPaywall == false,
+           !navigationRouter.isShoeInCurrentStack(matchShoe.id) {
+            navigationRouter.showShoeDetails = matchShoe
+            return
+        }
     }
 }
 
@@ -133,6 +165,7 @@ struct ContentView: View {
     ContentView()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
+        .environmentObject(StoreManager.shared)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
@@ -142,6 +175,7 @@ struct ContentView: View {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
+        .environmentObject(StoreManager.shared)
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)

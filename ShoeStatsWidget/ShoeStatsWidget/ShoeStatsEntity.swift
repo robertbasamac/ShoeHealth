@@ -27,10 +27,10 @@ struct ShoeStatsEntity: AppEntity {
     var averageDistance: Double
     var averagePace: (minutes: Int, seconds: Int)
     var averageDuration: String
-    var lastRunDate: Date?
     var wearPercentage: Double
     var wearPercentageAsString: String
     var wearColor: Color
+    var runType: RunType?
     var url: URL?
     
     init(
@@ -39,6 +39,7 @@ struct ShoeStatsEntity: AppEntity {
         model: String,
         nickname: String,
         lifespanDistance: Double,
+        runType: Bool,
         totalDistance: Double,
         totalDuration: String,
         averageDistance: Double,
@@ -60,7 +61,6 @@ struct ShoeStatsEntity: AppEntity {
         self.averageDistance = averageDistance
         self.averagePace = averagePace
         self.averageDuration = averageDiration
-        self.lastRunDate = lastActivityDate
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
         self.wearColor = wearColor
@@ -78,7 +78,6 @@ struct ShoeStatsEntity: AppEntity {
         self.averageDistance = shoe.averageDistance
         self.averagePace = shoe.averagePace
         self.averageDuration = shoe.formatterAverageDuration
-        self.lastRunDate = shoe.lastActivityDate
         self.wearPercentage = shoe.wearPercentage
         self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
         self.wearColor = shoe.wearColor
