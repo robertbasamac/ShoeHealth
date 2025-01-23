@@ -2,6 +2,8 @@
 
 **Shoe Health** is a mobile application designed to help runners monitor the lifespan of their running shoes, track workout data, and optimize performance. By connecting with Apple Health, Shoe Health provides insights into shoe wear, helping you make informed decisions about your footwear.
 
+[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg)](https://apps.apple.com/ro/app/shoe-health/id6648781147)
+
 ## Table of Contents
 
 - [Features](#features)

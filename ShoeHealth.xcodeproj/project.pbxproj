@@ -86,6 +86,7 @@
 		09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF262C9B49C4002507C9 /* PresetTime.swift */; };
 		09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */; };
 		09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */; };
+		09B792F72D4250A80068A534 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 09B792F62D4250A80068A534 /* README.md */; };
 		09BEB9932D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
 		09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
 		09BEB9972D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */; };
@@ -234,6 +235,7 @@
 		09A9FF262C9B49C4002507C9 /* PresetTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTime.swift; sourceTree = "<group>"; };
 		09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFormView.swift; sourceTree = "<group>"; };
 		09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWokoutsToShoeView.swift; sourceTree = "<group>"; };
+		09B792F62D4250A80068A534 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeShoeNotSelectedView.swift; sourceTree = "<group>"; };
 		09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeNotAvailableView.swift; sourceTree = "<group>"; };
 		09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoShoeAvailableView.swift; sourceTree = "<group>"; };
@@ -687,6 +689,7 @@
 				09DE4A712B0D3F7F001119E4 /* ShoeHealth */,
 				093742872B7AAD7A008D96BD /* ShoeStatsWidget */,
 				091AD7262C902376002D57C4 /* LICENSE */,
+				09B792F62D4250A80068A534 /* README.md */,
 				09DE4A702B0D3F7F001119E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -875,6 +878,7 @@
 				092DDB722CBC3D0D00263F06 /* Products.plist in Resources */,
 				0944A7E02CD4DE400042081D /* LaunchScreen.storyboard in Resources */,
 				09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */,
+				09B792F72D4250A80068A534 /* README.md in Resources */,
 				091AD7272C902376002D57C4 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
