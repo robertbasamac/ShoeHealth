@@ -354,7 +354,7 @@ extension ShoeFormView {
                         image: shoeFormViewModel.selectedPhotoData
                     )
                     
-                    if wasDailyDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) && !shoesViewModel.shoes.isEmpty {
+                    if wasDailyDefaultShoe && isNotDailyDefaultShoeAnymore() && !shoesViewModel.shoes.isEmpty {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                         }
@@ -404,6 +404,10 @@ extension ShoeFormView {
     private func shouldPreventDefaultOff() -> Bool {
         return (!isEditing && shoesViewModel.shoes.isEmpty) || (isEditing && shoesViewModel.shoes.count == 1)
     }
+    
+    private func isNotDailyDefaultShoeAnymore() -> Bool {
+        return (shoeFormViewModel.isDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) || !shoeFormViewModel.isDefaultShoe)
+    }
 }
 
 // MARK: - Previews
@@ -413,7 +417,7 @@ extension ShoeFormView {
         NavigationStack {
             ShoeFormView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
+                .environmentObject(StoreManager())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }

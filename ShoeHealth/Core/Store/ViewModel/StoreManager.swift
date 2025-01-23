@@ -26,14 +26,19 @@ enum ProductID: String, CaseIterable {
 // MARK: - StoreManager
 
 final class StoreManager: ObservableObject {
-    
-    static let shared = StoreManager()
+        
+    private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
     
     @Published private(set) var lifetimeProduct: Product?
     @Published private(set) var subscriptionProducts: [Product] = []
     
     @Published private(set) var purchasedProducts: [Product] = []
-    @Published private(set) var hasFullAccess: Bool = false
+    
+    @Published private(set) var hasFullAccess: Bool {
+        didSet {
+            defaults?.set(hasFullAccess, forKey: "IS_PREMIUM_USER")
+        }
+    }
     
     @Published private(set) var expirationDate: Date?
     @Published private(set) var willRenew: Bool = false
@@ -58,7 +63,9 @@ final class StoreManager: ObservableObject {
     
     // MARK: - init and deinit
     
-    private init() {
+    init() {
+        self.hasFullAccess = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
+        
         updateListenerTask = listenForTransactions()
         
         Task {

@@ -124,6 +124,8 @@ struct ContentView: View {
 extension ContentView {
     
     private func handleIncomingURL(_ url: URL) {
+        print("handleIncomingURL: \(url)")
+        
         guard url.scheme == "shoeHealthApp" else { return }
         
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
@@ -134,7 +136,7 @@ extension ContentView {
         }
         
         if let action = components.host, action == "show-addShoe", navigationRouter.showSheet != .addShoe {
-            navigationRouter.showSheet = .addShoe
+                navigationRouter.showSheet = .addShoe
             return
         }
         
@@ -165,7 +167,7 @@ extension ContentView {
     ContentView()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
+        .environmentObject(StoreManager())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
@@ -175,7 +177,7 @@ extension ContentView {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
+        .environmentObject(StoreManager())
         .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)

@@ -40,7 +40,7 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
             
             let shoeEntity = ShoeStatsEntity(from: shoe)
             return Entry(
-                date: shoe.aquisitionDate,
+                date: .now,
                 shoe: shoeEntity,
                 unitSymbol: unitSymbol
             )
@@ -61,6 +61,7 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     
     func snapshot(for configuration: Intent, in context: Context) async -> Entry {
         let unitSymbol = getUnitSymbol()
+        let isPremium = getPremiumStatus()
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
@@ -72,10 +73,11 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                         shoe: ShoeStatsEntity(from: Shoe.previewShoe),
                         firstStat: configuration.firstStat,
                         secondStat: configuration.secondStat,
-                        unitSymbol: unitSymbol
+                        unitSymbol: unitSymbol,
+                        isPremium: isPremium
                     )
                 } else {
-                    return Entry.empty()
+                    return Entry.empty(isPremium: isPremium)
                 }
             }
             
@@ -86,7 +88,8 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                     shoe: shoeEntity,
                     firstStat: configuration.firstStat,
                     secondStat: configuration.secondStat,
-                    unitSymbol: unitSymbol
+                    unitSymbol: unitSymbol,
+                    isPremium: isPremium
                 )
             } else {
                 let shoeEntityToReturn = configuration.shoeEntity ?? (context.isPreview ? ShoeStatsEntity(from: shoe) : nil)  // display default shoe if no other shoe is available
@@ -97,10 +100,11 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                         shoe: shoeEntity,
                         firstStat: configuration.firstStat,
                         secondStat: configuration.secondStat,
-                        unitSymbol: unitSymbol
+                        unitSymbol: unitSymbol,
+                        isPremium: isPremium
                     )
                 } else {
-                    return Entry.empty()
+                    return Entry.empty(isPremium: isPremium)
                 }
             }
         } catch {
@@ -115,22 +119,30 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                 shoe: shoeEntity,
                 firstStat: configuration.firstStat,
                 secondStat: configuration.secondStat,
-                unitSymbol: unitSymbol
+                unitSymbol: unitSymbol,
+                isPremium: isPremium
             )
         } else {
-            return Entry.empty()
+            return Entry.empty(isPremium: isPremium)
         }
     }
     
     func timeline(for configuration: Intent, in context: Context) async -> Timeline<Entry> {
         let unitSymbol = getUnitSymbol()
+        let isPremium = getPremiumStatus()
         
         if configuration.useDefaultShoe {
             do {
                 let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.isDefaultShoe } ))
                 
                 guard let shoe = shoes.first(where: { $0.defaultRunTypes.contains(configuration.runType) }) else {
-                    return Timeline(entries: [Entry.empty(for: configuration.runType)], policy: .never)
+                    return Timeline(
+                        entries: [Entry.empty(
+                            for: configuration.runType,
+                            isPremium: isPremium
+                        )],
+                        policy: .never
+                    )
                 }
                 
                 let shoeEntity = ShoeStatsEntity(from: shoe)
@@ -140,21 +152,23 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
                     runType: configuration.runType,
                     firstStat: configuration.firstStat,
                     secondStat: configuration.secondStat,
-                    unitSymbol: unitSymbol
+                    unitSymbol: unitSymbol,
+                    isPremium: isPremium
                 )
                 return Timeline(entries: [entry], policy: .never)
             } catch {
                 logger.error("Error fetching shoes, \(error).")
             }
             
-            return Timeline(entries: [Entry.empty(for: configuration.runType)], policy: .never)
+            return Timeline(entries: [Entry.empty(for: configuration.runType, isPremium: isPremium)], policy: .never)
         } else {
             let entry = Entry(
                 date: .now,
                 shoe: configuration.shoeEntity,
                 firstStat: configuration.firstStat,
                 secondStat: configuration.secondStat,
-                unitSymbol: unitSymbol
+                unitSymbol: unitSymbol,
+                isPremium: isPremium
             )
             return Timeline(entries: [entry], policy: .never)
         }
@@ -166,6 +180,13 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
         let unitOfMeasure = UnitOfMeasure(rawValue: savedUnitOfMeasure) ?? .metric
         
         return unitOfMeasure.symbol
+    }
+    
+    private func getPremiumStatus() -> Bool {
+        let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+        let savedPremiumStatus = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
+        
+        return savedPremiumStatus
     }
 }
 
@@ -179,6 +200,7 @@ struct MediumShoeStatsWidgetEntry: TimelineEntry {
     let firstStat: ShoeStatMetric
     let secondStat: ShoeStatMetric
     let unitSymbol: String
+    let isPremium: Bool
     
     init(
         date: Date,
@@ -186,7 +208,8 @@ struct MediumShoeStatsWidgetEntry: TimelineEntry {
         runType: RunType? = nil,
         firstStat: ShoeStatMetric = .averagePace,
         secondStat: ShoeStatMetric = .averageDistance,
-        unitSymbol: String = ""
+        unitSymbol: String = "",
+        isPremium: Bool = true
     ) {
         self.date = date
         self.shoe = shoe
@@ -194,9 +217,10 @@ struct MediumShoeStatsWidgetEntry: TimelineEntry {
         self.unitSymbol = unitSymbol
         self.firstStat = firstStat
         self.secondStat = secondStat
+        self.isPremium = isPremium
     }
     
-    static func empty(for runType: RunType? = nil) -> Self {
-        Self(date: .now, runType: runType)
+    static func empty(for runType: RunType? = nil, isPremium: Bool = true) -> Self {
+        Self(date: .now, runType: runType, isPremium: isPremium)
     }
 }

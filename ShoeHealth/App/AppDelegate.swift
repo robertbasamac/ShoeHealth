@@ -16,6 +16,7 @@ class AppDelegate: NSObject {
     
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
+    var storeManager: StoreManager?
     
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
 }
@@ -27,7 +28,7 @@ extension AppDelegate: UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         
-        NotificationManager.shared.setActionableNotificationTypes()
+        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager?.hasFullAccess ?? false)
         HealthManager.shared.startObserving()
         
         return true

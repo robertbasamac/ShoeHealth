@@ -1,5 +1,5 @@
 //
-//  MediumShoeStatsWidgetEntryView.swift
+//  SmallShoeStatsWidgetView.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -11,55 +11,27 @@ import WidgetKit
 // MARK: - Widget View
 
 struct SmallShoeStatsWidgetView: View {
-    
-    let storeManager = StoreManager.shared
-    
+        
     var entry: SmallShoeStatsWidgetEntry
     
     var body: some View {
-        Group {
-            if storeManager.hasFullAccess {
-                shoeWidgetView
-            } else if let runType = entry.runType, runType != .daily {
-                VStack(spacing: 10) {
-                    Text("'\(runType.rawValue.capitalized)' Run is not available for free users")
-                        .font(.subheadline)
-                    Text("Tap to show upgrade options")
-                        .font(.caption)
-                }
-                .foregroundStyle(.secondary)
-                .dynamicTypeSize(DynamicTypeSize.xSmall)
-                .multilineTextAlignment(.center)
-                .containerBackground(.background, for: .widget)
-                .widgetURL(URL(string: "shoeHealthApp://show-paywall"))
-            } else {
-                shoeWidgetView
-            }
-        }
-    }
-    
-    var shoeWidgetView: some View {
-        Group {
+        if entry.isPremium {
             if let shoe = entry.shoe {
-                SmallShoeStatsSnapshotWidgetView(shoe: shoe)
+                return AnyView(SmallShoeStatsSnapshotWidgetView(shoe: shoe))
             } else if let runType = entry.runType {
-                VStack(spacing: 10) {
-                    Text("No Shoe selected for '\(runType.rawValue.capitalized)' Runs")
-                        .font(.subheadline)
-                    Text("Tap to select a shoe")
-                        .font(.caption)
-                }
-                .foregroundStyle(.secondary)
-                .dynamicTypeSize(DynamicTypeSize.xSmall)
-                .multilineTextAlignment(.center)
-                .containerBackground(.background, for: .widget)
-                .widgetURL(URL(string: "shoeHealthApp://show-selectShoe?runType=\(runType.rawValue)"))
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
             } else {
-                Text("No Shoe")
-                    .foregroundStyle(.secondary)
-                    .dynamicTypeSize(DynamicTypeSize.xSmall)
-                    .containerBackground(.background, for: .widget)
-                    .widgetURL(URL(string: "shoeHealthApp://show-addShoe"))
+                return AnyView(NoShoeAvailableView())
+            }
+        } else if let runType = entry.runType, runType != .daily {
+            return AnyView(RunTypeNotAvailableView(runType: runType))
+        } else {
+            if let shoe = entry.shoe {
+                return AnyView(SmallShoeStatsSnapshotWidgetView(shoe: shoe))
+            } else if let runType = entry.runType {
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
+            } else {
+                return AnyView(NoShoeAvailableView())
             }
         }
     }
@@ -70,9 +42,6 @@ struct SmallShoeStatsWidgetView: View {
 struct SmallShoeStatsSnapshotWidgetView : View {
     
     var shoe: ShoeStatsEntity
-    
-    @State private var height: CGFloat = 0
-    @State private var width: CGFloat = 0
     
     var body: some View {
         VStack(alignment: .center, spacing: 4) {

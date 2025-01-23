@@ -62,6 +62,9 @@ struct ShoesView: View {
         .navigationDestination(for: ShoeCategory.self) { category in
             ShoesListView(forCategory: category)
         }
+        .onChange(of: storeManager.hasFullAccess, { _, newValue in
+            selectedDefaulRunType = newValue ? .daily : selectedDefaulRunType
+        })
         .refreshable {
             await healthManager.fetchRunningWorkouts()
         }
@@ -582,7 +585,7 @@ extension ShoesView {
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.container)
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
+            .environmentObject(StoreManager())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
@@ -595,7 +598,7 @@ extension ShoesView {
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
+            .environmentObject(StoreManager())
             .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)

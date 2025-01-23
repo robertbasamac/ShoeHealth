@@ -83,5 +83,5 @@ extension RunTypeSelectionView {
     @Previewable @State var runTypeSelections: [RunType] = [.daily]
     
     RunTypeSelectionView(selectedRunTypes: runTypeSelections, preventDeselectingDaily: false) { _ in }
-        .environmentObject(StoreManager.shared)
+        .environmentObject(StoreManager())
 }

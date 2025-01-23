@@ -215,6 +215,6 @@ extension PaywallView {
     NavigationStack {
         PaywallView()
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
+            .environmentObject(StoreManager())
     }
 }

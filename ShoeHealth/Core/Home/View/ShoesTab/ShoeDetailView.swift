@@ -516,7 +516,7 @@ extension ShoeDetailView {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoes[3])
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
+                .environmentObject(StoreManager())
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)

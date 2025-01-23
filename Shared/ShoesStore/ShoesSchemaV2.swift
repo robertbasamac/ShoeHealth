@@ -169,8 +169,8 @@ extension ShoesSchemaV2 {
             }
         }
         
-        var url: URL {
-            URL(string: "shoeHealthApp://\(self.brand)-\(self.model)-\(self.id.uuidString.prefix(8))")!
+        var url: URL? {
+            URL(string: "shoeHealthApp://\(self.brand)-\(self.model)-\(self.id.uuidString.prefix(8))")
         }
         
         // MARK: ShoeSchemaV2 Shoe - Preview data
@@ -179,8 +179,8 @@ extension ShoesSchemaV2 {
             Shoe(
                 image: UIImage(named: "pegasus")?.pngData(),
                 brand: "Nike",
-                model: "Pegasus Turbo Next Nature",
-                nickname: "Carl",
+                model: "Pegasus Turbo",
+                nickname: "Next Nature",
                 lifespanDistance: 500,
                 totalDistance: 250,
                 defaultRunTypes: [.daily]
@@ -201,8 +201,8 @@ extension ShoesSchemaV2 {
                 Shoe(
                     image: UIImage(named: "pegasus")?.pngData(),
                     brand: "Nike",
-                    model: "Pegasus Turbo Next Nature",
-                    nickname: "Carl",
+                    model: "Pegasus Turbo",
+                    nickname: "Next Nature",
                     lifespanDistance: 500,
                     totalDistance: 250,
                     defaultRunTypes: [.daily]

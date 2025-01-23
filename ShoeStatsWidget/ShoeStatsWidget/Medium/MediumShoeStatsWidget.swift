@@ -20,7 +20,6 @@ struct MediumShoeStatsWidget: Widget {
             provider: MediumShoeStatsAppIntentProvider()
         ) { entry in
             MediumShoeStatsWidgetView(entry: entry)
-                .widgetURL(entry.shoe?.url)
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays health and statistics of the selected shoe.")

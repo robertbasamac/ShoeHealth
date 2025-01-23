@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @main
 struct ShoeHealthApp: App {
@@ -16,7 +17,7 @@ struct ShoeHealthApp: App {
     @Environment(\.scenePhase) private var scenePhase
     
     @StateObject private var navigationRouter = NavigationRouter()
-    @StateObject private var storeManager: StoreManager = StoreManager.shared
+    @StateObject private var storeManager: StoreManager = StoreManager()
     @State private var shoesViewModel: ShoesViewModel
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared
@@ -44,6 +45,7 @@ struct ShoeHealthApp: App {
                     .onAppear {
                         appDelegate.shoesViewModel = shoesViewModel
                         appDelegate.navigationRouter = navigationRouter
+                        appDelegate.storeManager = storeManager
                     }
                     .onChange(of: scenePhase) { _, newPhase in
                         if newPhase == .active {
@@ -60,6 +62,10 @@ struct ShoeHealthApp: App {
                     }
                 }
                 .zIndex(2.0)
+            }
+            .onChange(of: storeManager.hasFullAccess) { _, newValue in
+                NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: newValue)
+                WidgetCenter.shared.reloadAllTimelines()
             }
         }
         .modelContainer(container)
