@@ -21,6 +21,10 @@ struct ShoesView: View {
     
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
+    @State private var shoeForDefaultSelection: Shoe? = nil
+    
+    @State private var selectedDefaulRunType: RunType = .daily
+    @Namespace private var animation
     
     @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
     
@@ -58,6 +62,9 @@ struct ShoesView: View {
         .navigationDestination(for: ShoeCategory.self) { category in
             ShoesListView(forCategory: category)
         }
+        .onChange(of: storeManager.hasFullAccess, { _, newValue in
+            selectedDefaulRunType = newValue ? .daily : selectedDefaulRunType
+        })
         .refreshable {
             await healthManager.fetchRunningWorkouts()
         }
@@ -106,10 +113,20 @@ extension ShoesView {
     @ViewBuilder
     private var defaultShoeSection: some View {
         VStack(spacing: 0) {
-            Text("Default Shoe")
+            Text("Default Shoes")
                 .asHeader()
             
-            if let shoe = shoesViewModel.getDefaultShoe() {
+            ScrollView(.horizontal) {
+                HStack(spacing: 8) {
+                    ForEach(RunType.allCases, id: \.self) { runType in
+                        runTypeButton(runType)
+                    }
+                }
+            }
+            .contentMargins(.horizontal, 20)
+            .contentMargins(.top, 8)
+            
+            if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
                 ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
                     .disabled(isShoeRestricted(shoe.id))
@@ -121,19 +138,18 @@ extension ShoesView {
                 HStack(spacing: 0) {
                     ShoeImage(width: width)
                         .frame(width: width, height: width)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     VStack {
-                        Text("No Default Shoe")
-                            .font(.title3)
-                            .fontWeight(.semibold)
+                        Text("No default shoe selected for \(selectedDefaulRunType.rawValue.capitalized)")
+                            .font(.callout)
                             .multilineTextAlignment(.center)
                         
                         Button {
                             if shoesViewModel.shoes.isEmpty {
                                 navigationRouter.showSheet = .addShoe
                             } else {
-                                navigationRouter.showSheet = .setDefaultShoe
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: selectedDefaulRunType)
                             }
                         } label: {
                             if shoesViewModel.shoes.isEmpty {
@@ -228,26 +244,24 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-                            if !shoe.isDefaultShoe && !isShoeRestricted(shoe.id) {
+//                            if !shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
                                 Button {
-                                    withAnimation {
-                                        shoesViewModel.setAsDefaultShoe(shoe.id)
-                                    }
+                                    shoeForDefaultSelection = shoe
                                 } label: {
                                     Label("Set Default", systemImage: "shoe.2")
                                 }
-                            }
+//                            }
                             
                             Button {
-                                let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+                                let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
 
                                 withAnimation {
                                     shoesViewModel.retireShoe(shoe.id)
                                 }
                                 
-                                if setNewDefaultShoe {
+                                if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        navigationRouter.showSheet = .setDefaultShoe
+                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                                     }
                                 }
                             } label: {
@@ -285,6 +299,17 @@ extension ShoesView {
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
+        .sheet(item: $shoeForDefaultSelection) { shoe in
+            NavigationStack {
+                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    withAnimation {
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+            .interactiveDismissDisabled()
+        }
     }
     
     @ViewBuilder
@@ -443,6 +468,39 @@ extension ShoesView {
     }
     
     @ViewBuilder
+    private func runTypeButton(_ runType: RunType) -> some View {
+        Button {
+            withAnimation {
+                if featureDisabled(for: runType) {
+                    navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
+                } else {
+                    if selectedDefaulRunType == runType {
+                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                    } else {
+                        selectedDefaulRunType = runType
+                    }
+                }
+            }
+        } label: {
+            Text(runType.rawValue.capitalized)
+                .font(.callout)
+                .foregroundStyle(featureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary))
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .background {
+                    if selectedDefaulRunType == runType {
+                        Capsule()
+                            .fill(Color.theme.accent)
+                            .matchedGeometryEffect(id: "ACTIVERUNTYPE", in: animation)
+                    } else {
+                        Capsule()
+                            .fill(Color.theme.containerBackground)
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder
     private func confirmationActions(shoe: Shoe) -> some View {
         Button("Cancel", role: .cancel) {
             shoeForDeletion = nil
@@ -451,15 +509,17 @@ extension ShoesView {
         Button("Delete", role: .destructive) {
             shoeForDeletion = nil
             
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
+            
             withAnimation {
                 shoesViewModel.deleteShoe(shoe.id)
             }
             
             navigationRouter.deleteShoe(shoe.id)
             
-            if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
             }
         }
@@ -495,7 +555,7 @@ extension ShoesView {
                 if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
                     navigationRouter.showSheet = .addShoe
                 } else {
-                    navigationRouter.showLimitAlert.toggle()
+                    navigationRouter.showFeatureRestrictedAlert(.limitReached)
                 }
             } label: {
                 Image(systemName: "plus")
@@ -510,6 +570,10 @@ extension ShoesView {
     
     private func isShoeRestricted(_ shoeID: UUID) -> Bool {
         return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
+    }
+    
+    private func featureDisabled(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
     }
 }
 

@@ -16,8 +16,8 @@ struct SmallShoeStatsWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: SmallSelectShoeIntent.self,
-            provider: SmallShoeStatsTimelineProvider()
+            intent: SmallShoeSelectionIntent.self,
+            provider: SmallShoeStatsAppIntentProvider()
         ) { entry in
             SmallShoeStatsWidgetView(entry: entry)
         }

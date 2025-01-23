@@ -14,13 +14,27 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "39.99",
+      "familyShareable" : false,
+      "internalID" : "6736561858",
+      "localizations" : [
+        {
+          "description" : "Get lifetime access to all app features",
+          "displayName" : "Unlimited Access Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.robertbasamac.shoehealth.fullaccess.lifetime",
+      "referenceName" : "Unlimited Access Lifetime",
+      "type" : "NonConsumable"
+    }
   ],
   "settings" : {
     "_applicationInternalID" : "6648781147",
     "_developerTeamID" : "878Q47ZQ84",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 753198441.649616,
+    "_lastSynchronizedDate" : 757885061.59950304,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -72,7 +86,71 @@
     ]
   },
   "subscriptionGroups" : [
+    {
+      "id" : "21553162",
+      "localizations" : [
 
+      ],
+      "name" : "Unlimited Access",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "14.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6736536397",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Annual subscription for all app features",
+              "displayName" : "Unlimited Access Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.robertbasamac.shoehealth.fullaccess.subscription.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Unlimited Access Annual",
+          "subscriptionGroupID" : "21553162",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6736536303",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Monthly subscription for all app features",
+              "displayName" : "Unlimited Access Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.robertbasamac.shoehealth.fullaccess.subscription.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Unlimited Access Monthly",
+          "subscriptionGroupID" : "21553162",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
   ],
   "version" : {
     "major" : 4,

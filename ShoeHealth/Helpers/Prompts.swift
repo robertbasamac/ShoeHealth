@@ -11,6 +11,14 @@ struct Prompts {
         static let selectDefaultShoeTitle: String = "Select Default Shoe"
         static let selectDefaultShoeDescription: String = "Choose your Default Shoe for new workouts. This setting allows you to quickly assign your preferred shoe to each new running session, ensuring consistency and convenience in your routine."
         
+        static func selectDefaultShoeTitle(for runType: RunType) -> String {
+            return "Select Default Shoe for \(runType.rawValue.capitalized)"
+        }
+        
+        static func selectDefaultShoeDescription(for runType: RunType) -> String {
+            return "Choose your Default Shoe for \(runType.rawValue.capitalized) workouts. This setting allows you to quickly assign your preferred shoe to \(runType.rawValue.lowercased()) sessions, ensuring consistency and convenience in your routine."
+        }
+        
         static let selectWorkoutShoeTitle = "Select Shoe for Workout"
         static let selectWorkoutShoeDescription = "Select the Shoe you used for this running session to ensure accurate tracking."
         

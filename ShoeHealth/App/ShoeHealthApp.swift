@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @main
 struct ShoeHealthApp: App {
@@ -21,8 +22,10 @@ struct ShoeHealthApp: App {
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared
     
+    let container = ShoesStore.shared.modelContainer
+    
     init () {
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: ShoesStore.container.mainContext))
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: container.mainContext))
         
         // override apple's buggy alerts tintColor
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.theme.accent)
@@ -42,6 +45,7 @@ struct ShoeHealthApp: App {
                     .onAppear {
                         appDelegate.shoesViewModel = shoesViewModel
                         appDelegate.navigationRouter = navigationRouter
+                        appDelegate.storeManager = storeManager
                     }
                     .onChange(of: scenePhase) { _, newPhase in
                         if newPhase == .active {
@@ -59,7 +63,11 @@ struct ShoeHealthApp: App {
                 }
                 .zIndex(2.0)
             }
+            .onChange(of: storeManager.hasFullAccess) { _, newValue in
+                NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: newValue)
+                WidgetCenter.shared.reloadAllTimelines()
+            }
         }
-        .modelContainer(ShoesStore.container)
+        .modelContainer(container)
     }
 }

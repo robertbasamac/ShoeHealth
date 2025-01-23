@@ -66,9 +66,9 @@
 		095D8B612BCD6B61001D7592 /* RoundedRectangleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */; };
 		09630FEC2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FEB2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift */; };
 		09630FEE2D08B219006C14E0 /* SmallShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FED2D08B219006C14E0 /* SmallShoeStatsWidget.swift */; };
-		09630FF32D08B510006C14E0 /* MediumSelectShoeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF22D08B510006C14E0 /* MediumSelectShoeIntent.swift */; };
+		09630FF32D08B510006C14E0 /* MediumShoeSelectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF22D08B510006C14E0 /* MediumShoeSelectionIntent.swift */; };
 		09630FF52D08B684006C14E0 /* SmallStatsTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF42D08B684006C14E0 /* SmallStatsTimelineProvider.swift */; };
-		09630FF72D08B6C0006C14E0 /* SmallSelectShoeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF62D08B6C0006C14E0 /* SmallSelectShoeIntent.swift */; };
+		09630FF72D08B6C0006C14E0 /* SmallShoeSelectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF62D08B6C0006C14E0 /* SmallShoeSelectionIntent.swift */; };
 		0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969BDE52C58FE9400933469 /* SettingsManager.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
@@ -76,6 +76,8 @@
 		097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */; };
 		0980A7EE2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */; };
 		098988022C9AD4D20036A253 /* RemindMeLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098988012C9AD4D20036A253 /* RemindMeLaterView.swift */; };
+		098DC01D2D294620005BE50C /* RunTypeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098DC01C2D294620005BE50C /* RunTypeSelectionView.swift */; };
+		0991B9042D3A7A3F006B56C2 /* FeatureAlertType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0991B9032D3A7A3F006B56C2 /* FeatureAlertType.swift */; };
 		0999BFF72B53FC13009BE901 /* ShoeImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0999BFF62B53FC13009BE901 /* ShoeImage.swift */; };
 		09A7B9DB2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
 		09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7B9DA2C81F5E100822C03 /* Color.swift */; };
@@ -84,6 +86,12 @@
 		09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9FF262C9B49C4002507C9 /* PresetTime.swift */; };
 		09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */; };
 		09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */; };
+		09BEB9932D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
+		09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
+		09BEB9972D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */; };
+		09BEB9982D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */; };
+		09BEB99A2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */; };
+		09BEB99B2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */; };
 		09BFD2D32B974ECB009F4133 /* MediumShoeStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2D22B974ECB009F4133 /* MediumShoeStatsWidget.swift */; };
 		09BFD2D52B9753D7009F4133 /* ShoeStatsEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2D42B9753D7009F4133 /* ShoeStatsEntity.swift */; };
 		09BFD2DB2B978DD9009F4133 /* SmallShoeStatsWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2DA2B978DD9009F4133 /* SmallShoeStatsWidgetView.swift */; };
@@ -92,6 +100,10 @@
 		09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD2E82B979C81009F4133 /* ShoesStore.swift */; };
 		09BFD6EE2C4050DF00D112BF /* WearCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearCondition.swift */; };
 		09BFD6EF2C4050DF00D112BF /* WearCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFD6ED2C4050DF00D112BF /* WearCondition.swift */; };
+		09BFEE882D21A35C00E911EC /* RunType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE872D21A35C00E911EC /* RunType.swift */; };
+		09BFEE892D21A35C00E911EC /* RunType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE872D21A35C00E911EC /* RunType.swift */; };
+		09BFEE8B2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */; };
+		09BFEE8C2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */; };
 		09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeCategory.swift */; };
 		09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* SortingRule+Order.swift */; };
 		09C595802C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
@@ -105,6 +117,7 @@
 		09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A762B0D3F81001119E4 /* Assets.xcassets */; };
 		09DE4A7A2B0D3F81001119E4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DE4A792B0D3F81001119E4 /* Preview Assets.xcassets */; };
 		09DE4A822B0D4CD8001119E4 /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DE4A812B0D4CD8001119E4 /* HealthManager.swift */; };
+		09E16B552D37C0270073BB24 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB6D2CBC3CD000263F06 /* StoreManager.swift */; };
 		09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34A2B15130900D16101 /* WorkoutListItem.swift */; };
 		09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */; };
 		09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
@@ -202,9 +215,9 @@
 		095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleProgressView.swift; sourceTree = "<group>"; };
 		09630FEB2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumShoeStatsWidgetView.swift; sourceTree = "<group>"; };
 		09630FED2D08B219006C14E0 /* SmallShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallShoeStatsWidget.swift; sourceTree = "<group>"; };
-		09630FF22D08B510006C14E0 /* MediumSelectShoeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumSelectShoeIntent.swift; sourceTree = "<group>"; };
+		09630FF22D08B510006C14E0 /* MediumShoeSelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumShoeSelectionIntent.swift; sourceTree = "<group>"; };
 		09630FF42D08B684006C14E0 /* SmallStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallStatsTimelineProvider.swift; sourceTree = "<group>"; };
-		09630FF62D08B6C0006C14E0 /* SmallSelectShoeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallSelectShoeIntent.swift; sourceTree = "<group>"; };
+		09630FF62D08B6C0006C14E0 /* SmallShoeSelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallShoeSelectionIntent.swift; sourceTree = "<group>"; };
 		0969BDE52C58FE9400933469 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
@@ -212,6 +225,8 @@
 		097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		0980A7ED2BB42DB1000848A1 /* UserDefault+PropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefault+PropertyWrapper.swift"; sourceTree = "<group>"; };
 		098988012C9AD4D20036A253 /* RemindMeLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeLaterView.swift; sourceTree = "<group>"; };
+		098DC01C2D294620005BE50C /* RunTypeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeSelectionView.swift; sourceTree = "<group>"; };
+		0991B9032D3A7A3F006B56C2 /* FeatureAlertType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureAlertType.swift; sourceTree = "<group>"; };
 		0999BFF62B53FC13009BE901 /* ShoeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeImage.swift; sourceTree = "<group>"; };
 		09A7B9DA2C81F5E100822C03 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		09A81FE02CFB342300D6E72B /* WorkoutGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutGroup.swift; sourceTree = "<group>"; };
@@ -219,12 +234,17 @@
 		09A9FF262C9B49C4002507C9 /* PresetTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetTime.swift; sourceTree = "<group>"; };
 		09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeFormView.swift; sourceTree = "<group>"; };
 		09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWokoutsToShoeView.swift; sourceTree = "<group>"; };
+		09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeShoeNotSelectedView.swift; sourceTree = "<group>"; };
+		09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeNotAvailableView.swift; sourceTree = "<group>"; };
+		09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoShoeAvailableView.swift; sourceTree = "<group>"; };
 		09BFD2D22B974ECB009F4133 /* MediumShoeStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumShoeStatsWidget.swift; sourceTree = "<group>"; };
 		09BFD2D42B9753D7009F4133 /* ShoeStatsEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsEntity.swift; sourceTree = "<group>"; };
 		09BFD2DA2B978DD9009F4133 /* SmallShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallShoeStatsWidgetView.swift; sourceTree = "<group>"; };
 		09BFD2DC2B978E97009F4133 /* MediumStatsTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumStatsTimelineProvider.swift; sourceTree = "<group>"; };
 		09BFD2E82B979C81009F4133 /* ShoesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStore.swift; sourceTree = "<group>"; };
 		09BFD6ED2C4050DF00D112BF /* WearCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearCondition.swift; sourceTree = "<group>"; };
+		09BFEE872D21A35C00E911EC /* RunType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunType.swift; sourceTree = "<group>"; };
+		09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesSchemaV2.swift; sourceTree = "<group>"; };
 		09C171672C203D4A005FAB1A /* ShoeCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeCategory.swift; sourceTree = "<group>"; };
 		09C171682C203D4A005FAB1A /* SortingRule+Order.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SortingRule+Order.swift"; sourceTree = "<group>"; };
 		09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitOfMeasure.swift; sourceTree = "<group>"; };
@@ -361,6 +381,7 @@
 				09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */,
 				09402B7D2BFBC54800C943C1 /* RunningCategory.swift */,
 				09BFD6ED2C4050DF00D112BF /* WearCondition.swift */,
+				09BFEE872D21A35C00E911EC /* RunType.swift */,
 				09C171692C203D4A005FAB1A /* Filtering */,
 			);
 			path = Model;
@@ -421,8 +442,8 @@
 		0956EE3A2B4C06F70029445E /* NavigationStack */ = {
 			isa = PBXGroup;
 			children = (
-				0956EE382B4C057D0029445E /* TabItem.swift */,
 				0956815A2B46E207005E5FE6 /* NavigationRouter.swift */,
+				0991B9052D3A7AC3006B56C2 /* Model */,
 			);
 			path = NavigationStack;
 			sourceTree = "<group>";
@@ -430,9 +451,9 @@
 		09630FEF2D08B22C006C14E0 /* Small */ = {
 			isa = PBXGroup;
 			children = (
-				09630FF62D08B6C0006C14E0 /* SmallSelectShoeIntent.swift */,
-				09630FED2D08B219006C14E0 /* SmallShoeStatsWidget.swift */,
+				09630FF62D08B6C0006C14E0 /* SmallShoeSelectionIntent.swift */,
 				09630FF42D08B684006C14E0 /* SmallStatsTimelineProvider.swift */,
+				09630FED2D08B219006C14E0 /* SmallShoeStatsWidget.swift */,
 				09BFD2DA2B978DD9009F4133 /* SmallShoeStatsWidgetView.swift */,
 			);
 			path = Small;
@@ -441,7 +462,7 @@
 		09630FF12D08B255006C14E0 /* Medium */ = {
 			isa = PBXGroup;
 			children = (
-				09630FF22D08B510006C14E0 /* MediumSelectShoeIntent.swift */,
+				09630FF22D08B510006C14E0 /* MediumShoeSelectionIntent.swift */,
 				09BFD2DC2B978E97009F4133 /* MediumStatsTimelineProvider.swift */,
 				09BFD2D22B974ECB009F4133 /* MediumShoeStatsWidget.swift */,
 				09630FEB2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift */,
@@ -508,8 +529,18 @@
 				09BFD2E82B979C81009F4133 /* ShoesStore.swift */,
 				0944A7F82CE60AF20042081D /* ShoesMigrationPlan.swift */,
 				0944A7FB2CE60B1A0042081D /* ShoesSchemaV1.swift */,
+				09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */,
 			);
 			path = ShoesStore;
+			sourceTree = "<group>";
+		};
+		0991B9052D3A7AC3006B56C2 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0956EE382B4C057D0029445E /* TabItem.swift */,
+				0991B9032D3A7A3F006B56C2 /* FeatureAlertType.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		09A9FF222C9B48F4002507C9 /* Settings */ = {
@@ -563,12 +594,23 @@
 			path = ViewComponents;
 			sourceTree = "<group>";
 		};
+		09BEB99E2D40FC9E000A98EF /* HelperViews */ = {
+			isa = PBXGroup;
+			children = (
+				09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */,
+				09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */,
+				09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */,
+			);
+			path = HelperViews;
+			sourceTree = "<group>";
+		};
 		09BFD2D82B976E34009F4133 /* ShoeStatsWidget */ = {
 			isa = PBXGroup;
 			children = (
 				09BFD2D42B9753D7009F4133 /* ShoeStatsEntity.swift */,
 				09630FEF2D08B22C006C14E0 /* Small */,
 				09630FF12D08B255006C14E0 /* Medium */,
+				09BEB99E2D40FC9E000A98EF /* HelperViews */,
 			);
 			path = ShoeStatsWidget;
 			sourceTree = "<group>";
@@ -663,9 +705,9 @@
 			children = (
 				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
-				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				0948B5DC2C0E1C2A001A7745 /* Extensions */,
 				090D76ED2BB2DEE600D23762 /* Helpers */,
+				09E7EAB22B3B265B00BFAC16 /* Utilities */,
 				09D1AF922BD9636700C61E5D /* Core */,
 				09DE4A782B0D3F81001119E4 /* Preview Content */,
 				09DE4A762B0D3F81001119E4 /* Assets.xcassets */,
@@ -700,6 +742,7 @@
 				0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */,
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */,
+				098DC01C2D294620005BE50C /* RunTypeSelectionView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
 			);
@@ -843,22 +886,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09630FF72D08B6C0006C14E0 /* SmallSelectShoeIntent.swift in Sources */,
+				09630FF72D08B6C0006C14E0 /* SmallShoeSelectionIntent.swift in Sources */,
 				09BFD2D32B974ECB009F4133 /* MediumShoeStatsWidget.swift in Sources */,
 				09BFD2DB2B978DD9009F4133 /* SmallShoeStatsWidgetView.swift in Sources */,
+				09E16B552D37C0270073BB24 /* StoreManager.swift in Sources */,
 				09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */,
+				09BEB9982D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */,
 				09BFD2DD2B978E97009F4133 /* MediumStatsTimelineProvider.swift in Sources */,
 				09630FEC2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift in Sources */,
+				09BFEE882D21A35C00E911EC /* RunType.swift in Sources */,
 				0944A7FD2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
 				09C595802C649BDC00A006BE /* UnitOfMeasure.swift in Sources */,
 				093742962B7AAD9D008D96BD /* PreviewSampleData.swift in Sources */,
 				0937429A2B7AAED9008D96BD /* Formatters.swift in Sources */,
 				09BFD6EE2C4050DF00D112BF /* WearCondition.swift in Sources */,
 				093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */,
-				09630FF32D08B510006C14E0 /* MediumSelectShoeIntent.swift in Sources */,
+				09630FF32D08B510006C14E0 /* MediumShoeSelectionIntent.swift in Sources */,
 				094D13832C1606F1003C6F50 /* Double.swift in Sources */,
 				09630FF52D08B684006C14E0 /* SmallStatsTimelineProvider.swift in Sources */,
 				09630FEE2D08B219006C14E0 /* SmallShoeStatsWidget.swift in Sources */,
+				09BEB9932D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */,
+				09BEB99B2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */,
 				0944A7F92CE60AF20042081D /* ShoesMigrationPlan.swift in Sources */,
 				09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */,
 				09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */,
@@ -866,6 +914,7 @@
 				095D8B612BCD6B61001D7592 /* RoundedRectangleProgressView.swift in Sources */,
 				093742972B7AAD9F008D96BD /* ModelContainerPreview.swift in Sources */,
 				093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */,
+				09BFEE8C2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */,
 				09BFD2D52B9753D7009F4133 /* ShoeStatsEntity.swift in Sources */,
 				093742892B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift in Sources */,
 				09402B812BFD0EFA00C943C1 /* PersonalBest.swift in Sources */,
@@ -883,6 +932,7 @@
 				092DDB6E2CBC3CD000263F06 /* StoreManager.swift in Sources */,
 				09A9FF272C9B49C4002507C9 /* PresetTime.swift in Sources */,
 				0944A7F22CE23D720042081D /* SFSafariViewController.swift in Sources */,
+				0991B9042D3A7A3F006B56C2 /* FeatureAlertType.swift in Sources */,
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */,
 				0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */,
@@ -893,6 +943,7 @@
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
 				092DDB762CCA63CF00263F06 /* ShoeSearchListView.swift in Sources */,
 				09A81FE12CFB342300D6E72B /* WorkoutGroup.swift in Sources */,
+				09BFEE8B2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */,
 				0944A7F62CE3E25C0042081D /* WelcomeItem.swift in Sources */,
 				09D9B5C62C08EA870016825A /* BlurredCircleButtonStyle.swift in Sources */,
 				09B3A5A32CD25CE70007F375 /* ShoeFormView.swift in Sources */,
@@ -919,6 +970,7 @@
 				09BFD6EF2C4050DF00D112BF /* WearCondition.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
+				09BFEE892D21A35C00E911EC /* RunType.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
 				097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */,
@@ -929,18 +981,22 @@
 				09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */,
 				092DDB782CCA63F000263F06 /* ShoesView.swift in Sources */,
 				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
+				09BEB99A2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */,
 				094D138B2C178A00003C6F50 /* OnboardingScreen.swift in Sources */,
 				0944A7FC2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
+				09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,
 				096D36A42B20B1C900C78453 /* Formatters.swift in Sources */,
 				09C595812C649BDC00A006BE /* UnitOfMeasure.swift in Sources */,
 				09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */,
 				09E2F3512B1668D700D16101 /* ShoeListItem.swift in Sources */,
+				09BEB9972D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */,
 				09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */,
 				09D6B8FA2C3C2856004EDA01 /* ShoeFormViewModel.swift in Sources */,
 				0936FF532BD14CA300BF5798 /* StrechyHeaderViewModifier.swift in Sources */,
 				094D138F2C19EF55003C6F50 /* OnboardingPage.swift in Sources */,
 				0944A7F42CE3CE450042081D /* WelcomePage.swift in Sources */,
+				098DC01D2D294620005BE50C /* RunTypeSelectionView.swift in Sources */,
 				0936FF4C2BD12D9800BF5798 /* ShoesListView.swift in Sources */,
 				09BFD2E92B979C81009F4133 /* ShoesStore.swift in Sources */,
 				0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */,
@@ -993,7 +1049,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1026,7 +1082,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

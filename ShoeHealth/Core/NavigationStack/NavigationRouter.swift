@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 import OSLog
+import Combine
 
 private let logger = Logger(subsystem: "Shoe Health", category: "NavigationRouter")
 
@@ -37,8 +38,49 @@ final class NavigationRouter: ObservableObject {
     
     @Published var showSheet: SheetType?
     @Published var showShoeDetails: Shoe?
-    @Published var showLimitAlert: Bool = false
     @Published var showPaywall: Bool = false
+    
+    @Published var showFeatureRestrictedAlert: Bool = false
+    var featureAlert: FeatureAlertType? = nil
+    
+    private var cancellables = Set<AnyCancellable>()
+    private let queue = DispatchQueue(label: "com.shoehealth.navigationrouter.sync.queue", attributes: .concurrent)
+    
+    init() {
+        setupBindings()
+    }
+    
+    private func setupBindings() {
+        $shoesNavigationPath
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [weak self] newPath in
+                self?.synchronizeShoesStack(with: newPath)
+            }
+            .store(in: &cancellables)
+        
+        $workoutsNavigationPath
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [weak self] newPath in
+                self?.synchronizeWorkoutsStack(with: newPath)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func synchronizeShoesStack(with newPath: NavigationPath) {
+        queue.async(flags: .barrier) {
+            if newPath.count < self.shoesStack.count {
+                self.shoesStack.removeLast(self.shoesStack.count - newPath.count)
+            }
+        }
+    }
+    
+    private func synchronizeWorkoutsStack(with newPath: NavigationPath) {
+        queue.async(flags: .barrier) { // Asigură acces exclusiv la aceste proprietăți
+            if newPath.count < self.workoutsStack.count {
+                self.workoutsStack.removeLast(self.workoutsStack.count - newPath.count)
+            }
+        }
+    }
 }
 
 // MARK: - Navigation Handling
@@ -57,9 +99,7 @@ extension NavigationRouter {
             case .shoes:
                 shoesNavigationPath.append(category)
                 shoesStack.append(category)
-            case .workouts:
-                return
-            case .settings:
+            case .workouts, .settings:
                 return
             }
         case .shoe(let shoe):
@@ -67,6 +107,7 @@ extension NavigationRouter {
             case .shoes:
                 shoesNavigationPath.append(shoe)
                 shoesStack.append(shoe)
+                
             case .workouts:
                 workoutsNavigationPath.append(shoe)
                 workoutsStack.append(shoe)
@@ -74,6 +115,7 @@ extension NavigationRouter {
                 return
             }
         }
+        
     }
     
     func navigateBack() {
@@ -106,6 +148,17 @@ extension NavigationRouter {
         }
     }
     
+    func isShoeInCurrentStack(_ shoeID: UUID) -> Bool {
+        switch selectedTab {
+        case .shoes:
+            return shoesStack.contains(where: { ($0 as? Shoe)?.id == shoeID })
+        case .workouts:
+            return workoutsStack.contains(where: { ($0 as? Shoe)?.id == shoeID })
+        case .settings:
+            return false
+        }
+    }
+    
     func deleteShoe(_ shoeID: UUID) {
         if showShoeDetails?.id == shoeID {
             showShoeDetails = nil
@@ -115,15 +168,21 @@ extension NavigationRouter {
         removeShoe(from: &workoutsStack, navigationPath: &workoutsNavigationPath, shoeID: shoeID)
     }
     
+    func showFeatureRestrictedAlert(_ alert: FeatureAlertType) {
+        featureAlert = alert
+        showFeatureRestrictedAlert.toggle()
+    }
+    
     private func removeShoe(from stack: inout [AnyHashable], navigationPath: inout NavigationPath, shoeID: UUID) {
         guard let _ = stack.first(where: { ($0 as? Shoe)?.id == shoeID }) else {
-            logger.debug("Shoe not found.")
             return
         }
         
         logger.debug("Shoe found.")
         
-        navigationPath.removeLast()
+        if !navigationPath.isEmpty {
+            navigationPath.removeLast()
+        }
     }
 }
 
@@ -140,9 +199,9 @@ extension NavigationRouter {
     /// The `SheetType` enum conforms to `Identifiable` by providing a unique `id` for each case, which is used to
     /// identify the sheet currently being presented. Additionally, it conforms to `Equatable` to facilitate comparison
     /// of different sheet types, enabling smooth transitions and updates to the UI.
-    enum SheetType: Identifiable {
+    enum SheetType: Identifiable, Equatable {
         case addShoe
-        case setDefaultShoe
+        case setDefaultShoe(forRunType: RunType)
         case addWorkoutToShoe(workoutID: UUID)
         case addMultipleWorkoutsToShoe(workoutIDs: [UUID])
         
@@ -150,8 +209,10 @@ extension NavigationRouter {
             switch self {
             case .addShoe:
                 return UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-            case .setDefaultShoe:
-                return UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+            case .setDefaultShoe(let runType):
+                let paddedHash = String(format: "%032x", runType.hashValue) // Create a 32-character hexadecimal string
+                let uuidString = "\(paddedHash.prefix(8))-\(paddedHash.dropFirst(8).prefix(4))-\(paddedHash.dropFirst(12).prefix(4))-\(paddedHash.dropFirst(16).prefix(4))-\(paddedHash.dropFirst(20).prefix(12))"
+                return UUID(uuidString: uuidString)!
             case .addWorkoutToShoe(let workoutID):
                 return workoutID
             case .addMultipleWorkoutsToShoe(let workoutIDs):
@@ -161,8 +222,10 @@ extension NavigationRouter {
         
         static func == (lhs: SheetType, rhs: SheetType) -> Bool {
             switch (lhs, rhs) {
-            case (.addShoe, .addShoe), (.setDefaultShoe, .setDefaultShoe):
+            case (.addShoe, .addShoe):
                 return true
+            case let (.setDefaultShoe(runType1), .setDefaultShoe(runType2)):
+                return runType1 == runType2
             case let (.addWorkoutToShoe(workout1), .addWorkoutToShoe(workout2)):
                 return workout1 == workout2
             case let (.addMultipleWorkoutsToShoe(workouts1), .addMultipleWorkoutsToShoe(workouts2)):

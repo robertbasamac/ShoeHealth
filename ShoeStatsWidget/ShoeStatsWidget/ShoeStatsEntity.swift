@@ -27,10 +27,11 @@ struct ShoeStatsEntity: AppEntity {
     var averageDistance: Double
     var averagePace: (minutes: Int, seconds: Int)
     var averageDuration: String
-    var lastRunDate: Date?
     var wearPercentage: Double
     var wearPercentageAsString: String
     var wearColor: Color
+    var runType: RunType?
+    var url: URL?
     
     init(
         id: UUID,
@@ -38,6 +39,7 @@ struct ShoeStatsEntity: AppEntity {
         model: String,
         nickname: String,
         lifespanDistance: Double,
+        runType: Bool,
         totalDistance: Double,
         totalDuration: String,
         averageDistance: Double,
@@ -46,7 +48,8 @@ struct ShoeStatsEntity: AppEntity {
         lastActivityDate: Date,
         wearPercentage: Double,
         wearPercentageAsString: String,
-        wearColor: Color
+        wearColor: Color,
+        url: URL?
     ) {
         self.id = id
         self.brand = brand
@@ -58,10 +61,10 @@ struct ShoeStatsEntity: AppEntity {
         self.averageDistance = averageDistance
         self.averagePace = averagePace
         self.averageDuration = averageDiration
-        self.lastRunDate = lastActivityDate
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
         self.wearColor = wearColor
+        self.url = url
     }
     
     init(from shoe: Shoe) {
@@ -75,10 +78,10 @@ struct ShoeStatsEntity: AppEntity {
         self.averageDistance = shoe.averageDistance
         self.averagePace = shoe.averagePace
         self.averageDuration = shoe.formatterAverageDuration
-        self.lastRunDate = shoe.lastActivityDate
         self.wearPercentage = shoe.wearPercentage
         self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
         self.wearColor = shoe.wearColor
+        self.url = shoe.url
     }
     
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"
@@ -94,7 +97,7 @@ struct ShoeStatsEntity: AppEntity {
 struct ShoeStatsQuery: EntityStringQuery {
     
     func entities(matching string: String) async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { $0.brand.contains(string) || $0.model.contains(string) },
@@ -108,7 +111,7 @@ struct ShoeStatsQuery: EntityStringQuery {
     }
     
     func entities(for identifiers: [ShoeStatsEntity.ID]) async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(predicate: #Predicate { identifiers.contains($0.id) },
@@ -122,7 +125,7 @@ struct ShoeStatsQuery: EntityStringQuery {
     }
     
     func suggestedEntities() async -> [ShoeStatsEntity] {
-        let modelContext = ModelContext(ShoesStore.container)
+        let modelContext = ModelContext(ShoesStore.shared.modelContainer)
         
         do {
             let shoes = try modelContext.fetch(FetchDescriptor<Shoe>(sortBy: [.init(\.brand), .init(\.model)]))

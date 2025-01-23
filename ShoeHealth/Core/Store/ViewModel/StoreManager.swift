@@ -26,19 +26,46 @@ enum ProductID: String, CaseIterable {
 // MARK: - StoreManager
 
 final class StoreManager: ObservableObject {
+        
+    private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
     
     @Published private(set) var lifetimeProduct: Product?
     @Published private(set) var subscriptionProducts: [Product] = []
     
     @Published private(set) var purchasedProducts: [Product] = []
-    @Published private(set) var hasFullAccess: Bool = false
+    
+    @Published private(set) var hasFullAccess: Bool {
+        didSet {
+            defaults?.set(hasFullAccess, forKey: "IS_PREMIUM_USER")
+        }
+    }
     
     @Published private(set) var expirationDate: Date?
     @Published private(set) var willRenew: Bool = false
     
     private var updateListenerTask: Task<Void, Error>? = nil
     
+    // MARK: Premium Features
+    
+    struct PremiumFeature: Identifiable, Hashable {
+        let id = UUID()
+        let title: String
+    }
+    
+    /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
+    static let shoesLimit: Int = 5
+    
+    /// - `premiumFeatures`: an array of features that the user can get when purchasing a subscription
+    static let premiumFeatures: [PremiumFeature] = [
+        PremiumFeature(title: "Unlimited Shoes"),
+        PremiumFeature(title: "Default Shoes for multiple run types")
+    ]
+    
+    // MARK: - init and deinit
+    
     init() {
+        self.hasFullAccess = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
+        
         updateListenerTask = listenForTransactions()
         
         Task {
@@ -50,6 +77,8 @@ final class StoreManager: ObservableObject {
     deinit {
         updateListenerTask?.cancel()
     }
+    
+    // MARK: - Store Methods
     
     func listenForTransactions() -> Task<Void, Error> {
         return Task(priority: .background) {

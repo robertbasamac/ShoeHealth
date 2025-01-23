@@ -84,7 +84,7 @@ extension RemindMeLaterView {
                     .padding(8)
                     .frame(height: 80)
                     .frame(maxWidth: .infinity)
-                    .background(Color(uiColor: .secondarySystemBackground))
+                    .background(Color.theme.containerBackground)
                     .foregroundColor(
                         selection == PresetTime.custom(
                             value: customValue,
@@ -93,7 +93,7 @@ extension RemindMeLaterView {
                     )
                     .cornerRadius(10)
                     .overlay {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .stroke(
                                 selection == PresetTime.custom(
                                     value: customValue,
@@ -102,7 +102,7 @@ extension RemindMeLaterView {
                                 lineWidth: 2
                             )
                             .padding(1)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                     .onTapGesture {
                         isCustomInputFocused = true

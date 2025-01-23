@@ -16,6 +16,7 @@ class AppDelegate: NSObject {
     
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
+    var storeManager: StoreManager?
     
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
 }
@@ -27,7 +28,7 @@ extension AppDelegate: UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         
-        NotificationManager.shared.setActionableNotificationTypes()
+        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager?.hasFullAccess ?? false)
         HealthManager.shared.startObserving()
         
         return true
@@ -45,14 +46,42 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         if categoryIdentifier == "NEW_RUNNING_WORKOUT_AVAILABLE" {
             guard let stringWorkoutID = userInfo["WORKOUT_ID"] as? String,
-                  let workoutID = UUID(uuidString: stringWorkoutID)
+                  let workoutID =  UUID(uuidString: stringWorkoutID)
             else { return }
             
             switch response.actionIdentifier {
-            case "DEFAULT_SHOE_ACTION":
-                logger.debug("\"Use default shoe\" action pressed.")
+            case "DEFAULT_SHOE_ACTION_DAILY":
+                logger.debug("\"Use Daily Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TEMPO":
+                logger.debug("\"Use Tempo Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_LONG":
+                logger.debug("\"Use Long Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_RACE":
+                logger.debug("\"Use Race default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TRAIL":
+                logger.debug("\"Use Train Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
                 
                 break
                 
@@ -83,10 +112,39 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             guard !workoutIDs.isEmpty else { return }
                         
             switch response.actionIdentifier {
-            case "DEFAULT_SHOE_ACTION":
-                logger.debug("\"Use default shoe\" action pressed.")
+            case "DEFAULT_SHOE_ACTION_DAILY":
+                logger.debug("\"Use Daily Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TEMPO":
+                logger.debug("\"Use Tempo Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_LONG":
+                logger.debug("\"Use Long Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_RACE":
+                logger.debug("\"Use Race default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
+                break
+                
+            case "DEFAULT_SHOE_ACTION_TRAIL":
+                logger.debug("\"Use Train Run default shoe\" action pressed.")
+                
+                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                
                 break
                 
             case "REMIND_ME_LATER":
@@ -135,7 +193,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Set Default Shoe\" notification pressed.")
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.navigationRouter?.showSheet = .setDefaultShoe
+                    self.navigationRouter?.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
                 break
                 
@@ -147,8 +205,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler()
     }
     
-    private func handleDefaultShoeAction(forWorkoutIDs workoutIDs: [UUID]) {
-        if let shoe = shoesViewModel?.getDefaultShoe() {
+    private func handleDefaultShoeAction(for runType: RunType, forWorkoutIDs workoutIDs: [UUID]) {
+        if let shoe = shoesViewModel?.getDefaultShoe(for: runType) {
             Task {
                 await shoesViewModel?.add(workoutIDs: workoutIDs, toShoe: shoe.id)
             }
@@ -178,17 +236,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     private func handleRetireShoeAction(forShoeID shoeID: UUID) {
         guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
         
-        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
         
         shoesViewModel?.retireShoe(shoeID)
         
-        if setNewDefaultShoe {
+        if setNewDefaultShoe && (!(shoesViewModel?.shoes.isEmpty ?? true)) {
             logger.debug("Scheduling Set New Default Shoe notification")
             
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
-            NotificationManager.shared.scheduleSetDefaultShoeNotification(at: dateComponents)
+            NotificationManager.shared.scheduleSetDefaultShoeNotification(for: shoe.defaultRunTypes, at: dateComponents)
         }
     }
 }

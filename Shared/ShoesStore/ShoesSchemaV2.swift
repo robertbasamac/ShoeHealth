@@ -1,26 +1,24 @@
 //
-//  ShoesSchemaV1.swift
+//  ShoesSchemaV2.swift
 //  ShoeHealth
 //
-//  Created by Robert Basamac on 14.11.2024.
+//  Created by Robert Basamac on 29.12.2024.
 //
 
 import Foundation
 import SwiftData
 import SwiftUI
 
-enum ShoesSchemaV1: @preconcurrency VersionedSchema {
+enum ShoesSchemaV2: @preconcurrency VersionedSchema {
     
-    @MainActor
-    static let versionIdentifier: Schema.Version = Schema.Version(1, 0, 0)
+    @MainActor static let versionIdentifier: Schema.Version = Schema.Version(2, 0, 0)
     
     static let models: [any PersistentModel.Type] = [Shoe.self]
-    
 }
 
-// MARK: ShoeSchemaV1 Model
+// MARK: ShoeSchemaV2 Model
 
-extension ShoesSchemaV1 {
+extension ShoesSchemaV2 {
     
     @Model
     final class Shoe {
@@ -30,41 +28,57 @@ extension ShoesSchemaV1 {
         var model: String = ""
         var nickname: String = ""
         var lifespanDistance: Double = 0
+        var aquisitionDate: Date = Date.now
         var totalDistance: Double = 0
         var totalDuration: Double = 0
-        var aquisitionDate: Date = Date.now
-        var retireDate: Date?
         var lastActivityDate: Date?
         var isRetired: Bool = false
+        var retireDate: Date?
         var isDefaultShoe: Bool = false
+        var defaultRunTypes: [RunType] = []
         var workouts: [UUID] = []
         var personalBests: [RunningCategory: PersonalBest?] = [:]
         var totalRuns: [RunningCategory: Int] = [:]
         
         init(
             id: UUID = .init(),
-            nickname: String,
+            image: Data? = nil,
             brand: String,
             model: String,
+            nickname: String,
             lifespanDistance: Double,
-            currentDistance: Double = 0,
-            aquisitionDate: Date,
+            aquisitionDate: Date = Date.now,
+            totalDistance: Double = 0,
+            totalDuration: Double = 0,
+            lastActivityDate: Date? = nil,
+            isRetired: Bool = false,
+            retireDate: Date? = nil,
             isDefaultShoe: Bool = false,
-            image: Data? = nil
+            defaultRunTypes: [RunType] = [],
+            workouts: [UUID] = [],
+            personalBests: [RunningCategory: PersonalBest?] = [:],
+            totalRuns: [RunningCategory: Int] = [:]
         ) {
             self.id = id
-            self.nickname = nickname
+            self.image = image
             self.brand = brand
             self.model = model
+            self.nickname = nickname
             self.lifespanDistance = lifespanDistance
-            self.totalDistance = currentDistance
             self.aquisitionDate = aquisitionDate
-            self.isRetired = false
+            self.totalDistance = totalDistance
+            self.totalDuration = totalDuration
+            self.lastActivityDate = lastActivityDate
+            self.isRetired = isRetired
+            self.retireDate = retireDate
             self.isDefaultShoe = isDefaultShoe
-            self.image = image
+            self.defaultRunTypes = isDefaultShoe ? (defaultRunTypes.isEmpty ? [.daily] : defaultRunTypes) : []
+            self.workouts = workouts
+            self.personalBests = personalBests
+            self.totalRuns = totalRuns
         }
         
-        // MARK: ShoeSchemaV1 Shoe - Transient properties
+        // MARK: ShoeSchemaV2 Shoe - Transient properties
         
         var wearPercentage: Double {
             return totalDistance / lifespanDistance
@@ -101,13 +115,16 @@ extension ShoesSchemaV1 {
             }
         }
         
+        func isDefaultShoe(for runType: RunType) -> Bool {
+            return self.isDefaultShoe && self.defaultRunTypes.contains(runType)
+        }
+        
         var averageDuration: Double {
             guard self.workouts.count != 0 else {
                 return 0
             }
             return self.totalDuration / Double(self.workouts.count)
         }
-            
         
         var averageDistance: Double {
             guard self.workouts.count != 0 else {
@@ -152,18 +169,62 @@ extension ShoesSchemaV1 {
             }
         }
         
-        // MARK: ShoeSchemaV1 Shoe - Preview data
+        var url: URL? {
+            URL(string: "shoeHealthApp://\(self.brand)-\(self.model)-\(self.id.uuidString.prefix(8))")
+        }
+        
+        // MARK: ShoeSchemaV2 Shoe - Preview data
         
         static var previewShoe: Shoe {
-            Shoe(nickname: "Turbo", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData())
+            Shoe(
+                image: UIImage(named: "pegasus")?.pngData(),
+                brand: "Nike",
+                model: "Pegasus Turbo",
+                nickname: "Next Nature",
+                lifespanDistance: 500,
+                totalDistance: 250,
+                defaultRunTypes: [.daily]
+            )
         }
         
         static var previewShoes: [Shoe] {
             [
-                Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, aquisitionDate: Date.now, isDefaultShoe: false, image: UIImage(named: "pegasus")?.pngData()),
-                Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature Bla bla bla", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData()),
-                Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 745, aquisitionDate: Date.now, isDefaultShoe: false),
-                Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 853.43, aquisitionDate: Date.now, isDefaultShoe: false)
+                Shoe(
+                    image: UIImage(named: "pegasus")?.pngData(),
+                    brand: "Nike",
+                    model: "Pegasus 40",
+                    nickname: "Shoey",
+                    lifespanDistance: 600,
+                    isDefaultShoe: true,
+                    defaultRunTypes: [.daily]
+                ),
+                Shoe(
+                    image: UIImage(named: "pegasus")?.pngData(),
+                    brand: "Nike",
+                    model: "Pegasus Turbo",
+                    nickname: "Next Nature",
+                    lifespanDistance: 500,
+                    totalDistance: 250,
+                    defaultRunTypes: [.daily]
+                ),
+                Shoe(
+                    image: UIImage(named: "pegasus")?.pngData(),
+                    brand: "Nike",
+                    model: "Alphafly 3",
+                    nickname: "Fasty",
+                    lifespanDistance: 800,
+                    totalDistance: 745,
+                    defaultRunTypes: [.race]
+                ),
+                Shoe(
+                    image: UIImage(named: "pegasus")?.pngData(),
+                    brand: "Nike",
+                    model: "Streakfly 2",
+                    nickname: "5k love",
+                    lifespanDistance: 700,
+                    totalDistance: 621,
+                    defaultRunTypes: [.tempo]
+                )
             ]
         }
     }

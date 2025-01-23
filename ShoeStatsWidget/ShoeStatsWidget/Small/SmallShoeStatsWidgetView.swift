@@ -1,5 +1,5 @@
 //
-//  MediumShoeStatsWidgetEntryView.swift
+//  SmallShoeStatsWidgetView.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -15,12 +15,24 @@ struct SmallShoeStatsWidgetView: View {
     var entry: SmallShoeStatsWidgetEntry
     
     var body: some View {
-        if let stats = entry.shoe {
-            SmallShoeStatsSnapshotWidgetView(shoe: stats)
+        if entry.isPremium {
+            if let shoe = entry.shoe {
+                return AnyView(SmallShoeStatsSnapshotWidgetView(shoe: shoe))
+            } else if let runType = entry.runType {
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
+            } else {
+                return AnyView(NoShoeAvailableView())
+            }
+        } else if let runType = entry.runType, runType != .daily {
+            return AnyView(RunTypeNotAvailableView(runType: runType))
         } else {
-            Text("No Shoe")
-                .foregroundStyle(.secondary)
-                .containerBackground(.fill, for: .widget)
+            if let shoe = entry.shoe {
+                return AnyView(SmallShoeStatsSnapshotWidgetView(shoe: shoe))
+            } else if let runType = entry.runType {
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
+            } else {
+                return AnyView(NoShoeAvailableView())
+            }
         }
     }
 }
@@ -30,9 +42,6 @@ struct SmallShoeStatsWidgetView: View {
 struct SmallShoeStatsSnapshotWidgetView : View {
     
     var shoe: ShoeStatsEntity
-    
-    @State private var height: CGFloat = 0
-    @State private var width: CGFloat = 0
     
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
@@ -85,6 +94,7 @@ struct SmallShoeStatsSnapshotWidgetView : View {
                 )
             }
         }
+        .widgetURL(shoe.url)
     }
 }
     

@@ -21,8 +21,7 @@ extension View {
     
     func roundedContainer() -> some View {
         self
-            .background(Color(uiColor: .secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .background(Color.theme.containerBackground, in: .rect(cornerRadius: 10))
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
     }

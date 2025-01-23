@@ -193,7 +193,7 @@ extension ShoeDetailView {
                         .frame(width: 44, height: 44)
                     
                     VStack {
-                        Text(!shoe.isRetired ? "Retired" : "Critical")
+                        Text(shoe.isRetired ? "Retired" : shoe.wearCondition.name)
                             .font(.subheadline)
                             .fontWeight(.semibold)
                     }
@@ -401,8 +401,7 @@ extension ShoeDetailView {
                     WorkoutListItem(workout: workout)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
-                        .background(Color(uiColor: .secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
             .padding(.horizontal, 20)
@@ -459,29 +458,31 @@ extension ShoeDetailView {
     }
     
     private func retireShoe() {
-        let setNewDefaultShoe = shoe.isDefaultShoe && !shoe.isRetired
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
         
         withAnimation {
             shoesViewModel.retireShoe(shoe.id)
         }
         
-        if setNewDefaultShoe {
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationRouter.showSheet = .setDefaultShoe
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
             }
         }
     }
     
     private func deleteShoe() {
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
+        
         withAnimation {
             shoesViewModel.deleteShoe(shoe.id)
         }
         
         navigationRouter.deleteShoe(shoe.id)
         
-        if shoe.isDefaultShoe && !shoesViewModel.shoes.isEmpty {
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationRouter.showSheet = .setDefaultShoe
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
             }
         }
     }

@@ -15,24 +15,44 @@ struct MediumShoeStatsWidgetView: View {
     var entry: MediumShoeStatsWidgetEntry
     
     var body: some View {
-        if let stats = entry.shoe {
-            MediumShoeStatsSnapshotWidgetView(
-                shoe: stats,
-                firstStat: entry.firstStat,
-                secondStat: entry.secondStat,
-                unitSymbol: entry.unitSymbol
-            )
+        if entry.isPremium {
+            if let shoe = entry.shoe {
+                return AnyView(
+                    MediumShoeStatsSnapshotWidgetView(
+                        shoe: shoe,
+                        firstStat: entry.firstStat,
+                        secondStat: entry.secondStat,
+                        unitSymbol: entry.unitSymbol
+                    )
+                )
+            } else if let runType = entry.runType {
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
+            } else {
+                return AnyView(NoShoeAvailableView())
+            }
+        } else if let runType = entry.runType, runType != .daily {
+            return AnyView(RunTypeNotAvailableView(runType: runType))
         } else {
-            Text("No Shoe")
-                .foregroundStyle(.secondary)
-                .containerBackground(.fill, for: .widget)
+            if let shoe = entry.shoe {
+                return AnyView(
+                    MediumShoeStatsSnapshotWidgetView(
+                        shoe: shoe,
+                        firstStat: entry.firstStat,
+                        secondStat: entry.secondStat,
+                        unitSymbol: entry.unitSymbol
+                ))
+            } else if let runType = entry.runType {
+                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
+            } else {
+                return AnyView(NoShoeAvailableView())
+            }
         }
     }
 }
 
 // MARK: - Snapshot Widget View
 
-struct MediumShoeStatsSnapshotWidgetView : View {
+struct MediumShoeStatsSnapshotWidgetView: View {
     
     var shoe: ShoeStatsEntity
     var firstStat: ShoeStatMetric
@@ -107,6 +127,7 @@ struct MediumShoeStatsSnapshotWidgetView : View {
                 )
             }
         }
+        .widgetURL(shoe.url)
     }
 }
 

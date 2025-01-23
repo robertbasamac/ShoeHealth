@@ -29,6 +29,7 @@ struct SettingsTab: View {
             unlockFullAccessSection
         }
         .listSectionSpacing(.compact)
+        .navigationTitle("Settings")
         .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
             unitOfMeasure = newValue
         }
@@ -161,7 +162,7 @@ extension SettingsTab {
         SettingsTab()
             .navigationTitle("Settings")
             .environmentObject(NavigationRouter())
-            .environment(SettingsManager.shared)
             .environmentObject(StoreManager())
+            .environment(SettingsManager.shared)
     }
 }
