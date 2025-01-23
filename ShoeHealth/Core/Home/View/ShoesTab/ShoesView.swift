@@ -130,6 +130,12 @@ extension ShoesView {
                 ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
                     .disabled(isShoeRestricted(shoe.id))
+                    .contextMenu {
+                        retireReinstateButton(shoe)
+                        deleteButton(shoe)
+                    } preview: {
+                        contextMenuPreview(shoe)
+                    }
                     .onTapGesture {
                         dismissSearch()
                         navigationRouter.navigate(to: .shoe(shoe))
@@ -244,48 +250,17 @@ extension ShoesView {
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(isShoeRestricted(shoe.id))
                         .contextMenu {
-//                            if !shoe.isDefaultShoe && !shoe.defaultRunTypes.contains(.daily) && !isShoeRestricted(shoe.id) {
-                                Button {
-                                    shoeForDefaultSelection = shoe
-                                } label: {
-                                    Label("Set Default", systemImage: "shoe.2")
-                                }
-//                            }
-                            
-                            Button {
-                                let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
-
-                                withAnimation {
-                                    shoesViewModel.retireShoe(shoe.id)
-                                }
-                                
-                                if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                                    }
-                                }
-                            } label: {
-                                if shoe.isRetired {
-                                    Label("Reinstate", systemImage: "bolt.fill")
-                                } else {
-                                    Label("Retire", systemImage: "bolt.slash.fill")
-                                }
+                            if storeManager.hasFullAccess ||
+                                (!storeManager.hasFullAccess &&
+                                 !shoe.isDefaultShoe &&
+                                 !shoe.defaultRunTypes.contains(.daily) &&
+                                 !isShoeRestricted(shoe.id)) {
+                                setDefaultShoeButton(shoe)
                             }
-                            
-                            Button(role: .destructive) {
-                                shoeForDeletion = shoe
-                                showDeletionConfirmation.toggle()
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                            retireReinstateButton(shoe)
+                            deleteButton(shoe)
                         } preview: {
-                            if shoe.image == nil {
-                                ShoeCell(shoe: shoe, width: 150, hideImage: true, displayProgress: false, reserveSpace: false)
-                                    .padding(10)
-                            } else {
-                                ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
-                                    .padding(10)
-                            }
+                            contextMenuPreview(shoe)
                         }
                         .onTapGesture {
                             dismissSearch()
@@ -468,6 +443,48 @@ extension ShoesView {
     }
     
     @ViewBuilder
+    private func setDefaultShoeButton(_ shoe: Shoe) -> some View {
+        Button {
+            shoeForDefaultSelection = shoe
+        } label: {
+            Label("Set Default", systemImage: "shoe.2")
+        }
+    }
+    
+    @ViewBuilder
+    private func retireReinstateButton(_ shoe: Shoe) -> some View {
+        Button {
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+
+            withAnimation {
+                shoesViewModel.retireShoe(shoe.id)
+            }
+            
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+        } label: {
+            if shoe.isRetired {
+                Label("Reinstate", systemImage: "bolt.fill")
+            } else {
+                Label("Retire", systemImage: "bolt.slash.fill")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func deleteButton(_ shoe: Shoe) -> some View {
+        Button(role: .destructive) {
+            shoeForDeletion = shoe
+            showDeletionConfirmation.toggle()
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+    }
+    
+    @ViewBuilder
     private func runTypeButton(_ runType: RunType) -> some View {
         Button {
             withAnimation {
@@ -522,6 +539,17 @@ extension ShoesView {
                     navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                 }
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func contextMenuPreview(_ shoe: Shoe) -> some View {
+        if shoe.image == nil {
+            ShoeCell(shoe: shoe, width: 150, hideImage: true, displayProgress: false, reserveSpace: false)
+                .padding(10)
+        } else {
+            ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
+                .padding(10)
         }
     }
     
@@ -580,27 +608,31 @@ extension ShoesView {
 // MARK: - Preview
 
 #Preview("Filled") {
-    NavigationStack {
-        ShoesTab()
-            .navigationTitle("Shoes")
-            .modelContainer(PreviewSampleData.container)
-            .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager())
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
-            .environment(SettingsManager.shared)
-            .environment(HealthManager.shared)
+    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
+        NavigationStack {
+            ShoesTab()
+                .navigationTitle("Shoes")
+                .modelContainer(PreviewSampleData.container)
+                .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager())
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(SettingsManager.shared)
+                .environment(HealthManager.shared)
+        }
     }
 }
 
 #Preview("Empty") {
-    NavigationStack {
-        ShoesTab()
-            .navigationTitle("Shoes")
-            .modelContainer(PreviewSampleData.emptyContainer)
-            .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager())
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
-            .environment(SettingsManager.shared)
-            .environment(HealthManager.shared)
+    ModelContainerPreview(PreviewSampleData.emptyInMemoryContainer) {
+        NavigationStack {
+            ShoesTab()
+                .navigationTitle("Shoes")
+                .modelContainer(PreviewSampleData.emptyContainer)
+                .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager())
+                .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+                .environment(SettingsManager.shared)
+                .environment(HealthManager.shared)
+        }
     }
 }

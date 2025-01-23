@@ -24,6 +24,8 @@ struct SettingsTab: View {
             
             remindMeLaterSection
             
+            faqSection
+            
             notificationsSection
             
             unlockFullAccessSection
@@ -86,6 +88,15 @@ extension SettingsTab {
         } footer: {
             Text(Prompts.Settings.remindMeLater)
                 .font(.footnote)
+        }
+    }
+    
+    @ViewBuilder
+    private var faqSection: some View {
+        Section {
+            NavigationLink(destination: FAQView()) {
+                Text("FAQ")
+            }
         }
     }
     

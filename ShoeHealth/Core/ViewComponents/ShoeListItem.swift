@@ -75,7 +75,7 @@ extension ShoeListItem {
     
     @ViewBuilder
     private var detailsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 2) {
             Text(shoe.nickname)
                 .font(.headline)
                 .italic()
