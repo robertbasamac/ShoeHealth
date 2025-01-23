@@ -122,23 +122,28 @@ final class ShoesViewModel {
     }
     
     func getRecentlyUsedShoes(exclude excludedShoes: [UUID] = [], prefix: Int = 5) -> [Shoe] {
-        let recentlyUsedShoes: [Shoe] = self.shoes
-            .filter { !excludedShoes.contains($0.id) && $0.lastActivityDate != nil}
-            .sorted { $0.lastActivityDate! > $1.lastActivityDate! }
-                
-        return Array(recentlyUsedShoes.prefix(prefix))
+        guard prefix > 0 else { return [] }
+
+        return shoes
+            .filter { shoe in
+                !excludedShoes.contains(shoe.id) && shoe.lastActivityDate != nil
+            }
+            .sorted { lhs, rhs in
+                guard let lhsDate = lhs.lastActivityDate, let rhsDate = rhs.lastActivityDate else { return false }
+                return lhsDate > rhsDate
+            }
+            .prefix(prefix)
+            .map { $0 }
     }
     
-    private func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
-        let recentlyAddedShoes: [Shoe] = self.shoes
+    func getRecentlyAddedShoes(exclude excludedShoes: [UUID], prefix: Int = 0) -> [Shoe] {
+        guard prefix > 0 else { return [] }
+
+        return shoes
             .filter { !excludedShoes.contains($0.id) }
-            .sorted { $0.aquisitionDate > $1.aquisitionDate }
-        
-        if prefix > 0 {
-            return Array(recentlyAddedShoes.prefix(prefix))
-        } else {
-            return recentlyAddedShoes
-        }
+            .sorted(by: { $0.aquisitionDate > $1.aquisitionDate })
+            .prefix(prefix)
+            .map { $0 }
     }
     
     func getShoes(for category: ShoeCategory = .all) -> [Shoe] {
