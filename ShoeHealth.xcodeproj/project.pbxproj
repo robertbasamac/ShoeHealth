@@ -129,6 +129,8 @@
 		09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E22B1345D7005CFF02 /* ShoesTab.swift */; };
 		09E385EA2B13FCC4005CFF02 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */; };
 		09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */; };
+		09E48DFB2D42CCC2001E54C0 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 09E48DFA2D42CCC2001E54C0 /* PRIVACY_POLICY.md */; };
+		09E48DFD2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md in Resources */ = {isa = PBXBuildFile; fileRef = 09E48DFC2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md */; };
 		09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F18EE72BC6AC03002B73EE /* ShoeCell.swift */; };
 		09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */; };
 /* End PBXBuildFile section */
@@ -272,6 +274,8 @@
 		09E385E22B1345D7005CFF02 /* ShoesTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesTab.swift; sourceTree = "<group>"; };
 		09E385E92B13FCC4005CFF02 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
 		09E385EB2B13FD0D005CFF02 /* ModelContainerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerPreview.swift; sourceTree = "<group>"; };
+		09E48DFA2D42CCC2001E54C0 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
+		09E48DFC2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TERMS_OF_SERVICE.md; sourceTree = "<group>"; };
 		09F18EE72BC6AC03002B73EE /* ShoeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeCell.swift; sourceTree = "<group>"; };
 		09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeWorkoutsListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -693,6 +697,8 @@
 				093742872B7AAD7A008D96BD /* ShoeStatsWidget */,
 				091AD7262C902376002D57C4 /* LICENSE */,
 				09B792F62D4250A80068A534 /* README.md */,
+				09E48DFA2D42CCC2001E54C0 /* PRIVACY_POLICY.md */,
+				09E48DFC2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md */,
 				09DE4A702B0D3F7F001119E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -879,8 +885,10 @@
 				092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */,
 				09DE4A7A2B0D3F81001119E4 /* Preview Assets.xcassets in Resources */,
 				092DDB722CBC3D0D00263F06 /* Products.plist in Resources */,
+				09E48DFD2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md in Resources */,
 				0944A7E02CD4DE400042081D /* LaunchScreen.storyboard in Resources */,
 				09DE4A772B0D3F81001119E4 /* Assets.xcassets in Resources */,
+				09E48DFB2D42CCC2001E54C0 /* PRIVACY_POLICY.md in Resources */,
 				09B792F72D4250A80068A534 /* README.md in Resources */,
 				091AD7272C902376002D57C4 /* LICENSE in Resources */,
 			);

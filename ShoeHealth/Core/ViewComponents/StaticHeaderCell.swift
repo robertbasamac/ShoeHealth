@@ -12,20 +12,29 @@ struct StaticHeaderCell: View {
     var model: String
     var brand: String
     var nickname: String
+    var date: Date
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(nickname)
-                .font(.system(size: 20, weight: .semibold, design: .default))
-                .foregroundStyle(Color.theme.accent)
-                .italic()
-                .lineLimit(1)
+            
+            HStack(spacing: 0) {
+                Text(nickname)
+                    .font(.system(size: 20, weight: .semibold, design: .default))
+                    .foregroundStyle(Color.theme.accent)
+                    .italic()
+                    .lineLimit(1)
+                
+                Spacer(minLength: 10)
+                
+                Text("Purchased: \(dateFormatter.string(from: date))")
+                    .font(.system(size: 13, weight: .regular, design: .default))
+            }
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(brand)
                     .font(.system(size: 16, weight: .semibold, design: .default))
                 Text(model)
-                    .font(.system(size: 32, weight: .bold, design: .default))
+                    .font(.system(size: 28, weight: .bold, design: .default))
                     .lineLimit(2)
             }
         }
@@ -39,7 +48,8 @@ struct StaticHeaderCell: View {
 
 #Preview {
     VStack {
-        StaticHeaderCell(model: "Pegasus Turbo Next Nature", brand: "Nike", nickname: "Shoey")
+        StaticHeaderCell(model: "Pegasus Turbo Next Nature", brand: "Nike", nickname: "Shoey", date: .now)
+            .frame(height: 110)
         Spacer()
     }
 }

@@ -42,14 +42,21 @@ struct ShoeDetailView: View {
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 0) {
-                        StretchyHeaderCell(height: 250, model: shoe.model, brand: shoe.brand, nickname: shoe.nickname, imageData: imageData)
-                            .overlay {
-                                Color(uiColor: .systemBackground)
-                                    .opacity(Double(opacity))
-                            }
-                            .readingFrame { frame in
-                                readFrame(frame)
-                            }
+                        StretchyHeaderCell(
+                            height: 250,
+                            model: shoe.model,
+                            brand: shoe.brand,
+                            nickname: shoe.nickname,
+                            date: shoe.aquisitionDate,
+                            imageData: imageData
+                        )
+                        .overlay {
+                            Color(uiColor: .systemBackground)
+                                .opacity(Double(opacity))
+                        }
+                        .readingFrame { frame in
+                            readFrame(frame)
+                        }
                         
                         healthSection
                         statsSection
@@ -61,12 +68,17 @@ struct ShoeDetailView: View {
             } else {
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 0) {
-                        StaticHeaderCell(model: shoe.model, brand: shoe.brand, nickname: shoe.nickname)
-                            .frame(height: 110)
-                            .overlay {
-                                Color(uiColor: .systemBackground)
-                                    .opacity(Double(opacity))
-                            }
+                        StaticHeaderCell(
+                            model: shoe.model,
+                            brand: shoe.brand,
+                            nickname: shoe.nickname,
+                            date: shoe.aquisitionDate
+                        )
+                        .frame(height: 110)
+                        .overlay {
+                            Color(uiColor: .systemBackground)
+                                .opacity(Double(opacity))
+                        }
                             .readingFrame { frame in
                                 readFrame(frame)
                             }

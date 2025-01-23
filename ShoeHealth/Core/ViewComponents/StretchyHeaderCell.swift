@@ -13,6 +13,7 @@ struct StretchyHeaderCell: View {
     var model: String
     var brand: String
     var nickname: String
+    var date: Date
     var imageData: Data?
     var shadowColor: Color = .black.opacity(0.8)
     
@@ -31,17 +32,27 @@ struct StretchyHeaderCell: View {
                         .clipped()
                 }
                 .overlay(alignment: .bottomLeading) {
-                    StaticHeaderCell(model: model, brand: brand, nickname: nickname)
-                        .frame(height: 110)
-                        .padding(.top, 20)
-                        .background {
-                            LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
-                        }
+                    StaticHeaderCell(
+                        model: model,
+                        brand: brand,
+                        nickname: nickname,
+                        date: date
+                    )
+                    .frame(height: 110)
+                    .padding(.top, 20)
+                    .background {
+                        LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
+                    }
                 }
                 .asStretchyHeader(startingHeight: height)
         } else {
-            StaticHeaderCell(model: model, brand: brand, nickname: nickname)
-                .frame(height: 110)
+            StaticHeaderCell(
+                model: model,
+                brand: brand,
+                nickname: nickname,
+                date: date
+            )
+            .frame(height: 110)
         }
     }
 }
@@ -49,7 +60,13 @@ struct StretchyHeaderCell: View {
 // MARK: - Preview
 
 #Preview {
-    StretchyHeaderCell(model: Shoe.previewShoe.model, brand: Shoe.previewShoe.brand, nickname: Shoe.previewShoe.nickname, imageData: Shoe.previewShoe.image)
+    StretchyHeaderCell(
+        model: Shoe.previewShoe.model,
+        brand: Shoe.previewShoe.brand,
+        nickname: Shoe.previewShoe.nickname,
+        date: Shoe.previewShoe.aquisitionDate,
+        imageData: Shoe.previewShoe.image
+    )
         .background(.gray)
         .frame(maxHeight: .infinity, alignment: .top)
 }
