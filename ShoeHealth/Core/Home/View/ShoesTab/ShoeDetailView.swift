@@ -79,9 +79,9 @@ struct ShoeDetailView: View {
                             Color(uiColor: .systemBackground)
                                 .opacity(Double(opacity))
                         }
-                            .readingFrame { frame in
-                                readFrame(frame)
-                            }
+                        .readingFrame { frame in
+                            readFrame(frame)
+                        }
                         
                         healthSection
                         statsSection

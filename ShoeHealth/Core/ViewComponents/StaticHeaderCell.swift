@@ -17,28 +17,27 @@ struct StaticHeaderCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             
-            HStack(spacing: 0) {
-                Text(nickname)
-                    .font(.system(size: 20, weight: .semibold, design: .default))
-                    .foregroundStyle(Color.theme.accent)
-                    .italic()
-                    .lineLimit(1)
-                
-                Spacer(minLength: 10)
-                
-                Text("Purchased: \(dateFormatter.string(from: date))")
-                    .font(.system(size: 13, weight: .regular, design: .default))
-            }
+            Text(nickname)
+                .font(.system(size: 20, weight: .semibold, design: .default))
+                .foregroundStyle(Color.theme.accent)
+                .italic()
+                .lineLimit(1)
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(brand)
                     .font(.system(size: 16, weight: .semibold, design: .default))
+                    .lineLimit(1)
+                
                 Text(model)
                     .font(.system(size: 28, weight: .bold, design: .default))
-                    .lineLimit(2)
+                    .lineLimit(1)
+                
+                Text("Purchased on \(dateFormatter.string(from: date))")
+                    .font(.system(size: 12, weight: .regular, design: .default))
+                    .lineLimit(1)
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 20)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
