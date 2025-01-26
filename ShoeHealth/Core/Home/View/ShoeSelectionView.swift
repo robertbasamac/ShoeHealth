@@ -112,7 +112,7 @@ extension ShoeSelectionView {
             HStack(spacing: 4) {
                 Image(systemName: shoe.id == selectedShoe?.id ? "checkmark.circle.fill" : "circle")
                     .imageScale(.large)
-                    .foregroundStyle(isShoeRestricted(shoe.id) ? .gray : Color.theme.accent)
+                    .foregroundStyle(shoesViewModel.shouldRestrictShoe(shoe.id) ? .gray : Color.theme.accent)
                 
                 ShoeListItem(
                     shoe: shoe,
@@ -122,12 +122,12 @@ extension ShoeSelectionView {
                     showNavigationLink: false,
                     reserveSpace: false
                 )
-                .disabled(isShoeRestricted(shoe.id))
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
             }
             .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
             .contentShape(.rect)
             .onTapGesture {
-                if !isShoeRestricted(shoe.id) {
+                if !shoesViewModel.shouldRestrictShoe(shoe.id) {
                     selectedShoe = selectedShoe == shoe ? nil : shoe
                 }
             }
@@ -165,10 +165,6 @@ extension ShoeSelectionView {
 
 extension ShoeSelectionView {
     
-    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
-    }
-    
     private func isSaveButtonDisabled() -> Bool {
         return selectedShoe == nil
     }
@@ -184,7 +180,7 @@ extension ShoeSelectionView {
                               description: Prompts.SelectShoe.selectDefaultShoeDescription,
                               systemImage: "shoe.2",
                               onDone: { _ in })
-            .environmentObject(StoreManager())
+            .environmentObject(StoreManager.shared)
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }
     }

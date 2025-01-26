@@ -26,7 +26,9 @@ enum ProductID: String, CaseIterable {
 // MARK: - StoreManager
 
 final class StoreManager: ObservableObject {
-        
+    
+    static let shared = StoreManager()
+    
     private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
     
     @Published private(set) var lifetimeProduct: Product?
@@ -63,7 +65,7 @@ final class StoreManager: ObservableObject {
     
     // MARK: - init and deinit
     
-    init() {
+    private init() {
         self.hasFullAccess = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
         
         updateListenerTask = listenForTransactions()

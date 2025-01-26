@@ -129,7 +129,7 @@ extension ShoesView {
             if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
                 ShoeListItem(shoe: shoe, width: width)
                     .roundedContainer()
-                    .disabled(isShoeRestricted(shoe.id))
+                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                     .contextMenu {
                         retireReinstateButton(shoe)
                         deleteButton(shoe)
@@ -248,13 +248,13 @@ extension ShoesView {
             LazyHStack(spacing: 6) {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: width)
-                        .disabled(isShoeRestricted(shoe.id))
+                        .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                         .contextMenu {
                             if storeManager.hasFullAccess ||
                                 (!storeManager.hasFullAccess &&
                                  !shoe.isDefaultShoe &&
                                  !shoe.defaultRunTypes.contains(.daily) &&
-                                 !isShoeRestricted(shoe.id)) {
+                                 !shoesViewModel.shouldRestrictShoe(shoe.id)) {
                                 setDefaultShoeButton(shoe)
                             }
                             retireReinstateButton(shoe)
@@ -488,7 +488,7 @@ extension ShoesView {
     private func runTypeButton(_ runType: RunType) -> some View {
         Button {
             withAnimation {
-                if featureDisabled(for: runType) {
+                if isFeatureDisabled(for: runType) {
                     navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
                 } else {
                     if selectedDefaulRunType == runType {
@@ -501,7 +501,7 @@ extension ShoesView {
         } label: {
             Text(runType.rawValue.capitalized)
                 .font(.callout)
-                .foregroundStyle(featureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary))
+                .foregroundStyle(isFeatureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary))
                 .padding(.vertical, 6)
                 .padding(.horizontal, 16)
                 .background {
@@ -596,11 +596,7 @@ extension ShoesView {
 
 extension ShoesView {
     
-    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
-    }
-    
-    private func featureDisabled(for runType: RunType) -> Bool {
+    private func isFeatureDisabled(for runType: RunType) -> Bool {
         return runType != .daily && !storeManager.hasFullAccess
     }
 }
@@ -614,7 +610,7 @@ extension ShoesView {
                 .navigationTitle("Shoes")
                 .modelContainer(PreviewSampleData.container)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)
@@ -629,7 +625,7 @@ extension ShoesView {
                 .navigationTitle("Shoes")
                 .modelContainer(PreviewSampleData.emptyContainer)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)

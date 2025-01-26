@@ -32,7 +32,7 @@ struct ShoesListView: View {
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
-                    .disabled(isShoeRestricted(shoe.id))
+                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         swipeLeftActions(shoe: shoe)
                     }
@@ -189,15 +189,6 @@ extension ShoesListView {
     }
 }
 
-// MARK: - Helper Methods
-
-extension ShoesListView {
-    
-    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
-    }
-}
-
 // MARK: - Preview
 
 #Preview {
@@ -205,7 +196,7 @@ extension ShoesListView {
         NavigationStack {
             ShoesListView(forCategory: .all)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .navigationTitle("Shoes")
         }

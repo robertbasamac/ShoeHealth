@@ -417,7 +417,7 @@ extension ShoeFormView {
         NavigationStack {
             ShoeFormView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
         }

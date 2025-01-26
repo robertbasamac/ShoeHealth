@@ -85,16 +85,28 @@ final class ShoesViewModel {
     }
     
     func shouldRestrictShoe(_ shoeID: UUID) -> Bool {
-        var allowedShoes = getAllDefaultShoes().map { $0.id }
+        if StoreManager.shared.hasFullAccess {
+            return false
+        }
         
-        if allowedShoes.count < 5 {
-            let neededShoes = 5 - allowedShoes.count
+        if !isShoesLimitReached() {
+            return false
+        }
+        
+        var allowedShoes: [UUID] = []
+        
+        if let defautlShoe = getDefaultShoe(for: .daily) {
+            allowedShoes.append(defautlShoe.id)
+        }
+        
+        if allowedShoes.count < StoreManager.shoesLimit {
+            let neededShoes = StoreManager.shoesLimit - allowedShoes.count
             let recentlyUsedShoes = getRecentlyUsedShoes(exclude: allowedShoes, prefix: neededShoes).map { $0.id }
             allowedShoes.append(contentsOf: recentlyUsedShoes)
         }
         
-        if allowedShoes.count < 5 {
-            let neededShoes = 5 - allowedShoes.count
+        if allowedShoes.count < StoreManager.shoesLimit {
+            let neededShoes = StoreManager.shoesLimit - allowedShoes.count
             let recentlyAddedShoes = getRecentlyAddedShoes(exclude: allowedShoes, prefix: neededShoes).map { $0.id }
             allowedShoes.append(contentsOf: recentlyAddedShoes)
         }
@@ -170,7 +182,7 @@ final class ShoesViewModel {
         case .recentlyUsed:
             filteredShoes.sort { sortingOrder == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
         case .aquisitionDate:
-            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
+            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
         }
         
         return filteredShoes

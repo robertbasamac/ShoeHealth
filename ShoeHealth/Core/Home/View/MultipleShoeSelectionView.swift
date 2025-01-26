@@ -159,10 +159,6 @@ extension MultipleShoeSelectionView {
 
 extension MultipleShoeSelectionView {
     
-    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
-    }
-    
     private func isSaveButtonDisabled() -> Bool {
         return selectionsDict.count != workoutIDs.count
     }

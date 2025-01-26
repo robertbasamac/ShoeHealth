@@ -114,7 +114,7 @@ struct ShoeDetailView: View {
             toolbarItems
         }
         .navigationDestination(isPresented: $showAllWorkouts) {
-            ShoeWorkoutsListView(shoe: shoe, isShoeRestricted: isShoeRestricted())
+            ShoeWorkoutsListView(shoe: shoe, isShoeRestricted: shoesViewModel.shouldRestrictShoe(shoe.id))
         }
         .sheet(isPresented: $showEditShoe) {
             NavigationStack {
@@ -405,7 +405,7 @@ extension ShoeDetailView {
                         .imageScale(.large)
                 }
                 .padding(.trailing, 20)
-                .disabled(isShoeRestricted())
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
             })
             
             VStack(spacing: 4) {
@@ -442,7 +442,7 @@ extension ShoeDetailView {
                     Label("Edit", systemImage: "pencil")
                 }
                 .buttonStyle(.blurredCapsule(Double(1-opacity)))
-                .disabled(isShoeRestricted())
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                 
                 Button(role: .destructive) {
                     showDeletionConfirmation.toggle()
@@ -499,10 +499,6 @@ extension ShoeDetailView {
         }
     }
     
-    private func isShoeRestricted() -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoe.id)
-    }
-    
     private func readFrame(_ frame: CGRect) {
         guard frame.maxY > 0 else {
             return
@@ -528,7 +524,7 @@ extension ShoeDetailView {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoes[3])
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager())
+                .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)

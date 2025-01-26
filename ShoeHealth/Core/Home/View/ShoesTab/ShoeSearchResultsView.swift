@@ -23,7 +23,7 @@ struct ShoeSearchResultsView: View {
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
-                    .disabled(isShoeRestricted(shoe.id))
+                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                     .onTapGesture {
                         navigationRouter.navigate(to: .shoe(shoe))
                     }
@@ -42,16 +42,6 @@ struct ShoeSearchResultsView: View {
         }
     }
 }
-    
-// MARK: - Helper Methods
-
-extension ShoeSearchResultsView {
-    
-    private func isShoeRestricted(_ shoeID: UUID) -> Bool {
-        return !storeManager.hasFullAccess && shoesViewModel.shouldRestrictShoe(shoeID)
-    }
-}
-
 
 // MARK: - Previews
 
