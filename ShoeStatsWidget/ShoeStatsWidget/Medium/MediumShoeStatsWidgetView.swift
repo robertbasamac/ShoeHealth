@@ -60,74 +60,75 @@ struct MediumShoeStatsSnapshotWidgetView: View {
     var unitSymbol: String
     
     var body: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(shoe.nickname)
-                        .font(.headline)
-                        .italic()
-                        .foregroundStyle(Color.theme.greenEnergy)
-                        .lineLimit(1)
-                    
-                    Text(shoe.brand)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .widgetAccentable(true)
-                    
-                    Text(shoe.model)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .lineLimit(2, reservesSpace: false)
-                        .multilineTextAlignment(.leading)
-                        .widgetAccentable(true)
-                }
-                .dynamicTypeSize(DynamicTypeSize.large)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                
-                CircularProgressView(progress: shoe.wearPercentage, lineWidth: 5, color: shoe.wearColor)
-                    .widgetAccentable(true)
-                    .overlay {
-                        statCell(
-                            label: "Wear",
-                            value: shoe.wearPercentageAsString,
-                            color: shoe.wearColor,
-                            containerAlignment: .center,
-                            showLabel: false
-                        )
-                        .padding(.horizontal, 8)
-                        .contentTransition(.numericText(value: shoe.totalDistance))
+        Link(destination: URL(string: "shoeHealthApp://openShoeDetails?shoeID=\(shoe.id)")!) {
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(shoe.nickname)
+                            .font(.headline)
+                            .italic()
+                            .foregroundStyle(Color.theme.greenEnergy)
+                            .lineLimit(1)
+                        
+                        Text(shoe.brand)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .widgetAccentable(true)
+                        
+                        Text(shoe.model)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .lineLimit(2, reservesSpace: false)
+                            .multilineTextAlignment(.leading)
+                            .widgetAccentable(true)
                     }
+                    .dynamicTypeSize(DynamicTypeSize.large)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    
+                    CircularProgressView(progress: shoe.wearPercentage, lineWidth: 5, color: shoe.wearColor)
+                        .widgetAccentable(true)
+                        .overlay {
+                            statCell(
+                                label: "Wear",
+                                value: shoe.wearPercentageAsString,
+                                color: shoe.wearColor,
+                                containerAlignment: .center,
+                                showLabel: false
+                            )
+                            .padding(.horizontal, 8)
+                            .contentTransition(.numericText(value: shoe.totalDistance))
+                        }
+                }
+                
+                HStack(spacing: 0) {
+                    statCell(
+                        label: "Distance",
+                        value: "\(Int(shoe.totalDistance))/\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))",
+                        unit: unitSymbol,
+                        color: shoe.wearColor,
+                        textAlignment: .leading,
+                        containerAlignment: .bottomLeading
+                    )
+                    Spacer(minLength: 8)
+                    getStatCell(for: firstStat)
+                    Spacer(minLength: 8)
+                    getStatCell(for: secondStat)
+                }
+                .contentTransition(.numericText(value: shoe.totalDistance))
             }
-            
-            HStack(spacing: 0) {
-                statCell(
-                    label: "Distance",
-                    value: "\(Int(shoe.totalDistance))/\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))",
-                    unit: unitSymbol,
-                    color: shoe.wearColor,
-                    textAlignment: .leading,
-                    containerAlignment: .bottomLeading
-                )
-                Spacer(minLength: 8)
-                getStatCell(for: firstStat)
-                Spacer(minLength: 8)
-                getStatCell(for: secondStat)
+            .foregroundStyle(.white)
+            .containerBackground(for: .widget) {
+                ZStack {
+                    Color.black
+                    LinearGradient(
+                        colors: [.black, shoe.wearColor.opacity(0.5)],
+                        startPoint: .trailing,
+                        endPoint: .leading
+                    )
+                }
             }
-            .contentTransition(.numericText(value: shoe.totalDistance))
         }
-        .foregroundStyle(.white)
-        .containerBackground(for: .widget) {
-            ZStack {
-                Color.black
-                LinearGradient(
-                    colors: [.black, shoe.wearColor.opacity(0.5)],
-                    startPoint: .trailing,
-                    endPoint: .leading
-                )
-            }
-        }
-        .widgetURL(shoe.url)
     }
 }
 

@@ -130,16 +130,19 @@ extension ContentView {
         
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
         
+        // "shoeHealthApp://show-paywall"
         if let action = components.host, action == "show-paywall", !navigationRouter.showPaywall {
             navigationRouter.showPaywall.toggle()
             return
         }
         
+        // "shoeHealthApp://show-addShoe"
         if let action = components.host, action == "show-addShoe", navigationRouter.showSheet != .addShoe {
                 navigationRouter.showSheet = .addShoe
             return
         }
         
+        // "shoeHealthApp://show-selectShoe?runType=\(runType.rawValue)"
         if let action = components.host, action == "show-selectShoe",
            let runTypeName = components.queryItems?.first(where: { $0.name == "runType" })?.value {
             let runType = RunType.create(from: runTypeName)
@@ -150,13 +153,18 @@ extension ContentView {
             }
         }
         
-        if let matchShoe = shoesViewModel.shoes.first(where: { $0.url == url }),
-           navigationRouter.showShoeDetails != matchShoe,
-           navigationRouter.showSheet == nil,
-           navigationRouter.showPaywall == false,
-           !navigationRouter.isShoeInCurrentStack(matchShoe.id) {
-            navigationRouter.showShoeDetails = matchShoe
-            return
+        // "shoeHealthApp://openShoeDetails?shoeID=\(shoe.id)"
+        if let action = components.host, action == "openShoeDetails",
+           let shoeID = components.queryItems?.first(where: { $0.name == "shoeID" })?.value,
+           let matchShoe = shoesViewModel.getShoe(forID: UUID(uuidString: shoeID) ?? UUID()) {
+            
+            if navigationRouter.showShoeDetails != matchShoe,
+               navigationRouter.showSheet == nil,
+               navigationRouter.showPaywall == false,
+               !navigationRouter.isShoeInCurrentStack(matchShoe.id) {
+                navigationRouter.showShoeDetails = matchShoe
+                return
+            }
         }
     }
 }

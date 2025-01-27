@@ -31,7 +31,6 @@ struct ShoeStatsEntity: AppEntity {
     var wearPercentageAsString: String
     var wearColor: Color
     var runType: RunType?
-    var url: URL?
     
     init(
         id: UUID,
@@ -48,8 +47,7 @@ struct ShoeStatsEntity: AppEntity {
         lastActivityDate: Date,
         wearPercentage: Double,
         wearPercentageAsString: String,
-        wearColor: Color,
-        url: URL?
+        wearColor: Color
     ) {
         self.id = id
         self.brand = brand
@@ -64,7 +62,6 @@ struct ShoeStatsEntity: AppEntity {
         self.wearPercentage = wearPercentage
         self.wearPercentageAsString = wearPercentageAsString
         self.wearColor = wearColor
-        self.url = url
     }
     
     init(from shoe: Shoe) {
@@ -81,7 +78,6 @@ struct ShoeStatsEntity: AppEntity {
         self.wearPercentage = shoe.wearPercentage
         self.wearPercentageAsString = shoe.wearPercentageAsString(withDecimals: 0)
         self.wearColor = shoe.wearColor
-        self.url = shoe.url
     }
     
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Shoe"
