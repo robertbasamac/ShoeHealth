@@ -358,7 +358,7 @@ extension ShoeDetailView {
             
             ForEach(RunningCategory.allCases, id: \.self) { category in
                 GridRow {
-                    Text("\(category.shortTitle)")
+                    Text("\(settingsManager.unitOfMeasure == .metric ? category.shortTitle : category.shortTitleInMiles)")
                         .font(.subheadline)
                         .fontDesign(.default)
                         .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)

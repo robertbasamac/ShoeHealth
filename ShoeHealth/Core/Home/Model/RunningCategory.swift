@@ -28,13 +28,26 @@ enum RunningCategory: String, CaseIterable, Codable {
     var shortTitle: String {
         switch self {
         case .fiveK:
-            return "5K"
+            return "5KM"
         case .tenK:
-            return "10K"
+            return "10KM"
         case .halfMarathon:
-            return "21K"
+            return "21KM"
         case .marathon:
-            return "42K"
+            return "42KM"
+        }
+    }
+    
+    var shortTitleInMiles: String {
+        switch self {
+        case .fiveK:
+            return "3.1MI"
+        case .tenK:
+            return "6.2MI"
+        case .halfMarathon:
+            return "13.1MI"
+        case .marathon:
+            return "26.2MI"
         }
     }
 }
