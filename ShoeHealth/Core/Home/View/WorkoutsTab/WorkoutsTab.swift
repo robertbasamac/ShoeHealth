@@ -37,7 +37,7 @@ struct WorkoutsTab: View {
                                         .lineLimit(2)
                                         .multilineTextAlignment(.center)
                                     
-                                    ShoeImage(imageData: shoe.image, width: 64)
+                                    ShoeImage(imageData: shoe.image, showBackground: false, width: 64)
                                         .frame(width: size, height: size)
                                         .clipShape(.rect(cornerRadius: 10))
                                         .onTapGesture {

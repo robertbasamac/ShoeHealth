@@ -24,7 +24,6 @@ struct ShoesView: View {
     @State private var shoeForDefaultSelection: Shoe? = nil
     
     @State private var selectedDefaulRunType: RunType = .daily
-    @Namespace private var animation
     
     @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140
     
@@ -508,7 +507,6 @@ extension ShoesView {
                     if selectedDefaulRunType == runType {
                         Capsule()
                             .fill(Color.theme.accent)
-                            .matchedGeometryEffect(id: "ACTIVERUNTYPE", in: animation)
                     } else {
                         Capsule()
                             .fill(Color.theme.containerBackground)

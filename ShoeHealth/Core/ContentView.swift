@@ -88,7 +88,7 @@ struct ContentView: View {
                 .interactiveDismissDisabled(
                     {
                         switch sheetType {
-                        case .setDefaultShoe, .addMultipleWorkoutsToShoe:
+                        case .setDefaultShoe, .addMultipleWorkoutsToShoe, .addWorkoutToShoe:
                             return true
                         default:
                             return false

@@ -18,7 +18,10 @@ struct ShoeSelectionView: View {
     @Query(filter: #Predicate { !$0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var activeShoes: [Shoe]
     @Query(filter: #Predicate { $0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var retiredShoes: [Shoe]
     
+    
     @State private var selectedShoe: Shoe?
+    
+    @State private var showAddShoe: Bool = false
     
     @State private var isExpandedActive: Bool = true
     @State private var isExpandedRetire: Bool = false
@@ -64,6 +67,20 @@ struct ShoeSelectionView: View {
         }
         .toolbar {
             toolbarItems
+        }
+        .safeAreaInset(edge: .bottom) {
+            Button {
+                showAddShoe.toggle()
+            } label: {
+                Text("Add New Shoe")
+                    .fontWeight(.semibold)
+            }
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .foregroundStyle(.black)
+        }
+        .navigationDestination(isPresented: $showAddShoe) {
+            ShoeFormView()
         }
     }
 }

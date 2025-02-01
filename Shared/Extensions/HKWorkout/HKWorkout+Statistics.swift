@@ -66,7 +66,7 @@ extension HKWorkout {
         let distance = self.totalDistance(unit: unit)
         let durationMinutes = duration / 60
         
-        let paceMinutes = durationMinutes / distance
+        let paceMinutes = distance == 0 ? 0 : durationMinutes / distance
         
         let minutes = Int(paceMinutes)
         let seconds = Int((paceMinutes - Double(minutes)) * 60)
