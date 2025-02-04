@@ -24,6 +24,7 @@ struct ShoeFormView: View {
     private var wasDailyDefaultShoe: Bool = false
     private var isEditing: Bool
     private var hideCancelButton: Bool
+    private let onSave: ((Shoe) -> Void)?
     
     @State private var showRunTypeSelection: Bool = false
     
@@ -33,7 +34,11 @@ struct ShoeFormView: View {
         case nickname
     }
     
-    init(shoe: Shoe? = nil, hideCancelButton: Bool = false) {
+    init(
+        shoe: Shoe? = nil,
+        hideCancelButton: Bool = false,
+        onSave: ((Shoe) -> Void)? = nil
+    ) {
         self.isEditing = shoe != nil
         self.hideCancelButton = hideCancelButton
         self.wasDailyDefaultShoe = shoe?.isDefaultShoe ?? false && shoe?.defaultRunTypes.contains(.daily) ?? false
@@ -48,6 +53,7 @@ struct ShoeFormView: View {
             shoeNickname: shoe?.nickname ?? "",
             shoeID: shoe?.id ?? UUID()
         ))
+        self.onSave = onSave
     }
     
     var body: some View {
@@ -364,7 +370,7 @@ extension ShoeFormView {
                         }
                     }
                 } else {
-                    shoesViewModel.addShoe(
+                    let newShoe = shoesViewModel.addShoe(
                         nickname: shoeFormViewModel.nickname,
                         brand: shoeFormViewModel.brand,
                         model: shoeFormViewModel.model,
@@ -374,6 +380,8 @@ extension ShoeFormView {
                         defaultRunTypes: shoeFormViewModel.defaultRunTypes,
                         image: shoeFormViewModel.selectedPhotoData
                     )
+                    
+                    onSave?(newShoe)
                 }
                 
                 settingsManager.setUnitOfMeasure(to: unitOfMeasure)

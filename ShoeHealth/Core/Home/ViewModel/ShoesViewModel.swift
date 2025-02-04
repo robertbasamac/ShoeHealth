@@ -190,8 +190,26 @@ final class ShoesViewModel {
     
     // MARK: - CRUD operations
     
-    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, defaultRunTypes: [RunType], image: Data?) {
-        let shoe = Shoe(image: image, brand: brand, model: model, nickname: nickname, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, defaultRunTypes: defaultRunTypes)
+    func addShoe(
+        nickname: String,
+        brand: String,
+        model: String,
+        lifespanDistance: Double,
+        aquisitionDate: Date,
+        isDefaultShoe: Bool,
+        defaultRunTypes: [RunType],
+        image: Data?
+    ) -> Shoe {
+        let newShoe = Shoe(
+            image: image,
+            brand: brand,
+            model: model,
+            nickname: nickname,
+            lifespanDistance: lifespanDistance,
+            aquisitionDate: aquisitionDate,
+            isDefaultShoe: isDefaultShoe,
+            defaultRunTypes: defaultRunTypes
+        )
         
         if isDefaultShoe {
             for otherShoe in shoes {
@@ -203,9 +221,11 @@ final class ShoesViewModel {
             }
         }
         
-        modelContext.insert(shoe)
+        modelContext.insert(newShoe)
         
         save()
+        
+        return newShoe
     }
     
     func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, isDefaultShoe: Bool, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {

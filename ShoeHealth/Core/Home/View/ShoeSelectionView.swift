@@ -80,7 +80,9 @@ struct ShoeSelectionView: View {
             .foregroundStyle(.black)
         }
         .navigationDestination(isPresented: $showAddShoe) {
-            ShoeFormView(hideCancelButton: true)
+            ShoeFormView(hideCancelButton: true) { shoe in
+                self.selectedShoe = shoe
+            }
         }
     }
 }
