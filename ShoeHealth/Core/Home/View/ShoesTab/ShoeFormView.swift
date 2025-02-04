@@ -23,6 +23,7 @@ struct ShoeFormView: View {
     
     private var wasDailyDefaultShoe: Bool = false
     private var isEditing: Bool
+    private var hideCancelButton: Bool
     
     @State private var showRunTypeSelection: Bool = false
     
@@ -32,8 +33,9 @@ struct ShoeFormView: View {
         case nickname
     }
     
-    init(shoe: Shoe? = nil) {
+    init(shoe: Shoe? = nil, hideCancelButton: Bool = false) {
         self.isEditing = shoe != nil
+        self.hideCancelButton = hideCancelButton
         self.wasDailyDefaultShoe = shoe?.isDefaultShoe ?? false && shoe?.defaultRunTypes.contains(.daily) ?? false
         self._shoeFormViewModel = State(wrappedValue: ShoeFormViewModel(
             selectedPhotoData: shoe?.image,
@@ -328,9 +330,11 @@ extension ShoeFormView {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") {
-                dismiss()
+        if !hideCancelButton {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") {
+                    dismiss()
+                }
             }
         }
         
