@@ -11,17 +11,16 @@ import HealthKit
 
 struct ShoeSelectionView: View {
     
+    @EnvironmentObject private var navigationRouter: NavigationRouter
     @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @Query(filter: #Predicate { !$0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var activeShoes: [Shoe]
-    @Query(filter: #Predicate { $0.isRetired }, sort: [SortDescriptor(\Shoe.brand, order: .forward), SortDescriptor(\Shoe.model, order: .forward)]) private var retiredShoes: [Shoe]
-    
-    
     @State private var selectedShoe: Shoe?
     
     @State private var showAddShoe: Bool = false
+    @State private var showPaywall: Bool = false
+    @State private var showFeatureRestrictedAlert: Bool = false
     
     @State private var isExpandedActive: Bool = true
     @State private var isExpandedRetire: Bool = false
@@ -68,21 +67,13 @@ struct ShoeSelectionView: View {
         .toolbar {
             toolbarItems
         }
-        .safeAreaInset(edge: .bottom) {
-            Button {
-                showAddShoe.toggle()
-            } label: {
-                Text("Add New Shoe")
-                    .fontWeight(.semibold)
-            }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .foregroundStyle(.black)
-        }
         .navigationDestination(isPresented: $showAddShoe) {
             ShoeFormView(hideCancelButton: true) { shoe in
                 self.selectedShoe = shoe
             }
+        }
+        .navigationDestination(isPresented: $showPaywall) {
+            PaywallView(showDismissButton: false, navigationBarVisibility: .automatic)
         }
     }
 }
@@ -112,7 +103,7 @@ extension ShoeSelectionView {
     
     private var activeShoesSection: some View {
         Section(isExpanded: $isExpandedActive, content: {
-            shoesList(shoes: activeShoes)
+            shoesList(shoes: shoesViewModel.getShoes(for: .active))
         }, header: {
             Text("Active Shoes")
         })
@@ -120,7 +111,7 @@ extension ShoeSelectionView {
     
     private var retiredShoesSection: some View {
         Section(isExpanded: $isExpandedRetire, content: {
-            shoesList(shoes: retiredShoes)
+            shoesList(shoes: shoesViewModel.getShoes(for: .retired))
         }, header: {
             Text("Retired Shoes")
         })
@@ -153,6 +144,38 @@ extension ShoeSelectionView {
         }
     }
     
+    private var addNewShoeButton: some View {
+        Button {
+            if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
+                showAddShoe.toggle()
+            } else {
+                showFeatureRestrictedAlert.toggle()
+            }
+        } label: {
+            Text("Add New Shoe")
+                .font(.callout)
+                .fontWeight(.medium)
+        }
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.capsule)
+        .foregroundStyle(.black)
+        .alert(FeatureAlertType.limitReached.title, isPresented: $showFeatureRestrictedAlert, actions: {
+            Button(role: .cancel) {
+//                dismiss()
+            } label: {
+                Text("Cancel")
+            }
+            
+            Button {
+                showPaywall.toggle()
+            } label: {
+                Text("Upgrade")
+            }
+        }, message: {
+            Text(FeatureAlertType.limitReached.message)
+        })
+    }
+    
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         if showCancelButton {
@@ -177,6 +200,10 @@ extension ShoeSelectionView {
             }
             .disabled(isSaveButtonDisabled())
         }
+        
+        ToolbarItem(placement: .status) {
+            addNewShoeButton
+        }
     }
 }
 
@@ -199,6 +226,7 @@ extension ShoeSelectionView {
                               description: Prompts.SelectShoe.selectDefaultShoeDescription,
                               systemImage: "shoe.2",
                               onDone: { _ in })
+            .environmentObject(NavigationRouter())
             .environmentObject(StoreManager.shared)
             .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         }

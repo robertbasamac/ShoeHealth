@@ -98,18 +98,16 @@ struct ContentView: View {
             }
             .alert(navigationRouter.featureAlert?.title ?? "", isPresented: $navigationRouter.showFeatureRestrictedAlert, actions: {
                 Button(role: .cancel) {
-                    dismiss()
+//                    dismiss()
                 } label: {
                     Text("Cancel")
                 }
-                .foregroundStyle(.accent)
                 
                 Button {
                     navigationRouter.showPaywall.toggle()
                 } label: {
                     Text("Upgrade")
                 }
-                .tint(.accent)
             }, message: {
                 Text(navigationRouter.featureAlert?.message ?? "")
             })

@@ -18,7 +18,10 @@ struct PaywallView: View {
     
     @State private var showManagedSubscriptions: Bool = false
     @State private var redeemSheetIsPresented = false
-
+    
+    var showDismissButton: Bool = true
+    var navigationBarVisibility: Visibility = .hidden
+    
     var body: some View {
         ScrollView {
             if let product = store.lifetimeProduct {
@@ -52,17 +55,9 @@ struct PaywallView: View {
         }
         .scrollBounceBehavior(.basedOnSize)
         .contentMargins(.bottom, 20)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(navigationBarVisibility, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                }
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.circle)
-            }
+            toolbarItems
         }
     }
 }
@@ -205,6 +200,21 @@ extension PaywallView {
             Text(feature.title)
                 .font(.callout)
                 .italic()
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private var toolbarItems: some ToolbarContent {
+        if showDismissButton {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.circle)
+            }
         }
     }
 }

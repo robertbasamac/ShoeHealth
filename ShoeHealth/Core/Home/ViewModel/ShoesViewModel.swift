@@ -158,7 +158,7 @@ final class ShoesViewModel {
             .map { $0 }
     }
     
-    func getShoes(for category: ShoeCategory = .all) -> [Shoe] {
+    func getShoes(for category: ShoeCategory = .all, sortingRule: SortingRule? = nil, sortingOrder: SortingOrder? = nil) -> [Shoe] {
         var filteredShoes: [Shoe] = []
         
         switch category {
@@ -170,19 +170,22 @@ final class ShoesViewModel {
             filteredShoes = self.shoes
         }
         
-        switch sortingRule {
+        let ruleToApply = sortingRule ?? self.sortingRule
+        let orderToApply = sortingOrder ?? self.sortingOrder
+        
+        switch ruleToApply {
         case .model:
-            filteredShoes.sort { sortingOrder == .forward ? $0.model < $1.model : $0.model > $1.model }
+            filteredShoes.sort { orderToApply == .forward ? $0.model < $1.model : $0.model > $1.model }
         case .brand:
-            filteredShoes.sort { sortingOrder == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
+            filteredShoes.sort { orderToApply == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
         case .distance:
-            filteredShoes.sort { sortingOrder == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
+            filteredShoes.sort { orderToApply == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
         case .wear:
-            filteredShoes.sort { sortingOrder == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+            filteredShoes.sort { orderToApply == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
         case .recentlyUsed:
-            filteredShoes.sort { sortingOrder == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
+            filteredShoes.sort { orderToApply == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
         case .aquisitionDate:
-            filteredShoes.sort { sortingOrder == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
+            filteredShoes.sort { orderToApply == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
         }
         
         return filteredShoes

@@ -415,7 +415,6 @@ extension ShoesView {
                 Text("No shoe selected for this workout")
                     .font(.callout)
                     .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
-
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.center)
                     .padding(.trailing, 30)
