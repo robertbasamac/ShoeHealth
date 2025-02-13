@@ -11,22 +11,13 @@ struct BlurredCircleButtonStyle: ButtonStyle {
     
     var opacity: CGFloat
     
-    func makeBody(configuration: Configuration) -> some View {
-        MyButton(configuration: configuration, opacity: opacity)
-    }
+    @Environment(\.isEnabled) private var isEnabled: Bool
     
-    struct MyButton: View {
-        let configuration: ButtonStyle.Configuration
-        var opacity: CGFloat
-
-        @Environment(\.isEnabled) private var isEnabled: Bool
-        
-        var body: some View {
-            configuration.label
-                .foregroundColor(isEnabled ? Color.theme.accent : Color.gray)
-                .frame(width: 34, height: 34)
-                .background(.bar.opacity(opacity), in: .circle)
-        }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(isEnabled ? Color.theme.accent : Color.gray)
+            .frame(width: 34, height: 34)
+            .background(.bar.opacity(opacity), in: .circle)
     }
 }
 

@@ -146,9 +146,12 @@ extension ShoesView {
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     
                     VStack {
-                        Text("No default shoe selected for \(selectedDefaulRunType.rawValue.capitalized)")
-                            .font(.callout)
-                            .multilineTextAlignment(.center)
+                        Group {
+                            Text("No default shoe selected for ") +
+                            Text("\(selectedDefaulRunType.rawValue.capitalized) runs")
+                        }
+                        .font(.callout)
+                        .multilineTextAlignment(.center)
                         
                         Button {
                             if shoesViewModel.shoes.isEmpty {
@@ -498,20 +501,9 @@ extension ShoesView {
             }
         } label: {
             Text(runType.rawValue.capitalized)
-                .font(.callout)
-                .foregroundStyle(isFeatureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary))
-                .padding(.vertical, 6)
-                .padding(.horizontal, 16)
-                .background {
-                    if selectedDefaulRunType == runType {
-                        Capsule()
-                            .fill(Color.theme.accent)
-                    } else {
-                        Capsule()
-                            .fill(Color.theme.containerBackground)
-                    }
-                }
         }
+        .buttonStyle(.menuButton(selectedDefaulRunType == runType))
+        .disabled(isFeatureDisabled(for: runType))
     }
     
     @ViewBuilder

@@ -14,6 +14,7 @@
 		090E15712BF377F800BC8124 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090E15702BF377F800BC8124 /* Double.swift */; };
 		091AD7272C902376002D57C4 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 091AD7252C902376002D57C4 /* LICENSE */; };
 		0925516E2C78D029004CA262 /* MultipleShoeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */; };
+		092624642D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092624632D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift */; };
 		092DDB6E2CBC3CD000263F06 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 092DDB6D2CBC3CD000263F06 /* StoreManager.swift */; };
 		092DDB702CBC3CEB00263F06 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB6F2CBC3CEB00263F06 /* Products.storekit */; };
 		092DDB722CBC3D0D00263F06 /* Products.plist in Resources */ = {isa = PBXBuildFile; fileRef = 092DDB712CBC3D0D00263F06 /* Products.plist */; };
@@ -177,6 +178,7 @@
 		090E15702BF377F800BC8124 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		091AD7252C902376002D57C4 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleShoeSelectionView.swift; sourceTree = "<group>"; };
+		092624632D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCapsuleButtonStyle.swift; sourceTree = "<group>"; };
 		092DDB6D2CBC3CD000263F06 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
 		092DDB6F2CBC3CEB00263F06 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		092DDB712CBC3D0D00263F06 /* Products.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Products.plist; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 			children = (
 				09D9B5C52C08EA870016825A /* BlurredCircleButtonStyle.swift */,
 				09D9B5C72C08EAB10016825A /* BlurredCapsuleButtonStyle.swift */,
+				092624632D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift */,
 			);
 			path = ButtonStyle;
 			sourceTree = "<group>";
@@ -998,6 +1001,7 @@
 				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
 				09BEB99A2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */,
 				094D138B2C178A00003C6F50 /* OnboardingScreen.swift in Sources */,
+				092624642D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift in Sources */,
 				0944A7FC2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
 				09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,

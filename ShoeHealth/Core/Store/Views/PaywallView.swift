@@ -53,6 +53,7 @@ struct PaywallView: View {
                 subscriptionsSection
             }
         }
+        .background(Color(uiColor: .systemBackground))
         .scrollBounceBehavior(.basedOnSize)
         .contentMargins(.bottom, 20)
         .toolbarBackground(navigationBarVisibility, for: .navigationBar)
@@ -72,20 +73,32 @@ extension PaywallView {
             ProductView(product) { phase in
                 switch phase {
                 case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(.rect(cornerRadius: 25))
+                    ZStack {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(.rect(cornerRadius: 25))
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(.white, style: .init(lineWidth: 1))
+                    }
                 case .failure(_):
-                    Image("ShoeHealth-unlimited")
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(.rect(cornerRadius: 25))
+                    ZStack {
+                        Image("ShoeHealth-unlimited")
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(.rect(cornerRadius: 25))
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(.white, style: .init(lineWidth: 1))
+                    }
                 case .unavailable:
-                    Image("ShoeHealth-unlimited")
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(.rect(cornerRadius: 25))
+                    ZStack {
+                        Image("ShoeHealth-unlimited")
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(.rect(cornerRadius: 25))
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(.white, style: .init(lineWidth: 1))
+                    }
                 case .loading:
                     ProgressView()
                 @unknown default:
