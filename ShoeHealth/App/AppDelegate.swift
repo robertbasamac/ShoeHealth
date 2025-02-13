@@ -57,31 +57,31 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 
                 break
                 
-            case "DEFAULT_SHOE_ACTION_TEMPO":
+            case "DEFAULT_SHOE_ACTION_LONG":
                 logger.debug("\"Use Tempo Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .long, forWorkoutIDs: [workoutID])
                 
                 break
                 
-            case "DEFAULT_SHOE_ACTION_LONG":
+            case "DEFAULT_SHOE_ACTION_TEMPO":
                 logger.debug("\"Use Long Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .tempo, forWorkoutIDs: [workoutID])
                 
                 break
                 
             case "DEFAULT_SHOE_ACTION_RACE":
                 logger.debug("\"Use Race default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .race, forWorkoutIDs: [workoutID])
                 
                 break
                 
             case "DEFAULT_SHOE_ACTION_TRAIL":
                 logger.debug("\"Use Train Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
+                handleDefaultShoeAction(for: .trail, forWorkoutIDs: [workoutID])
                 
                 break
                 
@@ -119,31 +119,31 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 
                 break
                 
-            case "DEFAULT_SHOE_ACTION_TEMPO":
+            case "DEFAULT_SHOE_ACTION_LONG":
                 logger.debug("\"Use Tempo Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .long, forWorkoutIDs: workoutIDs)
                 
                 break
                 
-            case "DEFAULT_SHOE_ACTION_LONG":
+            case "DEFAULT_SHOE_ACTION_TEMPO":
                 logger.debug("\"Use Long Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .tempo, forWorkoutIDs: workoutIDs)
                 
                 break
                 
             case "DEFAULT_SHOE_ACTION_RACE":
                 logger.debug("\"Use Race default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .race, forWorkoutIDs: workoutIDs)
                 
                 break
                 
             case "DEFAULT_SHOE_ACTION_TRAIL":
                 logger.debug("\"Use Train Run default shoe\" action pressed.")
                 
-                handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
+                handleDefaultShoeAction(for: .trail, forWorkoutIDs: workoutIDs)
                 
                 break
                 

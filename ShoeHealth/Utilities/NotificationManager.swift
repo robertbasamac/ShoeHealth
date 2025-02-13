@@ -99,14 +99,14 @@ final class NotificationManager {
         if isPremiumUser {
             premiumActions = [
                 UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_TEMPO",
-                    title: "Use default Shoe - Tempo",
+                    identifier: "DEFAULT_SHOE_ACTION_LONG",
+                    title: "Use default Shoe - Long",
                     options: [.authenticationRequired],
                     icon: UNNotificationActionIcon(systemImageName: "shoe.2")
                 ),
                 UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_LONG",
-                    title: "Use default Shoe - Long",
+                    identifier: "DEFAULT_SHOE_ACTION_TEMPO",
+                    title: "Use default Shoe - Tempo",
                     options: [.authenticationRequired],
                     icon: UNNotificationActionIcon(systemImageName: "shoe.2")
                 ),
