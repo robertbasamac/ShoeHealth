@@ -15,7 +15,6 @@ struct ShoeDetailView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
-    
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
@@ -25,6 +24,7 @@ struct ShoeDetailView: View {
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
     @State private var showDeletionConfirmation: Bool = false
+    @State private var showDefaultSelection: Bool = false
     
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
@@ -41,7 +41,7 @@ struct ShoeDetailView: View {
         Group {
             if let imageData = shoe.image {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
+                    VStack(spacing: 0) {
                         StretchyHeaderCell(
                             height: 250,
                             model: shoe.model,
@@ -67,7 +67,7 @@ struct ShoeDetailView: View {
                 .scrollTargetBehavior(.stretchyHeader)
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
+                    VStack(spacing: 0) {
                         StaticHeaderCell(
                             model: shoe.model,
                             brand: shoe.brand,
@@ -121,6 +121,17 @@ struct ShoeDetailView: View {
                 ShoeFormView(shoe: shoe)
             }
             .presentationCornerRadius(20)
+            .interactiveDismissDisabled()
+        }
+        .sheet(isPresented: $showDefaultSelection) {
+            NavigationStack {
+                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    withAnimation {
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                    }
+                }
+            }
+            .presentationDetents([.medium])
             .interactiveDismissDisabled()
         }
         .sheet(isPresented: $showAddWorkouts) {

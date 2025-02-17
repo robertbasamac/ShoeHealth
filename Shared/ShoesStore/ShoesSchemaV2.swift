@@ -173,7 +173,7 @@ extension ShoesSchemaV2 {
         
         static var previewShoe: Shoe {
             Shoe(
-                image: UIImage(named: "pegasus")?.pngData(),
+                image: UIImage(named: "ShoeHealth")?.pngData(),
                 brand: "Nike",
                 model: "Pegasus Turbo",
                 nickname: "Next Nature",
@@ -186,7 +186,7 @@ extension ShoesSchemaV2 {
         static var previewShoes: [Shoe] {
             [
                 Shoe(
-                    image: UIImage(named: "pegasus")?.pngData(),
+                    image: UIImage(named: "ShoeHealth")?.pngData(),
                     brand: "Nike",
                     model: "Pegasus 40",
                     nickname: "Shoey",
@@ -195,7 +195,7 @@ extension ShoesSchemaV2 {
                     defaultRunTypes: [.daily]
                 ),
                 Shoe(
-                    image: UIImage(named: "pegasus")?.pngData(),
+                    image: UIImage(named: "ShoeHealth")?.pngData(),
                     brand: "Nike",
                     model: "Pegasus Turbo Next Nature",
                     nickname: "Next Nature",
@@ -204,7 +204,7 @@ extension ShoesSchemaV2 {
                     defaultRunTypes: [.daily]
                 ),
                 Shoe(
-                    image: UIImage(named: "pegasus")?.pngData(),
+                    image: UIImage(named: "ShoeHealth")?.pngData(),
                     brand: "Nike",
                     model: "Alphafly 3",
                     nickname: "Fasty",
@@ -213,7 +213,7 @@ extension ShoesSchemaV2 {
                     defaultRunTypes: [.race]
                 ),
                 Shoe(
-                    image: UIImage(named: "pegasus")?.pngData(),
+                    image: UIImage(named: "ShoeHealth")?.pngData(),
                     brand: "Nike",
                     model: "Streakfly 2",
                     nickname: "5k love",

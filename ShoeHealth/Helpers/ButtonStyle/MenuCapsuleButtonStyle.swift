@@ -16,6 +16,7 @@ struct MenuCapsuleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.callout)
+            .fontWeight(.medium)
             .foregroundStyle(!isEnabled ? Color.gray : (isSelected ? Color.black : Color.primary))
             .padding(.vertical, 6)
             .padding(.horizontal, 16)

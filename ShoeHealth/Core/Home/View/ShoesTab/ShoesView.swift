@@ -448,7 +448,7 @@ extension ShoesView {
         Button {
             shoeForDefaultSelection = shoe
         } label: {
-            Label("Set Default", systemImage: "shoe.2")
+            Label("Set Default", systemImage: "figure.run")
         }
     }
     
