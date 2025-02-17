@@ -19,6 +19,12 @@ extension UIApplication {
         return scene?.windows.first?.safeAreaInsets.top ?? .zero
     }
     
+    static var bottomSafeAreaInsets: CGFloat  {
+        let scene = self.shared.connectedScenes.first as? UIWindowScene
+
+        return scene?.windows.first?.safeAreaInsets.bottom ?? .zero
+    }
+    
     static var statusBarHeight: CGFloat  {
         let scene = self.shared.connectedScenes.first as? UIWindowScene
 

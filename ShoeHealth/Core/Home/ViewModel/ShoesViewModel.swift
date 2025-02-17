@@ -333,7 +333,7 @@ final class ShoesViewModel {
         save()
     }
     
-    func setAsDefaultShoe(_ shoeID: UUID, for runTypes: [RunType]) {
+    func setAsDefaultShoe(_ shoeID: UUID, for runTypes: [RunType], append: Bool = false) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         for otherShoe in shoes {
@@ -344,12 +344,18 @@ final class ShoesViewModel {
             }
         }
         
-        shoe.defaultRunTypes.append(contentsOf: runTypes)
+        if append {
+            shoe.defaultRunTypes.append(contentsOf: runTypes)
+        } else {
+            shoe.defaultRunTypes = runTypes
+        }
+        
         shoe.isDefaultShoe = true
         shoe.isRetired = false
         
         save()
     }
+    
     
     func retireShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }

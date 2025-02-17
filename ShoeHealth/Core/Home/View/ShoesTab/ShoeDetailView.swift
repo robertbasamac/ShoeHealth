@@ -30,6 +30,10 @@ struct ShoeDetailView: View {
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
     
+    /// used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
+    @State private var bottomPadding: CGFloat = 20
+    @State private var sectionHeights: [String: CGFloat] = [:]
+    
     @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 100
     
     init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
@@ -92,11 +96,18 @@ struct ShoeDetailView: View {
                 .scrollTargetBehavior(.staticHeader)
             }
         }
-        .contentMargins(.bottom, 20)
+        .contentMargins(.bottom, bottomPadding)
         .navigationBarBackButtonHidden()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(navBarTitle)
         .toolbarBackground(navBarVisibility, for: .navigationBar)
+        .toolbar {
+            toolbarItems
+        }
+        .onPreferenceChange(SectionHeightPreferenceKey.self) { heights in
+            sectionHeights = heights
+            computeBottomPadding()
+        }
         .confirmationDialog(
             "Delete this shoe?",
             isPresented: $showDeletionConfirmation,
@@ -110,9 +121,6 @@ struct ShoeDetailView: View {
             message: { shoe in
                 Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
             })
-        .toolbar {
-            toolbarItems
-        }
         .navigationDestination(isPresented: $showAllWorkouts) {
             ShoeWorkoutsListView(shoe: shoe, isShoeRestricted: shoesViewModel.shouldRestrictShoe(shoe.id))
         }
@@ -123,7 +131,10 @@ struct ShoeDetailView: View {
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()
         }
-        .sheet(isPresented: $showDefaultSelection) {
+        .sheet(isPresented: $showDefaultSelection
+               , onDismiss: {
+            triggerSetNewDailyDefaultShoe()
+        }) {
             NavigationStack {
                 RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
                     withAnimation {
@@ -166,6 +177,86 @@ extension ShoeDetailView {
             .roundedContainer()
         }
         .padding(.top, 8)
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["healthSection": geo.size.height])
+            }
+        )
+    }
+    
+    @ViewBuilder
+    private var statsSection: some View {
+        VStack(spacing: 0) {
+            Text("Statistics")
+                .asHeader()
+            
+            VStack(spacing: 8) {
+                averagesSection
+                    .padding(.horizontal, 20)
+                
+                Rectangle()
+                    .fill(.background)
+                    .frame(height: 2)
+                    .frame(maxWidth: .infinity)
+                
+                personalBestsSection
+                    .padding(.horizontal, 20)
+            }
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .roundedContainer()
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["statsSection": geo.size.height])
+            }
+        )
+    }
+    
+    @ViewBuilder
+    private var workoutsSection: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("History")
+                
+                Image(systemName: "chevron.right")
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+            }
+            .asHeader()
+            .onTapGesture {
+                showAllWorkouts.toggle()
+            }
+            .overlay(alignment: .trailing, content: {
+                Button {
+                    showAddWorkouts.toggle()
+                } label: {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
+                }
+                .padding(.trailing, 20)
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+            })
+            
+            VStack(spacing: 4) {
+                ForEach(getShoeMostRecentlyWorkouts()) { workout in
+                    WorkoutListItem(workout: workout)
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["workoutsSection": geo.size.height])
+            }
+        )
     }
     
     @ViewBuilder
@@ -262,30 +353,6 @@ extension ShoeDetailView {
     }
     
     @ViewBuilder
-    private var statsSection: some View {
-        VStack(spacing: 0) {
-            Text("Statistics")
-                .asHeader()
-            
-            VStack(spacing: 8) {
-                averagesSection
-                    .padding(.horizontal, 20)
-                
-                Rectangle()
-                    .fill(.background)
-                    .frame(height: 2)
-                    .frame(maxWidth: .infinity)
-                
-                personalBestsSection
-                    .padding(.horizontal, 20)
-            }
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity)
-            .roundedContainer()
-        }
-    }
-    
-    @ViewBuilder
     private var averagesSection: some View {
         VStack(spacing: 8) {
             HStack {
@@ -350,15 +417,15 @@ extension ShoeDetailView {
     
     @ViewBuilder
     private var personalBestsSection: some View {
-        Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4, content: {
+        Grid(alignment: .center, horizontalSpacing: 8, verticalSpacing: 4) {
             GridRow {
                 Color.clear
                     .gridCellColumns(2)
-
+                
                 Text("PR")
                     .lineLimit(1)
                     .gridCellColumns(3)
-
+                
                 Text("Runs")
                     .lineLimit(1)
                     .gridCellColumns(2)
@@ -391,44 +458,6 @@ extension ShoeDetailView {
                 .font(.headline)
                 .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
             }
-        })
-    }
-        
-    @ViewBuilder
-    private var workoutsSection: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("History")
-                
-                Image(systemName: "chevron.right")
-                    .imageScale(.small)
-                    .foregroundStyle(.secondary)
-            }
-            .asHeader()
-            .onTapGesture {
-                showAllWorkouts.toggle()
-            }
-            .overlay(alignment: .trailing, content: {
-                Button {
-                    showAddWorkouts.toggle()
-                } label: {
-                    Image(systemName: "plus")
-                        .imageScale(.large)
-                }
-                .padding(.trailing, 20)
-                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-            })
-            
-            VStack(spacing: 4) {
-                ForEach(getShoeMostRecentlyWorkouts()) { workout in
-                    WorkoutListItem(workout: workout)
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
         }
     }
     
@@ -442,7 +471,7 @@ extension ShoeDetailView {
                     .imageScale(.large)
                     .fontWeight(.semibold)
             }
-            .buttonStyle(.blurredCircle(Double(1-opacity)))
+            .buttonStyle(.blurredCircle(Double(1 - opacity)))
         }
         
         ToolbarItem(placement: .topBarTrailing) {
@@ -452,8 +481,13 @@ extension ShoeDetailView {
                 } label: {
                     Label("Edit", systemImage: "pencil")
                 }
-                .buttonStyle(.blurredCapsule(Double(1-opacity)))
                 .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+                
+                Button {
+                    showDefaultSelection.toggle()
+                } label: {
+                    Label("Set Default", systemImage: "figure.run")
+                }
                 
                 Button(role: .destructive) {
                     showDeletionConfirmation.toggle()
@@ -463,7 +497,7 @@ extension ShoeDetailView {
             } label: {
                 Image(systemName: "ellipsis")
                     .frame(width: 34, height: 34)
-                    .background(.bar.opacity(Double(1-opacity)), in: .circle)
+                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
             }
         }
     }
@@ -476,6 +510,7 @@ extension ShoeDetailView {
     private func getShoeWorkouts() -> [HKWorkout] {
         return healthManager.getWorkouts(forIDs: shoe.workouts)
     }
+    
     private func getShoeMostRecentlyWorkouts() -> [HKWorkout] {
         return Array(getShoeWorkouts().prefix(5))
     }
@@ -510,12 +545,37 @@ extension ShoeDetailView {
         }
     }
     
+    private func triggerSetNewDailyDefaultShoe() {
+        guard let _ = shoesViewModel.getDefaultShoe(for: .daily) else {
+            if !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+            return
+        }
+    }
+    
+    private func computeBottomPadding() {
+        let healthHeight = sectionHeights["healthSection"] ?? 0
+        let statsHeight = sectionHeights["statsSection"] ?? 0
+        let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
+        let screenHeight = UIScreen.main.bounds.size.height
+        let navBarHeight = UIApplication.navigationBarHeight
+        let statusBarHeight = UIApplication.statusBarHeight
+        let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
+        
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - navBarHeight - healthHeight - statsHeight - workoutsHeight
+        
+        bottomPadding = availableHeight < 0 ? 20 : availableHeight
+    }
+    
     private func readFrame(_ frame: CGRect) {
         guard frame.maxY > 0 else {
             return
         }
         
-        let topPadding: CGFloat = UIApplication.statusBarHeight + 44
+        let topPadding: CGFloat = UIApplication.statusBarHeight + UIApplication.navigationBarHeight
         let showNavBarTitlePadding: CGFloat = 25
         
         opacity = interpolateOpacity(position: frame.maxY,

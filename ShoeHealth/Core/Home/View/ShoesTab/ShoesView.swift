@@ -254,7 +254,6 @@ extension ShoesView {
                         .contextMenu {
                             if storeManager.hasFullAccess ||
                                 (!storeManager.hasFullAccess &&
-                                 !shoe.isDefaultShoe &&
                                  !shoe.defaultRunTypes.contains(.daily) &&
                                  !shoesViewModel.shouldRestrictShoe(shoe.id)) {
                                 setDefaultShoeButton(shoe)
@@ -276,9 +275,12 @@ extension ShoesView {
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
-        .sheet(item: $shoeForDefaultSelection) { shoe in
+        .sheet(item: $shoeForDefaultSelection, onDismiss: {
+            triggerSetNewDailyDefaultShoe()
+        }) { shoe in
             NavigationStack {
                 RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    
                     withAnimation {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
                     }
@@ -587,6 +589,17 @@ extension ShoesView {
     
     private func isFeatureDisabled(for runType: RunType) -> Bool {
         return runType != .daily && !storeManager.hasFullAccess
+    }
+    
+    private func triggerSetNewDailyDefaultShoe() {
+        guard let _ = shoesViewModel.getDefaultShoe(for: .daily) else {
+            if !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+            return
+        }
     }
 }
 

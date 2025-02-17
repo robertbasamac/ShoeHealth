@@ -47,7 +47,7 @@ struct ContentView: View {
                             systemImage: "shoe.2",
                             onDone: { shoeID in
                                 withAnimation {
-                                    shoesViewModel.setAsDefaultShoe(shoeID, for: [runType])
+                                    shoesViewModel.setAsDefaultShoe(shoeID, for: [runType], append: true)
                                 }
                             })
                     case .addWorkoutToShoe(let workoutID):

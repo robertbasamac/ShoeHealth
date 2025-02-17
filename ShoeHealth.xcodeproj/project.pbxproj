@@ -133,6 +133,7 @@
 		09E48DFB2D42CCC2001E54C0 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 09E48DFA2D42CCC2001E54C0 /* PRIVACY_POLICY.md */; };
 		09E48DFD2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md in Resources */ = {isa = PBXBuildFile; fileRef = 09E48DFC2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md */; };
 		09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F18EE72BC6AC03002B73EE /* ShoeCell.swift */; };
+		09F6E7D82D62650900345000 /* SectionHeightPreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F6E7D72D62650900345000 /* SectionHeightPreferenceKey.swift */; };
 		09F96F362B67E27000BCE5E7 /* ShoeWorkoutsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */; };
 /* End PBXBuildFile section */
 
@@ -279,6 +280,7 @@
 		09E48DFA2D42CCC2001E54C0 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
 		09E48DFC2D42CCCD001E54C0 /* TERMS_OF_SERVICE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TERMS_OF_SERVICE.md; sourceTree = "<group>"; };
 		09F18EE72BC6AC03002B73EE /* ShoeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeCell.swift; sourceTree = "<group>"; };
+		09F6E7D72D62650900345000 /* SectionHeightPreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeightPreferenceKey.swift; sourceTree = "<group>"; };
 		09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeWorkoutsListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -316,6 +318,7 @@
 				0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */,
 				0936FF542BD586F600BF5798 /* FrameReader.swift */,
 				0944A7F12CE23D720042081D /* SFSafariViewController.swift */,
+				09F6E7D62D6264E200345000 /* PreferenceKey */,
 				09D9B5C42C08EA650016825A /* ButtonStyle */,
 				094F26282BE01FC800441A62 /* ScrollTargetBehavior */,
 				0980A7EF2BB42DBF000848A1 /* PropertyWrappers */,
@@ -791,6 +794,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		09F6E7D62D6264E200345000 /* PreferenceKey */ = {
+			isa = PBXGroup;
+			children = (
+				09F6E7D72D62650900345000 /* SectionHeightPreferenceKey.swift */,
+			);
+			path = PreferenceKey;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -984,6 +995,7 @@
 				09E385E32B1345D7005CFF02 /* ShoesTab.swift in Sources */,
 				0936FF592BD6628900BF5798 /* DimissSwipeGesture.swift in Sources */,
 				09E385E02B13457E005CFF02 /* WorkoutsTab.swift in Sources */,
+				09F6E7D82D62650900345000 /* SectionHeightPreferenceKey.swift in Sources */,
 				0944A7E22CD4DFDF0042081D /* LaunchView.swift in Sources */,
 				09BFD6EF2C4050DF00D112BF /* WearCondition.swift in Sources */,
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
@@ -1060,7 +1072,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1093,7 +1105,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.2;
+				MARKETING_VERSION = 2.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
