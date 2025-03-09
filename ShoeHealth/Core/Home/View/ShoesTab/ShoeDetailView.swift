@@ -304,7 +304,7 @@ extension ShoeDetailView {
         VStack(spacing: 20) {
             HStack(spacing: 20) {
                 VStack(spacing: 10) {
-                    Image(systemName: !shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
+                    Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 44, height: 44)
