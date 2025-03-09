@@ -20,19 +20,22 @@ struct ShoeDetailView: View {
     private var shoe: Shoe
     private var backButtonSymbol: String
     
+    /// Used for navigaion and modals presentation
     @State private var showEditShoe: Bool = false
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
     @State private var showDeletionConfirmation: Bool = false
     @State private var showDefaultSelection: Bool = false
     
+    /// Used for Header behavior
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
     
-    /// used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
+    /// Used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
     @State private var bottomPadding: CGFloat = 20
     @State private var sectionHeights: [String: CGFloat] = [:]
+    private var storedNavBarHeight: CGFloat = UIApplication.navigationBarHeight
     
     @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 100
     
@@ -561,13 +564,12 @@ extension ShoeDetailView {
         let statsHeight = sectionHeights["statsSection"] ?? 0
         let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
         let screenHeight = UIScreen.main.bounds.size.height
-        let navBarHeight = UIApplication.navigationBarHeight
         let statusBarHeight = UIApplication.statusBarHeight
         let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
         
-        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - navBarHeight - healthHeight - statsHeight - workoutsHeight
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight
         
-        bottomPadding = availableHeight < 0 ? 20 : availableHeight
+        bottomPadding = availableHeight < 20 ? 20 : availableHeight
     }
     
     private func readFrame(_ frame: CGRect) {
@@ -575,7 +577,7 @@ extension ShoeDetailView {
             return
         }
         
-        let topPadding: CGFloat = UIApplication.statusBarHeight + UIApplication.navigationBarHeight
+        let topPadding: CGFloat = UIApplication.statusBarHeight + storedNavBarHeight
         let showNavBarTitlePadding: CGFloat = 25
         
         opacity = interpolateOpacity(position: frame.maxY,
