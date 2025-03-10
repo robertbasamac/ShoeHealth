@@ -577,7 +577,7 @@ extension ShoeDetailView {
             return
         }
         
-        let topPadding: CGFloat = UIApplication.statusBarHeight + storedNavBarHeight
+        let topPadding: CGFloat = UIApplication.statusBarHeight + 44
         let showNavBarTitlePadding: CGFloat = 25
         
         opacity = interpolateOpacity(position: frame.maxY,
