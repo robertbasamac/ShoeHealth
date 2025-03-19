@@ -16,7 +16,6 @@ class AppDelegate: NSObject {
     
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
-    var storeManager: StoreManager?
     
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
 }
@@ -28,7 +27,7 @@ extension AppDelegate: UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         
-        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager?.hasFullAccess ?? false)
+        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: StoreManager.shared.hasFullAccess)
         HealthManager.shared.startObserving()
         
         return true
@@ -52,48 +51,36 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             switch response.actionIdentifier {
             case "DEFAULT_SHOE_ACTION_DAILY":
                 logger.debug("\"Use Daily Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .daily, forWorkoutIDs: [workoutID])
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_LONG":
                 logger.debug("\"Use Tempo Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .long, forWorkoutIDs: [workoutID])
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_TEMPO":
                 logger.debug("\"Use Long Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .tempo, forWorkoutIDs: [workoutID])
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_RACE":
                 logger.debug("\"Use Race default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .race, forWorkoutIDs: [workoutID])
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_TRAIL":
                 logger.debug("\"Use Train Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .trail, forWorkoutIDs: [workoutID])
-                
                 break
                 
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
-                
                 handleRemindMeLaterAction(forWorkoutIDs: [workoutID])
                 break
                 
             case UNNotificationDefaultActionIdentifier:
                 logger.debug("\"New Running Workout\" notification pressed.")
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showSheet = .addWorkoutToShoe(workoutID: workoutID)
                 }
@@ -114,48 +101,36 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             switch response.actionIdentifier {
             case "DEFAULT_SHOE_ACTION_DAILY":
                 logger.debug("\"Use Daily Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .daily, forWorkoutIDs: workoutIDs)
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_LONG":
                 logger.debug("\"Use Tempo Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .long, forWorkoutIDs: workoutIDs)
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_TEMPO":
                 logger.debug("\"Use Long Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .tempo, forWorkoutIDs: workoutIDs)
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_RACE":
                 logger.debug("\"Use Race default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .race, forWorkoutIDs: workoutIDs)
-                
                 break
                 
             case "DEFAULT_SHOE_ACTION_TRAIL":
                 logger.debug("\"Use Train Run default shoe\" action pressed.")
-                
                 handleDefaultShoeAction(for: .trail, forWorkoutIDs: workoutIDs)
-                
                 break
                 
             case "REMIND_ME_LATER":
                 logger.debug("\"Remind me later\" action pressed.")
-                
                 handleRemindMeLaterAction(forWorkoutIDs: workoutIDs)
                 break
                 
             case UNNotificationDefaultActionIdentifier:
                 logger.debug("\"Multiple New Running Workouts\" notification pressed.")
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showSheet = .addMultipleWorkoutsToShoe(workoutIDs: workoutIDs)
                 }
@@ -170,7 +145,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             switch response.actionIdentifier {
             case "RETIRE_SHOE_ACTION":
                 logger.debug("\"Retire Shoe\" action pressed.")
-                
                 handleRetireShoeAction(forShoeID: shoeID)
                 break
                 
@@ -178,7 +152,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 logger.debug("\"Show Wear Update\" notification pressed.")
 
                 guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { break }
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showShoeDetails = shoe
                 }
@@ -191,7 +164,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
                 logger.debug("\"Set Default Shoe\" notification pressed.")
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.navigationRouter?.showSheet = .setDefaultShoe(forRunType: .daily)
                 }

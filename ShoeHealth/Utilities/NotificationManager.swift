@@ -69,7 +69,7 @@ final class NotificationManager {
     }
     
     func setActionableNotificationTypes(isPremiumUser: Bool) {
-        logger.debug("Setting up actionable notifications.")
+        logger.debug("Setting up actionable notifications for \(isPremiumUser ? "premium" : "free") user.")
 
         // Common actions
         let defaultShoeActionDaily = UNNotificationAction(

@@ -45,7 +45,6 @@ struct ShoeHealthApp: App {
                     .onAppear {
                         appDelegate.shoesViewModel = shoesViewModel
                         appDelegate.navigationRouter = navigationRouter
-                        appDelegate.storeManager = storeManager
                     }
                     .onChange(of: scenePhase) { _, newPhase in
                         if newPhase == .active {
