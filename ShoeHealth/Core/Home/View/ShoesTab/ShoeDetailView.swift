@@ -18,7 +18,7 @@ struct ShoeDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     private var shoe: Shoe
-    private var backButtonSymbol: String
+    private var isFullScreen: Bool
     
     /// Used for navigaion and modals presentation
     @State private var showEditShoe: Bool = false
@@ -39,9 +39,9 @@ struct ShoeDetailView: View {
     
     @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 100
     
-    init(shoe: Shoe, showStats: Bool = true, backButtonSymbol: String = "chevron.left") {
+    init(shoe: Shoe, showStats: Bool = true, isFullScreen: Bool = false) {
         self.shoe = shoe
-        self.backButtonSymbol = backButtonSymbol
+        self.isFullScreen = isFullScreen
     }
     
     var body: some View {
@@ -470,7 +470,7 @@ extension ShoeDetailView {
             Button {
                 dismiss()
             } label: {
-                Image(systemName: backButtonSymbol)
+                Image(systemName: isFullScreen ? "xmark" : "chevron.left")
                     .imageScale(.large)
                     .fontWeight(.semibold)
             }
@@ -566,9 +566,10 @@ extension ShoeDetailView {
         let screenHeight = UIScreen.main.bounds.size.height
         let statusBarHeight = UIApplication.statusBarHeight
         let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
+        let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
         
-        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight
-        
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
+                
         bottomPadding = availableHeight < 20 ? 20 : availableHeight
     }
     

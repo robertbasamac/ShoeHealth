@@ -26,7 +26,7 @@ struct ContentView: View {
             }
             .fullScreenCover(item: $navigationRouter.showShoeDetails) { shoe in
                 NavigationStack {
-                    ShoeDetailView(shoe: shoe, backButtonSymbol: "xmark")
+                    ShoeDetailView(shoe: shoe, isFullScreen: true)
                 }
             }
             .fullScreenCover(isPresented: $navigationRouter.showPaywall) {
