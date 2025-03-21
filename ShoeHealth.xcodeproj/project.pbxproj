@@ -89,6 +89,10 @@
 		09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */; };
 		09B792F72D4250A80068A534 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 09B792F62D4250A80068A534 /* README.md */; };
 		09B792F92D4254960068A534 /* FAQView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B792F82D4254960068A534 /* FAQView.swift */; };
+		09BD60622D8D6F6D00EBEC44 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BD60612D8D6F6D00EBEC44 /* System.swift */; };
+		09BD60632D8D710600EBEC44 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BD60612D8D6F6D00EBEC44 /* System.swift */; };
+		09BD60692D8D95BE00EBEC44 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BD60682D8D95BE00EBEC44 /* DeepLinkAction.swift */; };
+		09BD606A2D8D95BE00EBEC44 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BD60682D8D95BE00EBEC44 /* DeepLinkAction.swift */; };
 		09BEB9932D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
 		09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */; };
 		09BEB9972D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */; };
@@ -243,6 +247,8 @@
 		09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWokoutsToShoeView.swift; sourceTree = "<group>"; };
 		09B792F62D4250A80068A534 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		09B792F82D4254960068A534 /* FAQView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQView.swift; sourceTree = "<group>"; };
+		09BD60612D8D6F6D00EBEC44 /* System.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
+		09BD60682D8D95BE00EBEC44 /* DeepLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkAction.swift; sourceTree = "<group>"; };
 		09BEB9922D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeShoeNotSelectedView.swift; sourceTree = "<group>"; };
 		09BEB9962D40FBC3000A98EF /* RunTypeNotAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTypeNotAvailableView.swift; sourceTree = "<group>"; };
 		09BEB9992D40FC1D000A98EF /* NoShoeAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoShoeAvailableView.swift; sourceTree = "<group>"; };
@@ -314,7 +320,6 @@
 		090D76ED2BB2DEE600D23762 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				0948B5DA2C0DE9CA001A7745 /* Prompts.swift */,
 				0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */,
 				0936FF542BD586F600BF5798 /* FrameReader.swift */,
 				0944A7F12CE23D720042081D /* SFSafariViewController.swift */,
@@ -357,10 +362,11 @@
 		093742742B7A6A87008D96BD /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				09BD60602D8D6EEC00EBEC44 /* Globals */,
 				0980A7F22BB5AEB4000848A1 /* Helpers */,
 				093742A22B7B9C74008D96BD /* Extensions */,
 				0980A7F32BB5AEFB000848A1 /* ShoesStore */,
-				093742A72B84AE29008D96BD /* View */,
+				093742A72B84AE29008D96BD /* Views */,
 				09E385E82B13FCAF005CFF02 /* PreviewSample */,
 			);
 			path = Shared;
@@ -400,13 +406,12 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		093742A72B84AE29008D96BD /* View */ = {
+		093742A72B84AE29008D96BD /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				094B75B02B4ECA7000632590 /* CircularProgressView.swift */,
-				095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */,
+				09BD606B2D8D960900EBEC44 /* Components */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		0944A7D82CD4DB980042081D /* LaunchScreen */ = {
@@ -608,6 +613,32 @@
 			path = ViewComponents;
 			sourceTree = "<group>";
 		};
+		09BD60602D8D6EEC00EBEC44 /* Globals */ = {
+			isa = PBXGroup;
+			children = (
+				09BD60612D8D6F6D00EBEC44 /* System.swift */,
+				09BD60682D8D95BE00EBEC44 /* DeepLinkAction.swift */,
+			);
+			path = Globals;
+			sourceTree = "<group>";
+		};
+		09BD60642D8D8B0100EBEC44 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0948B5DA2C0DE9CA001A7745 /* Prompts.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		09BD606B2D8D960900EBEC44 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				094B75B02B4ECA7000632590 /* CircularProgressView.swift */,
+				095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		09BEB99E2D40FC9E000A98EF /* HelperViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -723,6 +754,7 @@
 			children = (
 				09DE4A802B0D43AC001119E4 /* ShoeHealth.entitlements */,
 				0907F25C2B1C964B00EB682A /* App */,
+				09BD60642D8D8B0100EBEC44 /* Resources */,
 				0948B5DC2C0E1C2A001A7745 /* Extensions */,
 				090D76ED2BB2DEE600D23762 /* Helpers */,
 				09E7EAB22B3B265B00BFAC16 /* Utilities */,
@@ -922,6 +954,7 @@
 				09A7B9DC2C81F5E100822C03 /* Color.swift in Sources */,
 				09BEB9982D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */,
 				09BFD2DD2B978E97009F4133 /* MediumStatsTimelineProvider.swift in Sources */,
+				09BD60692D8D95BE00EBEC44 /* DeepLinkAction.swift in Sources */,
 				09630FEC2D085F23006C14E0 /* MediumShoeStatsWidgetView.swift in Sources */,
 				09BFEE882D21A35C00E911EC /* RunType.swift in Sources */,
 				0944A7FD2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
@@ -938,6 +971,7 @@
 				09BEB99B2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */,
 				0944A7F92CE60AF20042081D /* ShoesMigrationPlan.swift in Sources */,
 				09BFD2EA2B979C81009F4133 /* ShoesStore.swift in Sources */,
+				09BD60632D8D710600EBEC44 /* System.swift in Sources */,
 				09402B822BFD0F0700C943C1 /* RunningCategory.swift in Sources */,
 				093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */,
 				095D8B612BCD6B61001D7592 /* RoundedRectangleProgressView.swift in Sources */,
@@ -967,6 +1001,7 @@
 				0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */,
 				09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */,
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
+				09BD60622D8D6F6D00EBEC44 /* System.swift in Sources */,
 				094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */,
 				0936FF602BD6DEE700BF5798 /* StaticHeaderCell.swift in Sources */,
 				09D9B5CA2C08F1930016825A /* UIApplication.swift in Sources */,
@@ -1001,6 +1036,7 @@
 				09E2F34F2B151DD800D16101 /* HKWorkout+Identifiable.swift in Sources */,
 				09E385D82B1256B9005CFF02 /* HKWorkout+Statistics.swift in Sources */,
 				09BFEE892D21A35C00E911EC /* RunType.swift in Sources */,
+				09BD606A2D8D95BE00EBEC44 /* DeepLinkAction.swift in Sources */,
 				094B75B12B4ECA7000632590 /* CircularProgressView.swift in Sources */,
 				09DE4A732B0D3F7F001119E4 /* ShoeHealthApp.swift in Sources */,
 				097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */,

@@ -60,7 +60,7 @@ struct MediumShoeStatsSnapshotWidgetView: View {
     var unitSymbol: String
     
     var body: some View {
-        Link(destination: URL(string: "shoeHealthApp://openShoeDetails?shoeID=\(shoe.id)")!) {
+        Link(destination: URL(string: "shoeHealthApp://\(DeepLinkAction.openShoeDetails.rawValue)?shoeID=\(shoe.id)")!) {
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
                     VStack(alignment: .leading, spacing: 0) {

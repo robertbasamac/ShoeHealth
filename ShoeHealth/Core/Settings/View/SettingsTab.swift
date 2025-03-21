@@ -153,11 +153,11 @@ extension SettingsTab {
             .foregroundStyle(.primary)
         } footer: {
             HStack(spacing: 4) {
-                Link("Terms of Service", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                Link("Terms of Service", destination: System.AppLinks.termsOfService)
                 
                 Text("and")
                 
-                Link("Privacy Policy", destination: URL(string: "https://github.com/robertbasamac/ShoeHealth/blob/master/APP_POLICY.md")!)
+                Link("Privacy Policy", destination: System.AppLinks.privacyPolicy)
             }
             .frame(maxWidth: .infinity, alignment: .center)
             .font(.footnote)

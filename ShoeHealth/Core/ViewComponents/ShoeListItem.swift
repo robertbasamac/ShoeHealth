@@ -19,7 +19,7 @@ struct ShoeListItem: View {
     var reserveSpace: Bool = true
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: System.AppGroups.shoeHealth)) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         HStack(spacing: 0) {

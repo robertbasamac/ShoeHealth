@@ -44,7 +44,7 @@ struct SmallShoeStatsSnapshotWidgetView : View {
     var shoe: ShoeStatsEntity
     
     var body: some View {
-        Link(destination: URL(string: "shoeHealthApp://openShoeDetails?shoeID=\(shoe.id)")!) {
+        Link(destination: URL(string: "shoeHealthApp://\(DeepLinkAction.openShoeDetails.rawValue)?shoeID=\(shoe.id)")!) {
             VStack(alignment: .center, spacing: 4) {
                 CircularProgressView(progress: shoe.wearPercentage, lineWidth: 5, color: shoe.wearColor)
                     .widgetAccentable(true)

@@ -36,7 +36,7 @@ struct ShoeHealthApp: App {
             ZStack {
                 ContentView()
                     .preferredColorScheme(.dark)
-                    .defaultAppStorage(UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")!)
+                    .defaultAppStorage(UserDefaults(suiteName: System.AppGroups.shoeHealth)!)
                     .environmentObject(navigationRouter)
                     .environmentObject(storeManager)
                     .environment(shoesViewModel)

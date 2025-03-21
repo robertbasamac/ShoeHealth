@@ -15,7 +15,7 @@ final class SettingsManager {
     
     static let shared = SettingsManager()
 
-    @ObservationIgnored private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+    @ObservationIgnored private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     
     private(set) var unitOfMeasure: UnitOfMeasure {
         didSet {

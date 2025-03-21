@@ -10,7 +10,7 @@ import SwiftUI
 struct NoShoeAvailableView: View {
     
     var body: some View {
-        Link(destination: URL(string: "shoeHealthApp://show-addShoe")!) {
+        Link(destination: URL(string: "shoeHealthApp://\(DeepLinkAction.showAddShoe.rawValue)")!) {
             VStack(spacing: 10) {
                 Text("No shoe available")
                     .font(.subheadline)

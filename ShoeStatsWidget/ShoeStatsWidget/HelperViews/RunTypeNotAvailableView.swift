@@ -12,7 +12,7 @@ struct RunTypeNotAvailableView : View {
     var runType: RunType
     
     var body: some View {
-        Link(destination: URL(string: "shoeHealthApp://show-paywall")!) {
+        Link(destination: URL(string: "shoeHealthApp://\(DeepLinkAction.showPaywall.rawValue)")!) {
             VStack(spacing: 10) {
                 Text("'\(runType.rawValue.capitalized)' Run is not available for free users")
                     .font(.subheadline)

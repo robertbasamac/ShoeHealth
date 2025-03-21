@@ -21,7 +21,7 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel"
 final class ShoesViewModel {
     
     @ObservationIgnored private var modelContext: ModelContext
-    @ObservationIgnored private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+    @ObservationIgnored private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
     
     private(set) var shoes: [Shoe] = []

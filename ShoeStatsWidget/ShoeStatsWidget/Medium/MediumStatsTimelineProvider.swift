@@ -175,7 +175,7 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     }
     
     private func getUnitSymbol() -> String {
-        let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+        let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
         let savedUnitOfMeasure = defaults?.string(forKey: "UNIT_OF_MEASURE") ?? UnitOfMeasure.metric.rawValue
         let unitOfMeasure = UnitOfMeasure(rawValue: savedUnitOfMeasure) ?? .metric
         
@@ -183,7 +183,7 @@ struct MediumShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     }
     
     private func getPremiumStatus() -> Bool {
-        let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+        let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
         let savedPremiumStatus = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
         
         return savedPremiumStatus

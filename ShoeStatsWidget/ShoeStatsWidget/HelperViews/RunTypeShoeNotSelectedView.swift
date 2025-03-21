@@ -12,7 +12,7 @@ struct RunTypeShoeNotSelectedView: View {
     var runType: RunType
     
     var body: some View {
-        Link(destination: URL(string: "shoeHealthApp://show-selectShoe?runType=\(runType.rawValue)")!) {
+        Link(destination: URL(string: "shoeHealthApp://\(DeepLinkAction.showSelectShoe.rawValue)?runType=\(runType.rawValue)")!) {
             VStack(spacing: 10) {
                 Text("No Shoe selected for '\(runType.rawValue.capitalized)' Runs")
                     .font(.subheadline)

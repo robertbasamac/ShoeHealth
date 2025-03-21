@@ -150,7 +150,7 @@ struct SmallShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     }
     
     private func getPremiumStatus() -> Bool {
-        let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+        let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
         let savedPremiumStatus = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
         
         return savedPremiumStatus

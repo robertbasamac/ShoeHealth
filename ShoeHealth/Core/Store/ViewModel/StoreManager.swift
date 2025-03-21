@@ -29,7 +29,7 @@ final class StoreManager: ObservableObject {
     
     static let shared = StoreManager()
     
-    private let defaults = UserDefaults(suiteName: "group.com.robertbasamac.ShoeHealth")
+    private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     
     @Published private(set) var lifetimeProduct: Product?
     @Published private(set) var subscriptionProducts: [Product] = []
