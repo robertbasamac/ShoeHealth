@@ -312,7 +312,7 @@ final class HealthManager {
             let stepCountType = HKQuantityType(.stepCount)
             let stepCountQuery = HKSampleQuery(sampleType: stepCountType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, samples, error in
                 guard error == nil, let stepSamples = samples as? [HKQuantitySample] else {
-                    print("Error fetching step count samples: \(error?.localizedDescription ?? "Unknown error")")
+                    logger.error("Error fetching step count samples: \(error?.localizedDescription ?? "Unknown error")")
                     continuation.resume(returning: [])
                     return
                 }

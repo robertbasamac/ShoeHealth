@@ -9,6 +9,9 @@ import Foundation
 import Observation
 import PhotosUI
 import SwiftUI
+import OSLog
+
+private let logger = Logger(subsystem: "Shoe Health", category: "ShoeFormViewModel")
 
 @Observable
 final class ShoeFormViewModel {
@@ -61,7 +64,7 @@ final class ShoeFormViewModel {
                 }
             }
         } catch {
-            print("Error loading photo: \(error)")
+            logger.error("Error loading photo: \(error)")
         }
     }
     
