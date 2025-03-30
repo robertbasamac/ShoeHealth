@@ -17,6 +17,7 @@ extension View {
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .contentShape(.rect)
+            .dynamicTypeSize(DynamicTypeSize.small...DynamicTypeSize.xxxLarge)
     }
     
     func roundedContainer() -> some View {

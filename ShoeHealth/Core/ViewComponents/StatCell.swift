@@ -47,7 +47,7 @@ struct StatCell: View {
             if showLabel {
                 Text(label)
                     .font(labelFont)
-                    .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+                    .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
                     .lineLimit(1)
             }
             

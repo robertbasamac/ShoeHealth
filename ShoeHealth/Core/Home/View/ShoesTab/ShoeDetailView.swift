@@ -434,7 +434,7 @@ extension ShoeDetailView {
                     .gridCellColumns(2)
             }
             .font(.caption)
-            .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
+            .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
             .foregroundStyle(.secondary)
             
             ForEach(RunningCategory.allCases, id: \.self) { category in

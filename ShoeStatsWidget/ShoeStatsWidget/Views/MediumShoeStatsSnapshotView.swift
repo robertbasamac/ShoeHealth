@@ -1,58 +1,14 @@
 //
-//  MediumShoeStatsWidgetView.swift
+//  MediumShoeStatsSnapshotView.swift
 //  ShoeStatsWidgetExtension
 //
-//  Created by Robert Basamac on 10.12.2024.
+//  Created by Robert Basamac on 30.03.2025.
 //
 
 import SwiftUI
 import WidgetKit
 
-// MARK: - Widget View
-
-struct MediumShoeStatsWidgetView: View {
-        
-    var entry: MediumShoeStatsWidgetEntry
-    
-    var body: some View {
-        if entry.isPremium {
-            if let shoe = entry.shoe {
-                return AnyView(
-                    MediumShoeStatsSnapshotWidgetView(
-                        shoe: shoe,
-                        firstStat: entry.firstStat,
-                        secondStat: entry.secondStat,
-                        unitSymbol: entry.unitSymbol
-                    )
-                )
-            } else if let runType = entry.runType {
-                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
-            } else {
-                return AnyView(NoShoeAvailableView())
-            }
-        } else if let runType = entry.runType, runType != .daily {
-            return AnyView(RunTypeNotAvailableView(runType: runType))
-        } else {
-            if let shoe = entry.shoe {
-                return AnyView(
-                    MediumShoeStatsSnapshotWidgetView(
-                        shoe: shoe,
-                        firstStat: entry.firstStat,
-                        secondStat: entry.secondStat,
-                        unitSymbol: entry.unitSymbol
-                ))
-            } else if let runType = entry.runType {
-                return AnyView(RunTypeShoeNotSelectedView(runType: runType))
-            } else {
-                return AnyView(NoShoeAvailableView())
-            }
-        }
-    }
-}
-
-// MARK: - Snapshot Widget View
-
-struct MediumShoeStatsSnapshotWidgetView: View {
+struct MediumShoeStatsSnapshotView: View, ShoeStatsViewProtocol {
     
     var shoe: ShoeStatsEntity
     var firstStat: ShoeStatMetric
@@ -134,10 +90,10 @@ struct MediumShoeStatsSnapshotWidgetView: View {
 
 // MARK: - View Components
 
-extension MediumShoeStatsSnapshotWidgetView {
+extension MediumShoeStatsSnapshotView {
     
     @ViewBuilder
-    private func getStatCell(for metric: ShoeStatMetric) -> some View {
+    func getStatCell(for metric: ShoeStatMetric) -> some View {
         switch metric {
         case .totalDuration:
             statCell(
@@ -178,49 +134,16 @@ extension MediumShoeStatsSnapshotWidgetView {
             )
         }
     }
-    
-    @ViewBuilder
-    private func statCell(
-        label: String,
-        value: String,
-        unit: String = "",
-        color: Color,
-        textAlignment: HorizontalAlignment = .center,
-        containerAlignment: Alignment = .center,
-        showLabel: Bool = true
-    ) -> some View {
-        VStack(alignment: textAlignment, spacing: 0) {
-            if showLabel {
-                Text(label)
-                    .font(.caption)
-                    .lineLimit(1)
-            }
-            
-            Group {
-                Text(value) +
-                Text("\(unit.uppercased())")
-                    .textScale(.secondary)
-            }
-            .font(.headline)
-            .fontWeight(.medium)
-            .fontDesign(.rounded)
-            .foregroundStyle(color)
-            .lineLimit(1)
-            .widgetAccentable(true)
-        }
-        .dynamicTypeSize(DynamicTypeSize.large)
-        .frame(alignment: containerAlignment)
-    }
 }
 
 // MARK: - Previews
 
 #Preview("Medium", as: .systemMedium) {
-    MediumShoeStatsWidget()
+    ShoeStatsWidget()
 } timeline: {
-    MediumShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[1]), firstStat: .totalDuration, secondStat: .averageDuration, unitSymbol: UnitOfMeasure.metric.symbol)
+    ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[1]), firstStat: .totalDuration, secondStat: .averageDuration, unitSymbol: UnitOfMeasure.metric.symbol)
 
-    MediumShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[2]), firstStat: .averagePace, secondStat: .averageDistance, unitSymbol: UnitOfMeasure.metric.symbol)
+    ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[2]), firstStat: .averagePace, secondStat: .averageDistance, unitSymbol: UnitOfMeasure.metric.symbol)
     
-    MediumShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[3]), firstStat: .totalDuration, secondStat: .averagePace, unitSymbol: UnitOfMeasure.metric.symbol)
+    ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[3]), firstStat: .totalDuration, secondStat: .averagePace, unitSymbol: UnitOfMeasure.metric.symbol)
 }

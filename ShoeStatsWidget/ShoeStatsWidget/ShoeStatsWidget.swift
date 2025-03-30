@@ -1,5 +1,5 @@
 //
-//  MediumShoeStatsWidget.swift
+//  ShoeStatsWidget.swift
 //  ShoeStatsWidgetExtension
 //
 //  Created by Robert Basamac on 05.03.2024.
@@ -9,20 +9,20 @@ import WidgetKit
 import SwiftUI
 import SwiftData
 
-struct MediumShoeStatsWidget: Widget {
+struct ShoeStatsWidget: Widget {
     
     let kind: String = "MediumShoeStatsWidget"
     
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: MediumShoeSelectionIntent.self,
-            provider: MediumShoeStatsAppIntentProvider()
+            intent: ShoeSelectionIntent.self,
+            provider: ShoeStatsAppIntentProvider()
         ) { entry in
-            MediumShoeStatsWidgetView(entry: entry)
+            ShoeStatsWidgetView(entry: entry)
         }
         .configurationDisplayName("Shoe Stats")
         .description("Displays health and statistics of the selected shoe.")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
