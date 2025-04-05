@@ -80,17 +80,3 @@ struct FrameReader_Previews: PreviewProvider {
         PreviewView()
     }
 }
-
-
-func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
-    // Ensure position is within the range
-    let clampedPosition = min(max(position, minPosition), maxPosition)
-    
-    // Calculate normalized position between 0 and 1
-    let normalizedPosition = (clampedPosition - minPosition) / (maxPosition - minPosition)
-    
-    // Interpolate opacity between 0 and 1
-    let interpolatedOpacity = reversed ? Double(1 - normalizedPosition) : Double(normalizedPosition)
-    
-    return interpolatedOpacity
-}

@@ -31,6 +31,10 @@ struct ShoeDetailView: View {
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
+    @State private var isModalPresented: Bool = false
+    private var isAnyModalPresented: Bool {
+        showEditShoe || showAddWorkouts || showDefaultSelection
+    }
     
     /// Used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
     @State private var bottomPadding: CGFloat = 20
@@ -154,6 +158,13 @@ struct ShoeDetailView: View {
             }
             .presentationDragIndicator(.visible)
         }
+    }
+}
+
+private struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
@@ -574,7 +585,7 @@ extension ShoeDetailView {
     }
     
     private func readFrame(_ frame: CGRect) {
-        guard frame.maxY > 0 else {
+        guard frame.maxY > 0 && !isAnyModalPresented else {
             return
         }
         
@@ -588,6 +599,19 @@ extension ShoeDetailView {
         
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+    }
+    
+    private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
+        // Ensure position is within the range
+        let clampedPosition = min(max(position, minPosition), maxPosition)
+        
+        // Calculate normalized position between 0 and 1
+        let normalizedPosition = (clampedPosition - minPosition) / (maxPosition - minPosition)
+        
+        // Interpolate opacity between 0 and 1
+        let interpolatedOpacity = reversed ? Double(1 - normalizedPosition) : Double(normalizedPosition)
+        
+        return interpolatedOpacity
     }
 }
 

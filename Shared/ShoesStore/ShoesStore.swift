@@ -16,7 +16,7 @@ actor ShoesStore {
     
     private init() {}
     
-    nonisolated lazy var modelContainer: ModelContainer = {
+    nonisolated let modelContainer: ModelContainer = {
         let modelContainer: ModelContainer
         
         let schema = Schema([Shoe.self])
