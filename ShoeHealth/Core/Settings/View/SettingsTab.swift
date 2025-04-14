@@ -20,15 +20,11 @@ struct SettingsTab: View {
     
     var body: some View {
         Form {
-            unitOfMeasureSection
-            
-            remindMeLaterSection
-            
-            faqSection
-            
-            notificationsSection
-            
             unlockFullAccessSection
+            unitOfMeasureSection
+            remindMeLaterSection
+            notificationsSection
+            appSection
         }
         .listSectionSpacing(.compact)
         .navigationTitle("Settings")
@@ -66,6 +62,8 @@ extension SettingsTab {
                     Text(unit.rawValue).tag(unit)
                 }
             }
+        } header: {
+            Text("Options")
         } footer: {
             Text(Prompts.Settings.unitOfMeasure)
                 .font(.footnote)
@@ -88,15 +86,6 @@ extension SettingsTab {
         } footer: {
             Text(Prompts.Settings.remindMeLater)
                 .font(.footnote)
-        }
-    }
-    
-    @ViewBuilder
-    private var faqSection: some View {
-        Section {
-            NavigationLink(destination: FAQView()) {
-                Text("FAQ")
-            }
         }
     }
     
@@ -129,6 +118,49 @@ extension SettingsTab {
                 }
             }
             .foregroundStyle(.primary)
+        } footer: {
+            Text("For best user experience, we recommend enabling notifications.")
+        }
+    }
+    
+    @ViewBuilder
+    private var appSection: some View {
+        Section {
+            Button {
+                if let writeReviewURL = URL(string: "https://apps.apple.com/app/id6648781147?action=write-review") {
+                    UIApplication.shared.open(writeReviewURL)
+                }
+            } label: {
+                Text("Rate in App Store")
+                    .font(.body)
+                    .foregroundStyle(.white)
+            }
+            
+            Button {
+                UIApplication.shared.open(System.AppLinks.termsOfService)
+            } label: {
+                Text("Terms of Service")
+                    .foregroundStyle(.white)
+            }
+            
+            Button {
+                UIApplication.shared.open(System.AppLinks.privacyPolicy)
+            } label: {
+                Text("Privacy Policy")
+                    .foregroundStyle(.white)
+            }
+            
+            NavigationLink(destination: FAQView()) {
+                Text("FAQ")
+            }
+        } header: {
+            Text("App")
+        } footer: {
+            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                Text("App Version \(version)")
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .font(.footnote)
+            }
         }
     }
     
@@ -139,7 +171,7 @@ extension SettingsTab {
                 navigationRouter.showPaywall.toggle()
             } label: {
                 HStack {
-                    Text("Unlock Full Access")
+                    Text("Active Plan")
                     Spacer()
                     Text("\(store.getBadge())")
                         .foregroundStyle(.secondary)
@@ -151,17 +183,8 @@ extension SettingsTab {
                 .font(.body)
             }
             .foregroundStyle(.primary)
-        } footer: {
-            HStack(spacing: 4) {
-                Link("Terms of Service", destination: System.AppLinks.termsOfService)
-                
-                Text("and")
-                
-                Link("Privacy Policy", destination: System.AppLinks.privacyPolicy)
-            }
-            .frame(maxWidth: .infinity, alignment: .center)
-            .font(.footnote)
-            .handleOpenURLInApp()
+        } header: {
+            Text("Subscription")
         }
     }
 }

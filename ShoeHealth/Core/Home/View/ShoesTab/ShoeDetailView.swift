@@ -31,7 +31,7 @@ struct ShoeDetailView: View {
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
-    @State private var isModalPresented: Bool = false
+    
     private var isAnyModalPresented: Bool {
         showEditShoe || showAddWorkouts || showDefaultSelection
     }
@@ -235,7 +235,7 @@ extension ShoeDetailView {
     private var workoutsSection: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("History")
+                Text("Workouts")
                 
                 Image(systemName: "chevron.right")
                     .imageScale(.small)
