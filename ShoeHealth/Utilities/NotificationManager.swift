@@ -17,6 +17,8 @@ final class NotificationManager {
         
     static let shared = NotificationManager()
     
+    private var shoeDataHandler: ShoeDataHandler?
+    
     private let center = UNUserNotificationCenter.current()
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
 
@@ -26,6 +28,10 @@ final class NotificationManager {
         Task {
             await retrieveNotificationAuthorizationStatus()
         }
+    }
+    
+    func inject(shoeDataHandler: ShoeDataHandler) {
+        self.shoeDataHandler = shoeDataHandler
     }
     
     func requestNotificationAuthorization() async -> Bool {
@@ -71,13 +77,36 @@ final class NotificationManager {
     func setActionableNotificationTypes(isPremiumUser: Bool) {
         logger.debug("Setting up actionable notifications for \(isPremiumUser ? "premium" : "free") user.")
 
-        // Common actions
-        let defaultShoeActionDaily = UNNotificationAction(
-            identifier: "DEFAULT_SHOE_ACTION_DAILY",
-            title: "Use default Shoe - Daily",
-            options: [.authenticationRequired],
-            icon: UNNotificationActionIcon(systemImageName: "shoe.2")
-        )
+        var actions: [UNNotificationAction] = []
+
+        let runTypes: [RunType] = isPremiumUser ? [.daily, .long, .tempo, .race, .trail] : [.daily]
+        
+        for runType in runTypes {
+            logger.debug("for runType: \(runType.rawValue)")
+            
+            var title = runType.rawValue.capitalized
+            
+            if shoeDataHandler == nil {
+                logger.debug("ShoeDataHandler not set.")
+            } else {
+                logger.debug("ShoeDataHandler set.")
+            }
+        
+            if let shoe = shoeDataHandler?.getDefaultShoe(for: runType) {
+                logger.debug("Shoe found: \(shoe.brand) \(shoe.model)")
+                
+                title += " - \(shoe.brand) \(shoe.model)"
+                
+                let action = UNNotificationAction(
+                    identifier: "DEFAULT_SHOE_ACTION_\(runType.rawValue.uppercased())",
+                    title: title,
+                    options: [.authenticationRequired],
+                    icon: UNNotificationActionIcon(systemImageName: "shoe.2")
+                )
+                
+                actions.append(action)
+            }
+        }
 
         let remindMeLaterAction = UNNotificationAction(
             identifier: "REMIND_ME_LATER",
@@ -86,67 +115,34 @@ final class NotificationManager {
             icon: UNNotificationActionIcon(systemImageName: "clock.arrow.circlepath")
         )
 
+        actions.append(remindMeLaterAction)
+
         let retireShoeAction = UNNotificationAction(
             identifier: "RETIRE_SHOE_ACTION",
             title: "Retire Shoe",
             options: [.authenticationRequired, .destructive],
             icon: UNNotificationActionIcon(systemImageName: "bolt.slash.fill")
         )
-
-        // Premium actions
-        var premiumActions: [UNNotificationAction] = []
-
-        if isPremiumUser {
-            premiumActions = [
-                UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_LONG",
-                    title: "Use default Shoe - Long",
-                    options: [.authenticationRequired],
-                    icon: UNNotificationActionIcon(systemImageName: "shoe.2")
-                ),
-                UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_TEMPO",
-                    title: "Use default Shoe - Tempo",
-                    options: [.authenticationRequired],
-                    icon: UNNotificationActionIcon(systemImageName: "shoe.2")
-                ),
-                UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_DAILY_RACE",
-                    title: "Use default Shoe - Race",
-                    options: [.authenticationRequired],
-                    icon: UNNotificationActionIcon(systemImageName: "shoe.2")
-                ),
-                UNNotificationAction(
-                    identifier: "DEFAULT_SHOE_ACTION_TRAIL",
-                    title: "Use default Shoe - Trail",
-                    options: [.authenticationRequired],
-                    icon: UNNotificationActionIcon(systemImageName: "shoe.2")
-                )
-            ]
-        }
-
-        // Combine actions
-        let allActions = [defaultShoeActionDaily] + premiumActions + [remindMeLaterAction]
-
-        // Categories
+        
+        // Define the notification categories
         let runningWorkoutCategory = UNNotificationCategory(
             identifier: "NEW_RUNNING_WORKOUT_AVAILABLE",
-            actions: allActions,
+            actions: actions,
             intentIdentifiers: [],
             hiddenPreviewsBodyPlaceholder: "%u New Workout(s) logged",
             categorySummaryFormat: "There are %u new workouts.",
             options: [.customDismissAction]
         )
-
+        
         let multipleRunningWorkoutsCategory = UNNotificationCategory(
             identifier: "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE",
-            actions: allActions,
+            actions: actions,
             intentIdentifiers: [],
             hiddenPreviewsBodyPlaceholder: "New Workouts logged",
             categorySummaryFormat: "There are %u new workouts.",
             options: [.customDismissAction]
         )
-
+        
         let wearUpdateCategory = UNNotificationCategory(
             identifier: "SHOE_WEAR_UPDATE",
             actions: [retireShoeAction],
@@ -155,10 +151,9 @@ final class NotificationManager {
             categorySummaryFormat: "There are %u shoe wear updates.",
             options: [.customDismissAction]
         )
-
+        
         center.setNotificationCategories([runningWorkoutCategory, multipleRunningWorkoutsCategory, wearUpdateCategory])
     }
-
     
     func scheduleNewWorkoutNotification(forNewWorkouts workouts: [HKWorkout], at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()

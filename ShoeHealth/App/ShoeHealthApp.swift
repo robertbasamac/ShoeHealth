@@ -8,16 +8,19 @@
 import SwiftUI
 import SwiftData
 import WidgetKit
+import OSLog
+
+private let logger = Logger(subsystem: "Shoe Health", category: "ShoeHealthApp")
 
 @main
 struct ShoeHealthApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    
+     
     @Environment(\.scenePhase) private var scenePhase
     
-    @StateObject private var navigationRouter = NavigationRouter()
-    @StateObject private var storeManager: StoreManager = StoreManager.shared
+    @State private var navigationRouter: NavigationRouter
+    @State private var storeManager: StoreManager = StoreManager.shared
     @State private var shoesViewModel: ShoesViewModel
     @State private var healthManager = HealthManager.shared
     @State private var settingsManager = SettingsManager.shared
@@ -25,8 +28,16 @@ struct ShoeHealthApp: App {
     let container = ShoesStore.shared.modelContainer
     
     init () {
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(modelContext: container.mainContext))
+        let shoeDataHandler = ShoeDataHandler(modelContext: container.mainContext)
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(shoeDataHandler: shoeDataHandler))
+        self._navigationRouter = State(wrappedValue: NavigationRouter())
+
+        appDelegate.shoesViewModel = shoesViewModel
+        appDelegate.navigationRouter = navigationRouter
         
+        NotificationManager.shared.inject(shoeDataHandler: shoeDataHandler)
+        
+        logger.debug("initialized")
         // override apple's buggy alerts tintColor
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.theme.accent)
     }
@@ -42,10 +53,6 @@ struct ShoeHealthApp: App {
                     .environment(shoesViewModel)
                     .environment(healthManager)
                     .environment(settingsManager)
-                    .onAppear {
-                        appDelegate.shoesViewModel = shoesViewModel
-                        appDelegate.navigationRouter = navigationRouter
-                    }
                     .onChange(of: scenePhase) { _, newPhase in
                         if newPhase == .active {
                             Task {

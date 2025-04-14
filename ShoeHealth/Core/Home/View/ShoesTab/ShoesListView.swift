@@ -197,7 +197,7 @@ extension ShoesListView {
             ShoesListView(forCategory: .all)
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .navigationTitle("Shoes")
         }
     }

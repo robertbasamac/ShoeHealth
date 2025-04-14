@@ -12,11 +12,11 @@ struct ContentView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
     @EnvironmentObject private var storeManager: StoreManager
-
+    
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @Environment(\.dismiss) private var dismiss
-
+    
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
     
     var body: some View {
@@ -49,6 +49,8 @@ struct ContentView: View {
                                 withAnimation {
                                     shoesViewModel.setAsDefaultShoe(shoeID, for: [runType], append: true)
                                 }
+                                
+                                NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                             })
                     case .addWorkoutToShoe(let workoutID):
                         ShoeSelectionView(
@@ -171,7 +173,7 @@ extension ContentView {
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
         .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+//        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
@@ -181,7 +183,7 @@ extension ContentView {
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
         .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+//        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }

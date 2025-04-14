@@ -147,6 +147,8 @@ struct ShoeDetailView: View {
                     withAnimation {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
                     }
+                    
+                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
             .presentationDetents([.medium])
@@ -623,7 +625,7 @@ extension ShoeDetailView {
             ShoeDetailView(shoe: Shoe.previewShoes[3])
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)
         }

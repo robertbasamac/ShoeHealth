@@ -280,10 +280,11 @@ extension ShoesView {
         }) { shoe in
             NavigationStack {
                 RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
-                    
                     withAnimation {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
                     }
+                    
+                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
             .presentationDetents([.medium])
@@ -613,7 +614,7 @@ extension ShoesView {
                 .modelContainer(PreviewSampleData.container)
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)
         }
@@ -628,7 +629,7 @@ extension ShoesView {
                 .modelContainer(PreviewSampleData.emptyContainer)
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
                 .environment(SettingsManager.shared)
                 .environment(HealthManager.shared)
         }

@@ -29,7 +29,7 @@ struct ShoeSearchListView: View {
             .modelContainer(PreviewSampleData.container)
             .environmentObject(NavigationRouter())
             .environmentObject(StoreManager.shared)
-            .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+            .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
             .environment(SettingsManager.shared)
             .environment(HealthManager.shared)
     }
