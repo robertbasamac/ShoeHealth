@@ -67,6 +67,6 @@ struct StretchyHeaderCell: View {
         date: Shoe.previewShoe.aquisitionDate,
         imageData: Shoe.previewShoe.image
     )
-        .background(.gray)
-        .frame(maxHeight: .infinity, alignment: .top)
+    .background(.gray)
+    .frame(maxHeight: .infinity, alignment: .top)
 }

@@ -31,6 +31,8 @@ final class StoreManager: ObservableObject {
     
     private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     
+    @Published private(set) var isLoading: Bool = false
+    
     @Published private(set) var lifetimeProduct: Product?
     @Published private(set) var subscriptionProducts: [Product] = []
     
@@ -66,6 +68,8 @@ final class StoreManager: ObservableObject {
     // MARK: - init and deinit
     
     private init() {
+        self.isLoading = true
+        
         self.hasFullAccess = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
         
         updateListenerTask = listenForTransactions()
@@ -74,6 +78,8 @@ final class StoreManager: ObservableObject {
             await loadProducts()
             await updateCustomerProductStatus()
         }
+        
+        self.isLoading = false
     }
     
     deinit {

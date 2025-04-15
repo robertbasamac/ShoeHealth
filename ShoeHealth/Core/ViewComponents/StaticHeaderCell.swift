@@ -16,7 +16,6 @@ struct StaticHeaderCell: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            
             Text(nickname)
                 .font(.system(size: 20, weight: .semibold, design: .default))
                 .foregroundStyle(Color.theme.accent)

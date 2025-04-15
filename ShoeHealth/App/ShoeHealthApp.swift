@@ -62,7 +62,7 @@ struct ShoeHealthApp: App {
                     }
                 
                 ZStack {
-                    if healthManager.isLoading {
+                    if healthManager.isLoading || storeManager.isLoading {
                         LaunchView()
                             .transition(.opacity)
                     }
