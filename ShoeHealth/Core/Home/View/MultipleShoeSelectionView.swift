@@ -148,7 +148,7 @@ extension MultipleShoeSelectionView {
                 onDone(selectionsDict)
                 dismiss()
             } label: {
-                Text("Done")
+                Text("Save")
             }
             .disabled(isSaveButtonDisabled())
         }

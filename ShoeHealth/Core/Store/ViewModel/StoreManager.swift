@@ -57,7 +57,7 @@ final class StoreManager: ObservableObject {
     }
     
     /// - `shoesLimit`: an Int indicating the number of shoes allowed for free subscription
-    static let shoesLimit: Int = 5
+    static let shoesLimit: Int = 3
     
     /// - `premiumFeatures`: an array of features that the user can get when purchasing a subscription
     static let premiumFeatures: [PremiumFeature] = [

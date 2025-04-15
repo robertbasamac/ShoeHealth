@@ -46,7 +46,9 @@ struct RunTypeSelectionView: View {
                     .allowsHitTesting(!disableFeature(for: runType))
                 }
             } footer: {
-                Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                if !StoreManager.shared.hasFullAccess {
+                    Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                }
             }
         }
         .navigationTitle("Default Run Types")

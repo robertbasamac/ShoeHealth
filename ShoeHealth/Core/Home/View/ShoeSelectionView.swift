@@ -196,7 +196,7 @@ extension ShoeSelectionView {
                 
                 dismiss()
             } label: {
-                Text("Done")
+                Text("Save")
             }
             .disabled(isSaveButtonDisabled())
         }

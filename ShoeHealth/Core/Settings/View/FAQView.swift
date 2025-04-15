@@ -22,7 +22,7 @@ struct FAQView: View {
         ),
         FAQItem(
             question: "How is the lifespan of shoes calculated?",
-            answer: "The lifespan of a shoe is calculated based on the total running distance from workouts imported from Apple Health."
+            answer: "The lifespan of a shoe is calculated based on the total running distance from workouts imported from Apple Health. In the future, it is planned to use other several factors to calculate the lifespan of a shoe."
         ),
         FAQItem(
             question: "Can I track workouts other than running?",
@@ -38,19 +38,19 @@ struct FAQView: View {
         ),
         FAQItem(
             question: "Is it mandatory to have a default shoe?",
-            answer: "A default shoe is not mandatory, but the App will remind you if you don't have a 'Daily' default shoe set. Without a 'Daily' default shoe, the 'Use Default Shoe - Daily' option in workout notifications will not work. It’s recommended to always have a 'Daily' default shoe for convenience."
+            answer: "A default shoe is not mandatory, but the App will remind you if a 'Daily' default shoe is not set. Other categories are not mandatory, but it is recommended to have at least a 'Daily' default shoe set for convenience."
         ),
         FAQItem(
             question: "Is there any limit to the number of shoes I can add?",
-            answer: "Yes, the Free version of the App allows you to add up to 5 shoes. To add more, you can upgrade to the Premium version."
+            answer: "Yes, the Free version of the App allows you to add up to \(StoreManager.shoesLimit) shoes. To add more, you can upgrade to the Premium version."
         ),
         FAQItem(
             question: "What features are included in the Premium version of the App?",
             answer: "The Premium version includes two main features: unlimited shoe entries and the ability to set default shoes for four different running types (long run, tempo run, race, and trail run). You can also use these default shoes directly from new workout notifications and display them in Widgets."
         ),
         FAQItem(
-            question: "What happens to my shoes if I upgrade to the Premium version, add more than 5 shoes, and then go back to the Free version?",
-            answer: "If you switch back to the Free version, all shoes you added while using Premium will remain in the App, but they will be restricted. You won’t be able to edit them, add workouts, or set them as default shoes. You will only have access to up to 5 shoes. These 5 shoes are selected by specific rules in this order: the default 'Daily' shoe is included first (if set), followed by the most recently used shoes, and then the most recently added shoes until the limit of 5 is reached."
+            question: "What happens to my shoes if I upgrade to the Premium version, add more than \(StoreManager.shoesLimit) shoes, and then go back to the Free version?",
+            answer: "If you switch back to the Free version, all shoes you added while using Premium will remain in the App, but they will be restricted. You won’t be able to edit them, add workouts, or set them as default shoes. You will only have access to up to \(StoreManager.shoesLimit) shoes. These \(StoreManager.shoesLimit) shoes are selected by specific rules in the following order: the default 'Daily' shoe is included first (if set), followed by the most recently used shoes and then the most recently added shoes until the limit of \(StoreManager.shoesLimit) is reached."
         )
     ]
     

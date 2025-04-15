@@ -15,7 +15,8 @@ struct StretchyHeaderCell: View {
     var nickname: String
     var date: Date
     var imageData: Data?
-    var shadowColor: Color = .black.opacity(0.8)
+    var imageOpacity: CGFloat = 1
+    var shadowColor: Color = .black
     
     var body: some View {
         if let imageData = imageData, let uiImage = UIImage(data: imageData) {
@@ -28,6 +29,7 @@ struct StretchyHeaderCell: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .allowsHitTesting(false)
+                                .opacity(imageOpacity)
                         }
                         .clipped()
                 }
@@ -65,7 +67,7 @@ struct StretchyHeaderCell: View {
         brand: Shoe.previewShoe.brand,
         nickname: Shoe.previewShoe.nickname,
         date: Shoe.previewShoe.aquisitionDate,
-        imageData: Shoe.previewShoe.image
+        imageData: Shoe.previewShoe.image,
     )
     .background(.gray)
     .frame(maxHeight: .infinity, alignment: .top)

@@ -59,7 +59,8 @@ struct ShoeDetailView: View {
                             brand: shoe.brand,
                             nickname: shoe.nickname,
                             date: shoe.aquisitionDate,
-                            imageData: imageData
+                            imageData: imageData,
+                            imageOpacity: 1 - Double(opacity)
                         )
                         .overlay {
                             Color(uiColor: .systemBackground)
