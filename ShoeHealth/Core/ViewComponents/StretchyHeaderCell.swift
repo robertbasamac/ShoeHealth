@@ -15,7 +15,6 @@ struct StretchyHeaderCell: View {
     var nickname: String
     var date: Date
     var imageData: Data?
-    var imageOpacity: CGFloat = 1
     var shadowColor: Color = .black
     
     var body: some View {
@@ -29,7 +28,6 @@ struct StretchyHeaderCell: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .allowsHitTesting(false)
-                                .opacity(imageOpacity)
                         }
                         .clipped()
                 }
