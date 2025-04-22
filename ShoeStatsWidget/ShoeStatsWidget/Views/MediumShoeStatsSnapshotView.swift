@@ -107,7 +107,7 @@ extension MediumShoeStatsSnapshotView {
         case .averageDistance:
             statCell(
                 label: metric.rawValue,
-                value: shoe.averageDistance.as2DecimalsString(),
+                value: shoe.averageDistance.asString(withDecimals: 2),
                 unit: unitSymbol,
                 color: .blue,
                 textAlignment: .leading,

@@ -14,8 +14,9 @@ extension Double {
         return (self * divisor).rounded(.up) / divisor
     }
     
-    func as2DecimalsString() -> String {
-        let roundedValue = String(format: "%.2f", self)
+    func asString(withDecimals decimals: Int) -> String {
+        let format = "%.\(decimals)f"
+        let roundedValue = String(format: format, self)
         let intValue = Int(self)
         if self - Double(intValue) == 0 {
             return "\(intValue)"

@@ -19,6 +19,7 @@ struct StatCell: View {
     private var verticalAlignment: Bool
     private var textAlignment: HorizontalAlignment
     private var containerAlignment: Alignment
+    private var valueOnTop: Bool
     
     init(label: String,
          value: String,
@@ -29,7 +30,8 @@ struct StatCell: View {
          showLabel: Bool = true,
          verticalAlignment: Bool = true,
          textAlignment: HorizontalAlignment = .center,
-         containerAlignment: Alignment = .center) {
+         containerAlignment: Alignment = .center,
+         valueOnTop: Bool = false) {
         self.label = label
         self.value = value
         self.unit = unit
@@ -40,11 +42,12 @@ struct StatCell: View {
         self.verticalAlignment = verticalAlignment
         self.textAlignment = textAlignment
         self.containerAlignment = containerAlignment
+        self.valueOnTop = valueOnTop
     }
     
     var body: some View {
         VStack(alignment: textAlignment, spacing: 0) {
-            if showLabel {
+            if showLabel && !valueOnTop {
                 Text(label)
                     .font(labelFont)
                     .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
@@ -63,6 +66,13 @@ struct StatCell: View {
             .foregroundStyle(color)
             .lineLimit(1)
             .widgetAccentable(true)
+            
+            if showLabel && valueOnTop {
+                Text(label)
+                    .font(labelFont)
+                    .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
+                    .lineLimit(1)
+            }
         }
         .frame(maxWidth: .infinity, alignment: containerAlignment)
     }

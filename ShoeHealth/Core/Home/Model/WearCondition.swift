@@ -31,28 +31,28 @@ enum WearCondition: Int, CaseIterable {
     var description: String {
         switch self {
         case .new:
-            return "This shoe is brand new."
+            return "This shoe is brand new"
         case .good:
-            return "This shoe is in good condition."
+            return "This shoe is in good condition"
         case .moderate:
-            return "This shoe is in moderate condition."
+            return "This shoe is in moderate condition"
         case .high:
-            return "This shoe is highly worn."
+            return "This shoe is highly worn"
         case .critical:
-            return "This shoe is in critical condition."
+            return "This shoe is in critical condition"
         }
     }
     
     var action: String {
         switch self {
         case .new, .good:
-            return "No action needed."
+            return "No action needed"
         case .moderate:
-            return "Monitor them and consider replacing soon."
+            return "Monitor closely"
         case .high:
-            return "Plan to replace soon."
+            return "Plan to replace"
         case .critical:
-            return "Replace as soon as possible."
+            return "Replace now"
         }
     }
     

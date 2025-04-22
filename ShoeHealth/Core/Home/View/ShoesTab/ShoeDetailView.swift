@@ -41,7 +41,11 @@ struct ShoeDetailView: View {
     @State private var sectionHeights: [String: CGFloat] = [:]
     private var storedNavBarHeight: CGFloat = UIApplication.navigationBarHeight
     
-    @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 100
+    @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 80
+    
+    private var cappedProgressCircleSize: CGFloat {
+        min(progressCircleSize, 94)
+    }
     
     init(shoe: Shoe, showStats: Bool = true, isFullScreen: Bool = false) {
         self.shoe = shoe
@@ -191,6 +195,29 @@ extension ShoeDetailView {
                 ConditionSectionView(shoe: shoe)
             }
             .roundedContainer()
+            
+            if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
+                Button {
+                    retireShoe()
+                } label: {
+                    Group {
+                        if shoe.isRetired {
+                            Text("Reinstate Shoe")
+                        } else {
+                            Text("Retire Shoe")
+                        }
+                    }
+                    .font(.headline.bold())
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
+                    .dynamicTypeSize(DynamicTypeSize.small...DynamicTypeSize.large)
+                }
+                .tint(shoe.isRetired ? .green : .red)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.roundedRectangle(radius: 10))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+            }
         }
         .padding(.top, 8)
         .background(
@@ -278,35 +305,36 @@ extension ShoeDetailView {
     @ViewBuilder
     private var lifespanSection: some View {
         HStack(spacing: 8) {
-            VStack(alignment: .leading, spacing: 12) {
-                StatCell(
-                    label: "Current distance",
-                    value: shoe.totalDistance.as2DecimalsString(),
-                    unit: settingsManager.unitOfMeasure.symbol,
-                    color: .blue,
-                    textAlignment: .leading,
-                    containerAlignment: .leading
-                )
-                StatCell(
-                    label: "Remaining distance",
-                    value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(),
-                    unit: settingsManager.unitOfMeasure.symbol,
-                    color: shoe.wearColor,
-                    textAlignment: .leading,
-                    containerAlignment: .leading
-                )
-            }
+            StatCell(
+                label: "Covered",
+                value: shoe.totalDistance.asString(withDecimals: 1),
+                unit: settingsManager.unitOfMeasure.symbol,
+                color: .blue,
+                textAlignment: .center,
+                containerAlignment: .center,
+                valueOnTop: true
+            )
             
             ZStack {
                 CircularProgressView(progress: shoe.wearPercentage, lineWidth: 6, color: shoe.wearColor)
                 StatCell(
                     label: "Wear",
-                    value: shoe.wearPercentageAsString(withDecimals: 1),
+                    value: shoe.wearPercentageAsString(withDecimals: 0),
                     color: shoe.wearColor,
                     showLabel: false
                 )
             }
-            .frame(width: progressCircleSize, height: progressCircleSize)
+            .frame(width: cappedProgressCircleSize, height: cappedProgressCircleSize)
+            
+            StatCell(
+                label: "Remaining",
+                value: (shoe.lifespanDistance - shoe.totalDistance).asString(withDecimals: 1),
+                unit: settingsManager.unitOfMeasure.symbol,
+                color: shoe.wearColor,
+                textAlignment: .center,
+                containerAlignment: .center,
+                valueOnTop: true
+            )
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -338,7 +366,7 @@ extension ShoeDetailView {
             HStack {
                 StatCell(
                     label: "Total Distance",
-                    value: shoe.totalDistance.as2DecimalsString(),
+                    value: shoe.totalDistance.asString(withDecimals: 2),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: .blue,
                     textAlignment: .leading,
@@ -346,7 +374,7 @@ extension ShoeDetailView {
                 )
                 StatCell(
                     label: "Avg Distance",
-                    value: shoe.averageDistance.as2DecimalsString(),
+                    value: shoe.averageDistance.asString(withDecimals: 2),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: .blue,
                     textAlignment: .leading,
@@ -466,94 +494,114 @@ extension ShoeDetailView {
 extension ShoeDetailView {
     
     // MARK: - ConditionSectionView
-
+    
     private struct ConditionSectionView: View {
         
         @EnvironmentObject private var navigationRouter: NavigationRouter
         @Environment(ShoesViewModel.self) private var shoesViewModel
         
+        @ScaledMetric(relativeTo: .largeTitle) private var conditionImageSize: CGFloat = 34
+        
+        private var cappedImageSize: CGFloat {
+            min(conditionImageSize, 40)
+        }
+        
         var shoe: Shoe
         
         var body: some View {
-            
-            VStack(spacing: 20) {
-                HStack(spacing: 10) {
-                    VStack(spacing: 8) {
-                        Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
+            HStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Condition")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+
+                    HStack(spacing: 8) {
+                        Image(systemName: shoe.wearCondition.iconName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 44, height: 44)
+                            .frame(width: cappedImageSize, height: cappedImageSize)
+                            .foregroundStyle(shoe.wearColor)
                         
-                        VStack {
-                            Text(shoe.isRetired ? "Retired" : shoe.wearCondition.name)
-                                .font(.headline)
+                        VStack(alignment: .leading, spacing: 4) {
+                            if !shoe.isRetired {
+                                Text("\(shoe.wearCondition.action)")
+                                    .font(.caption)
+                                    .multilineTextAlignment(.leading)
+                                    .lineSpacing(0)
+                                    .lineLimit(2)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                            }
+                            
+                            Text(shoe.wearCondition.name)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundStyle(shoe.wearColor)
+                                .lineLimit(1)
                         }
                     }
-                    .foregroundStyle(shoe.isRetired ? .gray : shoe.wearColor)
-                    .padding(.horizontal, 10)
-                    
-                    VStack(spacing: 4) {
-                        if shoe.isRetired {
-                            Text("This shoe is retired since")
-                            Text("\(dateFormatter.string(from: shoe.retireDate ?? .now))")
-                        } else {
-                            Text("\(shoe.wearCondition.description)")
-                            Text("\(shoe.wearCondition.action)")
-                        }
-                    }
-                    .font(.callout)
-                    .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
+                .padding(.vertical, 8)
                 
-                if let estimatedDate = shoesViewModel.estimatedRetirementDate(for: shoe), !shoe.isRetired {
-                    HStack(spacing: 10) {
-                        Image(systemName: "calendar.badge.clock.rtl")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(.secondary)
-                            .frame(width: 44, height: 44)
-                            .padding(.horizontal, 10)
-                        
-                        VStack(spacing: 4) {
-                            ViewThatFits(in: .horizontal) {
-                                Text("Estimated Retirement Date")
-                                Text("Est. Retirement Date")
-                            }
-                            .font(.callout)
-                            .multilineTextAlignment(.center)
+                Rectangle()
+                    .fill(.background)
+                    .frame(width: 2)
+                    .frame(maxHeight: .infinity)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Retirement")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+
+                    if shoe.isRetired {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Retired since")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                                .lineSpacing(0)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                             
-                            Text(estimatedDate.formatted(date: .abbreviated, time: .omitted))
-                                .font(.headline)
+                            Text(Date.now.formatted(date: .abbreviated, time: .omitted))
+                                .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.secondary)
-                                .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
                         }
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    } else if let estimatedDate = shoesViewModel.estimatedRetirementDate(for: shoe) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Estimated Date")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                                .lineSpacing(0)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                            
+                            Text(estimatedDate.formatted(date: .abbreviated, time: .omitted))
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Estimated Date")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                                .lineSpacing(0)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                            
+                            Text("N/A")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
-                
-                if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
-                    Button {
-                        retireShoe()
-                    } label: {
-                        Group {
-                            if shoe.isRetired {
-                                Text("Reinstate Shoe")
-                            } else {
-                                Text("Retire Shoe")
-                            }
-                        }
-                        .font(.headline.bold())
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 20)
-                    }
-                    .tint(shoe.isRetired ? .green : .red)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.roundedRectangle(radius: 10))
-                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.vertical, 8)
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
         }
         
         private func retireShoe() {
@@ -635,7 +683,7 @@ extension ShoeDetailView {
         let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
         
         let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
-                
+        
         bottomPadding = availableHeight < 20 ? 20 : availableHeight
     }
     
@@ -675,7 +723,7 @@ extension ShoeDetailView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeDetailView(shoe: Shoe.previewShoes[3])
+            ShoeDetailView(shoe: Shoe.previewShoes[1])
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))

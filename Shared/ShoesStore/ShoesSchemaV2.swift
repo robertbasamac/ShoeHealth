@@ -191,6 +191,7 @@ extension ShoesSchemaV2 {
                     model: "Pegasus 40",
                     nickname: "Shoey",
                     lifespanDistance: 600,
+                    totalDistance: 200,
                     isDefaultShoe: true,
                     defaultRunTypes: [.daily]
                 ),
@@ -200,8 +201,17 @@ extension ShoesSchemaV2 {
                     model: "Pegasus Turbo Next Nature",
                     nickname: "Next Nature",
                     lifespanDistance: 500,
-                    totalDistance: 250,
+                    totalDistance: 300,
                     defaultRunTypes: [.daily]
+                ),
+                Shoe(
+                    image: UIImage(named: "ShoeHealth")?.pngData(),
+                    brand: "Nike",
+                    model: "Streakfly 2",
+                    nickname: "5k love",
+                    lifespanDistance: 700,
+                    totalDistance: 621.5,
+                    defaultRunTypes: [.tempo]
                 ),
                 Shoe(
                     image: UIImage(named: "ShoeHealth")?.pngData(),
@@ -211,15 +221,6 @@ extension ShoesSchemaV2 {
                     lifespanDistance: 800,
                     totalDistance: 745,
                     defaultRunTypes: [.race]
-                ),
-                Shoe(
-                    image: UIImage(named: "ShoeHealth")?.pngData(),
-                    brand: "Nike",
-                    model: "Streakfly 2",
-                    nickname: "5k love",
-                    lifespanDistance: 700,
-                    totalDistance: 621,
-                    defaultRunTypes: [.tempo]
                 )
             ]
         }
