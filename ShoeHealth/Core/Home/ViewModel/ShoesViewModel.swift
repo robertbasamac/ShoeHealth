@@ -292,6 +292,51 @@ final class ShoesViewModel {
         fetchShoes()
     }
     
+    func estimatedRetirementDate(for shoe: Shoe) -> Date? {
+        guard shoe.totalDistance < shoe.lifespanDistance else { return nil }
+        
+        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+        logger.debug("Retrieved \(workouts.count) workouts for shoe \(shoe.model)")
+        
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: workouts) {
+            calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: $0.startDate)
+        }
+        
+        let sortedGrouped = grouped.sorted {
+            guard let date1 = calendar.date(from: $0.key),
+                  let date2 = calendar.date(from: $1.key) else { return false }
+            return date1 < date2
+        }
+        
+        for (week, workouts) in sortedGrouped {
+            logger.debug("Week: \(week)")
+            for workout in workouts {
+                let distance = workout.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit)
+                let endDate = workout.endDate
+                logger.debug("Workout - Distance: \(distance), End Date: \(String(describing: endDate))")
+            }
+        }
+        logger.debug("Grouped workouts into \(grouped.keys.count) week groups")
+        
+        let weeklyTotals = grouped.values.map { group in
+            group.reduce(0.0) { $0 + $1.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit) }
+        }
+        logger.debug("Computed weekly totals: \(weeklyTotals)")
+        
+        guard !weeklyTotals.isEmpty else { return nil }
+        let averageWeekly = weeklyTotals.reduce(0.0, +) / Double(weeklyTotals.count)
+        
+        guard averageWeekly > 0 else { return nil }
+        
+        let remainingDistance = shoe.lifespanDistance - shoe.totalDistance
+        let weeksLeft = remainingDistance / averageWeekly
+        
+        let estimatedDate = calendar.date(byAdding: .day, value: Int(weeksLeft * 7), to: Date())
+        logger.debug("Estimated retirement in \(weeksLeft) weeks: \(String(describing: estimatedDate))")
+        return estimatedDate
+    }
+    
     @MainActor
     private func updateShoeStatistics(_ shoe: Shoe) async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure

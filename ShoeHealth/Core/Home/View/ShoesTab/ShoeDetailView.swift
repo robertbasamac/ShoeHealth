@@ -188,7 +188,7 @@ extension ShoeDetailView {
                     .frame(height: 2)
                     .frame(maxWidth: .infinity)
                 
-                conditionSection
+                ConditionSectionView(shoe: shoe)
             }
             .roundedContainer()
         }
@@ -280,7 +280,7 @@ extension ShoeDetailView {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 12) {
                 StatCell(
-                    label: "Current",
+                    label: "Current distance",
                     value: shoe.totalDistance.as2DecimalsString(),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: .blue,
@@ -288,7 +288,7 @@ extension ShoeDetailView {
                     containerAlignment: .leading
                 )
                 StatCell(
-                    label: "Remaining",
+                    label: "Remaining distance",
                     value: (shoe.lifespanDistance - shoe.totalDistance).as2DecimalsString(),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: shoe.wearColor,
@@ -310,62 +310,6 @@ extension ShoeDetailView {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-    }
-    
-    @ViewBuilder
-    private var conditionSection: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 20) {
-                VStack(spacing: 10) {
-                    Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 44, height: 44)
-                    
-                    VStack {
-                        Text(shoe.isRetired ? "Retired" : shoe.wearCondition.name)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                    }
-                }
-                .foregroundStyle(shoe.isRetired ? .gray : shoe.wearColor)
-                .padding(.leading, 10)
-                
-                VStack(spacing: 10) {
-                    if shoe.isRetired {
-                        Text("This shoe is retired since")
-                        Text("\(dateFormatter.string(from: shoe.retireDate ?? .now))")
-                    } else {
-                        Text("\(shoe.wearCondition.description)")
-                        Text("\(shoe.wearCondition.action)")
-                    }
-                }
-                .font(.callout)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-            }
-            
-            if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
-                Button {
-                    retireShoe()
-                } label: {
-                    Group {
-                        if shoe.isRetired {
-                            Text("Reinstate Shoe")
-                        } else {
-                            Text("Retire Shoe")
-                        }
-                    }
-                    .font(.callout.bold())
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 20)
-                }
-                .tint(shoe.isRetired ? .green : .red)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.roundedRectangle(radius: 10))
-            }
-        }
-        .padding(20)
     }
     
     @ViewBuilder
@@ -514,6 +458,115 @@ extension ShoeDetailView {
                 Image(systemName: "ellipsis")
                     .frame(width: 34, height: 34)
                     .background(.bar.opacity(Double(1 - opacity)), in: .circle)
+            }
+        }
+    }
+}
+
+extension ShoeDetailView {
+    
+    // MARK: - ConditionSectionView
+
+    private struct ConditionSectionView: View {
+        
+        @EnvironmentObject private var navigationRouter: NavigationRouter
+        @Environment(ShoesViewModel.self) private var shoesViewModel
+        
+        var shoe: Shoe
+        
+        var body: some View {
+            
+            VStack(spacing: 20) {
+                HStack(spacing: 10) {
+                    VStack(spacing: 8) {
+                        Image(systemName: shoe.isRetired ? "bolt.slash" : shoe.wearCondition.iconName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 44, height: 44)
+                        
+                        VStack {
+                            Text(shoe.isRetired ? "Retired" : shoe.wearCondition.name)
+                                .font(.headline)
+                        }
+                    }
+                    .foregroundStyle(shoe.isRetired ? .gray : shoe.wearColor)
+                    .padding(.horizontal, 10)
+                    
+                    VStack(spacing: 4) {
+                        if shoe.isRetired {
+                            Text("This shoe is retired since")
+                            Text("\(dateFormatter.string(from: shoe.retireDate ?? .now))")
+                        } else {
+                            Text("\(shoe.wearCondition.description)")
+                            Text("\(shoe.wearCondition.action)")
+                        }
+                    }
+                    .font(.callout)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
+                if let estimatedDate = shoesViewModel.estimatedRetirementDate(for: shoe), !shoe.isRetired {
+                    HStack(spacing: 10) {
+                        Image(systemName: "calendar.badge.clock.rtl")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.secondary)
+                            .frame(width: 44, height: 44)
+                            .padding(.horizontal, 10)
+                        
+                        VStack(spacing: 4) {
+                            ViewThatFits(in: .horizontal) {
+                                Text("Estimated Retirement Date")
+                                Text("Est. Retirement Date")
+                            }
+                            .font(.callout)
+                            .multilineTextAlignment(.center)
+                            
+                            Text(estimatedDate.formatted(date: .abbreviated, time: .omitted))
+                                .font(.headline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                                .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxxLarge)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                
+                if shoe.wearCondition.rawValue > WearCondition.good.rawValue || shoe.isRetired {
+                    Button {
+                        retireShoe()
+                    } label: {
+                        Group {
+                            if shoe.isRetired {
+                                Text("Reinstate Shoe")
+                            } else {
+                                Text("Retire Shoe")
+                            }
+                        }
+                        .font(.headline.bold())
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 20)
+                    }
+                    .tint(shoe.isRetired ? .green : .red)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.roundedRectangle(radius: 10))
+                }
+            }
+            .padding(20)
+        }
+        
+        private func retireShoe() {
+            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+            
+            withAnimation {
+                shoesViewModel.retireShoe(shoe.id)
+            }
+            
+            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
             }
         }
     }
