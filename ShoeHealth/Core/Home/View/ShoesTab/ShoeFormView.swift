@@ -430,7 +430,7 @@ extension ShoeFormView {
             ShoeFormView(shoe: Shoe.previewShoe)
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
+                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .environment(SettingsManager.shared)
         }
     }

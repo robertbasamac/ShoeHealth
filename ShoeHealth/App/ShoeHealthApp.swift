@@ -28,14 +28,14 @@ struct ShoeHealthApp: App {
     let container = ShoesStore.shared.modelContainer
     
     init () {
-        let shoeDataHandler = ShoeDataHandler(modelContext: container.mainContext)
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(shoeDataHandler: shoeDataHandler))
+        let shoeHandler = ShoeHandler(modelContext: container.mainContext)
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(shoeHandler: shoeHandler))
         self._navigationRouter = State(wrappedValue: NavigationRouter())
 
         appDelegate.shoesViewModel = shoesViewModel
         appDelegate.navigationRouter = navigationRouter
         
-        NotificationManager.shared.inject(shoeDataHandler: shoeDataHandler)
+        NotificationManager.shared.inject(shoeHandler: shoeHandler)
         
         logger.debug("initialized")
         // override apple's buggy alerts tintColor

@@ -13,7 +13,7 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoeDataHandler
 
 // MARK: ShoeDataHandler
 
-final class ShoeDataHandler {
+final class ShoeHandler {
 
     private let modelContext: ModelContext
 
@@ -126,48 +126,8 @@ final class ShoeDataHandler {
     
     // MARK: - Handling Shoes Methods
 
-    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, defaultRunTypes: [RunType], image: Data?) -> Shoe {
-        let newShoe = Shoe(image: image, brand: brand, model: model, nickname: nickname, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, defaultRunTypes: defaultRunTypes)
-        
-        if isDefaultShoe {
-            do {
-                let allShoes = try modelContext.fetch(FetchDescriptor<Shoe>())
-                
-                for otherShoe in allShoes {
-                    otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
-                    if otherShoe.defaultRunTypes.isEmpty {
-                        otherShoe.isDefaultShoe = false
-                    }
-                }
-            } catch {
-                logger.error("Failed to fetch shoes: \(error)")
-            }
-        }
-        
-        modelContext.insert(newShoe)
-        saveContext()
-        return newShoe
-    }
-    
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, isDefaultShoe: Bool, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
-        guard let shoe = getShoe(forID: shoeID) else { return }
-        
-        if !brand.isEmpty {
-            shoe.brand = brand
-        }
-        if !model.isEmpty {
-            shoe.model = model
-        }
-        if !nickname.isEmpty {
-            shoe.nickname = nickname
-        }
-        
-        shoe.image = image
-        shoe.aquisitionDate = aquisitionDate
-        shoe.lifespanDistance = lifespanDistance
-        shoe.isDefaultShoe = isDefaultShoe
-        shoe.defaultRunTypes = isDefaultShoe ? defaultRunTypes : []
-        
+    func addShoe(_ shoe: Shoe) {
+        modelContext.insert(shoe)
         saveContext()
     }
     
@@ -175,47 +135,8 @@ final class ShoeDataHandler {
         modelContext.delete(shoe)
         saveContext()
     }
-    
-    func setAsDefaultShoe(_ shoe: Shoe, for runTypes: [RunType], append: Bool) {
-        do {
-            let allShoes = try modelContext.fetch(FetchDescriptor<Shoe>())
-            
-            for otherShoe in allShoes {
-                otherShoe.defaultRunTypes.removeAll(where: { runTypes.contains($0) })
-                
-                if otherShoe.defaultRunTypes.isEmpty {
-                    otherShoe.isDefaultShoe = false
-                }
-            }
-            
-            if append {
-                shoe.defaultRunTypes.append(contentsOf: runTypes)
-            } else {
-                shoe.defaultRunTypes = runTypes
-            }
-            
-            shoe.isDefaultShoe = true
-            shoe.isRetired = false
-            
-            saveContext()
-        } catch {
-            logger.error("Failed to fetch shoes: \(error)")
-        }
-    }
-    
-    func retireShoe(_ shoe: Shoe) {
-        shoe.isRetired.toggle()
-        shoe.retireDate = shoe.isRetired ? Date() : nil
-        
-        if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && shoe.isRetired {
-            shoe.isDefaultShoe = false
-            shoe.defaultRunTypes = []
-        }
-        
-        saveContext()
-    }
 
-    private func saveContext() {
+    func saveContext() {
         do {
             try modelContext.save()
             logger.debug("Context saved successfully.")

@@ -63,7 +63,7 @@
 		094F262C2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094F262B2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift */; };
 		0956815B2B46E207005E5FE6 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956815A2B46E207005E5FE6 /* NavigationRouter.swift */; };
 		0956EE392B4C057D0029445E /* TabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0956EE382B4C057D0029445E /* TabItem.swift */; };
-		09584D2B2DAAF9710048A274 /* ShoeDataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09584D2A2DAAF9710048A274 /* ShoeDataHandler.swift */; };
+		09584D2B2DAAF9710048A274 /* ShoeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09584D2A2DAAF9710048A274 /* ShoeHandler.swift */; };
 		095D8B602BCD6A80001D7592 /* RoundedRectangleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */; };
 		095D8B612BCD6B61001D7592 /* RoundedRectangleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */; };
 		09630FEC2D085F23006C14E0 /* ShoeStatsWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FEB2D085F23006C14E0 /* ShoeStatsWidgetView.swift */; };
@@ -223,7 +223,7 @@
 		094F262B2BE0D08B00441A62 /* StretchyScrollTargetBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyScrollTargetBehavior.swift; sourceTree = "<group>"; };
 		0956815A2B46E207005E5FE6 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
 		0956EE382B4C057D0029445E /* TabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItem.swift; sourceTree = "<group>"; };
-		09584D2A2DAAF9710048A274 /* ShoeDataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeDataHandler.swift; sourceTree = "<group>"; };
+		09584D2A2DAAF9710048A274 /* ShoeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeHandler.swift; sourceTree = "<group>"; };
 		095D8B5F2BCD6A80001D7592 /* RoundedRectangleProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedRectangleProgressView.swift; sourceTree = "<group>"; };
 		09630FEB2D085F23006C14E0 /* ShoeStatsWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeStatsWidgetView.swift; sourceTree = "<group>"; };
 		09630FF22D08B510006C14E0 /* ShoeSelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSelectionIntent.swift; sourceTree = "<group>"; };
@@ -805,7 +805,7 @@
 			children = (
 				09DE4A812B0D4CD8001119E4 /* HealthManager.swift */,
 				0907F2602B1E206700EB682A /* NotificationManager.swift */,
-				09584D2A2DAAF9710048A274 /* ShoeDataHandler.swift */,
+				09584D2A2DAAF9710048A274 /* ShoeHandler.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1041,7 +1041,7 @@
 				09E385EC2B13FD0D005CFF02 /* ModelContainerPreview.swift in Sources */,
 				09E2F3512B1668D700D16101 /* ShoeListItem.swift in Sources */,
 				09B792F92D4254960068A534 /* FAQView.swift in Sources */,
-				09584D2B2DAAF9710048A274 /* ShoeDataHandler.swift in Sources */,
+				09584D2B2DAAF9710048A274 /* ShoeHandler.swift in Sources */,
 				09BEB9972D40FBC3000A98EF /* RunTypeNotAvailableView.swift in Sources */,
 				09E2F34D2B15175800D16101 /* ShoeSelectionView.swift in Sources */,
 				09D6B8FA2C3C2856004EDA01 /* ShoeFormViewModel.swift in Sources */,

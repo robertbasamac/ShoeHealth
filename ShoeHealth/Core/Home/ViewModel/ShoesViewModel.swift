@@ -20,7 +20,7 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel"
 @Observable
 final class ShoesViewModel {
     
-    @ObservationIgnored private let shoeDataHandler: ShoeDataHandler
+    @ObservationIgnored private let shoeHandler: ShoeHandler
 
     @ObservationIgnored private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
@@ -54,8 +54,8 @@ final class ShoesViewModel {
         }
     }
     
-    init(shoeDataHandler: ShoeDataHandler) {
-        self.shoeDataHandler = shoeDataHandler
+    init(shoeHandler: ShoeHandler) {
+        self.shoeHandler = shoeHandler
         
         let sortingRule = defaults?.string(forKey: "SORTING_RULE") ?? SortingRule.aquisitionDate.rawValue
         self.sortingRule = SortingRule(rawValue: sortingRule) ?? SortingRule.recentlyUsed
@@ -193,24 +193,90 @@ final class ShoesViewModel {
     
     // MARK: - CRUD operations
     
-    func addShoe(nickname: String, brand: String, model: String, lifespanDistance: Double, aquisitionDate: Date, isDefaultShoe: Bool, defaultRunTypes: [RunType], image: Data?) -> Shoe {
-        let newShoe = shoeDataHandler.addShoe(nickname: nickname, brand: brand, model: model, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, isDefaultShoe: isDefaultShoe, defaultRunTypes: defaultRunTypes, image: image)
+    func addShoe(
+        nickname: String,
+        brand: String,
+        model: String,
+        lifespanDistance: Double,
+        aquisitionDate: Date,
+        isDefaultShoe: Bool,
+        defaultRunTypes: [RunType],
+        image: Data?
+    ) -> Shoe {
+        let newShoe = Shoe(
+            image: image,
+            brand: brand,
+            model: model,
+            nickname: nickname,
+            lifespanDistance: lifespanDistance,
+            aquisitionDate: aquisitionDate,
+            isDefaultShoe: isDefaultShoe,
+            defaultRunTypes: defaultRunTypes
+        )
         
+        if isDefaultShoe {
+            for otherShoe in shoes {
+                otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+                
+                if otherShoe.defaultRunTypes.isEmpty {
+                    otherShoe.isDefaultShoe = false
+                }
+            }
+        }
+        
+        shoeHandler.addShoe(newShoe)
         fetchShoes()
         
         return newShoe
     }
     
-    func updateShoe(shoeID: UUID, nickname: String, brand: String, model: String, isDefaultShoe: Bool, defaultRunTypes: [RunType], lifespanDistance: Double, aquisitionDate: Date, image: Data?) {
-        shoeDataHandler.updateShoe(shoeID: shoeID, nickname: nickname, brand: brand, model: model, isDefaultShoe: isDefaultShoe, defaultRunTypes: defaultRunTypes, lifespanDistance: lifespanDistance, aquisitionDate: aquisitionDate, image: image)
+    func updateShoe(
+        shoeID: UUID,
+        nickname: String,
+        brand: String,
+        model: String,
+        isDefaultShoe: Bool,
+        defaultRunTypes: [RunType],
+        lifespanDistance: Double,
+        aquisitionDate: Date,
+        image: Data?
+    ) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        
+        if !brand.isEmpty {
+            shoe.brand = brand
+        }
+        if !model.isEmpty {
+            shoe.model = model
+        }
+        if !nickname.isEmpty {
+            shoe.nickname = nickname
+        }
+        
+        shoe.image = image
+        shoe.aquisitionDate = aquisitionDate
+        shoe.lifespanDistance = lifespanDistance
+        shoe.isDefaultShoe = isDefaultShoe
+        shoe.defaultRunTypes = isDefaultShoe ? defaultRunTypes : []
+        
+        if isDefaultShoe {
+            for otherShoe in shoes.filter({ $0.id != shoeID }) {
+                otherShoe.defaultRunTypes.removeAll(where: { defaultRunTypes.contains($0) })
+                
+                if otherShoe.defaultRunTypes.isEmpty {
+                    otherShoe.isDefaultShoe = false
+                }
+            }
+        }
 
+        shoeHandler.saveContext()
         fetchShoes()
     }
     
     func deleteShoe(at offsets: IndexSet) {
         withAnimation {
             offsets.map { self.shoes[$0] }.forEach { shoe in
-                shoeDataHandler.deleteShoe(shoe)
+                shoeHandler.deleteShoe(shoe)
             }
         }
         
@@ -221,7 +287,7 @@ final class ShoesViewModel {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
         
         shoes.removeAll { $0.id == shoeID }
-        shoeDataHandler.deleteShoe(shoe)
+        shoeHandler.deleteShoe(shoe)
         
         fetchShoes()
     }
@@ -252,6 +318,7 @@ final class ShoesViewModel {
         
         await updateShoeStatistics(shoe)
         
+        shoeHandler.saveContext()
         fetchShoes()
         
         // TO DO - move this outside of ShoesViewModel if possible
@@ -275,20 +342,46 @@ final class ShoesViewModel {
         
         await updateShoeStatistics(shoe)
         
+        shoeHandler.saveContext()
         fetchShoes()
     }
     
     func setAsDefaultShoe(_ shoeID: UUID, for runTypes: [RunType], append: Bool = false) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
-
-        shoeDataHandler.setAsDefaultShoe(shoe, for: runTypes, append: append)
+        
+        for otherShoe in shoes {
+            otherShoe.defaultRunTypes.removeAll(where: { runTypes.contains($0) })
+            
+            if otherShoe.defaultRunTypes.isEmpty {
+                otherShoe.isDefaultShoe = false
+            }
+        }
+        
+        if append {
+            shoe.defaultRunTypes.append(contentsOf: runTypes)
+        } else {
+            shoe.defaultRunTypes = runTypes
+        }
+        
+        shoe.isDefaultShoe = true
+        shoe.isRetired = false
+        
+        shoeHandler.saveContext()
         fetchShoes()
     }
     
     func retireShoe(_ shoeID: UUID) {
         guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
-
-        shoeDataHandler.retireShoe(shoe)
+        
+        shoe.isRetired.toggle()
+        shoe.retireDate = shoe.isRetired ? .now : nil
+        
+        if shoe.isDefaultShoe && !shoe.defaultRunTypes.isEmpty && shoe.isRetired {
+            shoe.isDefaultShoe = false
+            shoe.defaultRunTypes = []
+        }
+        
+        shoeHandler.saveContext()
         fetchShoes()
     }
     
@@ -486,6 +579,7 @@ final class ShoesViewModel {
             await updateShoeStatistics(shoe)
         }
         
+        shoeHandler.saveContext()
         fetchShoes()
     }
     
@@ -548,7 +642,7 @@ final class ShoesViewModel {
             ]
         )
         
-        self.shoes = shoeDataHandler.fetchShoes(with: descriptor)
+        self.shoes = shoeHandler.fetchShoes(with: descriptor)
         WidgetCenter.shared.reloadAllTimelines()
     }
 }

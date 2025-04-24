@@ -17,7 +17,7 @@ final class NotificationManager {
         
     static let shared = NotificationManager()
     
-    private var shoeDataHandler: ShoeDataHandler?
+    private var shoeHandler: ShoeHandler?
     
     private let center = UNUserNotificationCenter.current()
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
@@ -30,8 +30,8 @@ final class NotificationManager {
         }
     }
     
-    func inject(shoeDataHandler: ShoeDataHandler) {
-        self.shoeDataHandler = shoeDataHandler
+    func inject(shoeHandler: ShoeHandler) {
+        self.shoeHandler = shoeHandler
     }
     
     func requestNotificationAuthorization() async -> Bool {
@@ -85,14 +85,8 @@ final class NotificationManager {
             logger.debug("for runType: \(runType.rawValue)")
             
             var title = runType.rawValue.capitalized
-            
-            if shoeDataHandler == nil {
-                logger.debug("ShoeDataHandler not set.")
-            } else {
-                logger.debug("ShoeDataHandler set.")
-            }
         
-            if let shoe = shoeDataHandler?.getDefaultShoe(for: runType) {
+            if let shoe = shoeHandler?.getDefaultShoe(for: runType) {
                 logger.debug("Shoe found: \(shoe.brand) \(shoe.model)")
                 
                 title += " - \(shoe.brand) \(shoe.model)"
