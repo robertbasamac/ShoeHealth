@@ -128,6 +128,7 @@ extension ShoeSelectionView {
                     shoe: shoe,
                     width: size,
                     imageAlignment: .trailing,
+                    infoAlignment: .leading,
                     showStats: false,
                     showNavigationLink: false,
                     reserveSpace: false

@@ -14,6 +14,7 @@ struct ShoeListItem: View {
     var shoe: Shoe
     var width: CGFloat
     var imageAlignment: HorizontalAlignment = .leading
+    var infoAlignment: Alignment = .topLeading
     var showStats: Bool = true
     var showNavigationLink: Bool = true
     var reserveSpace: Bool = true
@@ -97,8 +98,6 @@ extension ShoeListItem {
                     .multilineTextAlignment(.leading)
             }
             
-            Spacer(minLength: 0)
-            
             if showStats {
                 distanceStat
             }
@@ -135,7 +134,7 @@ extension ShoeListItem {
             .lineLimit(1)
             .widgetAccentable(true)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
     }
 }
 
