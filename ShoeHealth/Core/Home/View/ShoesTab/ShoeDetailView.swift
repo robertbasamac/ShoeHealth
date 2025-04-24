@@ -41,12 +41,6 @@ struct ShoeDetailView: View {
     @State private var sectionHeights: [String: CGFloat] = [:]
     private var storedNavBarHeight: CGFloat = UIApplication.navigationBarHeight
     
-    @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 80
-    
-    private var cappedProgressCircleSize: CGFloat {
-        min(progressCircleSize, 94)
-    }
-    
     init(shoe: Shoe, showStats: Bool = true, isFullScreen: Bool = false) {
         self.shoe = shoe
         self.isFullScreen = isFullScreen
@@ -73,9 +67,9 @@ struct ShoeDetailView: View {
                             readFrame(frame)
                         }
                         
-                        healthSection
-                        statsSection
-                        workoutsSection
+                        HealthSectionView(shoe: shoe)
+                        StatsSectionView(shoe: shoe)
+                        WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -98,9 +92,9 @@ struct ShoeDetailView: View {
                             readFrame(frame)
                         }
                         
-                        healthSection
-                        statsSection
-                        workoutsSection
+                        HealthSectionView(shoe: shoe)
+                        StatsSectionView(shoe: shoe)
+                        WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
                     }
                 }
                 .scrollIndicators(.hidden)
@@ -178,8 +172,177 @@ private struct ScrollOffsetKey: PreferenceKey {
 
 extension ShoeDetailView {
     
-    @ViewBuilder
-    private var healthSection: some View {
+    @ToolbarContentBuilder
+    private var toolbarItems: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: isFullScreen ? "xmark" : "chevron.left")
+                    .imageScale(.large)
+                    .fontWeight(.semibold)
+            }
+            .buttonStyle(.blurredCircle(Double(1 - opacity)))
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Button {
+                    showEditShoe.toggle()
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+                
+                Button {
+                    showDefaultSelection.toggle()
+                } label: {
+                    Label("Set Default", systemImage: "figure.run")
+                }
+                
+                Button(role: .destructive) {
+                    showDeletionConfirmation.toggle()
+                } label : {
+                    Label("Delete", systemImage: "trash")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .frame(width: 34, height: 34)
+                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
+            }
+        }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension ShoeDetailView {
+    
+    private func retireShoe() {
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+        
+        withAnimation {
+            shoesViewModel.retireShoe(shoe.id)
+        }
+        
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+            }
+        }
+    }
+    
+    private func deleteShoe() {
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
+        
+        withAnimation {
+            shoesViewModel.deleteShoe(shoe.id)
+        }
+        
+        navigationRouter.deleteShoe(shoe.id)
+        
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+            }
+        }
+    }
+    
+    private func triggerSetNewDailyDefaultShoe() {
+        guard let _ = shoesViewModel.getDefaultShoe(for: .daily) else {
+            if !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+            return
+        }
+    }
+    
+    private func computeBottomPadding() {
+        let healthHeight = sectionHeights["healthSection"] ?? 0
+        let statsHeight = sectionHeights["statsSection"] ?? 0
+        let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
+        let screenHeight = UIScreen.main.bounds.size.height
+        let statusBarHeight = UIApplication.statusBarHeight
+        let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
+        let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
+        
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
+        
+        bottomPadding = availableHeight < 20 ? 20 : availableHeight
+    }
+    
+    private func readFrame(_ frame: CGRect) {
+        guard frame.maxY > 0 && !isAnyModalPresented else {
+            return
+        }
+        
+        let topPadding: CGFloat = UIApplication.statusBarHeight + 44
+        let showNavBarTitlePadding: CGFloat = 25
+        
+        opacity = interpolateOpacity(position: frame.maxY,
+                                     minPosition: topPadding + showNavBarTitlePadding,
+                                     maxPosition: topPadding + 110,
+                                     reversed: true)
+        
+        navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
+        navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+    }
+    
+    private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
+        // Ensure position is within the range
+        let clampedPosition = min(max(position, minPosition), maxPosition)
+        
+        // Calculate normalized position between 0 and 1
+        let normalizedPosition = (clampedPosition - minPosition) / (maxPosition - minPosition)
+        
+        // Interpolate opacity between 0 and 1
+        let interpolatedOpacity = reversed ? Double(1 - normalizedPosition) : Double(normalizedPosition)
+        
+        return interpolatedOpacity
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
+        NavigationStack {
+            ShoeDetailView(shoe: Shoe.previewShoes[1])
+                .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager.shared)
+                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
+                .environment(SettingsManager.shared)
+                .environment(HealthManager.shared)
+        }
+    }
+}
+
+
+// MARK: - HealthSectionView
+
+fileprivate struct HealthSectionView: View {
+    
+    @EnvironmentObject private var navigationRouter: NavigationRouter
+    @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(SettingsManager.self) private var settingsManager
+    
+    @ScaledMetric(relativeTo: .largeTitle) private var progressCircleSize: CGFloat = 80
+    
+    private var cappedProgressCircleSize: CGFloat {
+        min(progressCircleSize, 94)
+    }
+    
+    @ScaledMetric(relativeTo: .largeTitle) private var conditionImageSize: CGFloat = 34
+    
+    private var cappedImageSize: CGFloat {
+        min(conditionImageSize, 40)
+    }
+    
+    var shoe: Shoe
+    
+    var body: some View {
         VStack(spacing: 0) {
             Text("Health")
                 .asHeader()
@@ -192,7 +355,7 @@ extension ShoeDetailView {
                     .frame(height: 2)
                     .frame(maxWidth: .infinity)
                 
-                ConditionSectionView(shoe: shoe)
+                conditionSection
             }
             .roundedContainer()
             
@@ -216,7 +379,6 @@ extension ShoeDetailView {
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.roundedRectangle(radius: 10))
                 .padding(.horizontal, 20)
-                .padding(.vertical, 8)
             }
         }
         .padding(.top, 8)
@@ -227,81 +389,7 @@ extension ShoeDetailView {
             }
         )
     }
-    
-    @ViewBuilder
-    private var statsSection: some View {
-        VStack(spacing: 0) {
-            Text("Statistics")
-                .asHeader()
-            
-            VStack(spacing: 8) {
-                averagesSection
-                    .padding(.horizontal, 20)
-                
-                Rectangle()
-                    .fill(.background)
-                    .frame(height: 2)
-                    .frame(maxWidth: .infinity)
-                
-                personalBestsSection
-                    .padding(.horizontal, 20)
-            }
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity)
-            .roundedContainer()
-        }
-        .background(
-            GeometryReader { geo in
-                Color.clear
-                    .preference(key: SectionHeightPreferenceKey.self, value: ["statsSection": geo.size.height])
-            }
-        )
-    }
-    
-    @ViewBuilder
-    private var workoutsSection: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Workouts")
-                
-                Image(systemName: "chevron.right")
-                    .imageScale(.small)
-                    .foregroundStyle(.secondary)
-            }
-            .asHeader()
-            .onTapGesture {
-                showAllWorkouts.toggle()
-            }
-            .overlay(alignment: .trailing, content: {
-                Button {
-                    showAddWorkouts.toggle()
-                } label: {
-                    Image(systemName: "plus")
-                        .imageScale(.large)
-                }
-                .padding(.trailing, 20)
-                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-            })
-            
-            VStack(spacing: 4) {
-                ForEach(getShoeMostRecentlyWorkouts()) { workout in
-                    WorkoutListItem(workout: workout)
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-        }
-        .background(
-            GeometryReader { geo in
-                Color.clear
-                    .preference(key: SectionHeightPreferenceKey.self, value: ["workoutsSection": geo.size.height])
-            }
-        )
-    }
-    
+        
     @ViewBuilder
     private var lifespanSection: some View {
         HStack(spacing: 8) {
@@ -337,7 +425,157 @@ extension ShoeDetailView {
             )
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
+    }
+    
+    @ViewBuilder
+    private var conditionSection: some View {
+        
+        HStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Condition")
+                    .font(.footnote)
+                    .fontWeight(.bold)
+
+                HStack(spacing: 8) {
+                    Image(systemName: shoe.wearCondition.iconName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: cappedImageSize, height: cappedImageSize)
+                        .foregroundStyle(shoe.wearColor)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        if !shoe.isRetired {
+                            Text("\(shoe.wearCondition.action)")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                                .lineSpacing(0)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        }
+                        
+                        Text(shoe.wearCondition.name)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(shoe.wearColor)
+                            .lineLimit(1)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .padding(.vertical, 10)
+
+            Rectangle()
+                .fill(.background)
+                .frame(width: 2)
+                .frame(maxHeight: .infinity)
+            
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Retirement")
+                    .font(.footnote)
+                    .fontWeight(.bold)
+
+                if shoe.isRetired {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Retired since")
+                            .font(.caption)
+                            .multilineTextAlignment(.leading)
+                            .lineSpacing(0)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        
+                        Text(Date.now.formatted(date: .abbreviated, time: .omitted))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                    }
+                } else if let estimatedDate = shoesViewModel.estimatedRetirementDate(for: shoe) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Estimated Date")
+                            .font(.caption)
+                            .multilineTextAlignment(.leading)
+                            .lineSpacing(0)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        
+                        Text(estimatedDate.formatted(date: .abbreviated, time: .omitted))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Estimated Date")
+                            .font(.caption)
+                            .multilineTextAlignment(.leading)
+                            .lineSpacing(0)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        
+                        Text("N/A")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .padding(.vertical, 10)
+        }
+        .padding(.horizontal, 20)
+        .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
+    }
+    
+    private func retireShoe() {
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+        
+        withAnimation {
+            shoesViewModel.retireShoe(shoe.id)
+        }
+        
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+            }
+        }
+    }
+}
+
+// MARK: - StatsSectionView
+
+fileprivate struct StatsSectionView: View {
+    
+    @Environment(SettingsManager.self) private var settingsManager
+    
+    var shoe: Shoe
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("Statistics")
+                .asHeader()
+            
+            VStack(spacing: 10) {
+                averagesSection
+                    .padding(.horizontal, 20)
+                
+                Rectangle()
+                    .fill(.background)
+                    .frame(height: 2)
+                    .frame(maxWidth: .infinity)
+                
+                personalBestsSection
+                    .padding(.horizontal, 20)
+            }
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .roundedContainer()
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["statsSection": geo.size.height])
+            }
+        )
     }
     
     @ViewBuilder
@@ -448,181 +686,62 @@ extension ShoeDetailView {
             }
         }
     }
-    
-    @ToolbarContentBuilder
-    private var toolbarItems: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: isFullScreen ? "xmark" : "chevron.left")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
-            }
-            .buttonStyle(.blurredCircle(Double(1 - opacity)))
-        }
-        
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Button {
-                    showEditShoe.toggle()
-                } label: {
-                    Label("Edit", systemImage: "pencil")
-                }
-                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-                
-                Button {
-                    showDefaultSelection.toggle()
-                } label: {
-                    Label("Set Default", systemImage: "figure.run")
-                }
-                
-                Button(role: .destructive) {
-                    showDeletionConfirmation.toggle()
-                } label : {
-                    Label("Delete", systemImage: "trash")
-                }
-            } label: {
-                Image(systemName: "ellipsis")
-                    .frame(width: 34, height: 34)
-                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
-            }
-        }
-    }
 }
 
-extension ShoeDetailView {
-    
-    // MARK: - ConditionSectionView
-    
-    private struct ConditionSectionView: View {
-        
-        @EnvironmentObject private var navigationRouter: NavigationRouter
-        @Environment(ShoesViewModel.self) private var shoesViewModel
-        
-        @ScaledMetric(relativeTo: .largeTitle) private var conditionImageSize: CGFloat = 34
-        
-        private var cappedImageSize: CGFloat {
-            min(conditionImageSize, 40)
-        }
-        
-        var shoe: Shoe
-        
-        var body: some View {
-            HStack(spacing: 20) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Condition")
-                        .font(.footnote)
-                        .fontWeight(.bold)
+// MARK: - WorkoutsSectionView
 
-                    HStack(spacing: 8) {
-                        Image(systemName: shoe.wearCondition.iconName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: cappedImageSize, height: cappedImageSize)
-                            .foregroundStyle(shoe.wearColor)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            if !shoe.isRetired {
-                                Text("\(shoe.wearCondition.action)")
-                                    .font(.caption)
-                                    .multilineTextAlignment(.leading)
-                                    .lineSpacing(0)
-                                    .lineLimit(2)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                            }
-                            
-                            Text(shoe.wearCondition.name)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundStyle(shoe.wearColor)
-                                .lineLimit(1)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
-                .padding(.vertical, 8)
-                
-                Rectangle()
-                    .fill(.background)
-                    .frame(width: 2)
-                    .frame(maxHeight: .infinity)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Retirement")
-                        .font(.footnote)
-                        .fontWeight(.bold)
+fileprivate struct WorkoutsSectionView: View {
+    
+    @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(HealthManager.self) private var healthManager
+    
+    var shoe: Shoe
+    
+    @Binding var showAllWorkouts: Bool
+    @Binding var showAddWorkouts: Bool
 
-                    if shoe.isRetired {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Retired since")
-                                .font(.caption)
-                                .multilineTextAlignment(.leading)
-                                .lineSpacing(0)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                            
-                            Text(Date.now.formatted(date: .abbreviated, time: .omitted))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                        }
-                    } else if let estimatedDate = shoesViewModel.estimatedRetirementDate(for: shoe) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Estimated Date")
-                                .font(.caption)
-                                .multilineTextAlignment(.leading)
-                                .lineSpacing(0)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                            
-                            Text(estimatedDate.formatted(date: .abbreviated, time: .omitted))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                        }
-                    } else {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Estimated Date")
-                                .font(.caption)
-                                .multilineTextAlignment(.leading)
-                                .lineSpacing(0)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                            
-                            Text("N/A")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                        }
-                    }
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("Workouts")
+                
+                Image(systemName: "chevron.right")
+                    .imageScale(.small)
+                    .foregroundStyle(.secondary)
+            }
+            .asHeader()
+            .onTapGesture {
+                showAllWorkouts.toggle()
+            }
+            .overlay(alignment: .trailing, content: {
+                Button {
+                    showAddWorkouts.toggle()
+                } label: {
+                    Image(systemName: "plus")
+                        .imageScale(.large)
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 8)
+                .padding(.trailing, 20)
+                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+            })
+            
+            VStack(spacing: 4) {
+                ForEach(getShoeMostRecentlyWorkouts()) { workout in
+                    WorkoutListItem(workout: workout)
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
             }
             .padding(.horizontal, 20)
-            .dynamicTypeSize(DynamicTypeSize.xLarge...DynamicTypeSize.xxLarge)
+            .padding(.top, 8)
         }
-        
-        private func retireShoe() {
-            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
-            
-            withAnimation {
-                shoesViewModel.retireShoe(shoe.id)
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["workoutsSection": geo.size.height])
             }
-            
-            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                }
-            }
-        }
+        )
     }
-}
-
-// MARK: - Helpers
-
-extension ShoeDetailView {
     
     private func getShoeWorkouts() -> [HKWorkout] {
         return healthManager.getWorkouts(forIDs: shoe.workouts)
@@ -630,105 +749,5 @@ extension ShoeDetailView {
     
     private func getShoeMostRecentlyWorkouts() -> [HKWorkout] {
         return Array(getShoeWorkouts().prefix(5))
-    }
-    
-    private func retireShoe() {
-        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
-        
-        withAnimation {
-            shoesViewModel.retireShoe(shoe.id)
-        }
-        
-        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-            }
-        }
-    }
-    
-    private func deleteShoe() {
-        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
-        
-        withAnimation {
-            shoesViewModel.deleteShoe(shoe.id)
-        }
-        
-        navigationRouter.deleteShoe(shoe.id)
-        
-        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-            }
-        }
-    }
-    
-    private func triggerSetNewDailyDefaultShoe() {
-        guard let _ = shoesViewModel.getDefaultShoe(for: .daily) else {
-            if !shoesViewModel.shoes.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                }
-            }
-            return
-        }
-    }
-    
-    private func computeBottomPadding() {
-        let healthHeight = sectionHeights["healthSection"] ?? 0
-        let statsHeight = sectionHeights["statsSection"] ?? 0
-        let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
-        let screenHeight = UIScreen.main.bounds.size.height
-        let statusBarHeight = UIApplication.statusBarHeight
-        let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
-        let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
-        
-        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
-        
-        bottomPadding = availableHeight < 20 ? 20 : availableHeight
-    }
-    
-    private func readFrame(_ frame: CGRect) {
-        guard frame.maxY > 0 && !isAnyModalPresented else {
-            return
-        }
-        
-        let topPadding: CGFloat = UIApplication.statusBarHeight + 44
-        let showNavBarTitlePadding: CGFloat = 25
-        
-        opacity = interpolateOpacity(position: frame.maxY,
-                                     minPosition: topPadding + showNavBarTitlePadding,
-                                     maxPosition: topPadding + 110,
-                                     reversed: true)
-        
-        navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
-        navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
-    }
-    
-    private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
-        // Ensure position is within the range
-        let clampedPosition = min(max(position, minPosition), maxPosition)
-        
-        // Calculate normalized position between 0 and 1
-        let normalizedPosition = (clampedPosition - minPosition) / (maxPosition - minPosition)
-        
-        // Interpolate opacity between 0 and 1
-        let interpolatedOpacity = reversed ? Double(1 - normalizedPosition) : Double(normalizedPosition)
-        
-        return interpolatedOpacity
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
-        NavigationStack {
-            ShoeDetailView(shoe: Shoe.previewShoes[1])
-                .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeDataHandler: ShoeDataHandler(modelContext: PreviewSampleData.container.mainContext)))
-                .environment(SettingsManager.shared)
-                .environment(HealthManager.shared)
-        }
     }
 }
