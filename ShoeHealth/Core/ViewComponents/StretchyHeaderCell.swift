@@ -41,7 +41,7 @@ struct StretchyHeaderCell: View {
                     .frame(height: 110)
                     .padding(.top, 20)
                     .background {
-                        LinearGradient(colors: [shadowColor.opacity(0), shadowColor], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(colors: [shadowColor.opacity(0), shadowColor.opacity(0.7)], startPoint: .top, endPoint: .bottom)
                     }
                 }
                 .asStretchyHeader(startingHeight: height)
