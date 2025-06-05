@@ -31,13 +31,9 @@ struct ShoesView: View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
                 lastRunSection
-                
                 defaultShoeSection
-                
                 recentlyUsedSection
-                
                 activeShoesSection
-                
                 retiredShoesSection
             }
         }
@@ -115,15 +111,26 @@ extension ShoesView {
             Text("Default Shoes")
                 .asHeader()
             
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(RunType.allCases, id: \.self) { runType in
-                        runTypeButton(runType)
-                    }
+            HStack(spacing: 8) {
+                ForEach(RunType.allCases, id: \.self) { runType in
+                    RunTypeCapsule(
+                        runType: runType,
+                        foregroundColor: isFeatureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary),
+                        backgroundColor: selectedDefaulRunType == runType ? Color.theme.accent : Color.theme.containerBackground) {
+                            if isFeatureDisabled(for: runType) {
+                                navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
+                            } else {
+                                if selectedDefaulRunType == runType {
+                                    navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                                } else {
+                                    selectedDefaulRunType = runType
+                                }
+                            }
+                        }
                 }
             }
-            .contentMargins(.horizontal, 20)
-            .contentMargins(.top, 8)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
             
             if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
                 ShoeListItem(shoe: shoe, width: width)
@@ -172,7 +179,7 @@ extension ShoesView {
                                     .foregroundStyle(.black)
                             }
                         }
-                        .tint(.accentColor)
+                        .tint(.accent)
                         .buttonStyle(BorderedProminentButtonStyle())
                         .buttonBorderShape(.capsule)
                     }
@@ -279,9 +286,10 @@ extension ShoesView {
             triggerSetNewDailyDefaultShoe()
         }) { shoe in
             NavigationStack {
-                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes) { selectedDefaultRunTypes, selectedSuitableRunTypes in
                     withAnimation {
-                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultRunTypes)
+                        shoesViewModel.setSuitableRunTypes(selectedSuitableRunTypes, for: shoe.id)
                     }
                     
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)

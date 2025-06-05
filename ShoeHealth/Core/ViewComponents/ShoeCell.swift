@@ -34,7 +34,7 @@ struct ShoeCell: View {
                     .clipShape(.rect(cornerRadius: 10))
             }
             
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(shoe.nickname)
                     .font(.headline)
                     .italic()

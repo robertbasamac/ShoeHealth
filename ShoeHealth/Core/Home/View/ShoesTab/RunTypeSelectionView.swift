@@ -12,51 +12,71 @@ struct RunTypeSelectionView: View {
     @EnvironmentObject private var storeManager: StoreManager
     @Environment(\.dismiss) private var dismiss
     
-    @State var selectedRunTypes: [RunType]
+    @State var selectedDefaultRunTypes: [RunType]
+    @State var selectedSuitableRunTypes: [RunType]
     
     var preventDeselectingDaily: Bool = false
-    var onDone: ([RunType]) -> Void
+    var onDone: ([RunType], [RunType]) -> Void
     
     var body: some View {
         List {
             Section {
-                ForEach(RunType.allCases, id: \.self) { runType in
-                    HStack {
-                        Text(runType.rawValue.capitalized)
-                            .foregroundStyle(disableFeature(for: runType) ? .secondary : .primary)
-                        
-                        Spacer()
-                        
-                        if selectedRunTypes.contains(runType) {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(disableFeature(for: runType) ? .secondary : Color.theme.accent)
-                        }
-                    }
-                    .contentShape(.rect)
-                    .onTapGesture {
-                        if selectedRunTypes.contains(runType) {
-                            if runType == .daily && preventDeselectingDaily {
-                                return
+                HStack(spacing: 4) {
+                    ForEach(RunType.allCases, id: \.self) { runType in
+                        let colors = CapsuleStyleHelper.colorStyle(
+                            isDefault: selectedDefaultRunTypes.contains(runType),
+                            isSuitable: selectedSuitableRunTypes.contains(runType),
+                            isDisabled: isFeatureDisabled(for: runType)
+                        )
+
+                        RunTypeCapsule(
+                            runType: runType,
+                            foregroundColor: colors.foreground,
+                            backgroundColor: colors.background,
+                            onTap: {
+                                if !isFeatureDisabled(for: runType) {
+                                    if selectedDefaultRunTypes.contains(runType) {
+                                        selectedDefaultRunTypes.removeAll { $0 == runType }
+                                        selectedSuitableRunTypes.removeAll { $0 == runType }
+                                    } else if selectedSuitableRunTypes.contains(runType) {
+                                        selectedDefaultRunTypes.append(runType)
+                                    } else {
+                                        selectedSuitableRunTypes.append(runType)
+                                    }
+                                }
                             }
-                            selectedRunTypes.removeAll { $0 == runType }
-                        } else {
-                            selectedRunTypes.append(runType)
-                        }
+                        )
                     }
-                    .allowsHitTesting(!disableFeature(for: runType))
                 }
+                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                .dynamicTypeSize(...DynamicTypeSize.large)
+            } header: {
+                Text("Run Type Assignment")
             } footer: {
-                if !StoreManager.shared.hasFullAccess {
-                    Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                VStack(spacing: 12) {
+                    HStack(spacing: 4) {
+                        Text("Default").foregroundStyle(.accent)
+                        Text(" - ")
+                        Text("Also used").foregroundStyle(.white)
+                        Text(" - ")
+                        Text("Not used").foregroundStyle(.gray)
+                    }
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    if !StoreManager.shared.hasFullAccess {
+                        Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
                 }
             }
+            .listRowBackground(Color.clear)
         }
-        .navigationTitle("Default Run Types")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Done") {
-                    onDone(selectedRunTypes)
+                    onDone(selectedDefaultRunTypes, selectedSuitableRunTypes)
                     dismiss()
                 }
             }
@@ -74,16 +94,27 @@ struct RunTypeSelectionView: View {
 
 extension RunTypeSelectionView {
     
-    private func disableFeature(for runType: RunType) -> Bool {
+    private func isFeatureDisabled(for runType: RunType) -> Bool {
         return runType != .daily && !storeManager.hasFullAccess
+    }
+    
+    private func getRestrictedColor(_ runType: RunType, _ color: Color) -> Color {
+        return storeManager.hasFullAccess ? color : (runType == .daily ? color : .secondary)
     }
 }
 
 // MARK: - Preview
 
 #Preview {
-    @Previewable @State var runTypeSelections: [RunType] = [.daily]
+    @Previewable @State var defaultRunTypeSelections: [RunType] = [.daily]
+    @Previewable @State var suitableRunTypeSelections: [RunType] = [.tempo]
     
-    RunTypeSelectionView(selectedRunTypes: runTypeSelections, preventDeselectingDaily: false) { _ in }
+    NavigationStack {
+        RunTypeSelectionView(selectedDefaultRunTypes: defaultRunTypeSelections, selectedSuitableRunTypes: suitableRunTypeSelections, preventDeselectingDaily: false) { defaultTypes, suitableTypes in
+            defaultRunTypeSelections = defaultTypes
+            suitableRunTypeSelections = suitableTypes
+        }
         .environmentObject(StoreManager.shared)
+        .navigationTitle("Set Run Types")
+    }
 }

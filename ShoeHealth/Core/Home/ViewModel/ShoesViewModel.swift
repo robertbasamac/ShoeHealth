@@ -201,6 +201,7 @@ final class ShoesViewModel {
         aquisitionDate: Date,
         isDefaultShoe: Bool,
         defaultRunTypes: [RunType],
+        suitableRunTypes: [RunType],
         image: Data?
     ) -> Shoe {
         let newShoe = Shoe(
@@ -211,7 +212,8 @@ final class ShoesViewModel {
             lifespanDistance: lifespanDistance,
             aquisitionDate: aquisitionDate,
             isDefaultShoe: isDefaultShoe,
-            defaultRunTypes: defaultRunTypes
+            defaultRunTypes: defaultRunTypes,
+            suitableRunTypes: suitableRunTypes
         )
         
         if isDefaultShoe {
@@ -237,6 +239,7 @@ final class ShoesViewModel {
         model: String,
         isDefaultShoe: Bool,
         defaultRunTypes: [RunType],
+        suitableRunTypes: [RunType],
         lifespanDistance: Double,
         aquisitionDate: Date,
         image: Data?
@@ -258,6 +261,7 @@ final class ShoesViewModel {
         shoe.lifespanDistance = lifespanDistance
         shoe.isDefaultShoe = isDefaultShoe
         shoe.defaultRunTypes = isDefaultShoe ? defaultRunTypes : []
+        shoe.suitableRunTypes = suitableRunTypes
         
         if isDefaultShoe {
             for otherShoe in shoes.filter({ $0.id != shoeID }) {
@@ -363,9 +367,19 @@ final class ShoesViewModel {
             shoe.defaultRunTypes = runTypes
         }
         
+        shoe.suitableRunTypes = Array(Set(shoe.suitableRunTypes).union(runTypes))
         shoe.isDefaultShoe = true
         shoe.isRetired = false
         
+        shoeHandler.saveContext()
+        fetchShoes()
+    }
+    
+    func setSuitableRunTypes(_ runTypes: [RunType], for shoeID: UUID) {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+
+        shoe.suitableRunTypes = runTypes
+
         shoeHandler.saveContext()
         fetchShoes()
     }
@@ -410,6 +424,7 @@ final class ShoesViewModel {
                 logger.debug("Workout - Distance: \(distance), End Date: \(String(describing: endDate))")
             }
         }
+        
         logger.debug("Grouped workouts into \(grouped.keys.count) week groups")
         
         let weeklyTotals = grouped.values.map { group in

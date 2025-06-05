@@ -15,11 +15,12 @@ struct MenuCapsuleButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.callout)
-            .fontWeight(.medium)
+            .font(.footnote)
+            .fontWeight(.semibold)
             .foregroundStyle(!isEnabled ? Color.gray : (isSelected ? Color.black : Color.primary))
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 8)
             .padding(.vertical, 6)
-            .padding(.horizontal, 16)
             .background(isSelected ? Color.theme.accent : Color.theme.containerBackground, in: .capsule(style: .circular))
             .opacity(configuration.isPressed ? 0.8 : 1)
     }

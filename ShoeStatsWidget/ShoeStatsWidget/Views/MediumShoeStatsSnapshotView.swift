@@ -60,7 +60,7 @@ struct MediumShoeStatsSnapshotView: View, ShoeStatsViewProtocol {
                 HStack(spacing: 0) {
                     statCell(
                         label: "Distance",
-                        value: "\(Int(shoe.totalDistance))/\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))",
+                        value: "\(shoe.totalDistance.asString(withDecimals: 0))/\(shoe.lifespanDistance.asString(withDecimals: 0))",
                         unit: unitSymbol,
                         color: shoe.wearColor,
                         textAlignment: .leading,
@@ -141,7 +141,7 @@ extension MediumShoeStatsSnapshotView {
 #Preview("Medium", as: .systemMedium) {
     ShoeStatsWidget()
 } timeline: {
-    ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[1]), firstStat: .totalDuration, secondStat: .averageDuration, unitSymbol: UnitOfMeasure.metric.symbol)
+    ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[0]), firstStat: .totalDuration, secondStat: .averageDuration, unitSymbol: UnitOfMeasure.metric.symbol)
 
     ShoeStatsWidgetEntry(date: .now, shoe: ShoeStatsEntity(from: Shoe.previewShoes[2]), firstStat: .averagePace, secondStat: .averageDistance, unitSymbol: UnitOfMeasure.metric.symbol)
     

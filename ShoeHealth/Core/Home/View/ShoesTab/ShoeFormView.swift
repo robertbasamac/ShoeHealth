@@ -10,6 +10,7 @@ import SwiftUI
 struct ShoeFormView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
+    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
@@ -18,6 +19,7 @@ struct ShoeFormView: View {
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
     @State private var showDeletionConfirmation: Bool = false
+    @State private var showSuitableRunTypeSelection: Bool = false
     
     @FocusState private var focusField: FocusField?
     
@@ -48,6 +50,7 @@ struct ShoeFormView: View {
             lifespanDistance: shoe?.lifespanDistance ?? SettingsManager.shared.unitOfMeasure.range.lowerBound,
             isDefaultShoe: shoe?.isDefaultShoe ?? false,
             defaultRunTypes: shoe?.defaultRunTypes ?? [],
+            suitableRunTypes: shoe?.suitableRunTypes ?? [],
             shoeBrand: shoe?.brand ?? "",
             shoeModel: shoe?.model ?? "",
             shoeNickname: shoe?.nickname ?? "",
@@ -62,15 +65,10 @@ struct ShoeFormView: View {
                 .task(id: shoeFormViewModel.selectedPhoto) {
                     await shoeFormViewModel.loadPhoto()
                 }
-            
+            setRunTypesSection
             detailsSection
-            
             nicknameSection
-            
-            setDefaultSection
-            
             lifespanSection
-            
             aquisitionDateSection
             
             if isEditing {
@@ -200,6 +198,54 @@ extension ShoeFormView {
     }
     
     @ViewBuilder
+    private var setRunTypesSection: some View {
+        Section {
+            HStack(spacing: 4) {
+                ForEach(RunType.allCases, id: \.self) { runType in
+                    let colors = CapsuleStyleHelper.colorStyle(
+                        isDefault: shoeFormViewModel.defaultRunTypes.contains(runType),
+                        isSuitable: shoeFormViewModel.suitableRunTypes.contains(runType),
+                        isDisabled: isFeatureDisabled(for: runType)
+                    )
+                    
+                    RunTypeCapsule(
+                        runType: runType,
+                        foregroundColor: colors.foreground,
+                        backgroundColor: colors.background) {
+                            if !isFeatureDisabled(for: runType) {
+                                if shoeFormViewModel.defaultRunTypes.contains(runType) {
+                                    shoeFormViewModel.defaultRunTypes.removeAll { $0 == runType }
+                                    shoeFormViewModel.suitableRunTypes.removeAll { $0 == runType }
+                                } else if shoeFormViewModel.suitableRunTypes.contains(runType) {
+                                    shoeFormViewModel.defaultRunTypes.append(runType)
+                                } else {
+                                    shoeFormViewModel.suitableRunTypes.append(runType)
+                                }
+                                
+                                shoeFormViewModel.isDefaultShoe = !shoeFormViewModel.defaultRunTypes.isEmpty
+                            }
+                        }
+                }
+            }
+            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .dynamicTypeSize(...DynamicTypeSize.large)
+        } header: {
+            Text("Run Type Assignment")
+        } footer: {
+            HStack(spacing: 4) {
+                Text("Default").foregroundStyle(.accent)
+                Text(" - ")
+                Text("Also used").foregroundStyle(.white)
+                Text(" - ")
+                Text("Not used").foregroundStyle(.gray)
+            }
+            .font(.caption)
+            .frame(maxWidth: .infinity, alignment: .center)
+        }
+        .listRowBackground(Color.clear)
+    }
+    
+    @ViewBuilder
     private var detailsSection: some View {
         Section {
             TextField("Brand", text: $shoeFormViewModel.brand)
@@ -222,69 +268,6 @@ extension ShoeFormView {
             TextField("Nickname", text: $shoeFormViewModel.nickname)
                 .focused($focusField, equals: .nickname)
                 .textInputAutocapitalization(.words)
-        }
-    }
-    
-    @ViewBuilder
-    private var setDefaultSection: some View {
-        Section {
-            Toggle("Set as default shoe", isOn: Binding(
-                get: { shoeFormViewModel.isDefaultShoe },
-                set: { isOn in
-                    if isOn {
-                        withAnimation {
-                            shoeFormViewModel.isDefaultShoe = true
-                        }
-                        
-                        if shoeFormViewModel.defaultRunTypes.isEmpty {
-                            shoeFormViewModel.defaultRunTypes = [.daily]
-                            showRunTypeSelection = true
-                        }
-                    } else {
-                        withAnimation {
-                            shoeFormViewModel.isDefaultShoe = false
-                        }
-                    }
-                }
-            ))
-            .tint(Color.theme.accent)
-            .disabled(shouldPreventDefaultOff())
-            .onChange(of: shoeFormViewModel.defaultRunTypes) { _, newValue in
-                withAnimation {
-                    shoeFormViewModel.isDefaultShoe = !newValue.isEmpty
-                }
-            }
-            
-            if shoeFormViewModel.isDefaultShoe {
-                Button {
-                    showRunTypeSelection = true
-                } label: {
-                    HStack {
-                        Text(shoeFormViewModel.defaultRunTypes.map { $0.rawValue.lowercased() }.joined(separator: ", "))
-                            .font(.footnote)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .fontWeight(.semibold)
-                            .imageScale(.small)
-                            .foregroundStyle(.secondary.opacity(0.5))
-                    }
-                    .font(.body)
-                }
-                .sheet(isPresented: $showRunTypeSelection) {
-                    NavigationStack {
-                        RunTypeSelectionView(
-                            selectedRunTypes: shoeFormViewModel.defaultRunTypes,
-                            preventDeselectingDaily: shouldPreventDefaultOff()
-                        ) { selectedRunTypes in
-                            shoeFormViewModel.defaultRunTypes = selectedRunTypes
-                        }
-                    }
-                    .presentationDetents([.medium])
-                    .interactiveDismissDisabled()
-                }
-            }
         }
     }
     
@@ -359,6 +342,7 @@ extension ShoeFormView {
                         model: shoeFormViewModel.model,
                         isDefaultShoe: shoeFormViewModel.isDefaultShoe,
                         defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                        suitableRunTypes: shoeFormViewModel.defaultRunTypes,
                         lifespanDistance: shoeFormViewModel.lifespanDistance,
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
                         image: shoeFormViewModel.selectedPhotoData
@@ -378,6 +362,7 @@ extension ShoeFormView {
                         aquisitionDate: shoeFormViewModel.aquisitionDate,
                         isDefaultShoe: shoeFormViewModel.isDefaultShoe,
                         defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                        suitableRunTypes: shoeFormViewModel.defaultRunTypes,
                         image: shoeFormViewModel.selectedPhotoData
                     )
                     
@@ -403,7 +388,7 @@ extension ShoeFormView {
             shoesViewModel.deleteShoe(shoeFormViewModel.shoeID ?? UUID())
         }
         
-        dismiss()        
+        dismiss()
         navigationRouter.deleteShoe(shoeFormViewModel.shoeID ?? UUID())
         
         if wasDailyDefaultShoe && !shoesViewModel.shoes.isEmpty {
@@ -419,6 +404,10 @@ extension ShoeFormView {
     
     private func isNotDailyDefaultShoeAnymore() -> Bool {
         return (shoeFormViewModel.isDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) || !shoeFormViewModel.isDefaultShoe)
+    }
+    
+    private func isFeatureDisabled(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
     }
 }
 

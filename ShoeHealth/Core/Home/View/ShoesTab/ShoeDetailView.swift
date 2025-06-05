@@ -25,7 +25,7 @@ struct ShoeDetailView: View {
     @State private var showAllWorkouts: Bool = false
     @State private var showAddWorkouts: Bool = false
     @State private var showDeletionConfirmation: Bool = false
-    @State private var showDefaultSelection: Bool = false
+    @State private var showSelectRunTypes: Bool = false
     
     /// Used for Header behavior
     @State private var opacity: CGFloat = 0
@@ -33,7 +33,7 @@ struct ShoeDetailView: View {
     @State private var navBarTitle: String = ""
     
     private var isAnyModalPresented: Bool {
-        showEditShoe || showAddWorkouts || showDefaultSelection
+        showEditShoe || showAddWorkouts || showSelectRunTypes
     }
     
     /// Used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
@@ -57,7 +57,7 @@ struct ShoeDetailView: View {
                             brand: shoe.brand,
                             nickname: shoe.nickname,
                             date: shoe.aquisitionDate,
-                            imageData: imageData,
+                            imageData: imageData
                         )
                         .overlay {
                             Color(uiColor: .systemBackground)
@@ -67,6 +67,7 @@ struct ShoeDetailView: View {
                             readFrame(frame)
                         }
                         
+                        RunTypeSectionView(shoe: shoe, showSelectRunTypes: $showSelectRunTypes)
                         HealthSectionView(shoe: shoe)
                         StatsSectionView(shoe: shoe)
                         WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
@@ -92,6 +93,7 @@ struct ShoeDetailView: View {
                             readFrame(frame)
                         }
                         
+                        RunTypeSectionView(shoe: shoe, showSelectRunTypes: $showSelectRunTypes)
                         HealthSectionView(shoe: shoe)
                         StatsSectionView(shoe: shoe)
                         WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
@@ -136,18 +138,20 @@ struct ShoeDetailView: View {
             .presentationCornerRadius(20)
             .interactiveDismissDisabled()
         }
-        .sheet(isPresented: $showDefaultSelection
+        .sheet(isPresented: $showSelectRunTypes
                , onDismiss: {
             triggerSetNewDailyDefaultShoe()
         }) {
             NavigationStack {
-                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes) { selectedDefaultRunTypes, selectedSuitableRunTypes in
                     withAnimation {
-                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultRunTypes)
+                        shoesViewModel.setSuitableRunTypes(selectedSuitableRunTypes, for: shoe.id)
                     }
                     
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
+                .navigationTitle("Set Run Types")
             }
             .presentationDetents([.medium])
             .interactiveDismissDisabled()
@@ -158,13 +162,6 @@ struct ShoeDetailView: View {
             }
             .presentationDragIndicator(.visible)
         }
-    }
-}
-
-private struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
     }
 }
 
@@ -195,9 +192,9 @@ extension ShoeDetailView {
                 .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                 
                 Button {
-                    showDefaultSelection.toggle()
+                    showSelectRunTypes.toggle()
                 } label: {
-                    Label("Set Default", systemImage: "figure.run")
+                    Label("Set Run Type", systemImage: "figure.run")
                 }
                 
                 Button(role: .destructive) {
@@ -260,6 +257,7 @@ extension ShoeDetailView {
     }
     
     private func computeBottomPadding() {
+        let runsHeight = sectionHeights["runsSection"] ?? 0
         let healthHeight = sectionHeights["healthSection"] ?? 0
         let statsHeight = sectionHeights["statsSection"] ?? 0
         let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
@@ -268,7 +266,7 @@ extension ShoeDetailView {
         let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
         let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
         
-        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - runsHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
         
         bottomPadding = availableHeight < 20 ? 20 : availableHeight
     }
@@ -309,7 +307,7 @@ extension ShoeDetailView {
 #Preview {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
-            ShoeDetailView(shoe: Shoe.previewShoes[1])
+            ShoeDetailView(shoe: Shoe.previewShoes[2])
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
@@ -319,6 +317,58 @@ extension ShoeDetailView {
     }
 }
 
+// MARK: - RunTypeSectionView
+
+fileprivate struct RunTypeSectionView: View {
+    
+    @EnvironmentObject private var storeManager: StoreManager
+    
+    let shoe: Shoe
+    
+    @Binding var showSelectRunTypes: Bool
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Button {
+                showSelectRunTypes.toggle()
+            } label: {
+                Image(systemName: "plus")
+                    .fontWeight(.medium)
+                    .padding(6)
+                    .background(Color.theme.accent.opacity(0.2))
+                    .foregroundStyle(Color.theme.accent)
+                    .clipShape(Circle())
+            }
+            
+            ForEach(RunType.allCases, id: \.self) { runType in
+                let colors = CapsuleStyleHelper.colorStyle(
+                    isDefault: shoe.defaultRunTypes.contains(runType),
+                    isSuitable: shoe.suitableRunTypes.contains(runType),
+                    isDisabled: isFeatureDisabled(for: runType)
+                )
+
+                RunTypeCapsule(
+                    runType: runType,
+                    foregroundColor: colors.foreground,
+                    backgroundColor: colors.background)
+                { }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .dynamicTypeSize(...DynamicTypeSize.large)
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["runsSection": geo.size.height])
+            }
+        )
+    }
+    
+    private func isFeatureDisabled(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
+    }
+}
 
 // MARK: - HealthSectionView
 
@@ -416,7 +466,7 @@ fileprivate struct HealthSectionView: View {
             
             StatCell(
                 label: "Remaining",
-                value: (shoe.lifespanDistance - shoe.totalDistance).asString(withDecimals: 1),
+                value: (shoe.lifespanDistance - shoe.totalDistance.rounded(toPlaces: 1)).asString(withDecimals: 1),
                 unit: settingsManager.unitOfMeasure.symbol,
                 color: shoe.wearColor,
                 textAlignment: .center,
@@ -604,7 +654,7 @@ fileprivate struct StatsSectionView: View {
             HStack {
                 StatCell(
                     label: "Total Distance",
-                    value: shoe.totalDistance.asString(withDecimals: 2),
+                    value: shoe.totalDistance.asString(withDecimals: 1),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: .blue,
                     textAlignment: .leading,
@@ -612,7 +662,7 @@ fileprivate struct StatsSectionView: View {
                 )
                 StatCell(
                     label: "Avg Distance",
-                    value: shoe.averageDistance.asString(withDecimals: 2),
+                    value: shoe.averageDistance.asString(withDecimals: 1),
                     unit: settingsManager.unitOfMeasure.symbol,
                     color: .blue,
                     textAlignment: .leading,
