@@ -21,7 +21,7 @@ struct ShoesView: View {
     
     @State private var showDeletionConfirmation: Bool = false
     @State private var shoeForDeletion: Shoe? = nil
-    @State private var shoeForDefaultSelection: Shoe? = nil
+    @State private var shoeForRunTypesSelection: Shoe? = nil
     
     @State private var selectedDefaulRunType: RunType = .daily
     
@@ -111,7 +111,7 @@ extension ShoesView {
             Text("Default Shoes")
                 .asHeader()
             
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 ForEach(RunType.allCases, id: \.self) { runType in
                     RunTypeCapsule(
                         runType: runType,
@@ -282,7 +282,7 @@ extension ShoesView {
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
-        .sheet(item: $shoeForDefaultSelection, onDismiss: {
+        .sheet(item: $shoeForRunTypesSelection, onDismiss: {
             triggerSetNewDailyDefaultShoe()
         }) { shoe in
             NavigationStack {
@@ -457,9 +457,9 @@ extension ShoesView {
     @ViewBuilder
     private func setDefaultShoeButton(_ shoe: Shoe) -> some View {
         Button {
-            shoeForDefaultSelection = shoe
+            shoeForRunTypesSelection = shoe
         } label: {
-            Label("Set Default", systemImage: "figure.run")
+            Label("Set Run Types", systemImage: "figure.run")
         }
     }
     

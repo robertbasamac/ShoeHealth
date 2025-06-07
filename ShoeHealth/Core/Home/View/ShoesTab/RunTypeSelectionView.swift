@@ -21,7 +21,7 @@ struct RunTypeSelectionView: View {
     var body: some View {
         List {
             Section {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     ForEach(RunType.allCases, id: \.self) { runType in
                         let colors = CapsuleStyleHelper.colorStyle(
                             isDefault: selectedDefaultRunTypes.contains(runType),
@@ -72,6 +72,7 @@ struct RunTypeSelectionView: View {
             }
             .listRowBackground(Color.clear)
         }
+        .scrollDisabled(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

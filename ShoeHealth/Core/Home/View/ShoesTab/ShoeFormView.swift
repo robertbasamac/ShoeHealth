@@ -200,7 +200,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var setRunTypesSection: some View {
         Section {
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 ForEach(RunType.allCases, id: \.self) { runType in
                     let colors = CapsuleStyleHelper.colorStyle(
                         isDefault: shoeFormViewModel.defaultRunTypes.contains(runType),
@@ -232,15 +232,22 @@ extension ShoeFormView {
         } header: {
             Text("Run Type Assignment")
         } footer: {
-            HStack(spacing: 4) {
-                Text("Default").foregroundStyle(.accent)
-                Text(" - ")
-                Text("Also used").foregroundStyle(.white)
-                Text(" - ")
-                Text("Not used").foregroundStyle(.gray)
+            VStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Text("Default").foregroundStyle(.accent)
+                    Text(" - ")
+                    Text("Also used").foregroundStyle(.white)
+                    Text(" - ")
+                    Text("Not used").foregroundStyle(.gray)
+                }
+                .font(.caption)
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+                if !StoreManager.shared.hasFullAccess {
+                    Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
-            .font(.caption)
-            .frame(maxWidth: .infinity, alignment: .center)
         }
         .listRowBackground(Color.clear)
     }
@@ -303,7 +310,7 @@ extension ShoeFormView {
         } header: {
             Text("Lifespan distance")
         } footer: {
-            Text("The standard lifespan of road running shoes is \(unitOfMeasure == .metric ? "500-800 kilometers" : "300-500 miles"), depending on factors like running surface, owner's bodyweight and other.")
+            Text(Prompts.Settings.lifespan(unitOfMeasure: unitOfMeasure))
         }
     }
     

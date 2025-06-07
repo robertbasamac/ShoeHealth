@@ -194,7 +194,7 @@ extension ShoeDetailView {
                 Button {
                     showSelectRunTypes.toggle()
                 } label: {
-                    Label("Set Run Type", systemImage: "figure.run")
+                    Label("Set Run Types", systemImage: "figure.run")
                 }
                 
                 Button(role: .destructive) {
@@ -328,7 +328,7 @@ fileprivate struct RunTypeSectionView: View {
     @Binding var showSelectRunTypes: Bool
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
             Button {
                 showSelectRunTypes.toggle()
             } label: {
