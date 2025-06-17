@@ -9,6 +9,7 @@ import SwiftUI
 
 // MARK: - ShoeStatsViewProtocol
 
+@MainActor
 protocol ShoeStatsViewProtocol {
     
     var shoe: ShoeStatsEntity { get }

@@ -34,6 +34,7 @@ extension ShoesSchemaV3 {
         var lastActivityDate: Date?
         var isRetired: Bool = false
         var retireDate: Date?
+        var recoveryUntil: Date?
         var isDefaultShoe: Bool = false
         var defaultRunTypes: [RunType] = []
         var suitableRunTypes: [RunType] = []
@@ -54,6 +55,7 @@ extension ShoesSchemaV3 {
             lastActivityDate: Date? = nil,
             isRetired: Bool = false,
             retireDate: Date? = nil,
+            recoveryUntil: Date? = nil,
             isDefaultShoe: Bool = false,
             defaultRunTypes: [RunType] = [],
             suitableRunTypes: [RunType] = [],
@@ -73,6 +75,7 @@ extension ShoesSchemaV3 {
             self.lastActivityDate = lastActivityDate
             self.isRetired = isRetired
             self.retireDate = retireDate
+            self.recoveryUntil = recoveryUntil
             self.isDefaultShoe = isDefaultShoe
             self.defaultRunTypes = defaultRunTypes
             self.suitableRunTypes = suitableRunTypes
@@ -82,6 +85,11 @@ extension ShoesSchemaV3 {
         }
         
         // MARK: ShoeSchemaV3 Shoe - Transient properties
+        
+        var isInRecoveryMode: Bool {
+            guard let recoveryUntil = self.recoveryUntil else { return false }
+                return recoveryUntil > Date()
+        }
         
         var wearPercentage: Double {
             return totalDistance / lifespanDistance

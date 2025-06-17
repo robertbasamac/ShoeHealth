@@ -32,4 +32,19 @@ enum RunType: String, CaseIterable, Codable, Hashable, AppEnum {
             .trail: "Trail Runs"
         ]
     }
+    
+    var recoveryRange: (min: Int, max: Int) {
+        switch self {
+        case .race:
+            return (48, 72)
+        case .long:
+            return (24, 48)
+        case .tempo:
+            return (30, 36)
+        case .trail:
+            return (24, 36)
+        case .daily:
+            return (18, 24)
+        }
+    }
 }
