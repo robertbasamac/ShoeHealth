@@ -445,6 +445,20 @@ final class ShoesViewModel {
         return estimatedDate
     }
     
+    func getRecentShoeUsagePerRunType(limit: Int = 3) -> [RunType: [Shoe]] {
+        var result: [RunType: [Shoe]] = [:]
+
+        for runType in RunType.allCases {
+            let shoesForType = shoes
+                .filter { $0.defaultRunTypes.contains(runType) || $0.suitableRunTypes.contains(runType) }
+                .sorted { ($0.lastActivityDate ?? .distantPast) > ($1.lastActivityDate ?? .distantPast) }
+                .prefix(limit)
+            result[runType] = Array(shoesForType)
+        }
+
+        return result
+    }
+    
     @MainActor
     private func updateShoeStatistics(_ shoe: Shoe) async {
         let unitOfMeasure = SettingsManager.shared.unitOfMeasure
