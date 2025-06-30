@@ -173,7 +173,7 @@ extension ContentView {
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
         .environmentObject(StoreManager.shared)
-//        .environment(ShoesViewModel(modelContext: PreviewSampleData.container.mainContext))
+        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
@@ -183,7 +183,7 @@ extension ContentView {
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
         .environmentObject(StoreManager.shared)
-//        .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
         .environment(HealthManager.shared)
         .environment(SettingsManager.shared)
 }
