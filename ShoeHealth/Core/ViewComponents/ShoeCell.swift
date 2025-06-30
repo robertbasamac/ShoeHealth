@@ -59,6 +59,7 @@ struct ShoeCell: View {
             .padding(.horizontal, 8)
             .opacity(isEnabled ? 1 : 0.6)
         }
+        .contentShape(.rect)
         .frame(width: width)
     }
 }
