@@ -40,6 +40,7 @@ struct WorkoutsTab: View {
                                     ShoeImage(imageData: shoe.image, showBackground: false, width: 64)
                                         .frame(width: size, height: size)
                                         .clipShape(.rect(cornerRadius: 10))
+                                        .contentShape(.rect)
                                         .onTapGesture {
                                             navigationRouter.navigate(to: .shoe(shoe))
                                         }
