@@ -40,10 +40,10 @@ struct WorkoutsTab: View {
                                     ShoeImage(imageData: shoe.image, showBackground: false, width: 64)
                                         .frame(width: size, height: size)
                                         .clipShape(.rect(cornerRadius: 10))
-                                        .contentShape(.rect)
-                                        .onTapGesture {
-                                            navigationRouter.navigate(to: .shoe(shoe))
-                                        }
+                                }
+                                .contentShape(.rect)
+                                .onTapGesture {
+                                    navigationRouter.navigate(to: .shoe(shoe))
                                 }
                             } else {
                                 Image(systemName: "plus")
@@ -73,7 +73,7 @@ struct WorkoutsTab: View {
                 .listSectionSeparator(.hidden)
             }
         }
-        .listStyle(.grouped)
+        .listStyle(.plain)
         .listSectionSpacing(.custom(4))
         .navigationTitle("Workouts")
         .overlay {

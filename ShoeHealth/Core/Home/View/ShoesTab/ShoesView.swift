@@ -246,8 +246,8 @@ extension ShoesView {
     
     @ViewBuilder
     private func shoesCarousel(shoes: [Shoe]) -> some View {
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 6) {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
                 ForEach(shoes) { shoe in
                     ShoeCell(shoe: shoe, width: width)
                         .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
@@ -272,7 +272,6 @@ extension ShoesView {
             .scrollTargetLayout()
         }
         .scrollTargetBehavior(.viewAligned)
-        .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 20)
         .contentMargins(.vertical, 8)
         .sheet(item: $shoeForDefaultSelection, onDismiss: {
