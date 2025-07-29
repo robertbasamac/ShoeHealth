@@ -119,7 +119,7 @@ extension SettingsTab {
             }
             .foregroundStyle(.primary)
         } footer: {
-            Text("For best user experience, we recommend enabling notifications.")
+            Text(Prompts.Settings.notificationsNote)
         }
     }
     
@@ -132,22 +132,18 @@ extension SettingsTab {
                 }
             } label: {
                 Text("Rate in App Store")
-                    .font(.body)
-                    .foregroundStyle(.white)
             }
             
             Button {
                 UIApplication.shared.open(System.AppLinks.termsOfService)
             } label: {
                 Text("Terms of Service")
-                    .foregroundStyle(.white)
             }
             
             Button {
                 UIApplication.shared.open(System.AppLinks.privacyPolicy)
             } label: {
                 Text("Privacy Policy")
-                    .foregroundStyle(.white)
             }
             
             NavigationLink(destination: FAQView()) {
@@ -162,6 +158,7 @@ extension SettingsTab {
                     .font(.footnote)
             }
         }
+        .foregroundStyle(.white)
     }
     
     @ViewBuilder
