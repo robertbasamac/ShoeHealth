@@ -13,7 +13,7 @@ private let logger = Logger(subsystem: "Shoe Health", category: "ShoeDataHandler
 
 // MARK: ShoeDataHandler
 
-final class ShoeHandler {
+final class ShoeHandler: @unchecked Sendable {
 
     private let modelContext: ModelContext
 

@@ -19,25 +19,39 @@ struct ShoeHealthApp: App {
      
     @Environment(\.scenePhase) private var scenePhase
     
-    @State private var navigationRouter: NavigationRouter
-    @State private var storeManager: StoreManager = StoreManager.shared
     @State private var shoesViewModel: ShoesViewModel
-    @State private var healthManager = HealthManager.shared
-    @State private var settingsManager = SettingsManager.shared
-    
+    @State private var onboardingViewModel: OnboardingViewModel
+    @State private var navigationRouter: NavigationRouter
+    @State private var notificationManager: NotificationManager
+    @State private var storeManager: StoreManager
+    @State private var settingsManager: SettingsManager
+    @State private var healthManager: HealthManager
+        
     let container = ShoesStore.shared.modelContainer
     
     init () {
         let shoeHandler = ShoeHandler(modelContext: container.mainContext)
-        self._shoesViewModel = State(wrappedValue: ShoesViewModel(shoeHandler: shoeHandler))
-        self._navigationRouter = State(wrappedValue: NavigationRouter())
-
+        let navigationRouter = NavigationRouter()
+        let notificationManager = NotificationManager(shoeHandler: shoeHandler)
+        let storeManager = StoreManager()
+        let settingsManager = SettingsManager()
+        let healthManager = HealthManager(settingsManager: settingsManager, notificationManager: notificationManager)
+        
+        self._navigationRouter = State(wrappedValue: navigationRouter)
+        self._notificationManager = State(wrappedValue: notificationManager)
+        self._storeManager = State(wrappedValue: storeManager)
+        self._settingsManager = State(wrappedValue: settingsManager)
+        self._healthManager = State(wrappedValue: healthManager)
+        self._onboardingViewModel = State(wrappedValue: OnboardingViewModel(healthManager: healthManager, notificationManager: notificationManager))
+        self._shoesViewModel = State(wrappedValue: ShoesViewModel(shoeHandler: shoeHandler, notificationManager: notificationManager, storeManager: storeManager, healthManager: healthManager, settingsManager: settingsManager))
+        
         appDelegate.shoesViewModel = shoesViewModel
         appDelegate.navigationRouter = navigationRouter
+        appDelegate.healthManager = healthManager
+        appDelegate.settingsManager = settingsManager
+        appDelegate.notificationManager = notificationManager
+        appDelegate.storeManager = storeManager
         
-        NotificationManager.shared.inject(shoeHandler: shoeHandler)
-        
-        logger.debug("initialized")
         // override apple's buggy alerts tintColor
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.theme.accent)
     }
@@ -49,10 +63,12 @@ struct ShoeHealthApp: App {
                     .preferredColorScheme(.dark)
                     .defaultAppStorage(UserDefaults(suiteName: System.AppGroups.shoeHealth)!)
                     .environmentObject(navigationRouter)
-                    .environmentObject(storeManager)
                     .environment(shoesViewModel)
-                    .environment(healthManager)
+                    .environment(onboardingViewModel)
+                    .environment(notificationManager)
+                    .environment(storeManager)
                     .environment(settingsManager)
+                    .environment(healthManager)
                     .onChange(of: scenePhase) { _, newPhase in
                         if newPhase == .active {
                             Task {
@@ -70,7 +86,7 @@ struct ShoeHealthApp: App {
                 .zIndex(2.0)
             }
             .onChange(of: storeManager.hasFullAccess) { _, newValue in
-                NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: newValue)
+                notificationManager.setActionableNotificationTypes(isPremiumUser: newValue)
                 WidgetCenter.shared.reloadAllTimelines()
             }
         }

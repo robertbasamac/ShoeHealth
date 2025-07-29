@@ -53,18 +53,10 @@ struct HomeScreen: View {
     HomeScreen()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-        .environment(HealthManager.shared)
-        .environment(SettingsManager.shared)
 }
 
 #Preview("Empty") {
     HomeScreen()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
-        .environment(HealthManager.shared)
-        .environment(SettingsManager.shared)
 }

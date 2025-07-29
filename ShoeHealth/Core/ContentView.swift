@@ -11,8 +11,8 @@ import HealthKit
 struct ContentView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
-    
+    @Environment(StoreManager.self) private var storeManager
+    @Environment(NotificationManager.self) private var notificationManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @Environment(\.dismiss) private var dismiss
@@ -50,7 +50,7 @@ struct ContentView: View {
                                     shoesViewModel.setAsDefaultShoe(shoeID, for: [runType], append: true)
                                 }
                                 
-                                NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                                notificationManager.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                             })
                     case .addWorkoutToShoe(let workoutID):
                         ShoeSelectionView(
@@ -172,18 +172,10 @@ extension ContentView {
     ContentView()
         .modelContainer(PreviewSampleData.container)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-        .environment(HealthManager.shared)
-        .environment(SettingsManager.shared)
 }
 
 #Preview("Empty") {
     ContentView()
         .modelContainer(PreviewSampleData.emptyContainer)
         .environmentObject(NavigationRouter())
-        .environmentObject(StoreManager.shared)
-        .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
-        .environment(HealthManager.shared)
-        .environment(SettingsManager.shared)
 }

@@ -11,11 +11,9 @@ import HealthKit
 import Observation
 
 @Observable
-final class SettingsManager {
+final class SettingsManager: SettingsManaging, @unchecked Sendable {
     
-    static let shared = SettingsManager()
-
-    @ObservationIgnored private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
+    private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     
     private(set) var unitOfMeasure: UnitOfMeasure {
         didSet {
@@ -33,7 +31,7 @@ final class SettingsManager {
     private var cancellables = Set<AnyCancellable>()
     private let subject = PassthroughSubject<Void, Never>()
     
-    private init() {
+    public init() {
         let savedUnitOfMeasure = defaults?.string(forKey: "UNIT_OF_MEASURE") ?? UnitOfMeasure.metric.rawValue
         self.unitOfMeasure = UnitOfMeasure(rawValue: savedUnitOfMeasure) ?? .metric
         

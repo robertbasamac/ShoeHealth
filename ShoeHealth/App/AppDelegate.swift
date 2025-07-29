@@ -16,6 +16,10 @@ class AppDelegate: NSObject {
     
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
+    var healthManager: HealthManaging?
+    var settingsManager: SettingsManaging?
+    var notificationManager: NotificationManaging?
+    var storeManager: StoreManaging?
     
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
 }
@@ -27,8 +31,8 @@ extension AppDelegate: UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         
-        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: StoreManager.shared.hasFullAccess)
-        HealthManager.shared.startObserving()
+        notificationManager?.setActionableNotificationTypes(isPremiumUser: storeManager?.hasFullAccess ?? false)
+        healthManager?.startObserving()
         
         return true
     }
@@ -36,8 +40,9 @@ extension AppDelegate: UIApplicationDelegate {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
+extension AppDelegate: @preconcurrency UNUserNotificationCenterDelegate {
     
+    @MainActor
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
@@ -177,6 +182,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler()
     }
     
+    @MainActor
     private func handleDefaultShoeAction(for runType: RunType, forWorkoutIDs workoutIDs: [UUID]) {
         if let shoe = shoesViewModel?.getDefaultShoe(for: runType) {
             Task {
@@ -185,9 +191,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
     }
     
+    @MainActor
     private func handleRemindMeLaterAction(forWorkoutIDs workoutIDs: [UUID]) {
         let date: Date?
-        let remindMeLaterTime = SettingsManager.shared.remindMeLaterTime
+        let remindMeLaterTime = settingsManager?.remindMeLaterTime ?? .fiveMinutes
         
         switch remindMeLaterTime.duration.unit {
         case .minute, .minutes:
@@ -200,11 +207,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                         
         let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
         
-        let workouts = HealthManager.shared.getWorkouts(forIDs: workoutIDs)
+        guard let workouts = healthManager?.getWorkouts(forIDs: workoutIDs) else { return }
         
-        NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: workouts, at: dateComponents)
+        notificationManager?.scheduleNewWorkoutNotification(forNewWorkouts: workouts, at: dateComponents)
     }
     
+    @MainActor
     private func handleRetireShoeAction(forShoeID shoeID: UUID) {
         guard let shoe = shoesViewModel?.getShoe(forID: shoeID) else { return }
         
@@ -218,7 +226,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
-            NotificationManager.shared.scheduleSetDefaultShoeNotification(for: shoe.defaultRunTypes, at: dateComponents)
+            notificationManager?.scheduleSetDefaultShoeNotification(for: shoe.defaultRunTypes, at: dateComponents)
         }
     }
 }

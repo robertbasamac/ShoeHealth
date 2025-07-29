@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RunTypeSelectionView: View {
     
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(\.dismiss) private var dismiss
     
     @State var selectedRunTypes: [RunType]
@@ -46,7 +46,7 @@ struct RunTypeSelectionView: View {
                     .allowsHitTesting(!disableFeature(for: runType))
                 }
             } footer: {
-                if !StoreManager.shared.hasFullAccess {
+                if !storeManager.hasFullAccess {
                     Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
                 }
             }
@@ -85,5 +85,4 @@ extension RunTypeSelectionView {
     @Previewable @State var runTypeSelections: [RunType] = [.daily]
     
     RunTypeSelectionView(selectedRunTypes: runTypeSelections, preventDeselectingDaily: false) { _ in }
-        .environmentObject(StoreManager.shared)
 }

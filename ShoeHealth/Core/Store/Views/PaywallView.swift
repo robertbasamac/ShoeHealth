@@ -11,8 +11,8 @@ import StoreKit
 struct PaywallView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var store: StoreManager
-    
+    @Environment(StoreManager.self) private var store
+
     @Environment(\.openURL) private var openURL
     @Environment(\.dismiss) private var dismiss
     
@@ -238,6 +238,5 @@ extension PaywallView {
     NavigationStack {
         PaywallView()
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
     }
 }

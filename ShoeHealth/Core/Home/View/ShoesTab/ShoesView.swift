@@ -11,7 +11,8 @@ import HealthKit
 struct ShoesView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(NotificationManager.self) private var notificationManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
@@ -284,7 +285,7 @@ extension ShoesView {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
                     }
                     
-                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                    notificationManager.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
             .presentationDetents([.medium])
@@ -613,10 +614,6 @@ extension ShoesView {
                 .navigationTitle("Shoes")
                 .modelContainer(PreviewSampleData.container)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-                .environment(SettingsManager.shared)
-                .environment(HealthManager.shared)
         }
     }
 }
@@ -628,10 +625,6 @@ extension ShoesView {
                 .navigationTitle("Shoes")
                 .modelContainer(PreviewSampleData.emptyContainer)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
-                .environment(SettingsManager.shared)
-                .environment(HealthManager.shared)
         }
     }
 }

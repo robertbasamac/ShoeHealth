@@ -38,10 +38,6 @@ struct ShoesTab: View {
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.container)
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
-            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-            .environment(SettingsManager.shared)
-            .environment(HealthManager.shared)
     }
 }
 
@@ -51,9 +47,5 @@ struct ShoesTab: View {
             .navigationTitle("Shoes")
             .modelContainer(PreviewSampleData.emptyContainer)
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
-            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
-            .environment(SettingsManager.shared)
-            .environment(HealthManager.shared)
     }
 }

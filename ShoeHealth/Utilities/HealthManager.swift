@@ -12,19 +12,23 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "HealthManager")
 
+// MARK: - Running Workout
+
 struct RunningWorkout {
     
     var workout: HKWorkout
+    var unitOfMeasure: UnitOfMeasure
     private var averageHeartRate: Double = 0.0
     private var averageCadence: Double = 0.0
     private var averagePower: Double = 0.0
     
-    init(workout: HKWorkout) {
+    init(workout: HKWorkout, unitOfMeasure: UnitOfMeasure) {
         self.workout = workout
+        self.unitOfMeasure = unitOfMeasure
     }
     
     var wrappedAveragePace: (Int, Int) {
-        return self.workout.averagePace(unit: SettingsManager.shared.unitOfMeasure.unit)
+        return self.workout.averagePace(unit: unitOfMeasure.unit)
     }
     
     var wrappedAverageHeartRate: Double {
@@ -52,19 +56,20 @@ struct RunningWorkout {
     }
 }
 
+// MARK: - HealthManager
+
 @Observable
-final class HealthManager {
+final class HealthManager: HealthManaging, @unchecked Sendable {
     
-    static let shared = HealthManager()
+    private let settingsManager: SettingsManaging
+    private let notificationManager: NotificationManaging
     
-    @ObservationIgnored private var healthStore = HKHealthStore()
-    
+    @ObservationIgnored private let healthStore = HKHealthStore()
     @ObservationIgnored private let readTypes: Set = [HKObjectType.workoutType(),
                                                       HKQuantityType(.distanceWalkingRunning),
                                                       HKQuantityType(.heartRate),
                                                       HKQuantityType(.stepCount),
                                                       HKQuantityType(.runningPower)]
-    
     @ObservationIgnored private let sampleType =  HKObjectType.workoutType()
     @ObservationIgnored private let predicate = HKQuery.predicateForWorkouts(with: .running)
     
@@ -72,31 +77,34 @@ final class HealthManager {
         didSet {
             if let workout = workouts.first {
                 guard workout != lastWorkout?.workout else {
-                    HealthManager.shared.isLoading = false
+                    isLoading = false
                     return
                 }
                 
-                lastWorkout = RunningWorkout(workout: workout)
+                lastWorkout = RunningWorkout(workout: workout, unitOfMeasure: settingsManager.unitOfMeasure)
                 
                 Task {
                     await calculateLastRunStats()
-                    HealthManager.shared.isLoading = false
+                    isLoading = false
                 }
             } else {
                 lastWorkout = nil
-                HealthManager.shared.isLoading = false
+                isLoading = false
             }
         }
     }
-    
     private(set) var lastWorkout: RunningWorkout? = nil
-    
     private(set) var isLoading: Bool = true
     
     @ObservationIgnored var isFetchingWorkouts: Bool = false
     @ObservationIgnored @UserDefault("latestUpdate", defaultValue: Date.distantPast) var latestUpdate: Date
     
-    private init() { }
+    // MARK: - Init
+    
+    public init(settingsManager: SettingsManaging, notificationManager: NotificationManaging) {
+        self.settingsManager = settingsManager
+        self.notificationManager = notificationManager
+    }
     
     // MARK: - Request HealthKit authorization
     
@@ -159,14 +167,14 @@ final class HealthManager {
     }
     
     private func handleNewWorkouts() {
-        var anchor: HKQueryAnchor?
+//        var anchor: HKQueryAnchor?
 
         let anchoredQuery = HKAnchoredObjectQuery(type: sampleType,
                                                   predicate: predicate,
-                                                  anchor: anchor,
+                                                  anchor: nil,
                                                   limit: HKObjectQueryNoLimit) { [unowned self] query, newSamples, deletedSamples, newAnchor, error in
             self.updateWorkouts(newSamples: newSamples ?? [], deletedObjects: deletedSamples ?? [])
-            anchor = newAnchor
+//            anchor = newAnchor
         }
         
         healthStore.execute(anchoredQuery)
@@ -186,7 +194,7 @@ final class HealthManager {
         let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
         let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
 
-        NotificationManager.shared.scheduleNewWorkoutNotification(forNewWorkouts: newWorkouts, at: dateComponents)
+        notificationManager.scheduleNewWorkoutNotification(forNewWorkouts: newWorkouts, at: dateComponents)
         
         if let endDate = newWorkouts.last?.endDate {
             self.latestUpdate = endDate
@@ -203,7 +211,7 @@ final class HealthManager {
     func fetchRunningWorkouts() async {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
-            HealthManager.shared.isLoading = false
+            self.isLoading = false
             return
         }
         
@@ -223,13 +231,13 @@ final class HealthManager {
                                       resultsHandler: { query, samples, error in
                 if let unwrappedError = error {
                     continuation.resume(throwing: unwrappedError)
-                    HealthManager.shared.isLoading = false
+                    self.isLoading = false
                     return
                 }
                 
                 guard let samples = samples else {
                     logger.error("HealthKit not accessable.")
-                    HealthManager.shared.isLoading = false
+                    self.isLoading = false
                     return
                 }
                 
@@ -251,7 +259,7 @@ final class HealthManager {
         }
     }
     
-    func fetchDistanceSamples(for workout: HKWorkout, completion: @escaping ([HKQuantitySample]) -> Void) {
+    func fetchDistanceSamples(for workout: HKWorkout, completion: @Sendable @escaping ([HKQuantitySample]) -> Void) {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return
@@ -260,7 +268,7 @@ final class HealthManager {
         let distanceType = HKQuantityType(.distanceWalkingRunning)
         let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
         
-        var distanceSamples: [HKQuantitySample] = []
+//        var distanceSamples: [HKQuantitySample] = []
         
         let seriesQuery = HKQuantitySeriesSampleQuery(quantityType: distanceType, predicate: predicate) { (query, quantity, dateInterval, series, done, error) in
             if let error = error {
@@ -269,12 +277,14 @@ final class HealthManager {
                 return
             }
             
+            var result: [HKQuantitySample] = []
             if let quantity = quantity {
-                distanceSamples.append(HKQuantitySample(type: .init(.distanceWalkingRunning), quantity: quantity, start: dateInterval?.start ?? Date(), end: dateInterval?.end ?? Date()))
+                result.append(HKQuantitySample(type: .init(.distanceWalkingRunning), quantity: quantity, start: dateInterval?.start ?? Date(), end: dateInterval?.end ?? Date()))
             }
             
             if done {
-                completion(distanceSamples.sorted(by: { $0.endDate < $1.endDate }))
+                // Adună toate rezultatele deja închise (toate vor fi livrate în “done”).
+                completion(result.sorted(by: { $0.endDate < $1.endDate }))
             }
         }
         

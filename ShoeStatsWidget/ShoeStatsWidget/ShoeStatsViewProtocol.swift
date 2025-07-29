@@ -45,7 +45,6 @@ extension ShoeStatsViewProtocol {
             .fontDesign(.rounded)
             .foregroundStyle(color)
             .lineLimit(1)
-            .widgetAccentable(true)
         }
         .dynamicTypeSize(DynamicTypeSize.large)
         .frame(alignment: containerAlignment)

@@ -10,13 +10,14 @@ import SwiftUI
 struct SettingsTab: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var store: StoreManager
+    @Environment(NotificationManager.self) private var notificationManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(SettingsManager.self) private var settingsManager
     
     @Environment(\.scenePhase) private var scenePhase
     
-    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @State private var remindMeLaterTime: PresetTime = SettingsManager.shared.remindMeLaterTime
+    @State private var unitOfMeasure: UnitOfMeasure = .metric
+    @State private var remindMeLaterTime: PresetTime = .fiveMinutes
     
     var body: some View {
         Form {
@@ -28,6 +29,10 @@ struct SettingsTab: View {
         }
         .listSectionSpacing(.compact)
         .navigationTitle("Settings")
+        .onAppear {
+            unitOfMeasure = settingsManager.unitOfMeasure
+            remindMeLaterTime = settingsManager.remindMeLaterTime
+        }
         .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
             unitOfMeasure = newValue
         }
@@ -38,12 +43,12 @@ struct SettingsTab: View {
             settingsManager.setRemindMeLaterTime(to: newValue)
         }
         .task {
-            await NotificationManager.shared.retrieveNotificationAuthorizationStatus()
+            await notificationManager.retrieveNotificationAuthorizationStatus()
         }
         .onChange(of: scenePhase) { _, newValue in
             if newValue == .active {
                 Task {
-                    await NotificationManager.shared.retrieveNotificationAuthorizationStatus()
+                    await notificationManager.retrieveNotificationAuthorizationStatus()
                 }
             }
         }
@@ -94,13 +99,13 @@ extension SettingsTab {
         Section {
             Button {
                 Task {
-                    switch NotificationManager.shared.notificationAuthorizationStatus {
+                    switch notificationManager.notificationAuthorizationStatus {
                     case .notDetermined:
-                        let _ = await NotificationManager.shared.requestNotificationAuthorization()
+                        let _ = await notificationManager.requestNotificationAuthorization()
                     case .denied, .authorized, .provisional, .ephemeral:
-                        await NotificationManager.shared.openSettings()
+                        await notificationManager.openSettings()
                     @unknown default:
-                        let _ = await NotificationManager.shared.requestNotificationAuthorization()
+                        let _ = await notificationManager.requestNotificationAuthorization()
                     }
                 }
             } label: {
@@ -108,7 +113,7 @@ extension SettingsTab {
                     Text("Notifications")
                         .font(.body)
                     Spacer()
-                    Text("\(NotificationManager.shared.getBadge())")
+                    Text("\(notificationManager.getBadge())")
                         .foregroundStyle(.secondary)
                     Image(systemName: "chevron.right")
                         .font(.body)
@@ -173,7 +178,7 @@ extension SettingsTab {
                 HStack {
                     Text("Active Plan")
                     Spacer()
-                    Text("\(store.getBadge())")
+                    Text("\(storeManager.getBadge())")
                         .foregroundStyle(.secondary)
                     Image(systemName: "chevron.right")
                         .fontWeight(.semibold)
@@ -196,7 +201,5 @@ extension SettingsTab {
         SettingsTab()
             .navigationTitle("Settings")
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
-            .environment(SettingsManager.shared)
     }
 }

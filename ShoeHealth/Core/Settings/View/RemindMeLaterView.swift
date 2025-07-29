@@ -230,6 +230,5 @@ extension RemindMeLaterView {
     
     NavigationStack {
         RemindMeLaterView(selection: $selection)
-            .environment(SettingsManager.shared)
     }
 }

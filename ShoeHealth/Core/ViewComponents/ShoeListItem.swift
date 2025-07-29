@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShoeListItem: View {
     
+    @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.isEnabled) private var isEnabled: Bool
 
     var shoe: Shoe
@@ -19,8 +20,10 @@ struct ShoeListItem: View {
     var showNavigationLink: Bool = true
     var reserveSpace: Bool = true
     
-    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: System.AppGroups.shoeHealth)) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
+    @State private var unitOfMeasure: UnitOfMeasure = .metric
+    
+    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: System.AppGroups.shoeHealth))
+    private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         HStack(spacing: 0) {
@@ -63,6 +66,9 @@ struct ShoeListItem: View {
                     .padding(.trailing, 20)
                     .padding(.top, 8)
             }
+        }
+        .onAppear {
+            unitOfMeasure = settingsManager.unitOfMeasure
         }
         .onChange(of: unitOfMeasureString) { _, newValue in
             unitOfMeasure = UnitOfMeasure(rawValue: newValue) ?? .metric

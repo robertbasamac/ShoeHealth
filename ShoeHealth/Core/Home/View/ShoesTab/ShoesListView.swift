@@ -10,7 +10,7 @@ import SwiftUI
 struct ShoesListView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @State private var category: ShoeCategory = .all
@@ -196,8 +196,6 @@ extension ShoesListView {
         NavigationStack {
             ShoesListView(forCategory: .all)
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .navigationTitle("Shoes")
         }
     }

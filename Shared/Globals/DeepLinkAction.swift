@@ -8,6 +8,7 @@
 import Foundation
 
 enum DeepLinkAction: String {
+    
     case showPaywall = "show-paywall"
     case showAddShoe = "show-addShoe"
     case showSelectShoe = "show-selectShoe"

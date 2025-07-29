@@ -20,6 +20,10 @@ struct ShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     typealias Entry = ShoeStatsWidgetEntry
     typealias Intent = ShoeSelectionIntent
     
+    init() {
+        
+    }
+    
     func placeholder(in context: Context) -> Entry {
         let unitSymbol = getUnitSymbol()
         

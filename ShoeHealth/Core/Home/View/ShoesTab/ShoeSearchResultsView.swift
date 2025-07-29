@@ -10,7 +10,7 @@ import SwiftUI
 struct ShoeSearchResultsView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     
     @ScaledMetric(relativeTo: .largeTitle) private var width: CGFloat = 140

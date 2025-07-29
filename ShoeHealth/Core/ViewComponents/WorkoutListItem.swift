@@ -14,7 +14,7 @@ struct WorkoutListItem: View {
     
     var workout: HKWorkout
     
-    @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
+    @State private var unitOfMeasure: UnitOfMeasure = .metric
     @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: System.AppGroups.shoeHealth)) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
@@ -42,6 +42,9 @@ struct WorkoutListItem: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear {
+            unitOfMeasure = settingsManager.unitOfMeasure
+        }
         .onChange(of: settingsManager.unitOfMeasure) { _, newValue in
             unitOfMeasure = newValue
         }
