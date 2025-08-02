@@ -13,8 +13,11 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "ShoeFormViewModel")
 
+@MainActor
 @Observable
 final class ShoeFormViewModel {
+    
+    private let settingsManager: SettingsManaging
     
     var selectedPhotoData: Data? = nil
     var selectedPhoto: PhotosPickerItem? = nil
@@ -32,9 +35,10 @@ final class ShoeFormViewModel {
     // MARK: - Initializer
     
     init(
+        settingsManager: SettingsManaging,
         selectedPhotoData: Data? = nil,
         aquisitionDate: Date = .init(),
-        lifespanDistance: Double = SettingsManager.shared.unitOfMeasure.range.lowerBound,
+        lifespanDistance: Double? = nil,
         isDefaultShoe: Bool = false,
         defaultRunTypes: [RunType] = [],
         shoeBrand: String = "",
@@ -42,9 +46,17 @@ final class ShoeFormViewModel {
         shoeNickname: String = "",
         shoeID: UUID = UUID()
     ) {
+        self.settingsManager = settingsManager
+        
         self.selectedPhotoData = selectedPhotoData
         self.aquisitionDate = aquisitionDate
-        self.lifespanDistance = lifespanDistance
+
+        if let lifespanDistance = lifespanDistance {
+            self.lifespanDistance = lifespanDistance
+        } else {
+            self.lifespanDistance = settingsManager.unitOfMeasure.range.lowerBound
+        }
+        
         self.isDefaultShoe = isDefaultShoe
         self.defaultRunTypes = defaultRunTypes
         self.brand = shoeBrand

@@ -25,27 +25,21 @@ enum ProductID: String, CaseIterable {
 
 // MARK: - StoreManager
 
-final class StoreManager: ObservableObject {
-    
-    static let shared = StoreManager()
-    
+@Observable
+final class StoreManager: StoreManaging, @unchecked Sendable {
     private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     
-    @Published private(set) var isLoading: Bool = false
+    var isLoading: Bool = false
     
-    @Published private(set) var lifetimeProduct: Product?
-    @Published private(set) var subscriptionProducts: [Product] = []
+    var lifetimeProduct: Product?
+    var subscriptionProducts: [Product] = []
     
-    @Published private(set) var purchasedProducts: [Product] = []
+    var purchasedProducts: [Product] = []
     
-    @Published private(set) var hasFullAccess: Bool {
-        didSet {
-            defaults?.set(hasFullAccess, forKey: "IS_PREMIUM_USER")
-        }
-    }
+    var hasFullAccess: Bool
     
-    @Published private(set) var expirationDate: Date?
-    @Published private(set) var willRenew: Bool = false
+    var expirationDate: Date?
+    var willRenew: Bool = false
     
     private var updateListenerTask: Task<Void, Error>? = nil
     
@@ -67,7 +61,7 @@ final class StoreManager: ObservableObject {
     
     // MARK: - init and deinit
     
-    private init() {
+    public init() {
         self.isLoading = true
         
         self.hasFullAccess = defaults?.bool(forKey: "IS_PREMIUM_USER") ?? false
@@ -182,7 +176,7 @@ final class StoreManager: ObservableObject {
                             continue
                         }
                         
-                        self.expirationDate = expirationDate                        
+                        self.expirationDate = expirationDate
                     }
                 default:
                     break
@@ -194,6 +188,7 @@ final class StoreManager: ObservableObject {
         
         self.purchasedProducts = Array(Set(newPurchasedProducts))
         self.hasFullAccess = !self.purchasedProducts.isEmpty
+        defaults?.set(hasFullAccess, forKey: "IS_PREMIUM_USER")
     }
     
     func isPurchased(_ product: Product) -> Bool {

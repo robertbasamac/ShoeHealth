@@ -12,7 +12,7 @@ import HealthKit
 struct ShoeSelectionView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -228,8 +228,6 @@ extension ShoeSelectionView {
                               systemImage: "shoe.2",
                               onDone: { _ in })
             .environmentObject(NavigationRouter())
-            .environmentObject(StoreManager.shared)
-            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
         }
     }
 }

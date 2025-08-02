@@ -16,7 +16,7 @@ actor ShoesStore {
     
     private init() {}
     
-    nonisolated let modelContainer: ModelContainer = {
+    private static let container : ModelContainer = {
         let modelContainer: ModelContainer
         
         let schema = Schema([Shoe.self])
@@ -52,4 +52,8 @@ actor ShoesStore {
             fatalError("Failed to create the model container: \(error)")
         }
     }()
+    
+    nonisolated var modelContainer: ModelContainer {
+        Self.container
+    }
 }

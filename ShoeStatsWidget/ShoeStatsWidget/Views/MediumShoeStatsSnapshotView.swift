@@ -52,6 +52,7 @@ struct MediumShoeStatsSnapshotView: View, ShoeStatsViewProtocol {
                                 containerAlignment: .center,
                                 showLabel: false
                             )
+                            .widgetAccentable(true)
                             .padding(.horizontal, 8)
                             .contentTransition(.numericText(value: shoe.totalDistance))
                         }
@@ -66,6 +67,7 @@ struct MediumShoeStatsSnapshotView: View, ShoeStatsViewProtocol {
                         textAlignment: .leading,
                         containerAlignment: .bottomLeading
                     )
+                    .widgetAccentable(true)
                     Spacer(minLength: 8)
                     getStatCell(for: firstStat)
                     Spacer(minLength: 8)
@@ -103,6 +105,7 @@ extension MediumShoeStatsSnapshotView {
                 textAlignment: .leading,
                 containerAlignment: .bottomLeading
             )
+            .widgetAccentable(true)
             
         case .averageDistance:
             statCell(
@@ -113,6 +116,7 @@ extension MediumShoeStatsSnapshotView {
                 textAlignment: .leading,
                 containerAlignment: .bottomLeading
             )
+            .widgetAccentable(true)
             
         case .averagePace:
             statCell(
@@ -123,6 +127,7 @@ extension MediumShoeStatsSnapshotView {
                 textAlignment: .leading,
                 containerAlignment: .bottomLeading
             )
+            .widgetAccentable(true)
             
         case .averageDuration:
             statCell(
@@ -132,6 +137,7 @@ extension MediumShoeStatsSnapshotView {
                 textAlignment: .leading,
                 containerAlignment: .bottomLeading
             )
+            .widgetAccentable(true)
         }
     }
 }

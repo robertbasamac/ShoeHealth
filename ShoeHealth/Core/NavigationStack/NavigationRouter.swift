@@ -52,33 +52,28 @@ final class NavigationRouter: ObservableObject {
     
     private func setupBindings() {
         $shoesNavigationPath
-            .receive(on: DispatchQueue.global(qos: .userInitiated))
             .sink { [weak self] newPath in
-                self?.synchronizeShoesStack(with: newPath)
+                    self?.synchronizeShoesStack(with: newPath)
             }
             .store(in: &cancellables)
         
         $workoutsNavigationPath
-            .receive(on: DispatchQueue.global(qos: .userInitiated))
             .sink { [weak self] newPath in
                 self?.synchronizeWorkoutsStack(with: newPath)
             }
             .store(in: &cancellables)
     }
     
+    
     private func synchronizeShoesStack(with newPath: NavigationPath) {
-        queue.async(flags: .barrier) {
-            if newPath.count < self.shoesStack.count {
-                self.shoesStack.removeLast(self.shoesStack.count - newPath.count)
-            }
+        if newPath.count < self.shoesStack.count {
+            self.shoesStack.removeLast(self.shoesStack.count - newPath.count)
         }
     }
     
     private func synchronizeWorkoutsStack(with newPath: NavigationPath) {
-        queue.async(flags: .barrier) { // Asigură acces exclusiv la aceste proprietăți
-            if newPath.count < self.workoutsStack.count {
-                self.workoutsStack.removeLast(self.workoutsStack.count - newPath.count)
-            }
+        if newPath.count < self.workoutsStack.count {
+            self.workoutsStack.removeLast(self.workoutsStack.count - newPath.count)
         }
     }
 }

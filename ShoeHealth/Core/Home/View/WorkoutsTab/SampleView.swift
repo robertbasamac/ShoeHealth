@@ -33,7 +33,9 @@ struct SampleView: View {
         }
         .task {
             healthManager.fetchDistanceSamples(for: workout) { samples in
-                self.samples = samples
+                Task { @MainActor in
+                    self.samples = samples
+                }
             }
         }
         .navigationTitle("Workout samples")

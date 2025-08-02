@@ -6,40 +6,33 @@
 //
 
 import Foundation
-import UserNotifications
+@preconcurrency import UserNotifications
 import HealthKit
 import UIKit
 import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "NotificationManager")
 
-final class NotificationManager {
-        
-    static let shared = NotificationManager()
+@Observable
+final class NotificationManager: NotificationManaging, @unchecked Sendable {
     
-    private var shoeHandler: ShoeHandler?
-    
+    private let shoeHandler: ShoeHandler
     private let center = UNUserNotificationCenter.current()
     private let options: UNAuthorizationOptions = [.alert, .sound, .badge]
-
     var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
-    
-    private init() {
+
+    init(shoeHandler: ShoeHandler) {
+        self.shoeHandler = shoeHandler
+        
         Task {
             await retrieveNotificationAuthorizationStatus()
         }
     }
-    
-    func inject(shoeHandler: ShoeHandler) {
-        self.shoeHandler = shoeHandler
-    }
-    
+
     func requestNotificationAuthorization() async -> Bool {
         do {
-            try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])
-            
+            try await UNUserNotificationCenter.current().requestAuthorization(options: options)
             await retrieveNotificationAuthorizationStatus()
-            
             switch notificationAuthorizationStatus {
             case .notDetermined:
                 logger.debug("Notifications not determined.")
@@ -54,26 +47,18 @@ final class NotificationManager {
             @unknown default:
                 logger.debug("Notifications status unknown.")
             }
-            
             return true
         } catch {
             return false
         }
     }
-    
+
     @MainActor
     func retrieveNotificationAuthorizationStatus() async {
         let settings = await center.notificationSettings()
-            
-//        if settings.authorizationStatus == .authorized {
-//            DispatchQueue.main.async {
-//                UIApplication.shared.registerForRemoteNotifications()
-//            }
-//        }
-        
         self.notificationAuthorizationStatus = settings.authorizationStatus
     }
-    
+
     func setActionableNotificationTypes(isPremiumUser: Bool) {
         logger.debug("Setting up actionable notifications for \(isPremiumUser ? "premium" : "free") user.")
 
@@ -83,21 +68,16 @@ final class NotificationManager {
         
         for runType in runTypes {
             logger.debug("for runType: \(runType.rawValue)")
-            
             var title = runType.rawValue.capitalized
-        
-            if let shoe = shoeHandler?.getDefaultShoe(for: runType) {
+            if let shoe = shoeHandler.getDefaultShoe(for: runType) {
                 logger.debug("Shoe found: \(shoe.brand) \(shoe.model)")
-                
                 title += " - \(shoe.brand) \(shoe.model)"
-                
                 let action = UNNotificationAction(
                     identifier: "DEFAULT_SHOE_ACTION_\(runType.rawValue.uppercased())",
                     title: title,
                     options: [.authenticationRequired],
                     icon: UNNotificationActionIcon(systemImageName: "shoe.2")
                 )
-                
                 actions.append(action)
             }
         }
@@ -108,7 +88,6 @@ final class NotificationManager {
             options: [.authenticationRequired],
             icon: UNNotificationActionIcon(systemImageName: "clock.arrow.circlepath")
         )
-
         actions.append(remindMeLaterAction)
 
         let retireShoeAction = UNNotificationAction(
@@ -118,7 +97,6 @@ final class NotificationManager {
             icon: UNNotificationActionIcon(systemImageName: "bolt.slash.fill")
         )
         
-        // Define the notification categories
         let runningWorkoutCategory = UNNotificationCategory(
             identifier: "NEW_RUNNING_WORKOUT_AVAILABLE",
             actions: actions,
@@ -148,96 +126,87 @@ final class NotificationManager {
         
         center.setNotificationCategories([runningWorkoutCategory, multipleRunningWorkoutsCategory, wearUpdateCategory])
     }
-    
+
     func scheduleNewWorkoutNotification(forNewWorkouts workouts: [HKWorkout], at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
-        
         logger.debug("Scheduling new workout notifications for \(workouts.count) workouts.")
-        
-        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
-        
+        let unitOfMeasure = UnitOfMeasure.metric // TODO: update to user setting if needed
+
         if workouts.count == 1, let workout = workouts.first {
             let distanceString = String(format: "%.2f\(unitOfMeasure.symbol)", workout.totalDistance(unit: unitOfMeasure.unit))
             let dateString = workout.endDate.formatted(date: .numeric, time: .shortened)
-            
             content.title = "New Running Workout"
             content.subtitle = "\(distanceString), \(dateString)"
             content.sound = .default
             content.body = "A new running workout has been logged. Tap on this notification to manually select your shoe or long press to check available options."
             content.userInfo = ["WORKOUT_ID" : workout.id.uuidString]
             content.categoryIdentifier = "NEW_RUNNING_WORKOUT_AVAILABLE"
-            
+
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-            
             center.add(request)
         } else {
             let workoutIDs = workouts.map { $0.uuid.uuidString }
-            
             content.title = "New Running Workouts"
             content.subtitle = "\(workouts.count) workouts available"
             content.sound = .default
             content.body = "Tap on this notification to manually select your shoe for each workout individually or long press to check available options."
             content.userInfo = ["WORKOUT_IDs" : workoutIDs]
             content.categoryIdentifier = "MULTIPLE_NEW_RUNNING_WORKOUTS_AVAILABLE"
-            
+
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-            
             center.add(request)
         }
-        
+
         if let date = Calendar.current.date(from: dateComponents) {
             logger.debug("New Workout Notification scheduled: \(dateTimeFormatter.string(from: date))")
-        }            
+        }
     }
-    
+
     func scheduleShoeWearNotification(forShoe shoe: Shoe, at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
-          
         content.title = "Shoe Wear Update"
         content.subtitle = "Shoe wear is now \(shoe.wearCondition.name)."
         content.sound = .default
         content.body = "\"\(shoe.brand) \(shoe.model)\" - \(shoe.wearCondition.description) \(shoe.wearCondition.action) Tap on this notification to manually check the shoe."
         content.userInfo = ["SHOE_ID" : shoe.id.uuidString]
         content.categoryIdentifier = "SHOE_WEAR_UPDATE"
-        
+
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
         center.add(request)
-        
+
         if let date = Calendar.current.date(from: dateComponents) {
-            logger.debug("Wear Noification scheduled: \(dateTimeFormatter.string(from: date))")
+            logger.debug("Wear Notification scheduled: \(dateTimeFormatter.string(from: date))")
         }
     }
-    
-    func scheduleSetDefaultShoeNotification(for: [RunType], at dateComponents: DateComponents) {
+
+    func scheduleSetDefaultShoeNotification(for runTypes: [RunType], at dateComponents: DateComponents) {
         let content = UNMutableNotificationContent()
-          
         content.title = "Set Default Shoe"
         content.subtitle = "Default Shoe not set"
         content.sound = .default
         content.body = "Currently you have not set a Default Shoe. Tap on this notification to set one now."
         content.categoryIdentifier = "SET_DEFAULT_SHOE"
-        
+
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        
         center.add(request)
-        
+
         if let date = Calendar.current.date(from: dateComponents) {
-            logger.debug("Set Default Shoe Noification scheduled: \(dateTimeFormatter.string(from: date))")
+            logger.debug("Set Default Shoe Notification scheduled: \(dateTimeFormatter.string(from: date))")
         }
     }
-    
+
     @MainActor
     func openSettings() async {
-        if let appNotificationsSettingsURL = URL(string: UIApplication.openNotificationSettingsURLString), UIApplication.shared.canOpenURL(appNotificationsSettingsURL) {
+        if let appNotificationsSettingsURL = URL(string: UIApplication.openNotificationSettingsURLString),
+           UIApplication.shared.canOpenURL(appNotificationsSettingsURL) {
             await UIApplication.shared.open(appNotificationsSettingsURL)
         }
     }
-    
+
     func getBadge() -> String {
         switch notificationAuthorizationStatus {
         case .notDetermined:
@@ -251,4 +220,3 @@ final class NotificationManager {
         }
     }
 }
-    

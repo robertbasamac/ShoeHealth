@@ -5,6 +5,13 @@
 //  Created by Robert Basamac on 12.12.2023.
 //
 
+//
+//  ShoesViewModel.swift
+//  ShoeHealth
+//
+//  Created by Robert Basamac on 12.12.2023.
+//
+
 import Foundation
 import Observation
 import SwiftData
@@ -17,11 +24,28 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "ShoesViewModel")
 
+// ACTOR local pentru siguranță concurență la personalBests
+actor PRAccumulator {
+    var personalBests: [RunningCategory: PersonalBest?] = [:]
+    func update(_ category: RunningCategory, with best: PersonalBest) {
+        if let existing = personalBests[category]??.time,
+           best.time < existing {
+            personalBests[category] = best
+        } else if personalBests[category] == nil {
+            personalBests[category] = best
+        }
+    }
+}
+
 @Observable
-final class ShoesViewModel {
+final class ShoesViewModel: @unchecked Sendable {
     
     @ObservationIgnored private let shoeHandler: ShoeHandler
-
+    @ObservationIgnored private let notificationManager: NotificationManaging
+    @ObservationIgnored private let storeManager: StoreManaging
+    @ObservationIgnored private let healthManager: HealthManaging
+    @ObservationIgnored private let settingsManager: SettingsManaging
+    
     @ObservationIgnored private let defaults = UserDefaults(suiteName: System.AppGroups.shoeHealth)
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
     
@@ -54,8 +78,18 @@ final class ShoesViewModel {
         }
     }
     
-    init(shoeHandler: ShoeHandler) {
+    init(
+        shoeHandler: ShoeHandler,
+        notificationManager: NotificationManaging,
+        storeManager: StoreManaging,
+        healthManager: HealthManaging,
+        settingsManager: SettingsManaging
+    ) {
         self.shoeHandler = shoeHandler
+        self.notificationManager = notificationManager
+        self.storeManager = storeManager
+        self.healthManager = healthManager
+        self.settingsManager = settingsManager
         
         let sortingRule = defaults?.string(forKey: "SORTING_RULE") ?? SortingRule.aquisitionDate.rawValue
         self.sortingRule = SortingRule(rawValue: sortingRule) ?? SortingRule.recentlyUsed
@@ -85,10 +119,6 @@ final class ShoesViewModel {
     }
     
     func shouldRestrictShoe(_ shoeID: UUID) -> Bool {
-        if StoreManager.shared.hasFullAccess {
-            return false
-        }
-        
         if !isShoesLimitReached() {
             return false
         }
@@ -310,25 +340,24 @@ final class ShoesViewModel {
         oldShoes = Array(Set(oldShoes))
         
         for oldShoe in oldShoes {
-            await updateShoeStatistics(oldShoe)
+            await updateShoeStatistics(shoeID: oldShoe.id)
         }
         
         let previousWear = shoe.wearCondition
         shoe.workouts.append(contentsOf: workoutIDs)
         
-        await updateShoeStatistics(shoe)
-        
+        await updateShoeStatistics(shoeID: shoe.id)
         shoeHandler.saveContext()
         fetchShoes()
         
         // TO DO - move this outside of ShoesViewModel if possible
-        HealthManager.shared.updateLatestUpdateDate(from: Array(workoutIDs))
+        healthManager.updateLatestUpdateDate(from: Array(workoutIDs))
 
         if !shoe.isRetired && shoe.wearCondition.rawValue > previousWear.rawValue && shoe.wearCondition != .new && shoe.wearCondition != .good {
             let date = Calendar.current.date(byAdding: .second, value: 5, to: .now)
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date ?? .now)
             
-            NotificationManager.shared.scheduleShoeWearNotification(forShoe: shoe, at: dateComponents)
+            notificationManager.scheduleShoeWearNotification(forShoe: shoe, at: dateComponents)
         }
     }
     
@@ -340,7 +369,7 @@ final class ShoesViewModel {
             shoe.workouts.removeAll { $0 == workoutID }
         }
         
-        await updateShoeStatistics(shoe)
+        await updateShoeStatistics(shoeID: shoe.id)
         
         shoeHandler.saveContext()
         fetchShoes()
@@ -388,7 +417,7 @@ final class ShoesViewModel {
     func estimatedRetirementDate(for shoe: Shoe) -> Date? {
         guard shoe.totalDistance < shoe.lifespanDistance else { return nil }
         
-        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
+        let workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
         logger.debug("Retrieved \(workouts.count) workouts for shoe \(shoe.model)")
         
         let calendar = Calendar.current
@@ -405,7 +434,7 @@ final class ShoesViewModel {
         for (week, workouts) in sortedGrouped {
             logger.debug("Week: \(week)")
             for workout in workouts {
-                let distance = workout.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit)
+                let distance = workout.totalDistance(unit: settingsManager.unitOfMeasure.unit)
                 let endDate = workout.endDate
                 logger.debug("Workout - Distance: \(distance), End Date: \(String(describing: endDate))")
             }
@@ -413,7 +442,7 @@ final class ShoesViewModel {
         logger.debug("Grouped workouts into \(grouped.keys.count) week groups")
         
         let weeklyTotals = grouped.values.map { group in
-            group.reduce(0.0) { $0 + $1.totalDistance(unit: SettingsManager.shared.unitOfMeasure.unit) }
+            group.reduce(0.0) { $0 + $1.totalDistance(unit: settingsManager.unitOfMeasure.unit) }
         }
         logger.debug("Computed weekly totals: \(weeklyTotals)")
         
@@ -431,115 +460,97 @@ final class ShoesViewModel {
     }
     
     @MainActor
-    private func updateShoeStatistics(_ shoe: Shoe) async {
-        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
-        
-        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
-        
+    private func updateShoeStatistics(shoeID: UUID) async {
+        guard let shoe = shoes.first(where: { $0.id == shoeID }) else { return }
+        let unitOfMeasure = settingsManager.unitOfMeasure
+        let workouts = healthManager.getWorkouts(forIDs: shoe.workouts)
+
         shoe.lastActivityDate = workouts.first?.endDate
-        
         shoe.totalDistance = workouts.reduce(0.0) { result, workout in
             return result + workout.totalDistance(unit: unitOfMeasure.unit)
         }
-        
         shoe.totalDuration = workouts.reduce(0.0) { result, workout in
             return result + workout.duration
         }
-        
-        await computePersonalBests(for: shoe)
+        let workoutIDs = shoe.workouts
+        let (personalBests, totalRuns) = await computePersonalBests(for: workoutIDs)
+        shoe.personalBests = personalBests
+        shoe.totalRuns = totalRuns
     }
     
-    private func computePersonalBests(for shoe: Shoe) async {
-        var personalBests: [RunningCategory: PersonalBest?] = [:]
+    private func computePersonalBests(for workoutIDs: [UUID]) async -> ([RunningCategory: PersonalBest?], [RunningCategory: Int]) {
+        let prActor = PRAccumulator()
         var totalRuns: [RunningCategory: Int] = [:]
         var filteredWorkouts: [RunningCategory: [HKWorkout]] = [:]
-        
-        let workouts = HealthManager.shared.getWorkouts(forIDs: shoe.workouts)
-        
+        let workouts = healthManager.getWorkouts(forIDs: workoutIDs)
+
         for category in RunningCategory.allCases {
-            personalBests[category] = nil
             totalRuns[category] = 0
             filteredWorkouts[category] = workouts.filter { $0.totalDistance?.doubleValue(for: .meter()) ?? 0 >= category.distance }
         }
-        
-        let group = DispatchGroup()
-        
-        for category in RunningCategory.allCases {
-            logger.debug("Computing PR for category \(category.rawValue)")
 
+        let group = DispatchGroup()
+
+        for category in RunningCategory.allCases {
             guard let workoutsForCategory = filteredWorkouts[category] else { continue }
-                        
             totalRuns[category] = workoutsForCategory.count
-            
+
             for workout in workoutsForCategory {
-                
                 group.enter()
-                
-                HealthManager.shared.fetchDistanceSamples(for: workout) { samples in
+                healthManager.fetchDistanceSamples(for: workout) { samples in
                     var accumulatedDistance: Double = 0
                     var lastSampleEndDate: Date?
                     var lastValidSampleEndDate: Date?
-                    
                     var currentIndex = 0
-                    
+
                     for sample in samples {
                         let sampleDistance = sample.quantity.doubleValue(for: .meter())
-
                         currentIndex += 1
-
-                        if lastValidSampleEndDate == nil || ((self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate))) {
+                        if lastValidSampleEndDate == nil || (self.compareDatesIgnoringMoreGranularComponents(sample.startDate, lastValidSampleEndDate)) {
                             if accumulatedDistance + sampleDistance >= category.distance {
-                                logger.debug("Accumulated distance greater than the category distance, (+ \(sampleDistance)): \(accumulatedDistance + sampleDistance)")
-                                
                                 let sampleDuration = sample.endDate.timeIntervalSince(sample.startDate)
-                                
                                 let remainingDistance = category.distance - accumulatedDistance
                                 let proportion = remainingDistance / sampleDistance
                                 let interpolatedTime = proportion * sampleDuration
-                                
                                 lastSampleEndDate = Date(timeInterval: interpolatedTime, since: sample.startDate)
                                 break
                             }
-                            
                             accumulatedDistance += sampleDistance
                             lastValidSampleEndDate = sample.endDate
-                            logger.debug("\(currentIndex) - Accumulated distance (+ \(sampleDistance), \(sample.endDate)) = \(accumulatedDistance)")
-                        } else {
-                            logger.warning("Sample not satysfying the date condition, skipping: \(sampleDistance), \(sample.startDate)")
                         }
                     }
-                    
-                    logger.debug("Total samples counted for category \(category.rawValue), \(currentIndex), from total of \(samples.count)")
-                    
+
                     if let lastSampleEndDate = lastSampleEndDate {
                         let timeInterval = lastSampleEndDate.timeIntervalSince(workout.startDate)
-                        
-                        if personalBests[category] == nil || timeInterval < personalBests[category]!!.time {
-                            personalBests[category] = PersonalBest(time: timeInterval, workoutID: workout.id)
+                        let pr = PersonalBest(time: timeInterval, workoutID: workout.id)
+                        Task {
+                            await prActor.update(category, with: pr)
+                            group.leave()
                         }
+                    } else {
+                        group.leave()
                     }
-                    
-                    group.leave()
                 }
             }
         }
-        
-        await withCheckedContinuation { continuation in
+
+        let personalBestsCopy = await withCheckedContinuation { continuation in
             group.notify(queue: .main) {
-                shoe.personalBests = personalBests
-                shoe.totalRuns = totalRuns
-                continuation.resume()
+                Task {
+                    continuation.resume(returning: await prActor.personalBests)
+                }
             }
         }
-        
-        logger.debug("Personal bests computed for \(shoe.model).")
+        let totalRunsCopy = totalRuns
+
+        return (personalBestsCopy, totalRunsCopy)
     }
     
     // MARK: - CloudKit Updates Handling
     
     private func setupObservers() {
-        SettingsManager.shared.addObserver { [weak self] in
-            Task {
+        settingsManager.addObserver { [weak self] in
+            Task { [weak self] in
                 await self?.convertShoesToSelectedUnit()
             }
         }
@@ -567,18 +578,24 @@ final class ShoesViewModel {
     // MARK: - Other Methods
     
     private func convertShoesToSelectedUnit() async {
-        let unitOfMeasure = SettingsManager.shared.unitOfMeasure
-        
-        let group = DispatchGroup()
-        
-        for shoe in shoes {
-            group.enter()
-            
-            shoe.lifespanDistance = UnitOfMeasure.convert(distance: shoe.lifespanDistance, toUnit: unitOfMeasure)
-            
-            await updateShoeStatistics(shoe)
+        let unitOfMeasure = settingsManager.unitOfMeasure
+        let shoeIDs = shoes.map { $0.id }
+
+        for id in shoeIDs {
+            await MainActor.run {
+                if let shoe = shoes.first(where: { $0.id == id }) {
+                    shoe.lifespanDistance = UnitOfMeasure.convert(distance: shoe.lifespanDistance, toUnit: unitOfMeasure)
+                    shoe.totalDistance = 0
+                    shoe.totalDuration = 0
+                    shoe.personalBests = [:]
+                    shoe.totalRuns = [:]
+                    shoe.lastActivityDate = nil
+                }
+            }
         }
-        
+        for id in shoeIDs {
+            await updateShoeStatistics(shoeID: id)
+        }
         shoeHandler.saveContext()
         fetchShoes()
     }

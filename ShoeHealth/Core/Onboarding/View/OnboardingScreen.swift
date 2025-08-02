@@ -9,15 +9,14 @@ import SwiftUI
 import HealthKit
 
 struct OnboardingScreen: View {
-    
+
     @Environment(\.scenePhase) private var scenePhase
-    
-    @State private var onboardingViewModel = OnboardingViewModel()
+    @Environment(OnboardingViewModel.self) private var onboardingViewModel
     
     @State private var selectedTab: OnboardingTab = .welcome
 
     @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
-    
+        
     var body: some View {
         VStack(spacing: 0) {
             TabView(selection: $selectedTab) {
@@ -46,12 +45,13 @@ struct OnboardingScreen: View {
             continueButton
                 .animation(.none, value: selectedTab)
         }
+        .background(.black)
         .task {
             await onboardingViewModel.checkNotificationAuthorizationStatus()
         }
         .onChange(of: scenePhase) { _, newValue in
             if newValue == .active {                
-                Task {
+                Task { @MainActor in
                     await onboardingViewModel.checkNotificationAuthorizationStatus()
                 }
             }
@@ -116,13 +116,13 @@ extension OnboardingScreen {
 extension OnboardingScreen {
     
     private func requestHealthKitAccess() {
-        Task {
+        Task { @MainActor in
             await onboardingViewModel.requestHealthAuthorization()
         }
     }
     
     private func requestNotificationAccess() {
-        Task {
+        Task { @MainActor in
             await onboardingViewModel.requestNotificationAuthorization()
         }
     }

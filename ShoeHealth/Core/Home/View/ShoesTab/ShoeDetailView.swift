@@ -11,7 +11,8 @@ import HealthKit
 struct ShoeDetailView: View {
     
     @EnvironmentObject private var navigationRouter: NavigationRouter
-    @EnvironmentObject private var storeManager: StoreManager
+    @Environment(NotificationManager.self) private var notificationManager
+    @Environment(StoreManager.self) private var storeManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
@@ -117,7 +118,7 @@ struct ShoeDetailView: View {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
                     }
                     
-                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                    notificationManager.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
             .presentationDetents([.medium])
@@ -133,7 +134,8 @@ struct ShoeDetailView: View {
 }
 
 private struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
+    
+    static let defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
@@ -258,7 +260,9 @@ extension ShoeDetailView {
                                      reversed: true)
         
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
-        navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+        withAnimation {
+            navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+        }
     }
     
     private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
@@ -282,10 +286,6 @@ extension ShoeDetailView {
         NavigationStack {
             ShoeDetailView(shoe: Shoe.previewShoes[1])
                 .environmentObject(NavigationRouter())
-                .environmentObject(StoreManager.shared)
-                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-                .environment(SettingsManager.shared)
-                .environment(HealthManager.shared)
         }
     }
 }

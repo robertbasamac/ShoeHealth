@@ -11,14 +11,23 @@ import OSLog
 
 private let logger = Logger(subsystem: "Shoe Health", category: "OnboardingViewModel")
 
+// MARK: - OnboardingViewModel
+
 @Observable
-class OnboardingViewModel {
+final class OnboardingViewModel: @unchecked Sendable {
     
     var isHealthAuthorized = false
     var isNotificationsAuthorized = false
         
-    private let healthManager = HealthManager.shared
-    private let notificationManager = NotificationManager.shared
+    private let healthManager: HealthManaging
+    private let notificationManager: NotificationManaging
+
+    // MARK: - Init
+    
+    init(healthManager: HealthManaging, notificationManager: NotificationManaging) {
+        self.healthManager = healthManager
+        self.notificationManager = notificationManager
+    }
     
     func requestHealthAuthorization() async {
         let authorization = await healthManager.requestHealthAuthorization()

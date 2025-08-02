@@ -11,8 +11,8 @@ import HealthKit
 
 struct MultipleShoeSelectionView: View {
     
-    @EnvironmentObject private var storeManager: StoreManager
     @Environment(ShoesViewModel.self) private var shoesViewModel
+    @Environment(StoreManager.self) private var storeManager
     @Environment(HealthManager.self) private var healthManager
     @Environment(\.dismiss) private var dismiss
     
@@ -173,8 +173,6 @@ extension MultipleShoeSelectionView {
                                       description: Prompts.SelectShoe.selectMultipleWorkoutShoeDescription,
                                       systemImage: "figure.run.circle",
                                       onDone: { _ in })
-            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
-            .environment(HealthManager.shared)
         }
     }
 }
