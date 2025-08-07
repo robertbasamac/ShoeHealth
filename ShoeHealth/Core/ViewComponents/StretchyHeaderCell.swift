@@ -20,9 +20,12 @@ struct StretchyHeaderCell: View {
     var body: some View {
         if let imageData = imageData, let uiImage = UIImage(data: imageData) {
             Rectangle()
+                .fill(.black)
                 .opacity(0)
                 .overlay {
-                    Rectangle().opacity(0.0001)
+                    Rectangle()
+                        .fill(.black)
+                        .opacity(0.0001)
                         .overlay {
                             Image(uiImage: uiImage)
                                 .resizable()

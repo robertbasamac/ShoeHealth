@@ -63,6 +63,7 @@ struct ShoeWorkoutsListView: View {
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
+        .hideTabBar()
         .overlay {
             emptyWorkoutsView
         }
@@ -155,7 +156,7 @@ extension ShoeWorkoutsListView {
             }
         }
         
-        ToolbarItemGroup(placement: .bottomBar) {
+        ToolbarItemGroup(placement: .status) {
             if editMode.isEditing {
                 Button {
                     showAssignToShoe.toggle()
@@ -215,3 +216,19 @@ extension ShoeWorkoutsListView {
         }
     }
 }
+
+
+// MARK: - View Extension
+
+fileprivate extension View {
+    
+    @ViewBuilder
+    func hideTabBar() -> some View {
+        if #available(iOS 18, *) {
+            self.toolbarVisibility(.hidden, for: .tabBar)
+        } else {
+            self.toolbar(.hidden, for: .tabBar)
+        }
+    }
+}
+

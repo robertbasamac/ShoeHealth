@@ -146,20 +146,36 @@ extension ShoeSelectionView {
     }
     
     private var addNewShoeButton: some View {
-        Button {
-            if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
-                showAddShoe.toggle()
+        Group {
+            if #available(iOS 26, *) {
+                Button {
+                    if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
+                        showAddShoe.toggle()
+                    } else {
+                        showFeatureRestrictedAlert.toggle()
+                    }
+                } label: {
+                    Text("Add New Shoe")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                }
             } else {
-                showFeatureRestrictedAlert.toggle()
+                Button {
+                    if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
+                        showAddShoe.toggle()
+                    } else {
+                        showFeatureRestrictedAlert.toggle()
+                    }
+                } label: {
+                    Text("Add New Shoe")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .foregroundStyle(.black)
             }
-        } label: {
-            Text("Add New Shoe")
-                .font(.callout)
-                .fontWeight(.medium)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .foregroundStyle(.black)
         .alert(FeatureAlertType.limitReached.title, isPresented: $showFeatureRestrictedAlert, actions: {
             Button(role: .cancel) {
 //                dismiss()
@@ -184,7 +200,11 @@ extension ShoeSelectionView {
                 Button {
                     dismiss()
                 } label: {
-                    Text("Cancel")
+                    if #available(iOS 26, *) {
+                        Image(systemName: "xmark")
+                    } else {
+                        Text("Cancel")
+                    }
                 }
             }
         }
@@ -197,9 +217,14 @@ extension ShoeSelectionView {
                 
                 dismiss()
             } label: {
-                Text("Save")
+                if #available(iOS 26, *) {
+                    Image(systemName: "checkmark")
+                } else {
+                    Text("Save")
+                }
             }
             .disabled(isSaveButtonDisabled())
+            .tint(.accent)
         }
         
         ToolbarItem(placement: .status) {

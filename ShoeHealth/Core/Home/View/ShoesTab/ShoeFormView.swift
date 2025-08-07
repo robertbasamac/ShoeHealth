@@ -18,6 +18,7 @@ struct ShoeFormView: View {
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
     @State private var showDeletionConfirmation: Bool = false
+    @State private var showRunTypeSelection: Bool = false
     
     @FocusState private var focusField: FocusField?
     
@@ -26,7 +27,6 @@ struct ShoeFormView: View {
     private var hideCancelButton: Bool
     private let onSave: ((Shoe) -> Void)?
     
-    @State private var showRunTypeSelection: Bool = false
     
     enum FocusField: Hashable {
         case brand
@@ -338,58 +338,30 @@ extension ShoeFormView {
     private var toolbarItems: some ToolbarContent {
         if !hideCancelButton {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                Button {
                     dismiss()
+                } label: {
+                    if #available(iOS 26, *) {
+                        Image(systemName: "xmark")
+                    } else {
+                        Text("Cancel")
+                    }
                 }
             }
         }
         
         ToolbarItem(placement: .confirmationAction) {
             Button {
-                let settingsUnitOfMeasure = settingsManager.unitOfMeasure
-                if settingsUnitOfMeasure != unitOfMeasure {
-                    shoeFormViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? shoeFormViewModel.lifespanDistance * 1.60934 : shoeFormViewModel.lifespanDistance / 1.60934
-                }
-                
-                if isEditing {
-                    shoesViewModel.updateShoe(
-                        shoeID: shoeFormViewModel.shoeID ?? UUID(),
-                        nickname: shoeFormViewModel.nickname,
-                        brand: shoeFormViewModel.brand,
-                        model: shoeFormViewModel.model,
-                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
-                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
-                        lifespanDistance: shoeFormViewModel.lifespanDistance,
-                        aquisitionDate: shoeFormViewModel.aquisitionDate,
-                        image: shoeFormViewModel.selectedPhotoData
-                    )
-                    
-                    if wasDailyDefaultShoe && isNotDailyDefaultShoeAnymore() && !shoesViewModel.shoes.isEmpty {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                        }
-                    }
-                } else {
-                    let newShoe = shoesViewModel.addShoe(
-                        nickname: shoeFormViewModel.nickname,
-                        brand: shoeFormViewModel.brand,
-                        model: shoeFormViewModel.model,
-                        lifespanDistance: shoeFormViewModel.lifespanDistance,
-                        aquisitionDate: shoeFormViewModel.aquisitionDate,
-                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
-                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
-                        image: shoeFormViewModel.selectedPhotoData
-                    )
-                    
-                    onSave?(newShoe)
-                }
-                
-                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
-                dismiss()
+                confirmationAction()
             } label: {
-                Text("Save")
+                if #available(iOS 26, *) {
+                    Image(systemName: "checkmark")
+                } else {
+                    Text("Save")
+                }
             }
-            .disabled(shoeFormViewModel.brand.isEmpty || shoeFormViewModel.model.isEmpty || shoeFormViewModel.nickname.isEmpty)
+            .disabled(isDisabled())
+            .tint(.accent)
         }
     }
 }
@@ -419,6 +391,53 @@ extension ShoeFormView {
     
     private func isNotDailyDefaultShoeAnymore() -> Bool {
         return (shoeFormViewModel.isDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) || !shoeFormViewModel.isDefaultShoe)
+    }
+    
+    private func isDisabled() -> Bool {
+        return shoeFormViewModel.brand.isEmpty || shoeFormViewModel.model.isEmpty || shoeFormViewModel.nickname.isEmpty
+    }
+    
+    private func confirmationAction() {
+        let settingsUnitOfMeasure = settingsManager.unitOfMeasure
+        if settingsUnitOfMeasure != unitOfMeasure {
+            shoeFormViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? shoeFormViewModel.lifespanDistance * 1.60934 : shoeFormViewModel.lifespanDistance / 1.60934
+        }
+        
+        if isEditing {
+            shoesViewModel.updateShoe(
+                shoeID: shoeFormViewModel.shoeID ?? UUID(),
+                nickname: shoeFormViewModel.nickname,
+                brand: shoeFormViewModel.brand,
+                model: shoeFormViewModel.model,
+                isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                lifespanDistance: shoeFormViewModel.lifespanDistance,
+                aquisitionDate: shoeFormViewModel.aquisitionDate,
+                image: shoeFormViewModel.selectedPhotoData
+            )
+            
+            if wasDailyDefaultShoe && isNotDailyDefaultShoeAnymore() && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+        } else {
+            let newShoe = shoesViewModel.addShoe(
+                nickname: shoeFormViewModel.nickname,
+                brand: shoeFormViewModel.brand,
+                model: shoeFormViewModel.model,
+                lifespanDistance: shoeFormViewModel.lifespanDistance,
+                aquisitionDate: shoeFormViewModel.aquisitionDate,
+                isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                image: shoeFormViewModel.selectedPhotoData
+            )
+            
+            onSave?(newShoe)
+        }
+        
+        settingsManager.setUnitOfMeasure(to: unitOfMeasure)
+        dismiss()
     }
 }
 

@@ -46,7 +46,7 @@ struct StaticHeaderCell: View {
 
 #Preview {
     VStack {
-        StaticHeaderCell(model: "Pegasus Turbo Next Nature", brand: "Nike", nickname: "Shoey", date: .now)
+        StaticHeaderCell(model: "Pegasus Turbo", brand: "Nike", nickname: "Next Nature", date: .now)
             .frame(height: 110)
         Spacer()
     }

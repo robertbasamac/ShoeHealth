@@ -31,6 +31,7 @@ struct ShoeDetailView: View {
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
+    @State private var navBarSubtitle: String = ""
     
     private var isAnyModalPresented: Bool {
         showEditShoe || showAddWorkouts || showDefaultSelection
@@ -47,7 +48,7 @@ struct ShoeDetailView: View {
     }
     
     var body: some View {
-        ScrollView(.vertical) {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
                 StretchyHeaderCell(
                     height: 250,
@@ -70,13 +71,9 @@ struct ShoeDetailView: View {
                 WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
             }
         }
-        .scrollIndicators(.hidden)
         .scrollTargetBehavior(.dynamicStretchyHeader(for: shoe))
         .contentMargins(.bottom, bottomPadding)
-        .navigationBarBackButtonHidden()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle(navBarTitle)
-        .toolbarBackground(navBarVisibility, for: .navigationBar)
+        .adaptToPreiOS26(navBarVisibility: navBarVisibility, navBarTitle: navBarTitle, navBarSubtitle: navBarSubtitle)
         .toolbar {
             toolbarItems
         }
@@ -146,14 +143,26 @@ extension ShoeDetailView {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: isFullScreen ? "xmark" : "chevron.left")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
+            if #available(iOS 26, *) {
+                if isFullScreen {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                } else {
+                    EmptyView()
+                }
+            } else {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: isFullScreen ? "xmark" : "chevron.left")
+                        .imageScale(.large)
+                        .fontWeight(.semibold)
+                }
+                .buttonStyle(.blurredCircle(Double(1 - opacity)))
             }
-            .buttonStyle(.blurredCircle(Double(1 - opacity)))
         }
         
         ToolbarItem(placement: .topBarTrailing) {
@@ -177,9 +186,13 @@ extension ShoeDetailView {
                     Label("Delete", systemImage: "trash")
                 }
             } label: {
-                Image(systemName: "ellipsis")
-                    .frame(width: 34, height: 34)
-                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
+                if #available(iOS 26, *) {
+                    Image(systemName: "ellipsis")
+                } else {
+                    Image(systemName: "ellipsis")
+                        .frame(width: 34, height: 34)
+                        .background(.bar.opacity(Double(1 - opacity)), in: .circle)
+                }
             }
         }
     }
@@ -259,6 +272,7 @@ extension ShoeDetailView {
         
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+        navBarSubtitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.nickname : ""
     }
     
     private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
@@ -720,5 +734,22 @@ fileprivate struct WorkoutsSectionView: View {
     
     private func getShoeMostRecentlyWorkouts() -> [HKWorkout] {
         return Array(getShoeWorkouts().prefix(5))
+    }
+}
+
+// MARK: - View Extension
+
+fileprivate extension View {
+    
+    @ViewBuilder
+    func adaptToPreiOS26(navBarVisibility: Visibility, navBarTitle: String, navBarSubtitle: String) -> some View {
+        if #available(iOS 26, *) {
+            self.navigationTitle(navBarTitle)
+                .navigationSubtitle(navBarSubtitle)
+        } else {
+            self.navigationBarBackButtonHidden()
+                .toolbarBackground(navBarVisibility, for: .navigationBar)
+                .navigationBarTitle(navBarTitle, displayMode: .inline)
+        }
     }
 }

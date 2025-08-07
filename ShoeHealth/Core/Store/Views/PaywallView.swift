@@ -152,7 +152,7 @@ extension PaywallView {
         SubscriptionStoreView(subscriptions: store.subscriptionProducts) {
             featuresSection
         }
-        .subscriptionStoreControlStyle(.picker)
+        .subscriptionStoreControlStyle(.automatic)
         .storeButton(.hidden, for: .cancellation)
     }
     
@@ -219,14 +219,22 @@ extension PaywallView {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         if showDismissButton {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
+            ToolbarItem(placement: .destructiveAction) {
+                if #available(iOS 26, *) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                } else {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.circle)
                 }
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.circle)
             }
         }
     }

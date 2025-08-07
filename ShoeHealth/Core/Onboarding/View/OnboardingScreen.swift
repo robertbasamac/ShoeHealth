@@ -46,6 +46,7 @@ struct OnboardingScreen: View {
             continueButton
                 .animation(.none, value: selectedTab)
         }
+//        .background(Color(uiColor: .systemBackground))
         .task {
             await onboardingViewModel.checkNotificationAuthorizationStatus()
         }

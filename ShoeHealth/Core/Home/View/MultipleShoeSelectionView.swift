@@ -148,9 +148,14 @@ extension MultipleShoeSelectionView {
                 onDone(selectionsDict)
                 dismiss()
             } label: {
-                Text("Save")
+                if #available(iOS 26, *) {
+                    Image(systemName: "checkmark")
+                } else {
+                    Text("Save")
+                }
             }
             .disabled(isSaveButtonDisabled())
+            .tint(.accent)
         }
     }
 }
