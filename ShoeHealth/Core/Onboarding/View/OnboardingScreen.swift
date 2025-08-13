@@ -75,7 +75,7 @@ extension OnboardingScreen {
                     if onboardingViewModel.isHealthAuthorized {
                         selectedTab = .notificationAccess
                     } else {
-                        requestHealthKitAccess()
+                        requestHealthAccess()
                     }
                 case .notificationAccess:
                     if onboardingViewModel.isNotificationsAuthorized{
@@ -116,7 +116,7 @@ extension OnboardingScreen {
 
 extension OnboardingScreen {
     
-    private func requestHealthKitAccess() {
+    private func requestHealthAccess() {
         Task {
             await onboardingViewModel.requestHealthAuthorization()
         }

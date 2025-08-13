@@ -55,15 +55,19 @@ struct RunTypeSelectionView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") {
+                ConfirmButton {
                     onDone(selectedRunTypes)
                     dismiss()
+                } label: {
+                    Text("Done")
                 }
             }
             
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                CancelButton {
                     dismiss()
+                } label: {
+                    Text("Cancel")
                 }
             }
         }

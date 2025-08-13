@@ -24,14 +24,19 @@ struct ShoeCell: View {
                     .frame(width: width, height: width)
                     .overlay {
                         if displayProgress {
-                            RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                            RoundedRectangleProgressView(
+                                progress: shoe.wearPercentage,
+                                color: shoe.wearColor,
+                                width: width,
+                                cornerRadius: Constants.cornerRadius
+                            )
                         }
                         
                         if !isEnabled {
                             Color.black.opacity(0.4)
                         }
                     }
-                    .clipShape(.rect(cornerRadius: 10))
+                    .clipShape(.rect(cornerRadius: Constants.cornerRadius))
             }
             
             VStack(alignment: .leading, spacing: 0) {

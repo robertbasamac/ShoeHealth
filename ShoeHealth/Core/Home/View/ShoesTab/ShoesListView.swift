@@ -28,7 +28,7 @@ struct ShoesListView: View {
         List {
             ForEach(shoesViewModel.getShoes(for: category)) { shoe in
                 ShoeListItem(shoe: shoe, width: width)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
@@ -112,11 +112,7 @@ extension ShoesListView {
     }
     
     @ViewBuilder
-    private func confirmationActions(shoe: Shoe) -> some View {
-        Button("Cancel", role: .cancel) {
-            shoeForDeletion = nil
-        }
-        
+    private func confirmationActions(shoe: Shoe) -> some View {        
         Button("Delete", role: .destructive) {
             shoeForDeletion = nil
             
@@ -164,17 +160,32 @@ extension ShoesListView {
     
     @ViewBuilder
     private var shoeCategoryPicker: some View {
-        Picker("Category", selection: $category) {
-            ForEach(ShoeCategory.allCases) { category in
-                Text(category.rawValue)
-                    .tag(category)
+        if #available(iOS 26, *) {
+            Picker("Category", selection: $category) {
+                ForEach(ShoeCategory.allCases) { category in
+                    Text(category.rawValue)
+                        .tag(category)
+                }
             }
+            .pickerStyle(.palette)
+            .padding(.bottom, 1)
+            .glassEffect(.regular.interactive())
+            .cornerRadius(Constants.defaultCornerRadius)
+            .padding(.bottom, 10)
+            .padding(.horizontal, 40)
+        } else {
+            Picker("Category", selection: $category) {
+                ForEach(ShoeCategory.allCases) { category in
+                    Text(category.rawValue)
+                        .tag(category)
+                }
+            }
+            .pickerStyle(.palette)
+            .padding(.bottom, 1) 
+            .background(.bar, in: .rect(cornerRadius: 8))
+            .padding(.bottom, 10)
+            .padding(.horizontal, 40)
         }
-        .pickerStyle(.segmented)
-        .padding(.bottom, 1)
-        .background(.bar, in: .rect(cornerRadius: 8))
-        .padding(.bottom, 10)
-        .padding(.horizontal, 40)
     }
     
     @ViewBuilder
@@ -191,13 +202,25 @@ extension ShoesListView {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Filled") {
     ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
         NavigationStack {
             ShoesListView(forCategory: .all)
                 .environmentObject(NavigationRouter())
                 .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
+                .navigationTitle("Shoes")
+        }
+    }
+}
+
+#Preview("Empty") {
+    ModelContainerPreview(PreviewSampleData.inMemoryContainer) {
+        NavigationStack {
+            ShoesListView(forCategory: .all)
+                .environmentObject(NavigationRouter())
+                .environmentObject(StoreManager.shared)
+                .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
                 .navigationTitle("Shoes")
         }
     }

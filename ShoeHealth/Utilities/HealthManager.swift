@@ -100,7 +100,7 @@ final class HealthManager {
     
     // MARK: - Request HealthKit authorization
     
-    func requestHealthAuthorization() async -> Bool {
+    func requestAuthorization() async -> Bool {
         guard HKHealthStore.isHealthDataAvailable() else {
             logger.warning("HealthKit is not available on this device.")
             return false

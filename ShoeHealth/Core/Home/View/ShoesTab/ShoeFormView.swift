@@ -83,8 +83,6 @@ struct ShoeFormView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .confirmationDialog("Delete this shoe?", isPresented: $showDeletionConfirmation, titleVisibility: .visible) {
-                    Button("Cancel", role: .cancel) { }
-                    
                     Button("Delete", role: .destructive) {
                         deleteShoe()
                     }
@@ -97,6 +95,7 @@ struct ShoeFormView: View {
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .contentMargins(.bottom, 40, for: .automatic)
+        .scrollDismissesKeyboard(.immediately)
         .toolbar {
             toolbarItems
         }
@@ -148,13 +147,13 @@ extension ShoeFormView {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     } else {
                         Image(systemName: "square.fill")
                             .resizable()
                             .foregroundStyle(.secondary)
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                         
                         Image(systemName: "shoe.2.fill")
                             .resizable()
@@ -162,7 +161,7 @@ extension ShoeFormView {
                             .aspectRatio(contentMode: .fit)
                             .padding()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     }
                 }
                 
@@ -338,30 +337,21 @@ extension ShoeFormView {
     private var toolbarItems: some ToolbarContent {
         if !hideCancelButton {
             ToolbarItem(placement: .cancellationAction) {
-                Button {
+                CancelButton {
                     dismiss()
                 } label: {
-                    if #available(iOS 26, *) {
-                        Image(systemName: "xmark")
-                    } else {
-                        Text("Cancel")
-                    }
+                    Text("Cancel")
                 }
             }
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 confirmationAction()
             } label: {
-                if #available(iOS 26, *) {
-                    Image(systemName: "checkmark")
-                } else {
-                    Text("Save")
-                }
+                Text("Save")
             }
             .disabled(isDisabled())
-            .tint(.accent)
         }
     }
 }

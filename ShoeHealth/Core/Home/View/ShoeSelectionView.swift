@@ -127,6 +127,7 @@ extension ShoeSelectionView {
                 ShoeListItem(
                     shoe: shoe,
                     width: size,
+                    cornerRadius: Constants.defaultCornerRadius,
                     imageAlignment: .trailing,
                     infoAlignment: .leading,
                     showStats: false,
@@ -197,34 +198,25 @@ extension ShoeSelectionView {
     private var toolbarItems: some ToolbarContent {
         if showCancelButton {
             ToolbarItem(placement: .cancellationAction) {
-                Button {
+                CancelButton {
                     dismiss()
                 } label: {
-                    if #available(iOS 26, *) {
-                        Image(systemName: "xmark")
-                    } else {
-                        Text("Cancel")
-                    }
+                    Text("Cancel")
                 }
             }
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 if let shoe = selectedShoe {
                     onDone(shoe.id)
                 }
                 
                 dismiss()
             } label: {
-                if #available(iOS 26, *) {
-                    Image(systemName: "checkmark")
-                } else {
-                    Text("Save")
-                }
+                Text("Save")
             }
             .disabled(isSaveButtonDisabled())
-            .tint(.accent)
         }
         
         ToolbarItem(placement: .status) {

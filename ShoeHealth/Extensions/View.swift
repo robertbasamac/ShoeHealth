@@ -22,7 +22,7 @@ extension View {
     
     func roundedContainer() -> some View {
         self
-            .background(Color.theme.containerBackground, in: .rect(cornerRadius: 10))
+            .background(Color.theme.containerBackground, in: .rect(cornerRadius: Constants.cornerRadius))
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
     }

@@ -24,12 +24,12 @@ struct PresetTimeCell: View {
         .frame(maxWidth: .infinity)
         .background(Color.theme.containerBackground)
         .foregroundColor(selection == presetTime ? Color.theme.accent : .primary)
-        .cornerRadius(10)
+        .cornerRadius(Constants.defaultCornerRadius)
         .overlay {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: Constants.defaultCornerRadius, style: .continuous)
                 .stroke(selection == presetTime ? Color.theme.accent : Color.clear, lineWidth: 2)
                 .padding(1)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Constants.defaultCornerRadius, style: .continuous))
         }
         .onTapGesture {
             onTap()

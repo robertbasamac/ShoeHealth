@@ -136,7 +136,7 @@ extension MultipleShoeSelectionView {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button {
+            CancelButton {
                 dismiss()
             } label: {
                 Text("Cancel")
@@ -144,18 +144,13 @@ extension MultipleShoeSelectionView {
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 onDone(selectionsDict)
                 dismiss()
             } label: {
-                if #available(iOS 26, *) {
-                    Image(systemName: "checkmark")
-                } else {
-                    Text("Save")
-                }
+                Text("Save")
             }
             .disabled(isSaveButtonDisabled())
-            .tint(.accent)
         }
     }
 }

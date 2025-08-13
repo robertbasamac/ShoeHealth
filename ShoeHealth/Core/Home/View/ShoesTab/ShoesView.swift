@@ -15,6 +15,7 @@ struct ShoesView: View {
     @Environment(ShoesViewModel.self) private var shoesViewModel
     @Environment(HealthManager.self) private var healthManager
     @Environment(SettingsManager.self) private var settingsManager
+    @Environment(\.openURL) private var openURL
     
     @Environment(\.isSearching) var isSearching
     @Environment(\.dismissSearch) var dismissSearch
@@ -88,21 +89,57 @@ extension ShoesView {
                             runUsedShoeSection(lastRun.workout)
                         }
                         .padding(.horizontal, 20)
-                        
+
                         Rectangle()
                             .fill(.background)
                             .frame(height: 2)
                             .frame(maxWidth: .infinity)
-                        
+
                         runStatsSection(lastRun)
                             .padding(.horizontal, 20)
                     }
                     .padding(.vertical, 10)
-                }
-                else {
-                    Text("Your latest run will appear here.")
+                } else {
+                    VStack(spacing: 12) {
+                        Image(systemName: "figure.run.circle.fill")
+                            .font(.system(size: 56, weight: .semibold))
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.tint)
+                            .padding(.top, 4)
+
+                        VStack(spacing: 6) {
+                            Text("No runs yet")
+                                .font(.headline)
+                            
+                            Text("When you record a run in Apple Health, it will show up here.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        
+                        VStack(spacing: 6) {
+                            Button {
+                                Task {
+                                    await healthManager.fetchRunningWorkouts()
+                                }
+                            } label: {
+                                Label("Refresh", systemImage: "arrow.clockwise")
+                                    .foregroundStyle(.black)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            
+                            Text("You can also pull down to refresh")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.top, 4)
+                        
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 6)
+                    .padding(.bottom, 12)
+                    .padding(.horizontal, 12)
                 }
             }
             .roundedContainer()
@@ -143,7 +180,7 @@ extension ShoesView {
                 HStack(spacing: 0) {
                     ShoeImage(width: width)
                         .frame(width: width, height: width)
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     
                     VStack {
                         Group {
@@ -510,10 +547,6 @@ extension ShoesView {
     
     @ViewBuilder
     private func confirmationActions(shoe: Shoe) -> some View {
-        Button("Cancel", role: .cancel) {
-            shoeForDeletion = nil
-        }
-        
         Button("Delete", role: .destructive) {
             shoeForDeletion = nil
             
@@ -586,11 +619,17 @@ extension ShoesView {
 // MARK: - Helper Methods
 
 extension ShoesView {
-    
+
+    private func requestHealthAuthorization() async -> Bool {
+        guard HKHealthStore.isHealthDataAvailable() else { return false }
+        let authorization = await healthManager.requestAuthorization()
+        return authorization
+    }
+
     private func isFeatureDisabled(for runType: RunType) -> Bool {
         return runType != .daily && !storeManager.hasFullAccess
     }
-    
+
     private func triggerSetNewDailyDefaultShoe() {
         guard let _ = shoesViewModel.getDefaultShoe(for: .daily) else {
             if !shoesViewModel.shoes.isEmpty {

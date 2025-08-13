@@ -39,7 +39,7 @@ struct WorkoutsTab: View {
                                     
                                     ShoeImage(imageData: shoe.image, showBackground: false, width: 64)
                                         .frame(width: size, height: size)
-                                        .clipShape(.rect(cornerRadius: 10))
+                                        .clipShape(.rect(cornerRadius: Constants.cornerRadius))
                                 }
                                 .contentShape(.rect)
                                 .onTapGesture {
@@ -61,7 +61,7 @@ struct WorkoutsTab: View {
                         }
                         .frame(height: size)
                         .padding(.leading)
-                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: Constants.cornerRadius, style: .continuous))
                         .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
@@ -118,8 +118,20 @@ extension WorkoutsTab {
         if healthManager.workouts.isEmpty {
             ContentUnavailableView {
                 Label("No Workouts Available", systemImage: "figure.run.circle")
+
             } description: {
                 Text("There are no running workouts available in your Apple Health data.")
+
+            } actions: {
+                Button {
+                    Task {
+                        await healthManager.fetchRunningWorkouts()
+                    }
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                        .foregroundStyle(.black)
+                }
+                .buttonStyle(.borderedProminent)
             }
         }
     }
@@ -131,7 +143,7 @@ extension WorkoutsTab {
     NavigationStack {
         WorkoutsTab()
             .navigationTitle("Workouts")
-//            .environment(ShoesViewModel(modelContext: PreviewSampleData.emptyContainer.mainContext))
+            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
             .environment(HealthManager.shared)
     }
 }

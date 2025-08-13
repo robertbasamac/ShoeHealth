@@ -44,7 +44,7 @@ struct RoundedRectangleProgressView: View {
             }
         }
         .frame(width: width, height: width)
-        .clipShape(.rect(cornerRadius: 10))
+        .clipShape(.rect(cornerRadius: cornerRadius))
     }
 }
 

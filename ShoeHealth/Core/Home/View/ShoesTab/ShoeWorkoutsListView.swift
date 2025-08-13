@@ -20,8 +20,16 @@ struct ShoeWorkoutsListView: View {
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
     
-    @State private var showAddWorkouts: Bool = false
-    @State private var showAssignToShoe: Bool = false
+    @State private var activeSheet: ActiveSheet?
+    
+    @Namespace private var namespace
+    
+    private enum ActiveSheet: Hashable, Identifiable {
+        case addWorkouts
+        case assignToShoe
+        
+        var id: Self { self }
+    }
     
     init(shoe: Shoe, isShoeRestricted: Bool = false) {
         self.shoe = shoe
@@ -36,7 +44,7 @@ struct ShoeWorkoutsListView: View {
                         WorkoutListItem(workout: workout)
                             .padding(.horizontal)
                             .padding(.vertical, 6)
-                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
+                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: Constants.cornerRadius, style: .continuous))
                             .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
@@ -63,6 +71,7 @@ struct ShoeWorkoutsListView: View {
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
+        .scrollBounceBehavior(.basedOnSize)
         .hideTabBar()
         .overlay {
             emptyWorkoutsView
@@ -70,28 +79,32 @@ struct ShoeWorkoutsListView: View {
         .toolbar {
             toolbarItems
         }
-        .sheet(isPresented: $showAddWorkouts) {
-            NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoe.id)
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .addWorkouts:
+                NavigationStack {
+                    AddWokoutsToShoeView(shoeID: shoe.id)
+                }
+                .presentationDragIndicator(.visible)
+
+            case .assignToShoe:
+                NavigationStack {
+                    ShoeSelectionView(
+                        selectedShoe: shoesViewModel.getShoe(forID: shoe.id),
+                        title: Prompts.SelectShoe.assignWorkoutsTitle,
+                        description: Prompts.SelectShoe.assignWorkoutsDescription,
+                        systemImage: "shoe.2",
+                        onDone: { shoeID in
+                            withAnimation {
+                                addWorkouts(workoutIDs: Array(selections), to: shoeID)
+                                selections = Set<UUID>()
+                                editMode = .inactive
+                            }
+                        }
+                    )
+                }
+                .presentationDragIndicator(.visible)
             }
-            .presentationDragIndicator(.visible)
-        }
-        .sheet(isPresented: $showAssignToShoe) {
-            NavigationStack {
-                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(forID: shoe.id),
-                                  title: Prompts.SelectShoe.assignWorkoutsTitle,
-                                  description: Prompts.SelectShoe.assignWorkoutsDescription,
-                                  systemImage: "shoe.2",
-                                  onDone: { shoeID in
-                    withAnimation {
-                        addWorkouts(workoutIDs: Array(selections), to: shoeID)
-                        
-                        selections = Set<UUID>()
-                        editMode = .inactive
-                    }
-                })
-            }
-            .presentationDragIndicator(.visible)
         }
         .onAppear {
             groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.getWorkouts(forIDs: shoe.workouts))
@@ -127,7 +140,6 @@ extension ShoeWorkoutsListView {
             } label: {
                 if editMode.isEditing {
                     Text("Cancel")
-                        .fontWeight(.bold)
                 } else {
                     Text("Select")
                 }
@@ -159,7 +171,7 @@ extension ShoeWorkoutsListView {
         ToolbarItemGroup(placement: .status) {
             if editMode.isEditing {
                 Button {
-                    showAssignToShoe.toggle()
+                    activeSheet = .assignToShoe
                 } label: {
                     Text("Assign To")
                 }
@@ -178,7 +190,7 @@ extension ShoeWorkoutsListView {
                 .disabled(selections.isEmpty)
             } else {
                 Button {
-                    showAddWorkouts.toggle()
+                    activeSheet = .addWorkouts
                 } label: {
                     Text("Add Workouts")
                 }
@@ -231,4 +243,3 @@ fileprivate extension View {
         }
     }
 }
-
