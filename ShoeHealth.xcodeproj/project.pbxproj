@@ -70,6 +70,7 @@
 		09630FF32D08B510006C14E0 /* ShoeSelectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09630FF22D08B510006C14E0 /* ShoeSelectionIntent.swift */; };
 		0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969BDE52C58FE9400933469 /* SettingsManager.swift */; };
 		096D36A42B20B1C900C78453 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D36A32B20B1C900C78453 /* Formatters.swift */; };
+		09715ED02E4DD88600129004 /* ShoesHorizontalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09715ECF2E4DD88600129004 /* ShoesHorizontalListView.swift */; };
 		0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0975440B2B28769A00B379E2 /* ShoesViewModel.swift */; };
 		0978E0B02CB53D1400DEA781 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0978E0AF2CB53D1400DEA781 /* Assets.xcassets */; };
 		097C43522C1DC3ED00A1C639 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */; };
@@ -233,6 +234,7 @@
 		09630FF22D08B510006C14E0 /* ShoeSelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeSelectionIntent.swift; sourceTree = "<group>"; };
 		0969BDE52C58FE9400933469 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		096D36A32B20B1C900C78453 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
+		09715ECF2E4DD88600129004 /* ShoesHorizontalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesHorizontalListView.swift; sourceTree = "<group>"; };
 		0975440B2B28769A00B379E2 /* ShoesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesViewModel.swift; sourceTree = "<group>"; };
 		0978E0AF2CB53D1400DEA781 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		097C43512C1DC3ED00A1C639 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
@@ -790,6 +792,7 @@
 				092DDB752CCA63CF00263F06 /* ShoeSearchListView.swift */,
 				0944A7FE2CEB8D440042081D /* ShoeSearchResultsView.swift */,
 				092DDB772CCA63F000263F06 /* ShoesView.swift */,
+				09715ECF2E4DD88600129004 /* ShoesHorizontalListView.swift */,
 				0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */,
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */,
@@ -1055,6 +1058,7 @@
 				092624642D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift in Sources */,
 				0944A7FC2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
 				09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */,
+				09715ED02E4DD88600129004 /* ShoesHorizontalListView.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,
 				096D36A42B20B1C900C78453 /* Formatters.swift in Sources */,
 				09C595812C649BDC00A006BE /* UnitOfMeasure.swift in Sources */,
@@ -1292,7 +1296,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1336,7 +1340,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

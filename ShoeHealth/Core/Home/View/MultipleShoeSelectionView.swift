@@ -117,7 +117,7 @@ extension MultipleShoeSelectionView {
                         showStats: false,
                         showNavigationLink: false
                     )
-                        .padding([.leading, .bottom], 8)
+                    .padding([.leading, .bottom], 8)
                 } else {
                     Text("No shoe selected")
                         .foregroundStyle(.red)

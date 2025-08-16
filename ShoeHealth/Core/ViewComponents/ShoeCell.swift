@@ -13,6 +13,7 @@ struct ShoeCell: View {
     
     var shoe: Shoe
     var width: CGFloat
+    var cornerRadius: CGFloat
     var hideImage: Bool = false
     var displayProgress: Bool = true
     var reserveSpace: Bool = true
@@ -28,7 +29,7 @@ struct ShoeCell: View {
                                 progress: shoe.wearPercentage,
                                 color: shoe.wearColor,
                                 width: width,
-                                cornerRadius: Constants.cornerRadius
+                                cornerRadius: cornerRadius
                             )
                         }
                         
@@ -36,7 +37,7 @@ struct ShoeCell: View {
                             Color.black.opacity(0.4)
                         }
                     }
-                    .clipShape(.rect(cornerRadius: Constants.cornerRadius))
+                    .clipShape(.rect(cornerRadius: cornerRadius))
             }
             
             VStack(alignment: .leading, spacing: 0) {
@@ -77,7 +78,7 @@ struct ShoeCell: View {
     ScrollView(.horizontal) {
         LazyHStack(spacing: 10) {
             ForEach(Shoe.previewShoes) { shoe in
-                ShoeCell(shoe: shoe,width: width)
+                ShoeCell(shoe: shoe,width: width, cornerRadius: Constants.cornerRadius)
             }
         }
         .padding(.horizontal)

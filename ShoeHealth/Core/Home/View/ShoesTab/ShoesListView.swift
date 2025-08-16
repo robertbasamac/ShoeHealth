@@ -28,6 +28,7 @@ struct ShoesListView: View {
         List {
             ForEach(shoesViewModel.getShoes(for: category)) { shoe in
                 ShoeListItem(shoe: shoe, width: width)
+                    .id(shoe.id)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -36,6 +37,17 @@ struct ShoesListView: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         swipeLeftActions(shoe: shoe)
                     }
+                    .confirmationDialog(
+                        "Delete this shoe?",
+                        isPresented: $showDeletionConfirmation,
+                        titleVisibility: .visible,
+                        presenting: shoeForDeletion,
+                        actions: { shoe in
+                            confirmationActions(shoe: shoe)
+                        },
+                        message: { shoe in
+                            Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                        })
                     .onTapGesture {
                         navigationRouter.navigate(to: .shoe(shoe))
                     }
@@ -49,17 +61,6 @@ struct ShoesListView: View {
         .navigationTitle(category.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
-        .confirmationDialog(
-            "Delete this shoe?",
-            isPresented: $showDeletionConfirmation,
-            titleVisibility: .visible,
-            presenting: shoeForDeletion,
-            actions: { shoe in
-                confirmationActions(shoe: shoe)
-            },
-            message: { shoe in
-                Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
-            })
         .safeAreaInset(edge: .bottom) {
             shoeCategoryPicker
         }
@@ -68,9 +69,6 @@ struct ShoesListView: View {
         }
         .toolbar {
             toolbarItems
-        }
-        .navigationDestination(for: Shoe.self) { shoe in
-            ShoeDetailView(shoe: shoe)
         }
     }
 }

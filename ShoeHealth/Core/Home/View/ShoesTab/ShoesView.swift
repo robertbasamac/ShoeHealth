@@ -20,7 +20,11 @@ struct ShoesView: View {
     @Environment(\.isSearching) var isSearching
     @Environment(\.dismissSearch) var dismissSearch
     
-    @State private var showDeletionConfirmation: Bool = false
+    @State private var showDeletionConfirmationDefault: Bool = false
+    @State private var showDeletionConfirmationRecently: Bool = false
+    @State private var showDeletionConfirmationActive: Bool = false
+    @State private var showDeletionConfirmationRetired: Bool = false
+
     @State private var shoeForDeletion: Shoe? = nil
     @State private var shoeForDefaultSelection: Shoe? = nil
     
@@ -42,17 +46,20 @@ struct ShoesView: View {
                 retiredShoesSection
             }
         }
-        .confirmationDialog(
-            "Delete this shoe?",
-            isPresented: $showDeletionConfirmation,
-            titleVisibility: .visible,
-            presenting: shoeForDeletion,
-            actions: { shoe in
-                confirmationActions(shoe: shoe)
-            },
-            message: { shoe in
-                Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
-            })
+        .sheet(item: $shoeForDefaultSelection, onDismiss: {
+            triggerSetNewDailyDefaultShoe()
+        }) { shoe in
+            NavigationStack {
+                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    withAnimation {
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                    }
+                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                }
+            }
+            .presentationDetents([.medium])
+            .interactiveDismissDisabled()
+        }
         .toolbar {
             toolbarItems
         }
@@ -77,10 +84,7 @@ extension ShoesView {
     
     @ViewBuilder
     private var lastRunSection: some View {
-        VStack(spacing: 0) {
-            Text("Last Run")
-                .asHeader()
-            
+        SectionBlock(title: "Last Run", rounded: true) {
             Group {
                 if let lastRun = healthManager.getLastRun() {
                     VStack(spacing: 8) {
@@ -120,9 +124,7 @@ extension ShoesView {
                         
                         VStack(spacing: 6) {
                             Button {
-                                Task {
-                                    await healthManager.fetchRunningWorkouts()
-                                }
+                                Task { await healthManager.fetchRunningWorkouts() }
                             } label: {
                                 Label("Refresh", systemImage: "arrow.clockwise")
                                     .foregroundStyle(.black)
@@ -142,81 +144,92 @@ extension ShoesView {
                     .padding(.horizontal, 12)
                 }
             }
-            .roundedContainer()
         }
     }
     
     @ViewBuilder
     private var defaultShoeSection: some View {
-        VStack(spacing: 0) {
-            Text("Default Shoes")
-                .asHeader()
-            
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(RunType.allCases, id: \.self) { runType in
-                        runTypeButton(runType)
+        SectionBlock(title: "Default Shoes") {
+            VStack(spacing: 0) {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(RunType.allCases, id: \.self) { runType in
+                            runTypeButton(runType)
+                        }
                     }
                 }
-            }
-            .contentMargins(.horizontal, 20)
-            .contentMargins(.top, 8)
-            
-            if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
-                ShoeListItem(shoe: shoe, width: width)
-                    .roundedContainer()
-                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-                    .contextMenu {
-                        retireReinstateButton(shoe)
-                        deleteButton(shoe)
-                    } preview: {
-                        contextMenuPreview(shoe)
-                    }
-                    .onTapGesture {
-                        dismissSearch()
-                        navigationRouter.navigate(to: .shoe(shoe))
-                    }
-            } else {
-                HStack(spacing: 0) {
-                    ShoeImage(width: width)
-                        .frame(width: width, height: width)
-                        .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
-                    
-                    VStack {
-                        Group {
-                            Text("No default shoe selected for ") +
-                            Text("\(selectedDefaulRunType.rawValue.capitalized) runs")
-                        }
-                        .font(.callout)
-                        .multilineTextAlignment(.center)
-                        
-                        Button {
-                            if shoesViewModel.shoes.isEmpty {
-                                navigationRouter.showSheet = .addShoe
-                            } else {
-                                navigationRouter.showSheet = .setDefaultShoe(forRunType: selectedDefaulRunType)
+                .contentMargins(.horizontal, 20)
+                .contentMargins(.top, 8)
+                
+                Group {
+                    if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
+                        ShoeListItem(shoe: shoe, width: width)
+                            .roundedContainer()
+                            .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+                            .contextMenu {
+                                retireReinstateButton(shoe)
+                                deleteButton(shoe)
+                            } preview: {
+                                contextMenuPreview(shoe)
                             }
-                        } label: {
-                            if shoesViewModel.shoes.isEmpty {
-                                Text("Add Shoe")
-                                    .font(.callout)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.black)
-                            } else {
-                                Text("Select Shoe")
-                                    .font(.callout)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.black)
+                            .onTapGesture {
+                                dismissSearch()
+                                navigationRouter.navigate(to: .shoe(shoe))
                             }
+                    } else {
+                        HStack(spacing: 0) {
+                            ShoeImage(width: width)
+                                .frame(width: width, height: width)
+                                .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
+                            
+                            VStack {
+                                Group {
+                                    Text("No default shoe selected for ") +
+                                    Text("\(selectedDefaulRunType.rawValue.capitalized) runs")
+                                }
+                                .font(.callout)
+                                .multilineTextAlignment(.center)
+                                
+                                Button {
+                                    if shoesViewModel.shoes.isEmpty {
+                                        navigationRouter.showSheet = .addShoe
+                                    } else {
+                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: selectedDefaulRunType)
+                                    }
+                                } label: {
+                                    if shoesViewModel.shoes.isEmpty {
+                                        Text("Add Shoe")
+                                            .font(.callout)
+                                            .fontWeight(.medium)
+                                            .foregroundStyle(.black)
+                                    } else {
+                                        Text("Select Shoe")
+                                            .font(.callout)
+                                            .fontWeight(.medium)
+                                            .foregroundStyle(.black)
+                                    }
+                                }
+                                .tint(.accentColor)
+                                .buttonStyle(BorderedProminentButtonStyle())
+                                .buttonBorderShape(.capsule)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.horizontal, 12)
                         }
-                        .tint(.accentColor)
-                        .buttonStyle(BorderedProminentButtonStyle())
-                        .buttonBorderShape(.capsule)
+                        .roundedContainer()
                     }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.horizontal, 12)
                 }
-                .roundedContainer()
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmationDefault,
+                    titleVisibility: .visible,
+                    presenting: shoeForDeletion,
+                    actions: { shoe in
+                        confirmationActions(shoe: shoe)
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
             }
         }
     }
@@ -224,110 +237,147 @@ extension ShoesView {
     @ViewBuilder
     private var recentlyUsedSection: some View {
         let shoes = shoesViewModel.getRecentlyUsedShoes()
-        
         if !shoes.isEmpty {
-            VStack(spacing: 0) {
-                Text("Recently Used")
-                    .asHeader()
-                
-                shoesCarousel(shoes: shoes)
+            SectionBlock(title: "Recently Used") {
+                ShoesHorizontalListView(
+                    shoes: shoes,
+                    width: width,
+                    onTap: { shoe in
+                        dismissSearch()
+                        navigationRouter.navigate(to: .shoe(shoe))
+                    },
+                    onSetDefault: { shoe in
+                        shoeForDefaultSelection = shoe
+                    },
+                    onRetireToggle: { shoe in
+                        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+                        withAnimation {
+                            shoesViewModel.retireShoe(shoe.id)
+                        }
+                        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                            }
+                        }
+                    },
+                    onDeleteRequest: { shoe in
+                        shoeForDeletion = shoe
+                        showDeletionConfirmationRecently.toggle()
+                    }
+                )
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmationRecently,
+                    titleVisibility: .visible,
+                    presenting: shoeForDeletion,
+                    actions: { shoe in
+                        confirmationActions(shoe: shoe)
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
             }
         }
     }
-    
+
     @ViewBuilder
     private var activeShoesSection: some View {
         let shoes = shoesViewModel.getShoes(for: .active)
-
         if !shoes.isEmpty {
-            VStack(spacing: 0) {
-                HStack {
-                    Text("Active Shoes")
-                    Image(systemName: "chevron.right")
-                        .imageScale(.small)
-                        .foregroundStyle(.secondary)
-                }
-                .asHeader()
-                .onTapGesture {
-                    dismissSearch()
-                    navigationRouter.navigate(to: .category(.active))
-                }
-                
-                shoesCarousel(shoes: shoes)
+            SectionBlock(title: "Active Shoes", onTap: {
+                dismissSearch()
+                navigationRouter.navigate(to: .category(.active))
+            }) {
+                ShoesHorizontalListView(
+                    shoes: shoes,
+                    width: width,
+                    onTap: { shoe in
+                        dismissSearch()
+                        navigationRouter.navigate(to: .shoe(shoe))
+                    },
+                    onSetDefault: { shoe in
+                        shoeForDefaultSelection = shoe
+                    },
+                    onRetireToggle: { shoe in
+                        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+                        withAnimation {
+                            shoesViewModel.retireShoe(shoe.id)
+                        }
+                        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                            }
+                        }
+                    },
+                    onDeleteRequest: { shoe in
+                        shoeForDeletion = shoe
+                        showDeletionConfirmationActive.toggle()
+                    }
+                )
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmationActive,
+                    titleVisibility: .visible,
+                    presenting: shoeForDeletion,
+                    actions: { shoe in
+                        confirmationActions(shoe: shoe)
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
             }
         }
     }
-    
+
     @ViewBuilder
     private var retiredShoesSection: some View {
         let shoes = shoesViewModel.getShoes(for: .retired)
-
         if !shoes.isEmpty {
-            VStack(spacing: 0) {
-                HStack {
-                    Text("Retired Shoes")
-                    Image(systemName: "chevron.right")
-                        .imageScale(.small)
-                        .foregroundStyle(.secondary)
-                }
-                .asHeader()
-                .onTapGesture {
-                    dismissSearch()
-                    navigationRouter.navigate(to: .category(.retired))
-                }
-                
-                shoesCarousel(shoes: shoes)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func shoesCarousel(shoes: [Shoe]) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(shoes) { shoe in
-                    ShoeCell(shoe: shoe, width: width)
-                        .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-                        .contextMenu {
-                            if storeManager.hasFullAccess ||
-                                (!storeManager.hasFullAccess &&
-                                 !shoe.defaultRunTypes.contains(.daily) &&
-                                 !shoesViewModel.shouldRestrictShoe(shoe.id)) {
-                                setDefaultShoeButton(shoe)
+            SectionBlock(title: "Retired Shoes", onTap: {
+                dismissSearch()
+                navigationRouter.navigate(to: .category(.retired))
+            }) {
+                ShoesHorizontalListView(
+                    shoes: shoes,
+                    width: width,
+                    onTap: { shoe in
+                        dismissSearch()
+                        navigationRouter.navigate(to: .shoe(shoe))
+                    },
+                    onSetDefault: { shoe in
+                        shoeForDefaultSelection = shoe
+                    },
+                    onRetireToggle: { shoe in
+                        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+                        withAnimation {
+                            shoesViewModel.retireShoe(shoe.id)
+                        }
+                        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
                             }
-                            retireReinstateButton(shoe)
-                            deleteButton(shoe)
-                        } preview: {
-                            contextMenuPreview(shoe)
                         }
-                        .onTapGesture {
-                            dismissSearch()
-                            navigationRouter.navigate(to: .shoe(shoe))
-                        }
-                }
-            }
-            .scrollTargetLayout()
-        }
-        .scrollTargetBehavior(.viewAligned)
-        .contentMargins(.horizontal, 20)
-        .contentMargins(.vertical, 8)
-        .sheet(item: $shoeForDefaultSelection, onDismiss: {
-            triggerSetNewDailyDefaultShoe()
-        }) { shoe in
-            NavigationStack {
-                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
-                    withAnimation {
-                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                    },
+                    onDeleteRequest: { shoe in
+                        shoeForDeletion = shoe
+                        showDeletionConfirmationRetired.toggle()
                     }
-                    
-                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
-                }
+                )
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmationRetired,
+                    titleVisibility: .visible,
+                    presenting: shoeForDeletion,
+                    actions: { shoe in
+                        confirmationActions(shoe: shoe)
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
             }
-            .presentationDetents([.medium])
-            .interactiveDismissDisabled()
         }
     }
-    
+        
     @ViewBuilder
     private func runDateAndTimeSection(_ run: HKWorkout) -> some View {
         VStack(alignment: .center) {
@@ -518,7 +568,7 @@ extension ShoesView {
     private func deleteButton(_ shoe: Shoe) -> some View {
         Button(role: .destructive) {
             shoeForDeletion = shoe
-            showDeletionConfirmation.toggle()
+            showDeletionConfirmationDefault.toggle()
         } label: {
             Label("Delete", systemImage: "trash")
         }
@@ -551,11 +601,9 @@ extension ShoesView {
             shoeForDeletion = nil
             
             let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily)
-            
             withAnimation {
                 shoesViewModel.deleteShoe(shoe.id)
             }
-            
             navigationRouter.deleteShoe(shoe.id)
             
             if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
@@ -569,10 +617,10 @@ extension ShoesView {
     @ViewBuilder
     private func contextMenuPreview(_ shoe: Shoe) -> some View {
         if shoe.image == nil {
-            ShoeCell(shoe: shoe, width: 150, hideImage: true, displayProgress: false, reserveSpace: false)
+            ShoeCell(shoe: shoe, width: 150, cornerRadius: Constants.cornerRadius, hideImage: true, displayProgress: false, reserveSpace: false)
                 .padding(10)
         } else {
-            ShoeCell(shoe: shoe, width: 300, displayProgress: false, reserveSpace: false)
+            ShoeCell(shoe: shoe, width: 300, cornerRadius: Constants.cornerRadius, displayProgress: false, reserveSpace: false)
                 .padding(10)
         }
     }
@@ -613,6 +661,121 @@ extension ShoesView {
                 Image(systemName: "plus")
             }
         }
+    }
+}
+
+// MARK: - Section Header & Block
+
+fileprivate struct SectionHeader<Accessory: View>: View {
+    let title: LocalizedStringKey
+    let onTap: (() -> Void)?
+    @ViewBuilder var accessory: () -> Accessory
+
+    init(
+        _ title: LocalizedStringKey,
+        onTap: (() -> Void)? = nil,
+        @ViewBuilder accessory: @escaping () -> Accessory = { EmptyView() }
+    ) {
+        self.title = title
+        self.onTap = onTap
+        self.accessory = accessory
+    }
+
+    var body: some View {
+        HStack {
+            Text(title)
+            accessory()
+        }
+        .asHeader()
+        .contentShape(Rectangle())
+        .onTapGesture { onTap?() }
+    }
+}
+
+fileprivate extension SectionHeader where Accessory == EmptyView {
+
+    init(
+        _ title: LocalizedStringKey,
+        onTap: (() -> Void)? = nil
+    ) {
+        self.init(
+            title,
+            onTap: onTap,
+            accessory: {
+                EmptyView()
+            })
+    }
+}
+
+fileprivate struct SectionBlock<Header: View, Content: View>: View {
+    
+    private let rounded: Bool
+    private let header: Header
+    private let content: Content
+
+    init(
+        rounded: Bool = false,
+        @ViewBuilder header: () -> Header,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.rounded = rounded
+        self.header = header()
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+            if rounded {
+                content.roundedContainer()
+            } else {
+                content
+            }
+        }
+    }
+}
+
+// Title-only
+extension SectionBlock where Header == SectionHeader<EmptyView> {
+    
+    init(
+        title: LocalizedStringKey,
+        rounded: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            rounded: rounded,
+            header: {
+                SectionHeader(title)
+            },
+            content: content)
+    }
+}
+
+// Tappable title with chevron accessory
+extension SectionBlock where Header == SectionHeader<AnyView> {
+    
+    init(
+        title: LocalizedStringKey,
+        rounded: Bool = false,
+        onTap: @escaping () -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            rounded: rounded,
+            header: {
+                SectionHeader(
+                    title,
+                    onTap: onTap
+                ) {
+                    AnyView(
+                        Image(systemName: "chevron.right")
+                            .imageScale(.small)
+                            .foregroundStyle(.secondary)
+                    )
+                }
+            },
+            content: content)
     }
 }
 
