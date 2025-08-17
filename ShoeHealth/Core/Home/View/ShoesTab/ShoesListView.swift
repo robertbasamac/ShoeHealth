@@ -179,7 +179,7 @@ extension ShoesListView {
                 }
             }
             .pickerStyle(.palette)
-            .padding(.bottom, 1) 
+            .padding(.bottom, 1)
             .background(.bar, in: .rect(cornerRadius: 8))
             .padding(.bottom, 10)
             .padding(.horizontal, 40)

@@ -172,7 +172,7 @@ extension ShoeDetailView {
                     } label: {
                         Label("Edit", systemImage: "pencil")
                     }
-//                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
 
                     Button {
                         activeSheet = .defaultSelection

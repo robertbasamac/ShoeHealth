@@ -72,12 +72,14 @@ struct ShoeWorkoutsListView: View {
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
         .scrollBounceBehavior(.basedOnSize)
-        .hideTabBar()
         .overlay {
             emptyWorkoutsView
         }
         .toolbar {
             toolbarItems
+        }
+        .safeAreaInset(edge: .bottom) {
+            actionBottomBar
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
@@ -120,6 +122,31 @@ struct ShoeWorkoutsListView: View {
 extension ShoeWorkoutsListView {
     
     @ViewBuilder
+    private var actionBottomBar: some View {
+        ActionBottomBar(
+            editing: editMode.isEditing,
+            selectionsEmpty: selections.isEmpty,
+            isShoeRestricted: isShoeRestricted,
+            namespace: namespace,
+            onAssignToShoe: {
+                activeSheet = .assignToShoe
+            },
+            onDeleteSelected: {
+                withAnimation {
+                    removeWorkouts(workoutIDs: Array(selections))
+                    selections = Set<UUID>()
+                    editMode = .inactive
+                }
+            },
+            onAddWorkouts: {
+                activeSheet = .addWorkouts
+            }
+        )
+        .padding(.bottom, 10)
+        .padding(.horizontal, 40)
+    }
+    
+    @ViewBuilder
     private var emptyWorkoutsView: some View {
         if shoe.workouts.isEmpty {
             ContentUnavailableView {
@@ -152,7 +179,7 @@ extension ShoeWorkoutsListView {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
                     let allWorkoutIDs = groupedWorkouts.flatMap { $0.workouts.map { $0.id } }
-
+                    
                     if selections.count == allWorkoutIDs.count {
                         selections = Set<UUID>()
                     } else {
@@ -165,36 +192,6 @@ extension ShoeWorkoutsListView {
                         Text("Select All")
                     }
                 }
-            }
-        }
-        
-        ToolbarItemGroup(placement: .status) {
-            if editMode.isEditing {
-                Button {
-                    activeSheet = .assignToShoe
-                } label: {
-                    Text("Assign To")
-                }
-                .disabled(selections.isEmpty)
-                
-                Button {
-                    withAnimation {
-                        removeWorkouts(workoutIDs: Array(selections))
-                        
-                        selections = Set<UUID>()
-                        editMode = .inactive
-                    }
-                } label: {
-                    Text("Delete")
-                }
-                .disabled(selections.isEmpty)
-            } else {
-                Button {
-                    activeSheet = .addWorkouts
-                } label: {
-                    Text("Add Workouts")
-                }
-                .disabled(isShoeRestricted)
             }
         }
     }
@@ -230,16 +227,67 @@ extension ShoeWorkoutsListView {
 }
 
 
-// MARK: - View Extension
+// MARK: - Reusable Bottom Bar
+
+fileprivate struct ActionBottomBar: View {
+    
+    let editing: Bool
+    let selectionsEmpty: Bool
+    let isShoeRestricted: Bool
+    let namespace: Namespace.ID
+    let onAssignToShoe: () -> Void
+    let onDeleteSelected: () -> Void
+    let onAddWorkouts: () -> Void
+
+    var body: some View {
+        Group {
+            if editing {
+                HStack(spacing: 40) {
+                    Button {
+                        onAssignToShoe()
+                    } label: {
+                        Text("Assign To")
+                            .foregroundStyle(selectionsEmpty ? .gray : .accent)
+                    }
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .accent.opacity(0.1))
+                    .disabled(selectionsEmpty)
+                    
+                    Button {
+                        onDeleteSelected()
+                    } label: {
+                        Text("Delete")
+                            .foregroundStyle(selectionsEmpty ? .gray : .red)
+                    }
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .red.opacity(0.1))
+                    .disabled(selectionsEmpty)
+                }
+            } else {
+                Button {
+                    onAddWorkouts()
+                } label: {
+                    Text("Add Workouts")
+                        .foregroundStyle(isShoeRestricted ? .gray : .accent)
+                }
+                .adaptiveGlassCapsule(tint: isShoeRestricted ? .clear : .accent.opacity(0.1))
+                .disabled(isShoeRestricted)
+            }
+        }
+    }
+}
 
 fileprivate extension View {
-    
     @ViewBuilder
-    func hideTabBar() -> some View {
-        if #available(iOS 18, *) {
-            self.toolbarVisibility(.hidden, for: .tabBar)
+    func adaptiveGlassCapsule(tint: Color) -> some View {
+        if #available(iOS 26, *) {
+            self
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .tint(tint)
         } else {
-            self.toolbar(.hidden, for: .tabBar)
+            self
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .tint(tint)
         }
     }
 }
