@@ -96,7 +96,6 @@ extension SettingsTab {
     
     @ViewBuilder
     private var remindMeLaterSection: some View {
-        
         Section {
             NavigationLink {
                 RemindMeLaterView(selection: $remindMeLaterTime)

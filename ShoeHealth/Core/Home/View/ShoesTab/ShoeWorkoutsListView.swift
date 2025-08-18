@@ -247,28 +247,38 @@ fileprivate struct ActionBottomBar: View {
                         onAssignToShoe()
                     } label: {
                         Text("Assign To")
-                            .foregroundStyle(selectionsEmpty ? .gray : .accent)
+                            .font(.callout)
+                            .fontWeight(.medium)
+                            .padding(.vertical, 4)
+                            .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .accent)
                     }
-                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .accent.opacity(0.1))
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .accent)
                     .disabled(selectionsEmpty)
                     
                     Button {
                         onDeleteSelected()
                     } label: {
                         Text("Delete")
-                            .foregroundStyle(selectionsEmpty ? .gray : .red)
+                            .font(.callout)
+                            .fontWeight(.medium)
+                            .padding(.vertical, 4)
+                            .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .red)
                     }
-                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .red.opacity(0.1))
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .red)
                     .disabled(selectionsEmpty)
                 }
+                .animation(.smooth, value: selectionsEmpty)
             } else {
                 Button {
                     onAddWorkouts()
                 } label: {
                     Text("Add Workouts")
-                        .foregroundStyle(isShoeRestricted ? .gray : .accent)
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .padding(.vertical, 4)
+                        .foregroundStyle(isShoeRestricted ? Color(uiColor: .systemGray2) : .accent)
                 }
-                .adaptiveGlassCapsule(tint: isShoeRestricted ? .clear : .accent.opacity(0.1))
+                .adaptiveGlassCapsule(tint: isShoeRestricted ? .clear : .accent)
                 .disabled(isShoeRestricted)
             }
         }
@@ -282,12 +292,12 @@ fileprivate extension View {
             self
                 .buttonStyle(.glassProminent)
                 .buttonBorderShape(.capsule)
-                .tint(tint)
+                .tint(tint == .clear ? tint : tint.opacity(0.1))
         } else {
             self
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
-                .tint(tint)
+                .tint(tint == .clear ? tint : tint.opacity(0.2))
         }
     }
 }

@@ -67,6 +67,9 @@ struct ShoeSelectionView: View {
         .toolbar {
             toolbarItems
         }
+        .safeAreaInset(edge: .bottom, content: {
+            addNewShoeButton
+        })
         .navigationDestination(isPresented: $showAddShoe) {
             ShoeFormView(hideCancelButton: true) { shoe in
                 self.selectedShoe = shoe
@@ -159,7 +162,12 @@ extension ShoeSelectionView {
                     Text("Add New Shoe")
                         .font(.callout)
                         .fontWeight(.medium)
+                        .foregroundStyle(.accent)
+                        .padding(.vertical, 4)
                 }
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .tint(.accentColor.opacity(0.15))
             } else {
                 Button {
                     if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
@@ -171,10 +179,12 @@ extension ShoeSelectionView {
                     Text("Add New Shoe")
                         .font(.callout)
                         .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                        .padding(.vertical, 4)
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
-                .foregroundStyle(.black)
+                .tint(.accentColor)
             }
         }
         .alert(FeatureAlertType.limitReached.title, isPresented: $showFeatureRestrictedAlert, actions: {
@@ -217,10 +227,6 @@ extension ShoeSelectionView {
                 Text("Save")
             }
             .disabled(isSaveButtonDisabled())
-        }
-        
-        ToolbarItem(placement: .status) {
-            addNewShoeButton
         }
     }
 }
