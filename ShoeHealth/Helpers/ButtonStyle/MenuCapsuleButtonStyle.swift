@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuCapsuleButtonStyle: ButtonStyle {
     
     var isSelected: Bool
+    var isEnabledAppearance: Bool = true
     
     @Environment(\.isEnabled) private var isEnabled: Bool
     
@@ -17,7 +18,7 @@ struct MenuCapsuleButtonStyle: ButtonStyle {
         configuration.label
             .font(.callout)
             .fontWeight(.medium)
-            .foregroundStyle(!isEnabled ? Color.gray : (isSelected ? Color.black : Color.primary))
+            .foregroundStyle(!isEnabledAppearance ? Color.gray : (isSelected ? Color.black : Color.primary))
             .padding(.vertical, 6)
             .padding(.horizontal, 16)
             .background(isSelected ? Color.theme.accent : Color.theme.containerBackground, in: .capsule(style: .circular))
@@ -26,7 +27,8 @@ struct MenuCapsuleButtonStyle: ButtonStyle {
 }
 
 extension ButtonStyle where Self == MenuCapsuleButtonStyle {
-    static func menuButton(_ isSeleced: Bool) -> Self {
-        MenuCapsuleButtonStyle(isSelected: isSeleced)
+
+    static func menuButton(_ isSelected: Bool, enabledAppearance: Bool = true) -> Self {
+        MenuCapsuleButtonStyle(isSelected: isSelected, isEnabledAppearance: enabledAppearance)
     }
 }

@@ -249,7 +249,7 @@ fileprivate struct ActionBottomBar: View {
                         Text("Assign To")
                             .font(.callout)
                             .fontWeight(.medium)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 6)
                             .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .accent)
                     }
                     .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .accent)
@@ -261,7 +261,7 @@ fileprivate struct ActionBottomBar: View {
                         Text("Delete")
                             .font(.callout)
                             .fontWeight(.medium)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 6)
                             .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .red)
                     }
                     .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .red)
@@ -275,7 +275,7 @@ fileprivate struct ActionBottomBar: View {
                     Text("Add Workouts")
                         .font(.callout)
                         .fontWeight(.medium)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                         .foregroundStyle(isShoeRestricted ? Color(uiColor: .systemGray2) : .accent)
                 }
                 .adaptiveGlassCapsule(tint: isShoeRestricted ? .clear : .accent)

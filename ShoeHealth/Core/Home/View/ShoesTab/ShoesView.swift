@@ -591,8 +591,7 @@ extension ShoesView {
         } label: {
             Text(runType.rawValue.capitalized)
         }
-        .buttonStyle(.menuButton(selectedDefaulRunType == runType))
-        .disabled(isFeatureDisabled(for: runType))
+        .buttonStyle(.menuButton(selectedDefaulRunType == runType, enabledAppearance: !isFeatureDisabled(for: runType)))
     }
     
     @ViewBuilder

@@ -59,6 +59,7 @@ struct ShoeSelectionView: View {
             
             List {
                 activeShoesSection
+
                 retiredShoesSection
             }
             .listStyle(.sidebar)
@@ -134,6 +135,7 @@ extension ShoeSelectionView {
                     imageAlignment: .trailing,
                     infoAlignment: .leading,
                     showStats: false,
+                    showWearProgress: true,
                     showNavigationLink: false,
                     reserveSpace: false
                 )
@@ -163,7 +165,7 @@ extension ShoeSelectionView {
                         .font(.callout)
                         .fontWeight(.medium)
                         .foregroundStyle(.accent)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                 }
                 .buttonStyle(.glassProminent)
                 .buttonBorderShape(.capsule)
@@ -180,7 +182,7 @@ extension ShoeSelectionView {
                         .font(.callout)
                         .fontWeight(.medium)
                         .foregroundStyle(.black)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 6)
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
