@@ -158,7 +158,7 @@ extension ShoesView {
                         }
                     }
                 }
-                .contentMargins(.horizontal, 20)
+                .contentMargins(.horizontal, Constants.horizontalMargin)
                 .contentMargins(.top, 8)
                 
                 Group {

@@ -162,7 +162,7 @@ extension ShoeListItem {
             }
             .listStyle(.plain)
             .listRowSpacing(4)
-            .contentMargins(.horizontal, 20, for: .scrollContent)
+            .contentMargins(.horizontal, Constants.horizontalMargin, for: .scrollContent)
             .contentMargins(.top, 10, for: .scrollContent)
             .contentMargins(.top, 10, for: .scrollIndicators)
             .navigationTitle("Shoes")

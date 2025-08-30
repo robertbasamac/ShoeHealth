@@ -31,7 +31,7 @@ struct ShoeSearchResultsView: View {
         }
         .listStyle(.plain)
         .listRowSpacing(4)
-        .contentMargins(.horizontal, 20, for: .scrollContent)
+        .contentMargins(.horizontal, Constants.horizontalMargin, for: .scrollContent)
         .contentMargins(.top, 10, for: .scrollContent)
         .navigationDestination(for: Shoe.self) { shoe in
             ShoeDetailView(shoe: shoe)

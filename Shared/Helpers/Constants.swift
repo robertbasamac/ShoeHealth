@@ -24,4 +24,14 @@ struct Constants {
             return 10
         }
     }
+    
+    static var presentationCornerRadius: CGFloat {
+        if #available(iOS 26.0, *) {
+            return 25
+        } else {
+            return 20
+        }
+    }
+    
+    static let horizontalMargin: CGFloat = 20
 }

@@ -86,7 +86,7 @@ struct ShoesHorizontalListView: View {
             .scrollTargetLayout()
         }
         .scrollTargetBehavior(.viewAligned)
-        .contentMargins(.horizontal, 20)
+        .contentMargins(.horizontal, Constants.horizontalMargin)
         .contentMargins(.vertical, 8)
     }
 }

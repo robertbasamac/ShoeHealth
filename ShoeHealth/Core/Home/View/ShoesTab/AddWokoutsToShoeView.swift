@@ -36,7 +36,7 @@ struct AddWokoutsToShoeView: View {
         }
         .listStyle(.plain)
         .listRowSpacing(4)
-        .contentMargins(.trailing, 20, for: .scrollContent)
+        .contentMargins(.trailing, Constants.horizontalMargin, for: .scrollContent)
         .navigationTitle("Add Workouts")
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)

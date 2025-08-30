@@ -97,7 +97,7 @@ struct ShoeDetailView: View {
                     NavigationStack {
                         ShoeFormView(shoe: shoe)
                     }
-                    .presentationCornerRadius(20)
+                    .presentationCornerRadius(Constants.presentationCornerRadius)
                     .interactiveDismissDisabled()
                     .navigationTransition(
                         .zoom(sourceID: "transition-id", in: namespace)
@@ -106,7 +106,7 @@ struct ShoeDetailView: View {
                     NavigationStack {
                         ShoeFormView(shoe: shoe)
                     }
-                    .presentationCornerRadius(20)
+                    .presentationCornerRadius(Constants.presentationCornerRadius)
                     .interactiveDismissDisabled()
                 }
 

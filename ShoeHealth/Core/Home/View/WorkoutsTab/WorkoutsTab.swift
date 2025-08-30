@@ -94,7 +94,7 @@ struct WorkoutsTab: View {
                     }
                 })
             }
-            .presentationCornerRadius(20)
+            .presentationCornerRadius(Constants.presentationCornerRadius)
             .presentationDragIndicator(.visible)
         })
         .refreshable {
