@@ -545,6 +545,7 @@ final class ShoesViewModel {
         }
         
         NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 self?.handleCloudKitEvent(notification: notification)
             }
