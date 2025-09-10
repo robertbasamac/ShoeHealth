@@ -198,7 +198,7 @@ extension ShoesSchemaV2 {
                 Shoe(
                     image: UIImage(named: "ShoeHealth")?.pngData(),
                     brand: "Nike",
-                    model: "Pegasus Turbo Next Nature",
+                    model: "Pegasus Turbo",
                     nickname: "Next Nature",
                     lifespanDistance: 500,
                     totalDistance: 300,

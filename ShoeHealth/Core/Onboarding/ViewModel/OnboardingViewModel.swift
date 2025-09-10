@@ -21,7 +21,7 @@ class OnboardingViewModel {
     private let notificationManager = NotificationManager.shared
     
     func requestHealthAuthorization() async {
-        let authorization = await healthManager.requestHealthAuthorization()
+        let authorization = await healthManager.requestAuthorization()
         
         await MainActor.run {
             isHealthAuthorized = authorization

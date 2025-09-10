@@ -59,6 +59,7 @@ struct ShoeSelectionView: View {
             
             List {
                 activeShoesSection
+
                 retiredShoesSection
             }
             .listStyle(.sidebar)
@@ -67,6 +68,9 @@ struct ShoeSelectionView: View {
         .toolbar {
             toolbarItems
         }
+        .safeAreaInset(edge: .bottom, content: {
+            addNewShoeButton
+        })
         .navigationDestination(isPresented: $showAddShoe) {
             ShoeFormView(hideCancelButton: true) { shoe in
                 self.selectedShoe = shoe
@@ -127,9 +131,11 @@ extension ShoeSelectionView {
                 ShoeListItem(
                     shoe: shoe,
                     width: size,
+                    cornerRadius: Constants.defaultCornerRadius,
                     imageAlignment: .trailing,
                     infoAlignment: .leading,
                     showStats: false,
+                    showWearProgress: true,
                     showNavigationLink: false,
                     reserveSpace: false
                 )
@@ -146,20 +152,43 @@ extension ShoeSelectionView {
     }
     
     private var addNewShoeButton: some View {
-        Button {
-            if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
-                showAddShoe.toggle()
+        Group {
+            if #available(iOS 26, *) {
+                Button {
+                    if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
+                        showAddShoe.toggle()
+                    } else {
+                        showFeatureRestrictedAlert.toggle()
+                    }
+                } label: {
+                    Text("Add New Shoe")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.accent)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .tint(.accentColor.opacity(0.15))
             } else {
-                showFeatureRestrictedAlert.toggle()
+                Button {
+                    if storeManager.hasFullAccess || !shoesViewModel.isShoesLimitReached() {
+                        showAddShoe.toggle()
+                    } else {
+                        showFeatureRestrictedAlert.toggle()
+                    }
+                } label: {
+                    Text("Add New Shoe")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.black)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .tint(.accentColor)
             }
-        } label: {
-            Text("Add New Shoe")
-                .font(.callout)
-                .fontWeight(.medium)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .foregroundStyle(.black)
         .alert(FeatureAlertType.limitReached.title, isPresented: $showFeatureRestrictedAlert, actions: {
             Button(role: .cancel) {
 //                dismiss()
@@ -181,7 +210,7 @@ extension ShoeSelectionView {
     private var toolbarItems: some ToolbarContent {
         if showCancelButton {
             ToolbarItem(placement: .cancellationAction) {
-                Button {
+                CancelButton {
                     dismiss()
                 } label: {
                     Text("Cancel")
@@ -190,7 +219,7 @@ extension ShoeSelectionView {
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 if let shoe = selectedShoe {
                     onDone(shoe.id)
                 }
@@ -200,10 +229,6 @@ extension ShoeSelectionView {
                 Text("Save")
             }
             .disabled(isSaveButtonDisabled())
-        }
-        
-        ToolbarItem(placement: .status) {
-            addNewShoeButton
         }
     }
 }

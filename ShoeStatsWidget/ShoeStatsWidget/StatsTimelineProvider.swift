@@ -15,10 +15,17 @@ private let logger = Logger(subsystem: "Shoe Health Widgets", category: "MediumS
 
 struct ShoeStatsAppIntentProvider: AppIntentTimelineProvider {
     
-    let modelContext = ModelContext(ShoesStore.shared.modelContainer)
+    let container: ModelContainer
+    let modelContext: ModelContext
     
     typealias Entry = ShoeStatsWidgetEntry
     typealias Intent = ShoeSelectionIntent
+
+    init() {
+        // Use the target-aware ShoesStore: in widget targets it yields a read-only, App Group–backed container
+        self.container = ShoesStore.shared.modelContainer
+        self.modelContext = ModelContext(self.container)
+    }
     
     func placeholder(in context: Context) -> Entry {
         let unitSymbol = getUnitSymbol()

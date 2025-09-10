@@ -17,24 +17,21 @@ struct ShoeDetailView: View {
     @Environment(SettingsManager.self) private var settingsManager
     @Environment(\.dismiss) private var dismiss
     
+    @Namespace private var namespace
+    
     private var shoe: Shoe
     private var isFullScreen: Bool
     
-    /// Used for navigaion and modals presentation
-    @State private var showEditShoe: Bool = false
+    /// Used for navigation and modals presentation
     @State private var showAllWorkouts: Bool = false
-    @State private var showAddWorkouts: Bool = false
     @State private var showDeletionConfirmation: Bool = false
-    @State private var showDefaultSelection: Bool = false
+    @State private var activeSheet: ActiveSheet?
     
     /// Used for Header behavior
     @State private var opacity: CGFloat = 0
     @State private var navBarVisibility: Visibility = .hidden
     @State private var navBarTitle: String = ""
-    
-    private var isAnyModalPresented: Bool {
-        showEditShoe || showAddWorkouts || showDefaultSelection
-    }
+    @State private var navBarSubtitle: String = ""
     
     /// Used to calculate the bottom padding needed to be added to be able to fully scroll content until navigation bar becomes visible
     @State private var bottomPadding: CGFloat = 20
@@ -45,9 +42,17 @@ struct ShoeDetailView: View {
         self.shoe = shoe
         self.isFullScreen = isFullScreen
     }
+
+    private enum ActiveSheet: Hashable, Identifiable {
+        case editShoe
+        case defaultSelection
+        case addWorkouts
+
+        var id: Self { self }
+    }
     
     var body: some View {
-        ScrollView(.vertical) {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 0) {
                 StretchyHeaderCell(
                     height: 250,
@@ -67,16 +72,14 @@ struct ShoeDetailView: View {
 
                 HealthSectionView(shoe: shoe)
                 StatsSectionView(shoe: shoe)
-                WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts, showAddWorkouts: $showAddWorkouts)
+                WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts) {
+                    activeSheet = .addWorkouts
+                }
             }
         }
-        .scrollIndicators(.hidden)
         .scrollTargetBehavior(.dynamicStretchyHeader(for: shoe))
         .contentMargins(.bottom, bottomPadding)
-        .navigationBarBackButtonHidden()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle(navBarTitle)
-        .toolbarBackground(navBarVisibility, for: .navigationBar)
+        .adaptToPreiOS26(navBarVisibility: navBarVisibility, navBarTitle: navBarTitle, navBarSubtitle: navBarSubtitle)
         .toolbar {
             toolbarItems
         }
@@ -84,58 +87,51 @@ struct ShoeDetailView: View {
             sectionHeights = heights
             computeBottomPadding()
         }
-        .confirmationDialog(
-            "Delete this shoe?",
-            isPresented: $showDeletionConfirmation,
-            titleVisibility: .visible,
-            presenting: shoe,
-            actions: { shoe in
-                Button("Delete", role: .destructive) {
-                    deleteShoe()
-                }
-            },
-            message: { shoe in
-                Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
-            })
         .navigationDestination(isPresented: $showAllWorkouts) {
             ShoeWorkoutsListView(shoe: shoe, isShoeRestricted: shoesViewModel.shouldRestrictShoe(shoe.id))
         }
-        .sheet(isPresented: $showEditShoe) {
-            NavigationStack {
-                ShoeFormView(shoe: shoe)
-            }
-            .presentationCornerRadius(20)
-            .interactiveDismissDisabled()
-        }
-        .sheet(isPresented: $showDefaultSelection
-               , onDismiss: {
-            triggerSetNewDailyDefaultShoe()
-        }) {
-            NavigationStack {
-                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
-                    withAnimation {
-                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .editShoe:
+                if #available(iOS 26.0, *) {
+                    NavigationStack {
+                        ShoeFormView(shoe: shoe)
                     }
-                    
-                    NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                    .presentationCornerRadius(Constants.presentationCornerRadius)
+                    .interactiveDismissDisabled()
+                    .navigationTransition(
+                        .zoom(sourceID: "transition-id", in: namespace)
+                    )
+                } else {
+                    NavigationStack {
+                        ShoeFormView(shoe: shoe)
+                    }
+                    .presentationCornerRadius(Constants.presentationCornerRadius)
+                    .interactiveDismissDisabled()
                 }
-            }
-            .presentationDetents([.medium])
-            .interactiveDismissDisabled()
-        }
-        .sheet(isPresented: $showAddWorkouts) {
-            NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoe.id)
-            }
-            .presentationDragIndicator(.visible)
-        }
-    }
-}
 
-private struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+            case .defaultSelection:
+                NavigationStack {
+                    RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                        withAnimation {
+                            shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                        }
+                        NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
+                    }
+                }
+                .presentationDetents([.medium])
+                .interactiveDismissDisabled()
+                .onDisappear {
+                    triggerSetNewDailyDefaultShoe()
+                }
+
+            case .addWorkouts:
+                NavigationStack {
+                    AddWokoutsToShoeView(shoeID: shoe.id)
+                }
+                .presentationDragIndicator(.visible)
+            }
+        }
     }
 }
 
@@ -145,42 +141,79 @@ extension ShoeDetailView {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: isFullScreen ? "xmark" : "chevron.left")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
+        let content = Group {
+            ToolbarItem(placement: .cancellationAction) {
+                if #available(iOS 26, *) {
+                    if isFullScreen {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                    } else {
+                        EmptyView()
+                    }
+                } else {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: isFullScreen ? "xmark" : "chevron.left")
+                            .imageScale(.large)
+                            .fontWeight(.semibold)
+                    }
+                    .buttonStyle(.blurredCircle(Double(1 - opacity)))
+                }
             }
-            .buttonStyle(.blurredCircle(Double(1 - opacity)))
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        activeSheet = .editShoe
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
+
+                    Button {
+                        activeSheet = .defaultSelection
+                    } label: {
+                        Label("Set Default", systemImage: "figure.run")
+                    }
+                    
+                    Button(role: .destructive) {
+                        showDeletionConfirmation.toggle()
+                    } label : {
+                        Label("Delete", systemImage: "trash")
+                    }
+                } label: {
+                    if #available(iOS 26, *) {
+                        Image(systemName: "ellipsis")
+                    } else {
+                        Image(systemName: "ellipsis")
+                            .frame(width: 34, height: 34)
+                            .background(.bar.opacity(Double(1 - opacity)), in: .circle)
+                    }
+                }
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmation,
+                    titleVisibility: .visible,
+                    presenting: shoe,
+                    actions: { shoe in
+                        Button("Delete", role: .destructive) {
+                            deleteShoe()
+                        }
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
+            }
         }
         
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Button {
-                    showEditShoe.toggle()
-                } label: {
-                    Label("Edit", systemImage: "pencil")
-                }
-                .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
-                
-                Button {
-                    showDefaultSelection.toggle()
-                } label: {
-                    Label("Set Default", systemImage: "figure.run")
-                }
-                
-                Button(role: .destructive) {
-                    showDeletionConfirmation.toggle()
-                } label : {
-                    Label("Delete", systemImage: "trash")
-                }
-            } label: {
-                Image(systemName: "ellipsis")
-                    .frame(width: 34, height: 34)
-                    .background(.bar.opacity(Double(1 - opacity)), in: .circle)
-            }
+        if #available(iOS 26, *) {
+            content.matchedTransitionSource(id: "transition-id", in: namespace)
+        } else {
+            content
         }
     }
 }
@@ -245,7 +278,7 @@ extension ShoeDetailView {
     }
     
     private func readFrame(_ frame: CGRect) {
-        guard frame.maxY > 0 && !isAnyModalPresented else {
+        guard frame.maxY > 0 && activeSheet == nil else {
             return
         }
         
@@ -259,6 +292,7 @@ extension ShoeDetailView {
         
         navBarVisibility = frame.maxY < (topPadding - 0.5) ? .automatic : .hidden
         navBarTitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.model : ""
+        navBarSubtitle = frame.maxY < (topPadding + showNavBarTitlePadding) ? shoe.nickname : ""
     }
     
     private func interpolateOpacity(position: CGFloat, minPosition: CGFloat, maxPosition: CGFloat, reversed: Bool) -> Double {
@@ -344,11 +378,12 @@ fileprivate struct HealthSectionView: View {
                     .font(.headline.bold())
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 20)
+                    .padding(.vertical, 2)
                     .dynamicTypeSize(DynamicTypeSize.small...DynamicTypeSize.large)
                 }
                 .tint(shoe.isRetired ? .green : .red)
                 .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.roundedRectangle(radius: 10))
+                .buttonBorderShape(.capsule)
                 .padding(.horizontal, 20)
             }
         }
@@ -669,7 +704,7 @@ fileprivate struct WorkoutsSectionView: View {
     var shoe: Shoe
     
     @Binding var showAllWorkouts: Bool
-    @Binding var showAddWorkouts: Bool
+    var openAddWorkouts: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -686,7 +721,7 @@ fileprivate struct WorkoutsSectionView: View {
             }
             .overlay(alignment: .trailing, content: {
                 Button {
-                    showAddWorkouts.toggle()
+                    openAddWorkouts()
                 } label: {
                     Image(systemName: "plus")
                         .imageScale(.large)
@@ -700,7 +735,7 @@ fileprivate struct WorkoutsSectionView: View {
                     WorkoutListItem(workout: workout)
                         .padding(.horizontal)
                         .padding(.vertical, 6)
-                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(Color.theme.containerBackground, in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                 }
             }
             .padding(.horizontal, 20)
@@ -720,5 +755,26 @@ fileprivate struct WorkoutsSectionView: View {
     
     private func getShoeMostRecentlyWorkouts() -> [HKWorkout] {
         return Array(getShoeWorkouts().prefix(5))
+    }
+}
+
+// MARK: - View Extension
+
+fileprivate extension View {
+    
+    @ViewBuilder
+    func adaptToPreiOS26(navBarVisibility: Visibility, navBarTitle: String, navBarSubtitle: String) -> some View {
+        if #available(iOS 26, *) {
+            self.navigationTitle(navBarTitle)
+                .navigationSubtitle(navBarSubtitle)
+        } else if #available(iOS 18, *) {
+            self.navigationBarBackButtonHidden()
+                .toolbarBackgroundVisibility(navBarVisibility, for: .navigationBar)
+                .navigationBarTitle(navBarTitle, displayMode: .inline)
+        } else {
+            self.navigationBarBackButtonHidden()
+                .toolbarBackground(navBarVisibility, for: .navigationBar)
+                .navigationBarTitle(navBarTitle, displayMode: .inline)
+        }
     }
 }

@@ -155,13 +155,13 @@ extension ShoesSchemaV1 {
         // MARK: ShoeSchemaV1 Shoe - Preview data
         
         static var previewShoe: Shoe {
-            Shoe(nickname: "Turbo", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData())
+            Shoe(nickname: "Next Nature", brand: "Nike", model: "Pegasus Turbo", lifespanDistance: 500, currentDistance: 350, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData())
         }
         
         static var previewShoes: [Shoe] {
             [
                 Shoe(nickname: "Shoey", brand: "Nike", model: "Pegasus 40", lifespanDistance: 600, aquisitionDate: Date.now, isDefaultShoe: false, image: UIImage(named: "pegasus")?.pngData()),
-                Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature Bla bla bla", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData()),
+                Shoe(nickname: "Carl", brand: "Nike", model: "Pegasus Turbo Next Nature", lifespanDistance: 500, currentDistance: 250, aquisitionDate: Date.now, isDefaultShoe: true, image: UIImage(named: "pegasus")?.pngData()),
                 Shoe(nickname: "Fasty", brand: "Nike", model: "Alphafly 3", lifespanDistance: 800, currentDistance: 745, aquisitionDate: Date.now, isDefaultShoe: false),
                 Shoe(nickname: "5k love", brand: "Nike", model: "Streakfly 2", lifespanDistance: 800, currentDistance: 853.43, aquisitionDate: Date.now, isDefaultShoe: false)
             ]

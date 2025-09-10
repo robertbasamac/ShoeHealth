@@ -117,7 +117,7 @@ extension MultipleShoeSelectionView {
                         showStats: false,
                         showNavigationLink: false
                     )
-                        .padding([.leading, .bottom], 8)
+                    .padding([.leading, .bottom], 8)
                 } else {
                     Text("No shoe selected")
                         .foregroundStyle(.red)
@@ -136,7 +136,7 @@ extension MultipleShoeSelectionView {
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button {
+            CancelButton {
                 dismiss()
             } label: {
                 Text("Cancel")
@@ -144,7 +144,7 @@ extension MultipleShoeSelectionView {
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 onDone(selectionsDict)
                 dismiss()
             } label: {

@@ -13,9 +13,11 @@ struct ShoeListItem: View {
 
     var shoe: Shoe
     var width: CGFloat
+    var cornerRadius: CGFloat = Constants.cornerRadius
     var imageAlignment: HorizontalAlignment = .leading
     var infoAlignment: Alignment = .topLeading
     var showStats: Bool = true
+    var showWearProgress: Bool = true
     var showNavigationLink: Bool = true
     var reserveSpace: Bool = true
     
@@ -28,13 +30,15 @@ struct ShoeListItem: View {
                 ShoeImage(imageData: shoe.image, width: width)
                     .frame(width: width, height: width)
                     .overlay {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        if showWearProgress {
+                            RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: cornerRadius)
+                        }
                         
                         if !isEnabled {
                             Color.black.opacity(0.4)
                         }
                     }
-                    .clipShape(.rect(cornerRadius: 10))
+                    .clipShape(.rect(cornerRadius: cornerRadius))
             }
             
             detailsSection
@@ -44,13 +48,15 @@ struct ShoeListItem: View {
                 ShoeImage(imageData: shoe.image, width: width)
                     .frame(width: width, height: width)
                     .overlay {
-                        RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: 10)
+                        if showWearProgress {
+                            RoundedRectangleProgressView(progress: shoe.wearPercentage, color: shoe.wearColor, width: width, cornerRadius: cornerRadius)
+                        }
                         
                         if !isEnabled {
                             Color.black.opacity(0.4)
                         }
                     }
-                    .clipShape(.rect(cornerRadius: 10))
+                    .clipShape(.rect(cornerRadius: cornerRadius))
             }
         }
         .frame(height: width)
@@ -147,11 +153,18 @@ extension ShoeListItem {
         NavigationStack {
             List {
                 ForEach(Shoe.previewShoes) { shoe in
-                    ShoeListItem(shoe: shoe, width: width)
-                        .listRowInsets(EdgeInsets())
+                    ShoeListItem(shoe: shoe, width: width, cornerRadius: Constants.cornerRadius)
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
+                        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                 }
             }
+            .listStyle(.plain)
             .listRowSpacing(4)
+            .contentMargins(.horizontal, Constants.horizontalMargin, for: .scrollContent)
+            .contentMargins(.top, 10, for: .scrollContent)
+            .contentMargins(.top, 10, for: .scrollIndicators)
             .navigationTitle("Shoes")
         }
     }

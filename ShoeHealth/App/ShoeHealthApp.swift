@@ -64,7 +64,7 @@ struct ShoeHealthApp: App {
                 ZStack {
                     if healthManager.isLoading || storeManager.isLoading {
                         LaunchView()
-                            .transition(.opacity)
+                            .transition(.scale)
                     }
                 }
                 .zIndex(2.0)

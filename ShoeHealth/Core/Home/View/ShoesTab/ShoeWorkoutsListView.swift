@@ -20,8 +20,16 @@ struct ShoeWorkoutsListView: View {
     @State private var selections: Set<UUID> = Set<UUID>()
     @State private var editMode = EditMode.inactive
     
-    @State private var showAddWorkouts: Bool = false
-    @State private var showAssignToShoe: Bool = false
+    @State private var activeSheet: ActiveSheet?
+    
+    @Namespace private var namespace
+    
+    private enum ActiveSheet: Hashable, Identifiable {
+        case addWorkouts
+        case assignToShoe
+        
+        var id: Self { self }
+    }
     
     init(shoe: Shoe, isShoeRestricted: Bool = false) {
         self.shoe = shoe
@@ -36,7 +44,7 @@ struct ShoeWorkoutsListView: View {
                         WorkoutListItem(workout: workout)
                             .padding(.horizontal)
                             .padding(.vertical, 6)
-                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: 10, style: .continuous))
+                            .background(Color(uiColor: .secondarySystemGroupedBackground), in: .rect(cornerRadius: Constants.cornerRadius, style: .continuous))
                             .listRowInsets(.init(top: 2, leading: 20, bottom: 2, trailing: 20))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
@@ -63,34 +71,42 @@ struct ShoeWorkoutsListView: View {
         .navigationTitle("Workouts")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(editMode.isEditing)
+        .scrollBounceBehavior(.basedOnSize)
         .overlay {
             emptyWorkoutsView
         }
         .toolbar {
             toolbarItems
         }
-        .sheet(isPresented: $showAddWorkouts) {
-            NavigationStack {
-                AddWokoutsToShoeView(shoeID: shoe.id)
-            }
-            .presentationDragIndicator(.visible)
+        .safeAreaInset(edge: .bottom) {
+            actionBottomBar
         }
-        .sheet(isPresented: $showAssignToShoe) {
-            NavigationStack {
-                ShoeSelectionView(selectedShoe: shoesViewModel.getShoe(forID: shoe.id),
-                                  title: Prompts.SelectShoe.assignWorkoutsTitle,
-                                  description: Prompts.SelectShoe.assignWorkoutsDescription,
-                                  systemImage: "shoe.2",
-                                  onDone: { shoeID in
-                    withAnimation {
-                        addWorkouts(workoutIDs: Array(selections), to: shoeID)
-                        
-                        selections = Set<UUID>()
-                        editMode = .inactive
-                    }
-                })
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .addWorkouts:
+                NavigationStack {
+                    AddWokoutsToShoeView(shoeID: shoe.id)
+                }
+                .presentationDragIndicator(.visible)
+
+            case .assignToShoe:
+                NavigationStack {
+                    ShoeSelectionView(
+                        selectedShoe: shoesViewModel.getShoe(forID: shoe.id),
+                        title: Prompts.SelectShoe.assignWorkoutsTitle,
+                        description: Prompts.SelectShoe.assignWorkoutsDescription,
+                        systemImage: "shoe.2",
+                        onDone: { shoeID in
+                            withAnimation {
+                                addWorkouts(workoutIDs: Array(selections), to: shoeID)
+                                selections = Set<UUID>()
+                                editMode = .inactive
+                            }
+                        }
+                    )
+                }
+                .presentationDragIndicator(.visible)
             }
-            .presentationDragIndicator(.visible)
         }
         .onAppear {
             groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.getWorkouts(forIDs: shoe.workouts))
@@ -104,6 +120,31 @@ struct ShoeWorkoutsListView: View {
 // MARK: - View Components
 
 extension ShoeWorkoutsListView {
+    
+    @ViewBuilder
+    private var actionBottomBar: some View {
+        ActionBottomBar(
+            editing: editMode.isEditing,
+            selectionsEmpty: selections.isEmpty,
+            isShoeRestricted: isShoeRestricted,
+            namespace: namespace,
+            onAssignToShoe: {
+                activeSheet = .assignToShoe
+            },
+            onDeleteSelected: {
+                withAnimation {
+                    removeWorkouts(workoutIDs: Array(selections))
+                    selections = Set<UUID>()
+                    editMode = .inactive
+                }
+            },
+            onAddWorkouts: {
+                activeSheet = .addWorkouts
+            }
+        )
+        .padding(.bottom, 10)
+        .padding(.horizontal, 40)
+    }
     
     @ViewBuilder
     private var emptyWorkoutsView: some View {
@@ -126,24 +167,23 @@ extension ShoeWorkoutsListView {
             } label: {
                 if editMode.isEditing {
                     Text("Cancel")
-                        .fontWeight(.bold)
                 } else {
                     Text("Select")
                 }
             }
-            .animation(.none, value: editMode)
             .disabled(shoe.workouts.isEmpty)
         }
         
-        if editMode.isEditing {
-            ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .topBarLeading) {
+            if editMode.isEditing {
                 Button {
-                    let allWorkoutIDs = groupedWorkouts.flatMap { $0.workouts.map { $0.id } }
-
-                    if selections.count == allWorkoutIDs.count {
-                        selections = Set<UUID>()
-                    } else {
-                        selections = Set(allWorkoutIDs)
+                    let allWorkoutIDs = Set(groupedWorkouts.flatMap { $0.workouts.map { $0.id } })
+                    withAnimation {
+                        if selections.count == allWorkoutIDs.count {
+                            selections.removeAll()
+                        } else {
+                            selections = allWorkoutIDs
+                        }
                     }
                 } label: {
                     if selections.count == groupedWorkouts.flatMap({ $0.workouts }).count {
@@ -152,36 +192,6 @@ extension ShoeWorkoutsListView {
                         Text("Select All")
                     }
                 }
-            }
-        }
-        
-        ToolbarItemGroup(placement: .bottomBar) {
-            if editMode.isEditing {
-                Button {
-                    showAssignToShoe.toggle()
-                } label: {
-                    Text("Assign To")
-                }
-                .disabled(selections.isEmpty)
-                
-                Button {
-                    withAnimation {
-                        removeWorkouts(workoutIDs: Array(selections))
-                        
-                        selections = Set<UUID>()
-                        editMode = .inactive
-                    }
-                } label: {
-                    Text("Delete")
-                }
-                .disabled(selections.isEmpty)
-            } else {
-                Button {
-                    showAddWorkouts.toggle()
-                } label: {
-                    Text("Add Workouts")
-                }
-                .disabled(isShoeRestricted)
             }
         }
     }
@@ -212,6 +222,82 @@ extension ShoeWorkoutsListView {
             ShoeWorkoutsListView(shoe: Shoe.previewShoe)
                 .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
                 .environment(HealthManager.shared)
+        }
+    }
+}
+
+
+// MARK: - Reusable Bottom Bar
+
+fileprivate struct ActionBottomBar: View {
+    
+    let editing: Bool
+    let selectionsEmpty: Bool
+    let isShoeRestricted: Bool
+    let namespace: Namespace.ID
+    let onAssignToShoe: () -> Void
+    let onDeleteSelected: () -> Void
+    let onAddWorkouts: () -> Void
+
+    var body: some View {
+        Group {
+            if editing {
+                HStack(spacing: 40) {
+                    Button {
+                        onAssignToShoe()
+                    } label: {
+                        Text("Assign To")
+                            .font(.callout)
+                            .fontWeight(.medium)
+                            .padding(.vertical, 6)
+                            .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .accent)
+                    }
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .accent)
+                    .disabled(selectionsEmpty)
+                    
+                    Button {
+                        onDeleteSelected()
+                    } label: {
+                        Text("Delete")
+                            .font(.callout)
+                            .fontWeight(.medium)
+                            .padding(.vertical, 6)
+                            .foregroundStyle(selectionsEmpty ? Color(uiColor: .systemGray2) : .red)
+                    }
+                    .adaptiveGlassCapsule(tint: selectionsEmpty ? .clear : .red)
+                    .disabled(selectionsEmpty)
+                }
+                .animation(.smooth, value: selectionsEmpty)
+            } else {
+                Button {
+                    onAddWorkouts()
+                } label: {
+                    Text("Add Workouts")
+                        .font(.callout)
+                        .fontWeight(.medium)
+                        .padding(.vertical, 6)
+                        .foregroundStyle(isShoeRestricted ? Color(uiColor: .systemGray2) : .accent)
+                }
+                .adaptiveGlassCapsule(tint: isShoeRestricted ? .clear : .accent)
+                .disabled(isShoeRestricted)
+            }
+        }
+    }
+}
+
+fileprivate extension View {
+    @ViewBuilder
+    func adaptiveGlassCapsule(tint: Color) -> some View {
+        if #available(iOS 26, *) {
+            self
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .tint(tint == .clear ? tint : tint.opacity(0.1))
+        } else {
+            self
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .tint(tint == .clear ? tint : tint.opacity(0.2))
         }
     }
 }

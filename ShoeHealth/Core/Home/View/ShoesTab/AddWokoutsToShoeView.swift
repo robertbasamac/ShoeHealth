@@ -29,14 +29,14 @@ struct AddWokoutsToShoeView: View {
             WorkoutListItem(workout: workout)
                 .padding(.horizontal)
                 .padding(.vertical, 6)
-                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                 .listRowInsets(.init(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
         }
         .listStyle(.plain)
         .listRowSpacing(4)
-        .contentMargins(.trailing, 20, for: .scrollContent)
+        .contentMargins(.trailing, Constants.horizontalMargin, for: .scrollContent)
         .navigationTitle("Add Workouts")
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
@@ -88,14 +88,14 @@ extension AddWokoutsToShoeView {
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
+            ConfirmButton {
                 Task {
                     await shoesViewModel.add(workoutIDs: Array(selections), toShoe: shoeID)
                 }
-                
+
                 dismiss()
             } label: {
-                Text("Add")
+                Text("Save")
             }
             .disabled(selections.isEmpty)
         }

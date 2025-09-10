@@ -20,7 +20,7 @@ struct SettingsTab: View {
     
     var body: some View {
         Form {
-            unlockFullAccessSection
+            subscriptionSection
             unitOfMeasureSection
             remindMeLaterSection
             notificationsSection
@@ -55,6 +55,30 @@ struct SettingsTab: View {
 extension SettingsTab {
     
     @ViewBuilder
+    private var subscriptionSection: some View {
+        Section {
+            Button {
+                navigationRouter.showPaywall.toggle()
+            } label: {
+                HStack {
+                    Text("Active Plan")
+                    Spacer()
+                    Text("\(store.getBadge())")
+                        .foregroundStyle(.secondary)
+                    Image(systemName: "chevron.right")
+                        .fontWeight(.semibold)
+                        .imageScale(.small)
+                        .foregroundStyle(.secondary.opacity(0.5))
+                }
+                .font(.body)
+            }
+            .foregroundStyle(.primary)
+        } header: {
+            Text("Subscription")
+        }
+    }
+    
+    @ViewBuilder
     private var unitOfMeasureSection: some View {
         Section {
             Picker("Unit of Measure", selection: $unitOfMeasure) {
@@ -72,7 +96,6 @@ extension SettingsTab {
     
     @ViewBuilder
     private var remindMeLaterSection: some View {
-        
         Section {
             NavigationLink {
                 RemindMeLaterView(selection: $remindMeLaterTime)
@@ -158,31 +181,7 @@ extension SettingsTab {
                     .font(.footnote)
             }
         }
-        .foregroundStyle(.white)
-    }
-    
-    @ViewBuilder
-    private var unlockFullAccessSection: some View {
-        Section {
-            Button {
-                navigationRouter.showPaywall.toggle()
-            } label: {
-                HStack {
-                    Text("Active Plan")
-                    Spacer()
-                    Text("\(store.getBadge())")
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "chevron.right")
-                        .fontWeight(.semibold)
-                        .imageScale(.small)
-                        .foregroundStyle(.secondary.opacity(0.5))
-                }
-                .font(.body)
-            }
-            .foregroundStyle(.primary)
-        } header: {
-            Text("Subscription")
-        }
+        .tint(.primary)
     }
 }
 

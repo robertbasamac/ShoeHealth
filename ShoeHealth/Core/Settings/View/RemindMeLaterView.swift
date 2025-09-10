@@ -20,16 +20,12 @@ struct RemindMeLaterView: View {
     var body: some View {
         Form {
             selectedTimeInfoSection
-            
             presetsSection
-            
             customTimeSection
         }
         .listSectionSpacing(.compact)
         .navigationTitle("Remind me after")
-        .toolbar {
-            toolbarItems
-        }
+        .scrollDismissesKeyboard(.immediately)
         .onAppear {
             initCustomProperties()
         }
@@ -91,9 +87,9 @@ extension RemindMeLaterView {
                             unit: customUnit
                         ) ? Color.theme.accent : .primary
                     )
-                    .cornerRadius(10)
+                    .cornerRadius(Constants.defaultCornerRadius)
                     .overlay {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.defaultCornerRadius, style: .continuous)
                             .stroke(
                                 selection == PresetTime.custom(
                                     value: customValue,
@@ -102,7 +98,7 @@ extension RemindMeLaterView {
                                 lineWidth: 2
                             )
                             .padding(1)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.defaultCornerRadius, style: .continuous))
                     }
                     .onTapGesture {
                         isCustomInputFocused = true
@@ -156,17 +152,6 @@ extension RemindMeLaterView {
             Text("Value must be greater than 0.")
                 .font(.footnote)
 
-        }
-    }
-    
-    @ToolbarContentBuilder
-    private var toolbarItems: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
-            Spacer()
-            
-            Button("Done") {
-                isCustomInputFocused = false
-            }
         }
     }
 }

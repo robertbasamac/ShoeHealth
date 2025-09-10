@@ -18,6 +18,7 @@ struct ShoeFormView: View {
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
     
     @State private var showDeletionConfirmation: Bool = false
+    @State private var showRunTypeSelection: Bool = false
     
     @FocusState private var focusField: FocusField?
     
@@ -26,7 +27,6 @@ struct ShoeFormView: View {
     private var hideCancelButton: Bool
     private let onSave: ((Shoe) -> Void)?
     
-    @State private var showRunTypeSelection: Bool = false
     
     enum FocusField: Hashable {
         case brand
@@ -83,8 +83,6 @@ struct ShoeFormView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .confirmationDialog("Delete this shoe?", isPresented: $showDeletionConfirmation, titleVisibility: .visible) {
-                    Button("Cancel", role: .cancel) { }
-                    
                     Button("Delete", role: .destructive) {
                         deleteShoe()
                     }
@@ -97,6 +95,7 @@ struct ShoeFormView: View {
         .navigationBarTitleDisplayMode(.inline)
         .listSectionSpacing(.compact)
         .contentMargins(.bottom, 40, for: .automatic)
+        .scrollDismissesKeyboard(.immediately)
         .toolbar {
             toolbarItems
         }
@@ -148,13 +147,13 @@ extension ShoeFormView {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     } else {
                         Image(systemName: "square.fill")
                             .resizable()
                             .foregroundStyle(.secondary)
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                         
                         Image(systemName: "shoe.2.fill")
                             .resizable()
@@ -162,7 +161,7 @@ extension ShoeFormView {
                             .aspectRatio(contentMode: .fit)
                             .padding()
                             .frame(width: 150, height: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
                     }
                 }
                 
@@ -338,58 +337,21 @@ extension ShoeFormView {
     private var toolbarItems: some ToolbarContent {
         if !hideCancelButton {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                CancelButton {
                     dismiss()
+                } label: {
+                    Text("Cancel")
                 }
             }
         }
         
         ToolbarItem(placement: .confirmationAction) {
-            Button {
-                let settingsUnitOfMeasure = settingsManager.unitOfMeasure
-                if settingsUnitOfMeasure != unitOfMeasure {
-                    shoeFormViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? shoeFormViewModel.lifespanDistance * 1.60934 : shoeFormViewModel.lifespanDistance / 1.60934
-                }
-                
-                if isEditing {
-                    shoesViewModel.updateShoe(
-                        shoeID: shoeFormViewModel.shoeID ?? UUID(),
-                        nickname: shoeFormViewModel.nickname,
-                        brand: shoeFormViewModel.brand,
-                        model: shoeFormViewModel.model,
-                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
-                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
-                        lifespanDistance: shoeFormViewModel.lifespanDistance,
-                        aquisitionDate: shoeFormViewModel.aquisitionDate,
-                        image: shoeFormViewModel.selectedPhotoData
-                    )
-                    
-                    if wasDailyDefaultShoe && isNotDailyDefaultShoeAnymore() && !shoesViewModel.shoes.isEmpty {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                        }
-                    }
-                } else {
-                    let newShoe = shoesViewModel.addShoe(
-                        nickname: shoeFormViewModel.nickname,
-                        brand: shoeFormViewModel.brand,
-                        model: shoeFormViewModel.model,
-                        lifespanDistance: shoeFormViewModel.lifespanDistance,
-                        aquisitionDate: shoeFormViewModel.aquisitionDate,
-                        isDefaultShoe: shoeFormViewModel.isDefaultShoe,
-                        defaultRunTypes: shoeFormViewModel.defaultRunTypes,
-                        image: shoeFormViewModel.selectedPhotoData
-                    )
-                    
-                    onSave?(newShoe)
-                }
-                
-                settingsManager.setUnitOfMeasure(to: unitOfMeasure)
-                dismiss()
+            ConfirmButton {
+                confirmationAction()
             } label: {
                 Text("Save")
             }
-            .disabled(shoeFormViewModel.brand.isEmpty || shoeFormViewModel.model.isEmpty || shoeFormViewModel.nickname.isEmpty)
+            .disabled(isDisabled())
         }
     }
 }
@@ -419,6 +381,53 @@ extension ShoeFormView {
     
     private func isNotDailyDefaultShoeAnymore() -> Bool {
         return (shoeFormViewModel.isDefaultShoe && !shoeFormViewModel.defaultRunTypes.contains(.daily) || !shoeFormViewModel.isDefaultShoe)
+    }
+    
+    private func isDisabled() -> Bool {
+        return shoeFormViewModel.brand.isEmpty || shoeFormViewModel.model.isEmpty || shoeFormViewModel.nickname.isEmpty
+    }
+    
+    private func confirmationAction() {
+        let settingsUnitOfMeasure = settingsManager.unitOfMeasure
+        if settingsUnitOfMeasure != unitOfMeasure {
+            shoeFormViewModel.lifespanDistance = settingsUnitOfMeasure == .metric ? shoeFormViewModel.lifespanDistance * 1.60934 : shoeFormViewModel.lifespanDistance / 1.60934
+        }
+        
+        if isEditing {
+            shoesViewModel.updateShoe(
+                shoeID: shoeFormViewModel.shoeID ?? UUID(),
+                nickname: shoeFormViewModel.nickname,
+                brand: shoeFormViewModel.brand,
+                model: shoeFormViewModel.model,
+                isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                lifespanDistance: shoeFormViewModel.lifespanDistance,
+                aquisitionDate: shoeFormViewModel.aquisitionDate,
+                image: shoeFormViewModel.selectedPhotoData
+            )
+            
+            if wasDailyDefaultShoe && isNotDailyDefaultShoeAnymore() && !shoesViewModel.shoes.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                }
+            }
+        } else {
+            let newShoe = shoesViewModel.addShoe(
+                nickname: shoeFormViewModel.nickname,
+                brand: shoeFormViewModel.brand,
+                model: shoeFormViewModel.model,
+                lifespanDistance: shoeFormViewModel.lifespanDistance,
+                aquisitionDate: shoeFormViewModel.aquisitionDate,
+                isDefaultShoe: shoeFormViewModel.isDefaultShoe,
+                defaultRunTypes: shoeFormViewModel.defaultRunTypes,
+                image: shoeFormViewModel.selectedPhotoData
+            )
+            
+            onSave?(newShoe)
+        }
+        
+        settingsManager.setUnitOfMeasure(to: unitOfMeasure)
+        dismiss()
     }
 }
 
