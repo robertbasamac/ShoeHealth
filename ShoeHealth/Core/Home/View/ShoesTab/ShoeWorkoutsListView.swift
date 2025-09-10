@@ -171,19 +171,19 @@ extension ShoeWorkoutsListView {
                     Text("Select")
                 }
             }
-            .animation(.none, value: editMode)
             .disabled(shoe.workouts.isEmpty)
         }
         
-        if editMode.isEditing {
-            ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .topBarLeading) {
+            if editMode.isEditing {
                 Button {
-                    let allWorkoutIDs = groupedWorkouts.flatMap { $0.workouts.map { $0.id } }
-                    
-                    if selections.count == allWorkoutIDs.count {
-                        selections = Set<UUID>()
-                    } else {
-                        selections = Set(allWorkoutIDs)
+                    let allWorkoutIDs = Set(groupedWorkouts.flatMap { $0.workouts.map { $0.id } })
+                    withAnimation {
+                        if selections.count == allWorkoutIDs.count {
+                            selections.removeAll()
+                        } else {
+                            selections = allWorkoutIDs
+                        }
                     }
                 } label: {
                     if selections.count == groupedWorkouts.flatMap({ $0.workouts }).count {
