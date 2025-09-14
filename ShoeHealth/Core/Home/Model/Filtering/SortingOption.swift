@@ -1,5 +1,5 @@
 //
-//  SortingRule+Order.swift
+//  SortingOption.swift
 //  ShoeHealth
 //
 //  Created by Robert Basamac on 16.01.2024.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-// MARK: - Sorting Rule
+// MARK: - Sorting Option
 
-enum SortingRule: String, Identifiable, CaseIterable {
+enum SortingOption: String, Identifiable, CaseIterable {
     
     var id: Self { self }
 
@@ -19,14 +19,4 @@ enum SortingRule: String, Identifiable, CaseIterable {
     case wear           = "Wear"
     case recentlyUsed   = "Recently Used"
     case aquisitionDate = "Aquisition Date"
-}
-
-// MARK: - Sorting Order
-
-enum SortingOrder : String, Identifiable, CaseIterable {
-    
-    var id: Self { self }
-    
-    case forward = "forward"
-    case reverse = "reverse"
 }

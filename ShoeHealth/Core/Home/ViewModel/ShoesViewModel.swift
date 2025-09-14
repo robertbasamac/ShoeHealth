@@ -32,36 +32,41 @@ final class ShoesViewModel {
     var searchBinding: Binding<String> {
         Binding(
             get: { self.searchText },
-            set: { self.searchText = $0 }
+            set: {self.searchText = $0 }
         )
     }
     
     /// Sorting
-    var sortingRuleBinding: Binding<SortingRule> {
+    var sortingOptionBinding: Binding<SortingOption> {
         Binding(
-            get: { self.sortingRule },
-            set: { self.sortingRule = $0 }
+            get: { self.sortingOption },
+            set: {
+                if self.sortingOption == $0 {
+                    self.isSortingAscending.toggle()
+                }
+                self.sortingOption = $0
+            }
         )
     }
-    private(set) var sortingRule: SortingRule {
+    private(set) var sortingOption: SortingOption {
         didSet {
-            defaults?.set(sortingRule.rawValue, forKey: "SORTING_RULE")
+            defaults?.set(sortingOption.rawValue, forKey: "SORTING_RULE")
         }
     }
-    private(set) var sortingOrder: SortingOrder {
+    
+    private(set) var isSortingAscending: Bool {
         didSet {
-            defaults?.set(sortingOrder.rawValue, forKey: "SORTING_ORDER")
+            defaults?.set(isSortingAscending, forKey: "IS_SORTING_ASCENDING")
         }
     }
     
     init(shoeHandler: ShoeHandler) {
         self.shoeHandler = shoeHandler
         
-        let sortingRule = defaults?.string(forKey: "SORTING_RULE") ?? SortingRule.aquisitionDate.rawValue
-        self.sortingRule = SortingRule(rawValue: sortingRule) ?? SortingRule.recentlyUsed
+        let sortingOption = defaults?.string(forKey: "SORTING_RULE") ?? SortingOption.aquisitionDate.rawValue
+        self.sortingOption = SortingOption(rawValue: sortingOption) ?? SortingOption.recentlyUsed
         
-        let sortingOrder = defaults?.string(forKey: "SORTING_ORDER") ?? SortingOrder.forward.rawValue
-        self.sortingOrder = SortingOrder(rawValue: sortingOrder) ?? SortingOrder.forward
+        self.isSortingAscending = defaults?.bool(forKey: "IS_SORTING_ASCENDING") ?? true
         
         fetchShoes()
         setupObservers()
@@ -158,7 +163,7 @@ final class ShoesViewModel {
             .map { $0 }
     }
     
-    func getShoes(for category: ShoeCategory = .all, sortingRule: SortingRule? = nil, sortingOrder: SortingOrder? = nil) -> [Shoe] {
+    func getShoes(for category: ShoeCategory = .all, sortingOption: SortingOption? = nil, isSortingAscending: Bool? = nil) -> [Shoe] {
         var filteredShoes: [Shoe] = []
         
         switch category {
@@ -170,22 +175,22 @@ final class ShoesViewModel {
             filteredShoes = self.shoes
         }
         
-        let ruleToApply = sortingRule ?? self.sortingRule
-        let orderToApply = sortingOrder ?? self.sortingOrder
+        let ruleToApply = sortingOption ?? self.sortingOption
+        let orderToApply = isSortingAscending ?? self.isSortingAscending
         
         switch ruleToApply {
         case .model:
-            filteredShoes.sort { orderToApply == .forward ? $0.model < $1.model : $0.model > $1.model }
+            filteredShoes.sort { orderToApply ? $0.model < $1.model : $0.model > $1.model }
         case .brand:
-            filteredShoes.sort { orderToApply == .forward ? $0.brand < $1.brand : $0.brand > $1.brand }
+            filteredShoes.sort { orderToApply ? $0.brand < $1.brand : $0.brand > $1.brand }
         case .distance:
-            filteredShoes.sort { orderToApply == .forward ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
+            filteredShoes.sort { orderToApply ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
         case .wear:
-            filteredShoes.sort { orderToApply == .forward ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+            filteredShoes.sort { orderToApply ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
         case .recentlyUsed:
-            filteredShoes.sort { orderToApply == .forward ? $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast }
+            filteredShoes.sort { orderToApply ? $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast }
         case .aquisitionDate:
-            filteredShoes.sort { orderToApply == .forward ? $0.aquisitionDate > $1.aquisitionDate : $0.aquisitionDate < $1.aquisitionDate }
+            filteredShoes.sort { orderToApply ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
         }
         
         return filteredShoes
@@ -628,7 +633,14 @@ final class ShoesViewModel {
     }
     
     func toggleSortOrder() {
-        sortingOrder = sortingOrder == .forward ? .reverse : .forward
+        isSortingAscending.toggle()
+    }
+    
+    func setSortOption(_ option: SortingOption) {
+        if self.sortingOption == option {
+            self.isSortingAscending.toggle()
+        }
+        self.sortingOption = option
     }
     
     // MARK: - SwiftData Model Context methods

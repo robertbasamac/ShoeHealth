@@ -113,7 +113,7 @@
 		09BFEE8B2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */; };
 		09BFEE8C2D21A4EF00E911EC /* ShoesSchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */; };
 		09C1716A2C203D4A005FAB1A /* ShoeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171672C203D4A005FAB1A /* ShoeCategory.swift */; };
-		09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* SortingRule+Order.swift */; };
+		09C1716B2C203D4A005FAB1A /* SortingOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C171682C203D4A005FAB1A /* SortingOption.swift */; };
 		09C595802C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
 		09C595812C649BDC00A006BE /* UnitOfMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */; };
 		09D4CE3B2E4613BB00B4A576 /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D4CE3A2E4613BB00B4A576 /* ConfirmButton.swift */; };
@@ -267,7 +267,7 @@
 		09BFEE872D21A35C00E911EC /* RunType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunType.swift; sourceTree = "<group>"; };
 		09BFEE8A2D21A4EF00E911EC /* ShoesSchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesSchemaV2.swift; sourceTree = "<group>"; };
 		09C171672C203D4A005FAB1A /* ShoeCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShoeCategory.swift; sourceTree = "<group>"; };
-		09C171682C203D4A005FAB1A /* SortingRule+Order.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SortingRule+Order.swift"; sourceTree = "<group>"; };
+		09C171682C203D4A005FAB1A /* SortingOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortingOption.swift; sourceTree = "<group>"; };
 		09C5957F2C649BDC00A006BE /* UnitOfMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitOfMeasure.swift; sourceTree = "<group>"; };
 		09D4CE3A2E4613BB00B4A576 /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
 		09D4CE3D2E46159200B4A576 /* CancelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelButton.swift; sourceTree = "<group>"; };
@@ -669,7 +669,7 @@
 			children = (
 				09A81FE02CFB342300D6E72B /* WorkoutGroup.swift */,
 				09C171672C203D4A005FAB1A /* ShoeCategory.swift */,
-				09C171682C203D4A005FAB1A /* SortingRule+Order.swift */,
+				09C171682C203D4A005FAB1A /* SortingOption.swift */,
 			);
 			path = Filtering;
 			sourceTree = "<group>";
@@ -1050,7 +1050,7 @@
 				0936FF502BD1464B00BF5798 /* ShoeDetailView.swift in Sources */,
 				0907F2612B1E206700EB682A /* NotificationManager.swift in Sources */,
 				094F262A2BE01FF100441A62 /* StaticHeaderScrollTargetBehavior.swift in Sources */,
-				09C1716B2C203D4A005FAB1A /* SortingRule+Order.swift in Sources */,
+				09C1716B2C203D4A005FAB1A /* SortingOption.swift in Sources */,
 				092DDB782CCA63F000263F06 /* ShoesView.swift in Sources */,
 				090E156E2BEB814D00BC8124 /* StatCell.swift in Sources */,
 				09BEB99A2D40FC1D000A98EF /* NoShoeAvailableView.swift in Sources */,
@@ -1106,7 +1106,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
@@ -1117,7 +1117,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1138,7 +1138,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ShoeStatsWidget/ShoeStatsWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShoeStatsWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShoeStatsWidget;
@@ -1149,7 +1149,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth.ShoeStatsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1296,7 +1296,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1318,7 +1318,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1340,7 +1340,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = ShoeHealth/ShoeHealth.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ShoeHealth/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1362,7 +1362,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.robertbasamac.ShoeHealth;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

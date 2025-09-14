@@ -134,19 +134,27 @@ extension ShoesListView {
     private var toolbarItems: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Picker("Sort Rule", selection: shoesViewModel.sortingRuleBinding) {
-                    ForEach(SortingRule.allCases) { rule in
-                        Text(rule.rawValue)
-                            .tag(rule)
+                Picker("Sorting", selection: shoesViewModel.sortingOptionBinding) {
+                    ForEach(SortingOption.allCases) { option in
+                        if #available(iOS 26, *) {
+                            Button { /* action */ } label: {
+                                Text(option.rawValue)
+                                if shoesViewModel.sortingOption == option {
+                                    Text(shoesViewModel.isSortingAscending ? "Ascending" : "Descending")
+                                }
+                            }
+                            .tag(option)
+                        } else {
+                            HStack {
+                                Text(option.rawValue)
+                                Spacer()
+                                if shoesViewModel.sortingOption == option {
+                                    Image(systemName: shoesViewModel.isSortingAscending ? "chevron.down" : "chevron.up")
+                                }
+                            }
+                            .tag(option)
+                        }
                     }
-                }
-                
-                Divider()
-                
-                Button {
-                    shoesViewModel.toggleSortOrder()
-                } label: {
-                    Label("Sort Order", systemImage: shoesViewModel.sortingOrder == .forward ? "chevron.up" : "chevron.down")
                 }
             } label: {
                 Image(systemName: "arrow.up.arrow.down")
@@ -220,6 +228,18 @@ extension ShoesListView {
                 .environmentObject(StoreManager.shared)
                 .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
                 .navigationTitle("Shoes")
+        }
+    }
+}
+
+
+struct HorizontalLabelStyle: LabelStyle {
+    
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            configuration.title
+            Spacer()
+            configuration.icon
         }
     }
 }

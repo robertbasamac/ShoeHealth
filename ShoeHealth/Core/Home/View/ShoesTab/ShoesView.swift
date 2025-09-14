@@ -130,8 +130,9 @@ extension ShoesView {
                                     .foregroundStyle(.black)
                             }
                             .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
                             
-                            Text("You can also pull down to refresh")
+                            Text("or pull down to refresh")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
@@ -626,22 +627,29 @@ extension ShoesView {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        
         ToolbarItem(placement: .topBarLeading) {
             Menu {
-                Picker("Sort Rule", selection: shoesViewModel.sortingRuleBinding) {
-                    ForEach(SortingRule.allCases) { rule in
-                        Text(rule.rawValue)
-                            .tag(rule)
+                Picker("Sorting", selection: shoesViewModel.sortingOptionBinding) {
+                    ForEach(SortingOption.allCases) { option in
+                        if #available(iOS 26, *) {
+                            Button { /* action */ } label: {
+                                Text(option.rawValue)
+                                if shoesViewModel.sortingOption == option {
+                                    Text(shoesViewModel.isSortingAscending ? "Ascending" : "Descending")
+                                }
+                            }
+                            .tag(option)
+                        } else {
+                            HStack {
+                                Text(option.rawValue)
+                                Spacer()
+                                if shoesViewModel.sortingOption == option {
+                                    Image(systemName: shoesViewModel.isSortingAscending ? "chevron.down" : "chevron.up")
+                                }
+                            }
+                            .tag(option)
+                        }
                     }
-                }
-                
-                Divider()
-                
-                Button {
-                    shoesViewModel.toggleSortOrder()
-                } label: {
-                    Label("Sort Order", systemImage: shoesViewModel.sortingOrder == .forward ? "arrow.up" : "arrow.down")
                 }
             } label: {
                 Image(systemName: "arrow.up.arrow.down")

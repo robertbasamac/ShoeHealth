@@ -157,10 +157,8 @@ extension WorkoutsTab {
         if healthManager.workouts.isEmpty {
             ContentUnavailableView {
                 Label("No Workouts Available", systemImage: "figure.run.circle")
-
             } description: {
                 Text("There are no running workouts available in your Apple Health data.")
-
             } actions: {
                 Button {
                     Task {
@@ -169,8 +167,10 @@ extension WorkoutsTab {
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                         .foregroundStyle(.black)
+                        .padding(2)
                 }
                 .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
             }
         }
     }
