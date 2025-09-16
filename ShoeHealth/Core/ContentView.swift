@@ -17,7 +17,7 @@ struct ContentView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
+    @AppStorage("IS_ONBOARDING") private var isOnboarding: Bool = true
     
     var body: some View {
         HomeScreen()

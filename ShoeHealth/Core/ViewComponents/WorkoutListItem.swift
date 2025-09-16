@@ -15,7 +15,6 @@ struct WorkoutListItem: View {
     var workout: HKWorkout
     
     @State private var unitOfMeasure: UnitOfMeasure = SettingsManager.shared.unitOfMeasure
-    @AppStorage("UNIT_OF_MEASURE", store: UserDefaults(suiteName: System.AppGroups.shoeHealth)) private var unitOfMeasureString: String = UnitOfMeasure.metric.rawValue
     
     var body: some View {
         HStack {

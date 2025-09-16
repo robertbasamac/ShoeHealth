@@ -17,7 +17,8 @@ class AppDelegate: NSObject {
     var shoesViewModel: ShoesViewModel?
     var navigationRouter: NavigationRouter?
     
-    @AppStorage("IS_ONBOARDING") var isOnboarding: Bool = true
+    @AppStorage("IS_ONBOARDING", store: UserDefaults(suiteName: System.AppGroups.shoeHealth))
+    private var isOnboarding: Bool = true
 }
 
 // MARK: - UIApplicationDelegate

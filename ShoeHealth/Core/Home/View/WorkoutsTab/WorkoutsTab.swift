@@ -20,7 +20,18 @@ struct WorkoutsTab: View {
     @State private var editMode: EditMode = .inactive
     @State private var isPresentingBulkAssign: Bool = false
     
+    @AppStorage("FILTER_OPTION") private var filterOption: FilterOption = .all
+    
     @ScaledMetric(relativeTo: .largeTitle) var size: CGFloat = 64
+    
+    enum FilterOption: String, Identifiable, CaseIterable {
+        
+        var id: Self { self }
+        
+        case all        = "All"
+        case assigned   = "Assigned"
+        case unassigned = "Unassigned"
+    }
     
     var body: some View {
         List(selection: $selections) {
@@ -75,12 +86,18 @@ struct WorkoutsTab: View {
             await healthManager.fetchRunningWorkouts()
         }
         .onAppear {
-            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: healthManager.workouts)
+            let filteredWorkouts = filteredWorkoutsByOption()
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: filteredWorkouts)
             selections.removeAll()
             editMode = .inactive
         }
         .onChange(of: healthManager.workouts) { _, newValue in
-            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: newValue)
+            let filteredWorkouts = filteredWorkoutsByOption(workouts: newValue)
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: filteredWorkouts)
+        }
+        .onChange(of: filterOption) { _, _ in
+            let filteredWorkouts = filteredWorkoutsByOption()
+            groupedWorkouts = WorkoutGroup.groupWorkoutsByMonthAndYear(workouts: filteredWorkouts)
         }
     }
 }
@@ -154,11 +171,12 @@ extension WorkoutsTab {
     
     @ViewBuilder
     private var emptyWorkoutsView: some View {
-        if healthManager.workouts.isEmpty {
+        if groupedWorkouts.flatMap({ $0.workouts }).isEmpty {
             ContentUnavailableView {
-                Label("No Workouts Available", systemImage: "figure.run.circle")
+                Label("No Workouts available", systemImage: "figure.run.circle")
             } description: {
-                Text("There are no running workouts available in your Apple Health data.")
+                let filterString = filterOption == .all ? "workouts" : filterOption.rawValue.lowercased() + " workouts"
+                Text("There are no \(filterString) available in your Apple Health data.")
             } actions: {
                 Button {
                     Task {
@@ -177,25 +195,41 @@ extension WorkoutsTab {
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            if !healthManager.workouts.isEmpty {
+        ToolbarItem(placement: .topBarLeading) {
+            if editMode.isEditing {
                 Button {
+                    let allWorkoutIDs = Set(groupedWorkouts.flatMap { $0.workouts.map { $0.id } })
+                    
                     withAnimation {
-                        if editMode.isEditing {
+                        if selections.count == allWorkoutIDs.count {
                             selections.removeAll()
-                            editMode = .inactive
                         } else {
-                            editMode = .active
+                            selections = allWorkoutIDs
                         }
                     }
                 } label: {
-                    if editMode.isEditing {
-                        Text("Cancel")
+                    if selections.count == groupedWorkouts.flatMap({ $0.workouts }).count {
+                        Text("Deselect All")
                     } else {
-                        Text("Select")
+                        Text("Select All")
                     }
                 }
-                
+            } else {
+                Menu {
+                    Picker("Filter", selection: $filterOption) {
+                        ForEach(FilterOption.allCases) { option in
+                            Text(option.rawValue)
+                                .tag(option)
+                        }
+                    }
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease")
+                }
+            }
+        }
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            if !healthManager.workouts.isEmpty {
                 if editMode.isEditing {
                     Button {
                         withAnimation {
@@ -231,27 +265,22 @@ extension WorkoutsTab {
                 .disabled(selections.isEmpty)
             }
         }
-        
-        ToolbarItem(placement: .topBarLeading) {
-            if editMode.isEditing {
-                Button {
-                    let allWorkoutIDs = Set(groupedWorkouts.flatMap { $0.workouts.map { $0.id } })
-                    
-                    withAnimation {
-                        if selections.count == allWorkoutIDs.count {
-                            selections.removeAll()
-                        } else {
-                            selections = allWorkoutIDs
-                        }
-                    }
-                } label: {
-                    if selections.count == groupedWorkouts.flatMap({ $0.workouts }).count {
-                        Text("Deselect All")
-                    } else {
-                        Text("Select All")
-                    }
-                }
-            }
+    }
+}
+
+// MARK: - Helper Methods
+
+extension WorkoutsTab {
+
+    private func filteredWorkoutsByOption(workouts: [HKWorkout]? = nil) -> [HKWorkout] {
+        let workoutsToFilter = workouts ?? healthManager.workouts
+        switch filterOption {
+        case .all:
+            return workoutsToFilter
+        case .assigned:
+            return workoutsToFilter.filter { shoesViewModel.getShoe(ofWorkoutID: $0.id) != nil }
+        case .unassigned:
+            return workoutsToFilter.filter { shoesViewModel.getShoe(ofWorkoutID: $0.id) == nil }
         }
     }
 }
@@ -266,4 +295,3 @@ extension WorkoutsTab {
             .environment(HealthManager.shared)
     }
 }
-
