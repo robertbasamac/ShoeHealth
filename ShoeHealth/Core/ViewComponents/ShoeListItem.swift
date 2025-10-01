@@ -123,11 +123,11 @@ extension ShoeListItem {
                 .lineLimit(1)
             
             Group {
-                Text("\(Int(shoe.totalDistance))")
+                Text(shoe.totalDistance.asString(withDecimals: 1))
                     .foregroundStyle(shoe.wearColor) +
                 Text("/")
                     .foregroundStyle(.gray) +
-                Text("\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))")
+                Text(shoe.lifespanDistance.asString(withDecimals: 0))
                     .foregroundStyle(.blue) +
                 Text("\(unitOfMeasure.symbol.uppercased())")
                     .textScale(.secondary)

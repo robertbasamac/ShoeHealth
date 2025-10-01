@@ -291,7 +291,7 @@ extension WorkoutsTab {
     NavigationStack {
         WorkoutsTab()
             .navigationTitle("Workouts")
-            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.emptyContainer.mainContext)))
+            .environment(ShoesViewModel(shoeHandler: ShoeHandler(modelContext: PreviewSampleData.container.mainContext)))
             .environment(HealthManager.shared)
     }
 }

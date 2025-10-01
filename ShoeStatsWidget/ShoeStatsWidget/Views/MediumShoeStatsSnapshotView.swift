@@ -60,7 +60,7 @@ struct MediumShoeStatsSnapshotView: View, ShoeStatsViewProtocol {
                 HStack(spacing: 0) {
                     statCell(
                         label: "Distance",
-                        value: "\(Int(shoe.totalDistance))/\(Int(shoe.lifespanDistance.rounded(toPlaces: 0)))",
+                        value: "\(shoe.totalDistance.asString(withDecimals:0))/\(shoe.lifespanDistance.asString(withDecimals: 0))",
                         unit: unitSymbol,
                         color: shoe.wearColor,
                         textAlignment: .leading,

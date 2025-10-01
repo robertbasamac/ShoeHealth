@@ -15,7 +15,7 @@ struct BlurredCircleButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(isEnabled ? Color.theme.accent : Color.gray)
+            .foregroundColor(isEnabled ? Color.accentColor : Color.gray)
             .frame(width: 34, height: 34)
             .background(.bar.opacity(opacity), in: .circle)
     }

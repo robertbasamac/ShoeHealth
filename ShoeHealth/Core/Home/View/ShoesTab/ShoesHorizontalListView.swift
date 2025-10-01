@@ -37,7 +37,7 @@ struct ShoesHorizontalListView: View {
                                 Button {
                                     onSetDefault(shoe)
                                 } label: {
-                                    Label("Set Default", systemImage: "figure.run")
+                                    Label("Set Run Types", systemImage: "figure.run")
                                 }
                             }
 

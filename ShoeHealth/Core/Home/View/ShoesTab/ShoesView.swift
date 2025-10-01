@@ -26,7 +26,7 @@ struct ShoesView: View {
     @State private var showDeletionConfirmationRetired: Bool = false
 
     @State private var shoeForDeletion: Shoe? = nil
-    @State private var shoeForDefaultSelection: Shoe? = nil
+    @State private var shoeForRunTypesSelection: Shoe? = nil
     
     @State private var selectedDefaulRunType: RunType = .daily
     
@@ -36,23 +36,20 @@ struct ShoesView: View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
                 lastRunSection
-                
                 defaultShoeSection
-                
                 recentlyUsedSection
-                
                 activeShoesSection
-                
                 retiredShoesSection
             }
         }
-        .sheet(item: $shoeForDefaultSelection, onDismiss: {
+        .sheet(item: $shoeForRunTypesSelection, onDismiss: {
             triggerSetNewDailyDefaultShoe()
         }) { shoe in
             NavigationStack {
-                RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes, preventDeselectingDaily: false) { selectedDefaultTypes, selectedSuitableTypes in
                     withAnimation {
-                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                        shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultTypes)
+                        shoesViewModel.setSuitableRunTypes(selectedDefaultTypes, for: shoe.id)
                     }
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
@@ -81,6 +78,8 @@ struct ShoesView: View {
 // MARK: - View Components
 
 extension ShoesView {
+    
+    // MARK: lastRunSection
     
     @ViewBuilder
     private var lastRunSection: some View {
@@ -148,19 +147,32 @@ extension ShoesView {
         }
     }
     
+    // MARK: defaultShoeSection
+    
     @ViewBuilder
     private var defaultShoeSection: some View {
         SectionBlock(title: "Default Shoes") {
             VStack(spacing: 0) {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 8) {
-                        ForEach(RunType.allCases, id: \.self) { runType in
-                            runTypeButton(runType)
-                        }
+                HStack(spacing: 8) {
+                    ForEach(RunType.allCases, id: \.self) { runType in
+                        RunTypeCapsule(
+                            runType: runType,
+                            foregroundColor: isFeatureDisabled(for: runType) ? Color.gray : (selectedDefaulRunType == runType ? Color.black : Color.primary),
+                            backgroundColor: selectedDefaulRunType == runType ? Color.theme.accent : Color.theme.containerBackground) {
+                                if isFeatureDisabled(for: runType) {
+                                    navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
+                                } else {
+                                    if selectedDefaulRunType == runType {
+                                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
+                                    } else {
+                                        selectedDefaulRunType = runType
+                                    }
+                                }
+                            }
                     }
                 }
-                .contentMargins(.horizontal, Constants.horizontalMargin)
-                .contentMargins(.top, 8)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
                 
                 Group {
                     if let shoe = shoesViewModel.getDefaultShoe(for: selectedDefaulRunType) {
@@ -168,10 +180,11 @@ extension ShoesView {
                             .roundedContainer()
                             .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
                             .contextMenu {
-                                retireReinstateButton(shoe)
-                                deleteButton(shoe)
+                                setRunTypes(forShoe: shoe)
+                                retireReinstateButton(forShoe: shoe)
+                                deleteButton(forShoe: shoe)
                             } preview: {
-                                contextMenuPreview(shoe)
+                                contextMenuPreview(forShoe: shoe)
                             }
                             .onTapGesture {
                                 dismissSearch()
@@ -235,6 +248,8 @@ extension ShoesView {
         }
     }
     
+    // MARK: recentlyUsedSection
+    
     @ViewBuilder
     private var recentlyUsedSection: some View {
         let shoes = shoesViewModel.getRecentlyUsedShoes()
@@ -248,7 +263,7 @@ extension ShoesView {
                         navigationRouter.navigate(to: .shoe(shoe))
                     },
                     onSetDefault: { shoe in
-                        shoeForDefaultSelection = shoe
+                        shoeForRunTypesSelection = shoe
                     },
                     onRetireToggle: { shoe in
                         let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
@@ -280,7 +295,9 @@ extension ShoesView {
             }
         }
     }
-
+    
+    // MARK: activeShoesSection
+    
     @ViewBuilder
     private var activeShoesSection: some View {
         let shoes = shoesViewModel.getShoes(for: .active)
@@ -297,7 +314,7 @@ extension ShoesView {
                         navigationRouter.navigate(to: .shoe(shoe))
                     },
                     onSetDefault: { shoe in
-                        shoeForDefaultSelection = shoe
+                        shoeForRunTypesSelection = shoe
                     },
                     onRetireToggle: { shoe in
                         let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
@@ -329,7 +346,9 @@ extension ShoesView {
             }
         }
     }
-
+    
+    // MARK: retiredShoesSection
+    
     @ViewBuilder
     private var retiredShoesSection: some View {
         let shoes = shoesViewModel.getShoes(for: .retired)
@@ -346,18 +365,10 @@ extension ShoesView {
                         navigationRouter.navigate(to: .shoe(shoe))
                     },
                     onSetDefault: { shoe in
-                        shoeForDefaultSelection = shoe
+                        shoeForRunTypesSelection = shoe
                     },
                     onRetireToggle: { shoe in
-                        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
-                        withAnimation {
-                            shoesViewModel.retireShoe(shoe.id)
-                        }
-                        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                            }
-                        }
+                        onRetireAction(forShoe: shoe)
                     },
                     onDeleteRequest: { shoe in
                         shoeForDeletion = shoe
@@ -378,7 +389,9 @@ extension ShoesView {
             }
         }
     }
-        
+    
+    // MARK: runDateAndTimeSection
+    
     @ViewBuilder
     private func runDateAndTimeSection(_ run: HKWorkout) -> some View {
         VStack(alignment: .center) {
@@ -391,6 +404,8 @@ extension ShoesView {
         .dynamicTypeSize(DynamicTypeSize.large...DynamicTypeSize.xxLarge)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    // MARK: runStatsSection
     
     @ViewBuilder
     private func runStatsSection(_ run: RunningWorkout) -> some View {
@@ -476,6 +491,8 @@ extension ShoesView {
         }
     }
     
+    // MARK: runUsedShoeSection
+    
     @ViewBuilder
     private func runUsedShoeSection(_ run: HKWorkout) -> some View {
         Group {
@@ -533,29 +550,21 @@ extension ShoesView {
 //        }
     }
     
+    // MARK: Context Menu Buttons
+    
     @ViewBuilder
-    private func setDefaultShoeButton(_ shoe: Shoe) -> some View {
+    private func setRunTypes(forShoe shoe: Shoe) -> some View {
         Button {
-            shoeForDefaultSelection = shoe
+            shoeForRunTypesSelection = shoe
         } label: {
-            Label("Set Default", systemImage: "figure.run")
+            Label("Set Run Types", systemImage: "figure.run")
         }
     }
     
     @ViewBuilder
-    private func retireReinstateButton(_ shoe: Shoe) -> some View {
+    private func retireReinstateButton(forShoe shoe: Shoe) -> some View {
         Button {
-            let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
-
-            withAnimation {
-                shoesViewModel.retireShoe(shoe.id)
-            }
-            
-            if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
-                }
-            }
+            onRetireAction(forShoe: shoe)
         } label: {
             if shoe.isRetired {
                 Label("Reinstate", systemImage: "bolt.fill")
@@ -566,7 +575,7 @@ extension ShoesView {
     }
     
     @ViewBuilder
-    private func deleteButton(_ shoe: Shoe) -> some View {
+    private func deleteButton(forShoe shoe: Shoe) -> some View {
         Button(role: .destructive) {
             shoeForDeletion = shoe
             showDeletionConfirmationDefault.toggle()
@@ -574,6 +583,8 @@ extension ShoesView {
             Label("Delete", systemImage: "trash")
         }
     }
+    
+    // MARK: runTypeButton
     
     @ViewBuilder
     private func runTypeButton(_ runType: RunType) -> some View {
@@ -595,6 +606,8 @@ extension ShoesView {
         .buttonStyle(.menuButton(selectedDefaulRunType == runType, enabledAppearance: !isFeatureDisabled(for: runType)))
     }
     
+    // MARK: confirmationActions
+    
     @ViewBuilder
     private func confirmationActions(shoe: Shoe) -> some View {
         Button("Delete", role: .destructive) {
@@ -614,8 +627,10 @@ extension ShoesView {
         }
     }
     
+    // MARK: contextMenuPreview
+    
     @ViewBuilder
-    private func contextMenuPreview(_ shoe: Shoe) -> some View {
+    private func contextMenuPreview(forShoe shoe: Shoe) -> some View {
         if shoe.image == nil {
             ShoeCell(shoe: shoe, width: 150, cornerRadius: Constants.cornerRadius, hideImage: true, displayProgress: false, reserveSpace: false)
                 .padding(10)
@@ -624,6 +639,8 @@ extension ShoesView {
                 .padding(10)
         }
     }
+    
+    // MARK: toolbarItems
     
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
@@ -808,6 +825,18 @@ extension ShoesView {
                 }
             }
             return
+        }
+    }
+    
+    private func onRetireAction(forShoe shoe: Shoe) {
+        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+        withAnimation {
+            shoesViewModel.retireShoe(shoe.id)
+        }
+        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+            }
         }
     }
 }

@@ -45,7 +45,7 @@ struct ShoeDetailView: View {
 
     private enum ActiveSheet: Hashable, Identifiable {
         case editShoe
-        case defaultSelection
+        case runTypeSelection
         case addWorkouts
 
         var id: Self { self }
@@ -70,6 +70,9 @@ struct ShoeDetailView: View {
                     readFrame(frame)
                 }
 
+                RunTypeSectionView(shoe: shoe) {
+                    activeSheet = .runTypeSelection
+                }
                 HealthSectionView(shoe: shoe)
                 StatsSectionView(shoe: shoe)
                 WorkoutsSectionView(shoe: shoe, showAllWorkouts: $showAllWorkouts) {
@@ -110,11 +113,12 @@ struct ShoeDetailView: View {
                     .interactiveDismissDisabled()
                 }
 
-            case .defaultSelection:
+            case .runTypeSelection:
                 NavigationStack {
-                    RunTypeSelectionView(selectedRunTypes: shoe.defaultRunTypes) { selectedRunTypes in
+                    RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes) { selectedDefaultTypes, selectedSuitableTypes in
                         withAnimation {
-                            shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedRunTypes)
+                            shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultTypes)
+                            shoesViewModel.setSuitableRunTypes(selectedSuitableTypes, for: shoe.id)
                         }
                         NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                     }
@@ -175,9 +179,9 @@ extension ShoeDetailView {
                     .disabled(shoesViewModel.shouldRestrictShoe(shoe.id))
 
                     Button {
-                        activeSheet = .defaultSelection
+                        activeSheet = .runTypeSelection
                     } label: {
-                        Label("Set Default", systemImage: "figure.run")
+                        Label("Set Run Types", systemImage: "figure.run")
                     }
                     
                     Button(role: .destructive) {
@@ -264,6 +268,7 @@ extension ShoeDetailView {
     }
     
     private func computeBottomPadding() {
+        let runsHeight = sectionHeights["runsSection"] ?? 0
         let healthHeight = sectionHeights["healthSection"] ?? 0
         let statsHeight = sectionHeights["statsSection"] ?? 0
         let workoutsHeight = sectionHeights["workoutsSection"] ?? 0
@@ -272,7 +277,7 @@ extension ShoeDetailView {
         let bottomSafeAreaInsets = UIApplication.bottomSafeAreaInsets
         let tabBarHeight = isFullScreen ? (UIApplication.tabBarHeight - bottomSafeAreaInsets) : 0
         
-        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
+        let availableHeight = screenHeight - statusBarHeight - bottomSafeAreaInsets - storedNavBarHeight - runsHeight - healthHeight - statsHeight - workoutsHeight + tabBarHeight
         
         bottomPadding = availableHeight < 20 ? 20 : availableHeight
     }
@@ -324,6 +329,57 @@ extension ShoeDetailView {
     }
 }
 
+// MARK: - RunTypeSectionView
+
+fileprivate struct RunTypeSectionView: View {
+    
+    @EnvironmentObject private var storeManager: StoreManager
+    
+    let shoe: Shoe
+    var showRunTypeSelection: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 6) {
+            Button {
+                showRunTypeSelection()
+            } label: {
+                Image(systemName: "plus")
+                    .fontWeight(.medium)
+                    .padding(6)
+                    .background(Color.theme.accent.opacity(0.2))
+                    .foregroundStyle(Color.theme.accent)
+                    .clipShape(Circle())
+            }
+            
+            ForEach(RunType.allCases, id: \.self) { runType in
+                let colors = CapsuleStyleHelper.colorStyle(
+                    isDefault: shoe.defaultRunTypes.contains(runType),
+                    isSuitable: shoe.suitableRunTypes.contains(runType),
+                    isDisabled: isFeatureDisabled(for: runType)
+                )
+
+                RunTypeCapsule(
+                    runType: runType,
+                    foregroundColor: colors.foreground,
+                    backgroundColor: colors.background)
+                { }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .dynamicTypeSize(...DynamicTypeSize.large)
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: SectionHeightPreferenceKey.self, value: ["runsSection": geo.size.height])
+            }
+        )
+    }
+    
+    private func isFeatureDisabled(for runType: RunType) -> Bool {
+        return runType != .daily && !storeManager.hasFullAccess
+    }
+}
 
 // MARK: - HealthSectionView
 

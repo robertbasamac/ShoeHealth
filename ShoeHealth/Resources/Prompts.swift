@@ -45,5 +45,8 @@ struct Prompts {
         static let unitOfMeasure = "Used to set the unit for all measurements displayed in the App."
         static let remindMeLater = "Used to reschedule new workouts notifications when you select \"Remind me later\" after long pressing on the workout notifications."
         static let notificationsNote = "For best user experience, we recommend enabling notifications."
+        static func lifespan(unitOfMeasure: UnitOfMeasure) -> String {
+            return "The standard lifespan of road running shoes is \(unitOfMeasure == .metric ? "500-800 kilometers" : "300-500 miles"), depending on factors such as the type of sole (e.g., road or trail), the terrain you run on, your body weight, running form, and other individual habits."
+        }
     }
 }

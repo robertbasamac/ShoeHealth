@@ -15,8 +15,7 @@ extension Double {
     }
     
     func asString(withDecimals decimals: Int) -> String {
-        let format = "%.\(decimals)f"
-        let roundedValue = String(format: format, self)
+        let roundedValue = String(self.rounded(toPlaces: decimals))
         let intValue = Int(self)
         if self - Double(intValue) == 0 {
             return "\(intValue)"
