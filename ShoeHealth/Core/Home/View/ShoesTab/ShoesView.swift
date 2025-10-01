@@ -584,28 +584,6 @@ extension ShoesView {
         }
     }
     
-    // MARK: runTypeButton
-    
-    @ViewBuilder
-    private func runTypeButton(_ runType: RunType) -> some View {
-        Button {
-            withAnimation {
-                if isFeatureDisabled(for: runType) {
-                    navigationRouter.showFeatureRestrictedAlert(.defaultRunRestricted)
-                } else {
-                    if selectedDefaulRunType == runType {
-                        navigationRouter.showSheet = .setDefaultShoe(forRunType: runType)
-                    } else {
-                        selectedDefaulRunType = runType
-                    }
-                }
-            }
-        } label: {
-            Text(runType.rawValue.capitalized)
-        }
-        .buttonStyle(.menuButton(selectedDefaulRunType == runType, enabledAppearance: !isFeatureDisabled(for: runType)))
-    }
-    
     // MARK: confirmationActions
     
     @ViewBuilder
@@ -632,10 +610,10 @@ extension ShoesView {
     @ViewBuilder
     private func contextMenuPreview(forShoe shoe: Shoe) -> some View {
         if shoe.image == nil {
-            ShoeCell(shoe: shoe, width: 150, cornerRadius: Constants.cornerRadius, hideImage: true, displayProgress: false, reserveSpace: false)
+            ShoeCell(shoe: shoe, width: 150, cornerRadius: Constants.defaultCornerRadius, hideImage: true, displayProgress: false, reserveSpace: false)
                 .padding(10)
         } else {
-            ShoeCell(shoe: shoe, width: 300, cornerRadius: Constants.cornerRadius, displayProgress: false, reserveSpace: false)
+            ShoeCell(shoe: shoe, width: 300, cornerRadius: Constants.defaultCornerRadius, displayProgress: false, reserveSpace: false)
                 .padding(10)
         }
     }
@@ -691,6 +669,7 @@ extension ShoesView {
 // MARK: - Section Header & Block
 
 fileprivate struct SectionHeader<Accessory: View>: View {
+    
     let title: LocalizedStringKey
     let onTap: (() -> Void)?
     @ViewBuilder var accessory: () -> Accessory
@@ -711,8 +690,10 @@ fileprivate struct SectionHeader<Accessory: View>: View {
             accessory()
         }
         .asHeader()
-        .contentShape(Rectangle())
-        .onTapGesture { onTap?() }
+        .contentShape(.rect)
+        .onTapGesture {
+            onTap?()
+        }
     }
 }
 

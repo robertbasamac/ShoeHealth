@@ -57,26 +57,7 @@ struct ShoesHorizontalListView: View {
                                 Label("Delete", systemImage: "trash")
                             }
                         } preview: {
-                            if shoe.image == nil {
-                                ShoeCell(
-                                    shoe: shoe,
-                                    width: 150,
-                                    cornerRadius: Constants.defaultCornerRadius,
-                                    hideImage: true,
-                                    displayProgress: false,
-                                    reserveSpace: false
-                                )
-                                .padding(10)
-                            } else {
-                                ShoeCell(
-                                    shoe: shoe,
-                                    width: 300,
-                                    cornerRadius: Constants.defaultCornerRadius,
-                                    displayProgress: false,
-                                    reserveSpace: false
-                                )
-                                .padding(10)
-                            }
+                            contextMenuPreview(forShoe: shoe)
                         }
                         .onTapGesture {
                             onTap(shoe)
@@ -88,5 +69,19 @@ struct ShoesHorizontalListView: View {
         .scrollTargetBehavior(.viewAligned)
         .contentMargins(.horizontal, Constants.horizontalMargin)
         .contentMargins(.vertical, 8)
+    }
+}
+
+extension ShoesHorizontalListView {
+    
+    @ViewBuilder
+    private func contextMenuPreview(forShoe shoe: Shoe) -> some View {
+        if shoe.image == nil {
+            ShoeCell(shoe: shoe, width: 150, cornerRadius: Constants.defaultCornerRadius, hideImage: true, displayProgress: false, reserveSpace: false)
+                .padding(10)
+        } else {
+            ShoeCell(shoe: shoe, width: 300, cornerRadius: Constants.defaultCornerRadius, displayProgress: false, reserveSpace: false)
+                .padding(10)
+        }
     }
 }
