@@ -690,6 +690,7 @@
 				094D13882C17871F003C6F50 /* HomeScreen.swift */,
 				09E2F34C2B15175800D16101 /* ShoeSelectionView.swift */,
 				0925516D2C78D022004CA262 /* MultipleShoeSelectionView.swift */,
+				098DC01C2D294620005BE50C /* RunTypeSelectionView.swift */,
 				09E385E72B13FAE5005CFF02 /* ShoesTab */,
 				09E385E62B13FAD8005CFF02 /* WorkoutsTab */,
 			);
@@ -806,7 +807,6 @@
 				0936FF4B2BD12D9800BF5798 /* ShoesListView.swift */,
 				0936FF4F2BD1464B00BF5798 /* ShoeDetailView.swift */,
 				09B3A5A22CD25CE70007F375 /* ShoeFormView.swift */,
-				098DC01C2D294620005BE50C /* RunTypeSelectionView.swift */,
 				09F96F352B67E27000BCE5E7 /* ShoeWorkoutsListView.swift */,
 				09B541F52B66C5FB00A31169 /* AddWokoutsToShoeView.swift */,
 			);

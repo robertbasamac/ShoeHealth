@@ -49,7 +49,7 @@ struct ShoesView: View {
                 RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes, preventDeselectingDaily: false) { selectedDefaultTypes, selectedSuitableTypes in
                     withAnimation {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultTypes)
-                        shoesViewModel.setSuitableRunTypes(selectedDefaultTypes, for: shoe.id)
+                        shoesViewModel.setSuitableRunTypes(selectedSuitableTypes, for: shoe.id)
                     }
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
