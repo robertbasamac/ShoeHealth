@@ -123,6 +123,7 @@ struct ShoeDetailView: View {
                         NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                     }
                 }
+                .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                 .onDisappear {
                     triggerSetNewDailyDefaultShoe()
                 }
@@ -131,6 +132,7 @@ struct ShoeDetailView: View {
                 NavigationStack {
                     AddWokoutsToShoeView(shoeID: shoe.id)
                 }
+                .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                 .presentationDragIndicator(.visible)
             }
         }

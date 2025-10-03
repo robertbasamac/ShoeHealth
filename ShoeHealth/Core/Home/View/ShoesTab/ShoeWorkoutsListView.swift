@@ -87,6 +87,7 @@ struct ShoeWorkoutsListView: View {
                 NavigationStack {
                     AddWokoutsToShoeView(shoeID: shoe.id)
                 }
+                .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                 .presentationDragIndicator(.visible)
 
             case .assignToShoe:
@@ -105,6 +106,7 @@ struct ShoeWorkoutsListView: View {
                         }
                     )
                 }
+                .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                 .presentationDragIndicator(.visible)
             }
         }

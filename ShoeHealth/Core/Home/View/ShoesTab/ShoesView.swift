@@ -54,6 +54,7 @@ struct ShoesView: View {
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
+            .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
         }
         .toolbar {
             toolbarItems

@@ -54,6 +54,5 @@ fileprivate struct SheetHeighModifier: ViewModifier, Animatable {
         content
             .presentationDetents(height == .zero ? [.medium] : [.height(height)])
             .interactiveDismissDisabled()
-            .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
     }
 }
