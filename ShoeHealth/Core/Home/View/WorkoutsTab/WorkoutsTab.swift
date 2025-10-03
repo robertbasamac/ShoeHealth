@@ -62,7 +62,7 @@ struct WorkoutsTab: View {
                     }
                 })
             }
-            .presentationCornerRadius(Constants.presentationCornerRadius)
+            .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
             .presentationDragIndicator(.visible)
         })
         .sheet(isPresented: $isPresentingBulkAssign) {
@@ -79,7 +79,7 @@ struct WorkoutsTab: View {
                     }
                 })
             }
-            .presentationCornerRadius(Constants.presentationCornerRadius)
+            .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
             .presentationDragIndicator(.visible)
         }
         .refreshable {

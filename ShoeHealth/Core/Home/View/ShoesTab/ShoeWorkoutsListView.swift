@@ -285,7 +285,7 @@ fileprivate struct ActionBottomBar: View {
     }
 }
 
-fileprivate extension View {
+extension View {
     @ViewBuilder
     func adaptiveGlassCapsule(tint: Color) -> some View {
         if #available(iOS 26, *) {

@@ -39,4 +39,12 @@ extension View {
             .font(.system(size: 17, weight: .semibold))
             .frame(width: 30, height: 30)
     }
+    
+    func presentationCornerRadiusPreiOS26(_ radius: CGFloat) -> some View {
+        if #available(iOS 26, *) {
+            return self
+        } else {
+            return self.presentationCornerRadius(radius)
+        }
+    }
 }

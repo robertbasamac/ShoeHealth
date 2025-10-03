@@ -100,7 +100,7 @@ struct ShoeDetailView: View {
                     NavigationStack {
                         ShoeFormView(shoe: shoe)
                     }
-                    .presentationCornerRadius(Constants.presentationCornerRadius)
+                    .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                     .interactiveDismissDisabled()
                     .navigationTransition(
                         .zoom(sourceID: "transition-id", in: namespace)
@@ -109,12 +109,12 @@ struct ShoeDetailView: View {
                     NavigationStack {
                         ShoeFormView(shoe: shoe)
                     }
-                    .presentationCornerRadius(Constants.presentationCornerRadius)
+                    .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                     .interactiveDismissDisabled()
                 }
 
             case .runTypeSelection:
-                NavigationStack {
+                DynamicSheet(animation: .smooth) {
                     RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes) { selectedDefaultTypes, selectedSuitableTypes in
                         withAnimation {
                             shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultTypes)
@@ -123,8 +123,6 @@ struct ShoeDetailView: View {
                         NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                     }
                 }
-                .presentationDetents([.medium])
-                .interactiveDismissDisabled()
                 .onDisappear {
                     triggerSetNewDailyDefaultShoe()
                 }
@@ -339,7 +337,7 @@ fileprivate struct RunTypeSectionView: View {
     var showRunTypeSelection: () -> Void
     
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: RunTypeCapsule.capsuleSpace) {
             Button {
                 showRunTypeSelection()
             } label: {

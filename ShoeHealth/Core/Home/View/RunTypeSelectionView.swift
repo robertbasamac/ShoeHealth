@@ -19,79 +19,85 @@ struct RunTypeSelectionView: View {
     var onDone: ([RunType], [RunType]) -> Void
     
     var body: some View {
-        List {
-            Section {
-                HStack(spacing: 6) {
-                    ForEach(RunType.allCases, id: \.self) { runType in
-                        let colors = CapsuleStyleHelper.colorStyle(
-                            isDefault: selectedDefaultRunTypes.contains(runType),
-                            isSuitable: selectedSuitableRunTypes.contains(runType),
-                            isDisabled: isFeatureDisabled(for: runType)
-                        )
-                        
-                        RunTypeCapsule(
-                            runType: runType,
-                            foregroundColor: colors.foreground,
-                            backgroundColor: colors.background,
-                            onTap: {
-                                if !isFeatureDisabled(for: runType) {
-                                    if selectedDefaultRunTypes.contains(runType) {
-                                        selectedDefaultRunTypes.removeAll { $0 == runType }
-                                        selectedSuitableRunTypes.removeAll { $0 == runType }
-                                    } else if selectedSuitableRunTypes.contains(runType) {
-                                        selectedDefaultRunTypes.append(runType)
-                                    } else {
-                                        selectedSuitableRunTypes.append(runType)
-                                    }
-                                }
-                            }
-                        )
-                    }
+        VStack(spacing: 12) {
+            HStack {
+                ToolbarActionButton(.cancel) {
+                    dismiss()
                 }
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .dynamicTypeSize(...DynamicTypeSize.large)
-            } header: {
-                Text("Run Type Assignment")
-            } footer: {
-                VStack(spacing: 12) {
-                    HStack(spacing: 4) {
-                        Text("Default").foregroundStyle(.accent)
-                        Text(" - ")
-                        Text("Also used").foregroundStyle(.white)
-                        Text(" - ")
-                        Text("Not used").foregroundStyle(.gray)
-                    }
-                    .font(.caption)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    if !StoreManager.shared.hasFullAccess {
-                        Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                }
-            }
-            .listRowBackground(Color.clear)
-        }
-        .scrollDisabled(true)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                ConfirmButton {
+                Spacer()
+                ToolbarActionButton(.confirm) {
                     onDone(selectedDefaultRunTypes, selectedSuitableRunTypes)
                     dismiss()
-                } label: {
-                    Text("Done")
                 }
             }
             
-            ToolbarItem(placement: .cancellationAction) {
-                CancelButton {
-                    dismiss()
-                } label: {
-                    Text("Cancel")
+            Group {
+                if #available(iOS 26, *) {
+                    Text("Run Type Assignment")
+                        .font(.headline)
+                    
+                } else {
+                    Text("Run Type Assignment")
+                        .font(.footnote)
+                        .textCase(.uppercase)
+                }
+            }
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
+            
+            HStack(spacing: RunTypeCapsule.capsuleSpace) {
+                ForEach(RunType.allCases, id: \.self) { runType in
+                    let colors = CapsuleStyleHelper.colorStyle(
+                        isDefault: selectedDefaultRunTypes.contains(runType),
+                        isSuitable: selectedSuitableRunTypes.contains(runType),
+                        isDisabled: isFeatureDisabled(for: runType)
+                    )
+                    
+                    RunTypeCapsule(
+                        runType: runType,
+                        foregroundColor: colors.foreground,
+                        backgroundColor: colors.background,
+                        onTap: {
+                            if !isFeatureDisabled(for: runType) {
+                                if selectedDefaultRunTypes.contains(runType) {
+                                    selectedDefaultRunTypes.removeAll { $0 == runType }
+                                    selectedSuitableRunTypes.removeAll { $0 == runType }
+                                } else if selectedSuitableRunTypes.contains(runType) {
+                                    selectedDefaultRunTypes.append(runType)
+                                } else {
+                                    selectedSuitableRunTypes.append(runType)
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+            .dynamicTypeSize(...DynamicTypeSize.large)
+            
+            VStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Text("Default").foregroundStyle(.accent)
+                    Text(" - ")
+                    Text("Also used").foregroundStyle(.white)
+                    Text(" - ")
+                    Text("Not used").foregroundStyle(.gray)
+                }
+                .font(.caption)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+                if !storeManager.hasFullAccess {
+                    Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.horizontal, 20)
                 }
             }
         }
+        .padding([.horizontal, .top], 20)
+        .padding(.bottom, storeManager.hasFullAccess ? 30 : 20)
     }
 }
 
@@ -114,12 +120,10 @@ extension RunTypeSelectionView {
     @Previewable @State var defaultRunTypeSelections: [RunType] = [.daily]
     @Previewable @State var suitableRunTypeSelections: [RunType] = [.tempo]
     
-    NavigationStack {
-        RunTypeSelectionView(selectedDefaultRunTypes: defaultRunTypeSelections, selectedSuitableRunTypes: suitableRunTypeSelections, preventDeselectingDaily: false) { defaultTypes, suitableTypes in
-            defaultRunTypeSelections = defaultTypes
-            suitableRunTypeSelections = suitableTypes
-        }
-        .environmentObject(StoreManager.shared)
-        .navigationTitle("Set Run Types")
+    RunTypeSelectionView(selectedDefaultRunTypes: defaultRunTypeSelections, selectedSuitableRunTypes: suitableRunTypeSelections, preventDeselectingDaily: false) { defaultTypes, suitableTypes in
+        defaultRunTypeSelections = defaultTypes
+        suitableRunTypeSelections = suitableTypes
     }
+    .frame(maxHeight: .infinity, alignment: .top)
+    .environmentObject(StoreManager.shared)
 }

@@ -198,7 +198,7 @@ extension ShoeFormView {
     @ViewBuilder
     private var setRunTypesSection: some View {
         Section {
-            HStack(spacing: 6) {
+            HStack(spacing: RunTypeCapsule.capsuleSpace) {
                 ForEach(RunType.allCases, id: \.self) { runType in
                     let colors = CapsuleStyleHelper.colorStyle(
                         isDefault: shoeFormViewModel.defaultRunTypes.contains(runType),
@@ -240,10 +240,13 @@ extension ShoeFormView {
                     Text("Not used").foregroundStyle(.gray)
                 }
                 .font(.caption)
+                .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
                 
                 if !StoreManager.shared.hasFullAccess {
                     Text("Only 'Daily' run type is available for free users. To unlock other run types, please consider upgrading to a premium plan.")
+                        .font(.footnote)
+
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
@@ -311,6 +314,7 @@ extension ShoeFormView {
             Text("Lifespan distance")
         } footer: {
             Text(Prompts.Settings.lifespan(unitOfMeasure: unitOfMeasure))
+                .font(.footnote)
         }
     }
     

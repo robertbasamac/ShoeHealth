@@ -36,6 +36,8 @@
 		093742A02B7B756E008D96BD /* HKWorkout+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E385D72B1256B9005CFF02 /* HKWorkout+Statistics.swift */; };
 		093742A12B7B9C50008D96BD /* HKWorkout+Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E2F34E2B151DD800D16101 /* HKWorkout+Identifiable.swift */; };
 		093742A62B7E519A008D96BD /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B75B02B4ECA7000632590 /* CircularProgressView.swift */; };
+		0938ED362E8EF613008D6DCA /* DynamicSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0938ED352E8EF60D008D6DCA /* DynamicSheet.swift */; };
+		0938ED382E8FCB39008D6DCA /* ToolbarActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0938ED372E8FCB39008D6DCA /* ToolbarActionButton.swift */; };
 		09402B7C2BFBBB6800C943C1 /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7B2BFBBB6800C943C1 /* SampleView.swift */; };
 		09402B7E2BFBC54800C943C1 /* RunningCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7D2BFBC54800C943C1 /* RunningCategory.swift */; };
 		09402B802BFD0CFA00C943C1 /* PersonalBest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09402B7F2BFD0CFA00C943C1 /* PersonalBest.swift */; };
@@ -209,6 +211,8 @@
 		093742842B7AAD7A008D96BD /* ShoeStatsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShoeStatsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		093742882B7AAD7A008D96BD /* ShoesStatsWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoesStatsWidgetBundle.swift; sourceTree = "<group>"; };
 		0937428E2B7AAD7B008D96BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0938ED352E8EF60D008D6DCA /* DynamicSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicSheet.swift; sourceTree = "<group>"; };
+		0938ED372E8FCB39008D6DCA /* ToolbarActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarActionButton.swift; sourceTree = "<group>"; };
 		093C4A4C2D0C33BE007EDEEA /* ShoeStatsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShoeStatsWidgetExtension.entitlements; sourceTree = "<group>"; };
 		09402B7B2BFBBB6800C943C1 /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
 		09402B7D2BFBC54800C943C1 /* RunningCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningCategory.swift; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 		090D76ED2BB2DEE600D23762 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0938ED352E8EF60D008D6DCA /* DynamicSheet.swift */,
 				0973D85F2E846A9900F1AA07 /* CapsuleStyleHelper.swift */,
 				0936FF582BD6628900BF5798 /* DimissSwipeGesture.swift */,
 				0936FF542BD586F600BF5798 /* FrameReader.swift */,
@@ -724,6 +729,7 @@
 		09D4CE3C2E4613D900B4A576 /* Button */ = {
 			isa = PBXGroup;
 			children = (
+				0938ED372E8FCB39008D6DCA /* ToolbarActionButton.swift */,
 				09D4CE3A2E4613BB00B4A576 /* ConfirmButton.swift */,
 				09D4CE3D2E46159200B4A576 /* CancelButton.swift */,
 			);
@@ -1015,6 +1021,7 @@
 				0991B9042D3A7A3F006B56C2 /* FeatureAlertType.swift in Sources */,
 				09E2F34B2B15130900D16101 /* WorkoutListItem.swift in Sources */,
 				0969BDE62C58FE9400933469 /* SettingsManager.swift in Sources */,
+				0938ED362E8EF613008D6DCA /* DynamicSheet.swift in Sources */,
 				0936FF5E2BD6DED000BF5798 /* StretchyHeaderCell.swift in Sources */,
 				09B541F62B66C5FB00A31169 /* AddWokoutsToShoeView.swift in Sources */,
 				0975440C2B28769A00B379E2 /* ShoesViewModel.swift in Sources */,
@@ -1072,6 +1079,7 @@
 				092624642D5B9D7400AFA58C /* MenuCapsuleButtonStyle.swift in Sources */,
 				0944A7FC2CE60B1A0042081D /* ShoesSchemaV1.swift in Sources */,
 				09BEB9942D40FBAD000A98EF /* RunTypeShoeNotSelectedView.swift in Sources */,
+				0938ED382E8FCB39008D6DCA /* ToolbarActionButton.swift in Sources */,
 				09715ED02E4DD88600129004 /* ShoesHorizontalListView.swift in Sources */,
 				09F18EE82BC6AC03002B73EE /* ShoeCell.swift in Sources */,
 				096D36A42B20B1C900C78453 /* Formatters.swift in Sources */,

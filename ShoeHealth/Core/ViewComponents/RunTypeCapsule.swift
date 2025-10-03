@@ -19,7 +19,8 @@ struct RunTypeCapsule: View {
             .font(.footnote)
             .fontWeight(.semibold)
             .foregroundStyle(foregroundColor)
-            .padding(6)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 4)
             .frame(maxWidth: .infinity)
             .background(backgroundColor, in: .capsule(style: .circular))
             .dynamicTypeSize(...DynamicTypeSize.large)
@@ -27,4 +28,6 @@ struct RunTypeCapsule: View {
                 withAnimation { onTap() }
             }
     }
+    
+    static let capsuleSpace: CGFloat = 6
 }

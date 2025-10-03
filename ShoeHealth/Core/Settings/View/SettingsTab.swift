@@ -143,6 +143,7 @@ extension SettingsTab {
             .foregroundStyle(.primary)
         } footer: {
             Text(Prompts.Settings.notificationsNote)
+                .font(.footnote)
         }
     }
     
@@ -177,8 +178,8 @@ extension SettingsTab {
         } footer: {
             if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                 Text("App Version \(version)")
-                    .frame(maxWidth: .infinity, alignment: .center)
                     .font(.footnote)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
         }
         .tint(.primary)

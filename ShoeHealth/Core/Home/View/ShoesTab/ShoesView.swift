@@ -45,7 +45,7 @@ struct ShoesView: View {
         .sheet(item: $shoeForRunTypesSelection, onDismiss: {
             triggerSetNewDailyDefaultShoe()
         }) { shoe in
-            NavigationStack {
+            DynamicSheet(animation: .smooth) {
                 RunTypeSelectionView(selectedDefaultRunTypes: shoe.defaultRunTypes, selectedSuitableRunTypes: shoe.suitableRunTypes, preventDeselectingDaily: false) { selectedDefaultTypes, selectedSuitableTypes in
                     withAnimation {
                         shoesViewModel.setAsDefaultShoe(shoe.id, for: selectedDefaultTypes)
@@ -54,8 +54,6 @@ struct ShoesView: View {
                     NotificationManager.shared.setActionableNotificationTypes(isPremiumUser: storeManager.hasFullAccess)
                 }
             }
-            .presentationDetents([.medium])
-            .interactiveDismissDisabled()
         }
         .toolbar {
             toolbarItems
@@ -153,7 +151,7 @@ extension ShoesView {
     private var defaultShoeSection: some View {
         SectionBlock(title: "Default Shoes") {
             VStack(spacing: 0) {
-                HStack(spacing: 8) {
+                HStack(spacing: RunTypeCapsule.capsuleSpace) {
                     ForEach(RunType.allCases, id: \.self) { runType in
                         RunTypeCapsule(
                             runType: runType,

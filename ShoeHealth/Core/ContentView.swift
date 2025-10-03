@@ -76,7 +76,7 @@ struct ContentView: View {
                         })
                     }
                 }
-                .presentationCornerRadius(Constants.presentationCornerRadius)
+                .presentationCornerRadiusPreiOS26(Constants.presentationCornerRadius)
                 .presentationDragIndicator(
                     {
                         switch sheetType {

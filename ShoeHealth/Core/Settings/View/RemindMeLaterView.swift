@@ -151,7 +151,6 @@ extension RemindMeLaterView {
         } footer: {
             Text("Value must be greater than 0.")
                 .font(.footnote)
-
         }
     }
 }
