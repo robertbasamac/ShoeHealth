@@ -163,7 +163,14 @@ final class ShoesViewModel {
             .map { $0 }
     }
     
-    func getShoes(for category: ShoeCategory = .all, sortingOption: SortingOption? = nil, isSortingAscending: Bool? = nil) -> [Shoe] {
+    func getShoes(forRunType runType: RunType, sortingOption: SortingOption? = nil, isSortingAscending: Bool? = nil) -> [Shoe] {
+        let filteredShoes = shoes.filter { $0.suitableRunTypes.contains(runType) }
+        return sortShoes(filteredShoes,
+                         by: sortingOption,
+                         ascending: isSortingAscending)
+    }
+    
+    func getShoes(forCategory category: ShoeCategory = .all, sortingOption: SortingOption? = nil, isSortingAscending: Bool? = nil) -> [Shoe] {
         var filteredShoes: [Shoe] = []
         
         switch category {
@@ -175,25 +182,39 @@ final class ShoesViewModel {
             filteredShoes = self.shoes
         }
         
+        return sortShoes(filteredShoes,
+                         by: sortingOption,
+                         ascending: isSortingAscending)
+    }
+    
+    // MARK: - Sorting helper (reusable)
+
+    private func sortShoes(_ shoes: [Shoe], by sortingOption: SortingOption? = nil, ascending: Bool? = nil) -> [Shoe] {
+        var result = shoes
+
         let ruleToApply = sortingOption ?? self.sortingOption
-        let orderToApply = isSortingAscending ?? self.isSortingAscending
-        
+        let orderToApply = ascending ?? self.isSortingAscending
+
         switch ruleToApply {
         case .model:
-            filteredShoes.sort { orderToApply ? $0.model < $1.model : $0.model > $1.model }
+            result.sort { orderToApply ? $0.model < $1.model : $0.model > $1.model }
         case .brand:
-            filteredShoes.sort { orderToApply ? $0.brand < $1.brand : $0.brand > $1.brand }
+            result.sort { orderToApply ? $0.brand < $1.brand : $0.brand > $1.brand }
         case .distance:
-            filteredShoes.sort { orderToApply ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
+            result.sort { orderToApply ? $0.totalDistance < $1.totalDistance : $0.totalDistance > $1.totalDistance }
         case .wear:
-            filteredShoes.sort { orderToApply ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
+            result.sort { orderToApply ? $0.wearPercentage < $1.wearPercentage : $0.wearPercentage > $1.wearPercentage }
         case .recentlyUsed:
-            filteredShoes.sort { orderToApply ? $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast : $0.lastActivityDate ?? Date.distantPast > $1.lastActivityDate ?? Date.distantPast }
+            result.sort {
+                let l = $0.lastActivityDate ?? .distantPast
+                let r = $1.lastActivityDate ?? .distantPast
+                return orderToApply ? (l < r) : (l > r)
+            }
         case .aquisitionDate:
-            filteredShoes.sort { orderToApply ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
+            result.sort { orderToApply ? $0.aquisitionDate < $1.aquisitionDate : $0.aquisitionDate > $1.aquisitionDate }
         }
-        
-        return filteredShoes
+
+        return result
     }
     
     // MARK: - CRUD operations

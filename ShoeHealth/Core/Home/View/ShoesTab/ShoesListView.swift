@@ -26,7 +26,7 @@ struct ShoesListView: View {
     
     var body: some View {
         List {
-            ForEach(shoesViewModel.getShoes(for: category)) { shoe in
+            ForEach(shoesViewModel.getShoes(forCategory: category)) { shoe in
                 ShoeListItem(shoe: shoe, width: width)
                     .id(shoe.id)
                     .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: Constants.cornerRadius, style: .continuous))
@@ -160,7 +160,7 @@ extension ShoesListView {
                 Image(systemName: "arrow.up.arrow.down")
                     .imageScale(.medium)
             }
-            .disabled(shoesViewModel.getShoes(for: category).isEmpty)
+            .disabled(shoesViewModel.getShoes(forCategory: category).isEmpty)
         }
     }
     
@@ -196,7 +196,7 @@ extension ShoesListView {
     
     @ViewBuilder
     private var emptyShoesView: some View {
-        if shoesViewModel.getShoes(for: category).isEmpty {
+        if shoesViewModel.getShoes(forCategory: category).isEmpty {
             ContentUnavailableView {
                 Label("No \(category.title)", systemImage: "shoe.circle")
             } description: {

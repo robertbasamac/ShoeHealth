@@ -46,7 +46,7 @@ struct FAQView: View {
         ),
         FAQItem(
             question: "What features are included in the Premium version of the App?",
-            answer: "The Premium version includes two main features: unlimited shoe entries and the ability to set default shoes for four different running types (long run, tempo run, race, and trail run). You can also use these default shoes directly from new workout notifications and display them in Widgets."
+            answer: "The Premium version includes two main features: unlimited shoe entries and access to four more running types (long run, tempo run, race, and trail run). You can also use these default shoes directly from new workout notifications and display them in Widgets."
         ),
         FAQItem(
             question: "What happens to my shoes if I upgrade to the Premium version, add more than \(StoreManager.shoesLimit) shoes, and then go back to the Free version?",

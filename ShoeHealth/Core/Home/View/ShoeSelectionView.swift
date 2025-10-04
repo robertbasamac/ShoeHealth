@@ -107,7 +107,7 @@ extension ShoeSelectionView {
     
     private var activeShoesSection: some View {
         Section(isExpanded: $isExpandedActive, content: {
-            shoesList(shoes: shoesViewModel.getShoes(for: .active))
+            shoesList(shoes: shoesViewModel.getShoes(forCategory: .active))
         }, header: {
             Text("Active Shoes")
         })
@@ -115,7 +115,7 @@ extension ShoeSelectionView {
     
     private var retiredShoesSection: some View {
         Section(isExpanded: $isExpandedRetire, content: {
-            shoesList(shoes: shoesViewModel.getShoes(for: .retired))
+            shoesList(shoes: shoesViewModel.getShoes(forCategory: .retired))
         }, header: {
             Text("Retired Shoes")
         })

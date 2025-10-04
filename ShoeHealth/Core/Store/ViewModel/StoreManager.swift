@@ -62,7 +62,7 @@ final class StoreManager: ObservableObject {
     /// - `premiumFeatures`: an array of features that the user can get when purchasing a subscription
     static let premiumFeatures: [PremiumFeature] = [
         PremiumFeature(title: "Unlimited Shoes"),
-        PremiumFeature(title: "Default Shoes for multiple run types")
+        PremiumFeature(title: "Multiple Run Types")
     ]
     
     // MARK: - init and deinit

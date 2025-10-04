@@ -26,7 +26,7 @@ enum FeatureAlertType {
         case .limitReached:
             return "You can only add up to \(StoreManager.shoesLimit) shoes as a free user. Upgrade to unlock unlimited shoes and additional features."
         case .defaultRunRestricted:
-            return "You can only have a 'Daily' default shoe as a free user. Upgrade to unlock all run types and additional features."
+            return "You can only have 'Daily' shoes as a free user. Upgrade to unlock all run types and additional features."
         }
     }
 }

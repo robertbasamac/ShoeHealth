@@ -36,8 +36,14 @@ struct ShoesView: View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
                 lastRunSection
-                defaultShoeSection
-                recentlyUsedSection
+                defaultShoesSection
+                
+                if storeManager.hasFullAccess {
+                    runTypesShoesSection
+                }
+                
+                recentlyUsedShoesSection
+                
                 activeShoesSection
                 retiredShoesSection
             }
@@ -149,7 +155,7 @@ extension ShoesView {
     // MARK: defaultShoeSection
     
     @ViewBuilder
-    private var defaultShoeSection: some View {
+    private var defaultShoesSection: some View {
         SectionBlock(title: "Default Shoes") {
             VStack(spacing: 0) {
                 HStack(spacing: RunTypeCapsule.capsuleSpace) {
@@ -250,10 +256,58 @@ extension ShoesView {
     // MARK: recentlyUsedSection
     
     @ViewBuilder
-    private var recentlyUsedSection: some View {
+    private var recentlyUsedShoesSection: some View {
         let shoes = shoesViewModel.getRecentlyUsedShoes()
         if !shoes.isEmpty {
             SectionBlock(title: "Recently Used") {
+                ShoesHorizontalListView(
+                    shoes: shoes,
+                    width: width,
+                    onTap: { shoe in
+                        dismissSearch()
+                        navigationRouter.navigate(to: .shoe(shoe))
+                    },
+                    onSetDefault: { shoe in
+                        shoeForRunTypesSelection = shoe
+                    },
+                    onRetireToggle: { shoe in
+                        let setNewDefaultShoe = shoe.isDefaultShoe && shoe.defaultRunTypes.contains(.daily) && !shoe.isRetired
+                        withAnimation {
+                            shoesViewModel.retireShoe(shoe.id)
+                        }
+                        if setNewDefaultShoe && !shoesViewModel.shoes.isEmpty {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                navigationRouter.showSheet = .setDefaultShoe(forRunType: .daily)
+                            }
+                        }
+                    },
+                    onDeleteRequest: { shoe in
+                        shoeForDeletion = shoe
+                        showDeletionConfirmationRecently.toggle()
+                    }
+                )
+                .confirmationDialog(
+                    "Delete this shoe?",
+                    isPresented: $showDeletionConfirmationRecently,
+                    titleVisibility: .visible,
+                    presenting: shoeForDeletion,
+                    actions: { shoe in
+                        confirmationActions(shoe: shoe)
+                    },
+                    message: { shoe in
+                        Text("Deleting \'\(shoe.brand) \(shoe.model) - \(shoe.nickname)\' shoe is permanent. This action cannot be undone.")
+                    })
+            }
+        }
+    }
+    
+    // MARK: runTypesShoesSection
+    
+    @ViewBuilder
+    private var runTypesShoesSection: some View {
+        let shoes = shoesViewModel.getShoes(forRunType: selectedDefaulRunType)
+        if !shoes.isEmpty {
+            SectionBlock(title: "\(selectedDefaulRunType.runsString.capitalized) Shoes") {
                 ShoesHorizontalListView(
                     shoes: shoes,
                     width: width,
@@ -299,7 +353,7 @@ extension ShoesView {
     
     @ViewBuilder
     private var activeShoesSection: some View {
-        let shoes = shoesViewModel.getShoes(for: .active)
+        let shoes = shoesViewModel.getShoes(forCategory: .active)
         if !shoes.isEmpty {
             SectionBlock(title: "Active Shoes", onTap: {
                 dismissSearch()
@@ -350,7 +404,7 @@ extension ShoesView {
     
     @ViewBuilder
     private var retiredShoesSection: some View {
-        let shoes = shoesViewModel.getShoes(for: .retired)
+        let shoes = shoesViewModel.getShoes(forCategory: .retired)
         if !shoes.isEmpty {
             SectionBlock(title: "Retired Shoes", onTap: {
                 dismissSearch()
